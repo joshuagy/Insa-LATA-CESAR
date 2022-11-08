@@ -48,6 +48,8 @@ class GraphicalView(object):
                 self.renderIntro()
             if currentstate == model.STATE_MENU:
                 self.renderMenu()
+            if currentstate == model.STATE_PLAY:
+                self.renderGame()
             self.clock.tick(30)
     
     def renderScene(self, scene):
@@ -75,7 +77,18 @@ class GraphicalView(object):
                     True, (0, 0, 255))
         self.screen.blit(somewords, (0, 0))
         pygame.display.flip()
-        
+    
+    def renderGame(self) -> None:
+        """
+        Render the game.
+        """
+        self.screen.fill((150, 150, 0))
+        somewords = self.smallfont.render(
+                    'game', 
+                    True, (0, 150, 150))
+        self.screen.blit(somewords, (0, 0))
+        pygame.display.flip()
+
     def initialize(self) -> None:
         """
         Set up the pygame graphical display and loads graphical resources.
