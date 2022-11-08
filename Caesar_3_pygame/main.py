@@ -9,7 +9,6 @@ pygame.display.set_icon(pygame.image.load("C3/augustus_IDI_ICON1-0.png"))
 
 def main():
 
-
     pygame.init() 
     pygame.mixer.init() # For sound
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
