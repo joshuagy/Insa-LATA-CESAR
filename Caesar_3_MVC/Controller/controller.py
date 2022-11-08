@@ -71,7 +71,7 @@ class MouseInputHandler:
 		Handles menu mouse events.
 		"""
 		# left click exits
-		self.evManager.Post(QuitEvent())
+		self.evManager.Post(StateChangeEvent(model.STATE_PLAY))
 
 class KeyboardInputHandler:
 	"""
