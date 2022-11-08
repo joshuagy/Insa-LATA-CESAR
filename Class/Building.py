@@ -1,11 +1,14 @@
+from types import NoneType
+
+#
+
 class Building():
-    def __init__(self, position, size, desc, connectedToRoad, status=False , ressources = dict()):
+    def __init__(self, position, size, desc, connectedToRoad, status=False):
         self.position = position
         self.size = size
         self.desc = desc
         self.connectedToRoad = connectedToRoad
         self.status = status
-        self.ressources = ressources
 
     def get_position(self):
         return self.position
@@ -37,11 +40,17 @@ class Building():
     def get_status(self, newStatus):
         self.status = newStatus
 
-    def get_ressources(self):
-        return self.ressources
-
-    def set_ressources(self, newRessources):
-        self.ressources = newRessources
+    def get_fireRisk(self):
+        return self.fireRisk
+    
+    def set_riskLevel(self, newfireRisk):
+        self.fireRisk = newfireRisk
+    
+    def get_collapseRisk(self):
+        return self.collapseRisk
+    
+    def set_collapseRisk(self, newcollapseRisk):
+        self.collapseRisk = newcollapseRisk
 
     def delete():
         pass
