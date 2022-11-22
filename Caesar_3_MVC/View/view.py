@@ -48,6 +48,8 @@ class GraphicalView(object):
                 self.renderIntro()
             if currentstate == model.STATE_MENU:
                 self.renderMenu()
+            if currentstate == model.STATE_PLAY:
+                self.renderGame()
             self.clock.tick(30)
     
     def renderScene(self, scene):
