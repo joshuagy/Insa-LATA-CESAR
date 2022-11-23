@@ -1,5 +1,5 @@
 import pygame
-from Model import model
+from Model import model, Plateau
 from EventManager.eventManager import *
 from Scenes.introScene import IntroScene
 
@@ -82,12 +82,14 @@ class GraphicalView(object):
         """
         Render the game.
         """
-        self.screen.fill((150, 150, 0))
-        somewords = self.smallfont.render(
-                    'game', 
-                    True, (0, 150, 150))
-        self.screen.blit(somewords, (0, 0))
-        pygame.display.flip()
+        pygame.init() 
+        pygame.mixer.init() # For sound
+        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        clock = pygame.time.Clock()
+        game = Plateau.Plateau(screen, clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
+
+        while True:
+            game.run()
 
     def initialize(self) -> None:
         """
