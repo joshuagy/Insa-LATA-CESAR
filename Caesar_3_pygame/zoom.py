@@ -12,7 +12,6 @@ class Zoom:
         self.image["rock1"] = pygame.transform.scale(self.image["rock1"], (self.image["rock1"].get_width()*X__, self.image["rock1"].get_height()*X__))
         self.image["land2"] = pygame.transform.scale(self.image["land2"], (self.image["land2"].get_width() * X__, self.image["land2"].get_height() * X__))
         self.image["tree2"] = pygame.transform.scale(self.image["tree2"], (self.image["tree2"].get_width() * X__, self.image["tree2"].get_height() * X__))
-        self.image["rock2"] = pygame.transform.scale(self.image["rock2"], (self.image["rock2"].get_width() * X__, self.image["rock2"].get_height() * X__))
         self.image["tree3"] = pygame.transform.scale(self.image["tree3"], (self.image["tree3"].get_width() * X__, self.image["tree3"].get_height() * X__))
         self.image["water1"] = pygame.transform.scale(self.image["water1"], (self.image["water1"].get_width() * X__, self.image["water1"].get_height() * X__))
         self.image["path1"] = pygame.transform.scale(self.image["path1"], (self.image["path1"].get_width() * X__, self.image["path1"].get_height() * X__))
