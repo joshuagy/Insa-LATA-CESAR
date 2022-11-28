@@ -1,6 +1,7 @@
 import pygame
 from Model.Zoom import Zoom
 from Model.Camera import Camera
+from Model.Case import Case
 from View.Menu_map import Menu_map
 from Model.control_panel import *
 import sys
@@ -44,12 +45,12 @@ class Plateau():
             for cell_y in range(self.nbr_cell_y):
                 cells_to_map = self.cells_to_map(cell_x, cell_y)
                 map[cell_x].append(cells_to_map)
-                render_pos = cells_to_map["render_pos"]
+                render_pos = cells_to_map.render_pos
                 self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
 
 
         return map
-    
+    map
     def cells_to_map(self, cell_x, cell_y):
 
         rectangle_cell = [
@@ -61,13 +62,8 @@ class Plateau():
 
         isometric_cell = [self.cartesian_to_isometric(x, y) for x, y in rectangle_cell]
 
-        return {
-            "grid": [cell_x, cell_y],
-            "rectangle_cell": rectangle_cell,
-            "isometric_cell": isometric_cell,
-            "render_pos": [min([x for x, y in isometric_cell]), min([y for x, y in isometric_cell])],
-            "image": self.choose_image()
-            }
+        return Case(cell_x, cell_y, rectangle_cell, isometric_cell, [min([x for x, y in isometric_cell]), min([y for x, y in isometric_cell])], self.choose_image())        
+        
     def cartesian_to_isometric(self, x, y):
             return x - y,(x + y)/2
 
@@ -232,8 +228,8 @@ class Plateau():
        
         for cell_x in range(self.nbr_cell_y):
             for cell_y in range(self.nbr_cell_y):
-                render_pos =  self.map[cell_x][cell_y]["render_pos"]
-                image = self.map[cell_x][cell_y]["image"]
+                render_pos =  self.map[cell_x][cell_y].render_pos
+                image = self.map[cell_x][cell_y].sprite
                 if image != "":
 
                     self.screen.blit(self.image[image],
