@@ -1,6 +1,7 @@
 import pygame
 from Model import model, Plateau
-from EventManager.eventManager import *
+from EventManager.EventManager import EventManager
+from EventManager.allEvent import *
 from Scenes.introScene import IntroScene
 
 
@@ -28,6 +29,7 @@ class GraphicalView(object):
         self.screen = None
         self.clock = None
         self.smallfont = None
+        self.game = None
     
     def notify(self, event):
         """
@@ -86,10 +88,10 @@ class GraphicalView(object):
         pygame.mixer.init() # For sound
         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         clock = pygame.time.Clock()
-        game = Plateau.Plateau(screen, clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
+        self.game = Plateau.Plateau(screen, clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
 
         while True:
-            game.run()
+            self.game.run()
 
     def initialize(self) -> None:
         """

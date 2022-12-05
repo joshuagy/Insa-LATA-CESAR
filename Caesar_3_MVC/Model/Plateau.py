@@ -50,7 +50,7 @@ class Plateau():
 
 
         return map
-    map
+        
     def cells_to_map(self, cell_x, cell_y):
 
         rectangle_cell = [
