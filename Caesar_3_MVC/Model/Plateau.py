@@ -174,11 +174,10 @@ class Plateau():
                 }
 
     def run(self):
-        while self.running:
-            self.clock.tick(60)
-            self.events()
-            self.update()
-            self.draw()
+        self.clock.tick(60)
+        self.events()
+        self.update()
+        self.draw()
 
 
 

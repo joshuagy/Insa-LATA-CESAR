@@ -85,13 +85,8 @@ class GraphicalView(object):
         Render the game.
         """
         pygame.init() 
-        pygame.mixer.init() # For sound
-        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        clock = pygame.time.Clock()
-        self.game = Plateau.Plateau(screen, clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
-
-        while True:
-            self.game.run()
+        pygame.mixer.init()
+        self.model.actualGame.run()
 
     def initialize(self) -> None:
         """
@@ -101,7 +96,8 @@ class GraphicalView(object):
         pygame.init()
         pygame.font.init()
         pygame.display.set_caption('Game')
-        self.screen = pygame.display.set_mode((200, 200))
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.clock = pygame.time.Clock()
         self.smallfont = pygame.font.Font(None, 40)
         self.isinitialized = True
+        self.model.actualGame = Plateau.Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])

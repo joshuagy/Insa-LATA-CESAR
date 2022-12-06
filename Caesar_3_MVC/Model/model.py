@@ -24,6 +24,7 @@ class GameEngine(object):
         evManager.RegisterListener(self)
         self.running = False
         self.state = StateMachine()
+        self.actualGame = None
 
     def notify(self, event):
         """

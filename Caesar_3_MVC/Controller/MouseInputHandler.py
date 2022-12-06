@@ -34,7 +34,6 @@ class MouseInputHandler:
                                 self.handleMouseEventsStateMenu(event)
                         if currentstate == STATE_PLAY:
                                 self.handleMouseEventsStatePlay(event)
-                print(STATE_PLAY == currentstate)
                 if event.button == 1:
                         self.clicked = False
 
@@ -57,4 +56,3 @@ class MouseInputHandler:
         Handles game mouse events
         """
         print("Click on game")
-        print(self.initialCoordinate)
