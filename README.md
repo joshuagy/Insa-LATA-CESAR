@@ -10,7 +10,9 @@
 - [ ] Real-Time Aspects.
 - [ ] Walker visualisation
 - [ ] Variable Speed
-- [ ] Trading
+- [ ] Trading (Have neighbouring cities with which to trade specific goods)
+- [ ] Administration (Implement some degree of global control over your city to adjust tax levels, industry
+priorities, visualise service coverage and so on)
 
 ## Optional features
 - [ ] Disasters and Invasions/War
