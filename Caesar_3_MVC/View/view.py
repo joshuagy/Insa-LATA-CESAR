@@ -1,9 +1,9 @@
 import pygame
-from Model import model, Plateau
+from Model.Menu import Menu 
+from Model.Plateau import Plateau 
 from EventManager.EventManager import EventManager
 from EventManager.allEvent import *
-from Scenes.introScene import IntroScene
-
+from Model.constants import *
 
 class GraphicalView(object):
     """
@@ -29,8 +29,7 @@ class GraphicalView(object):
         self.screen = None
         self.clock = None
         self.smallfont = None
-        self.game = None
-    
+
     def notify(self, event):
         """
         Receive events posted to the message queue. 
@@ -38,7 +37,7 @@ class GraphicalView(object):
 
         if isinstance(event, InitializeEvent):
             self.initialize()
-        elif isinstance(event, QuitEvent):
+        elif isinstance(event, ExitEvent):
             # shut down the pygame graphics
             self.isinitialized = False
             pygame.quit()
@@ -46,38 +45,19 @@ class GraphicalView(object):
             if not self.isinitialized:
                 return
             currentstate = self.model.state.peek()
-            if currentstate == model.STATE_INTRO:
-                self.renderIntro()
-            if currentstate == model.STATE_MENU:
+            if currentstate == STATE_MENU:
                 self.renderMenu()
-            if currentstate == model.STATE_PLAY:
+            if currentstate == STATE_PLAY:
                 self.renderGame()
             self.clock.tick(30)
-    
-    def renderScene(self, scene):
 
-        pygame.display.flip()
-    def renderIntro(self) -> None:
-        """
-        Render the game intro.
-        """
-        self.screen.fill((255, 0, 0))
-        somewords = self.smallfont.render(
-                    'game intro', 
-                    True, (0, 255, 0))
-        self.screen.blit(somewords, (0, 0))
-        pygame.display.flip()
         
     def renderMenu(self) -> None:
         """
         Render the game menu.
         """
 
-        self.screen.fill((0, 255, 0))
-        somewords = self.smallfont.render(
-                    'game menu', 
-                    True, (0, 0, 255))
-        self.screen.blit(somewords, (0, 0))
+        self.model.menu.render()
         pygame.display.flip()
     
     def renderGame(self) -> None:
@@ -100,4 +80,5 @@ class GraphicalView(object):
         self.clock = pygame.time.Clock()
         self.smallfont = pygame.font.Font(None, 40)
         self.isinitialized = True
-        self.model.actualGame = Plateau.Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
+        self.model.menu = Menu(self.screen)
+        self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])

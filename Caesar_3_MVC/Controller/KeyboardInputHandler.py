@@ -1,10 +1,8 @@
 from EventManager.Event import Event
-from EventManager.allEvent import QuitEvent, TickEvent, QuitEvent
-from Model.model import STATE_ABOUT, STATE_HELP, STATE_INTRO, STATE_MENU, STATE_PLAY
+from EventManager.allEvent import *
+from Model.constants import *
 import pygame
 import sys
-
-cell_size = 30
 
 class KeyboardInputHandler:
 	"""
@@ -23,7 +21,7 @@ class KeyboardInputHandler:
 			self.handleKeyboardEventsStatePlay(event)
 
 		elif event.key == pygame.K_ESCAPE:
-			self.evManager.Post(QuitEvent())
+			self.evManager.Post(ExitEvent())
 
 	def handleKeyboardEventsStatePlay(self, event):
 		"""

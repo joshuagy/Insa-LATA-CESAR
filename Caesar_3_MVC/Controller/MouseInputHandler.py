@@ -1,8 +1,7 @@
 import pygame
-from Model.model import STATE_ABOUT, STATE_HELP, STATE_INTRO, STATE_MENU, STATE_PLAY
+from Model.constants import *
 from EventManager.Event import Event
 from EventManager.allEvent import StateChangeEvent, TickEvent, QuitEvent
-import sys
 
 cell_size = 30
 
@@ -31,21 +30,12 @@ class MouseInputHandler:
                 if(self.clicked):
                         # get current state
                         currentstate = self.model.state.peek()
-                        if currentstate == STATE_INTRO:
-                                self.handleMouseEventsStateIntro(event)
                         if currentstate == STATE_MENU:
                                 self.handleMouseEventsStateMenu(event)
                         if currentstate == STATE_PLAY:
                                 self.handleMouseEventsStatePlay(event)
                 if event.button == 1:
                         self.clicked = False
-
-    def handleMouseEventsStateIntro(self, event):
-        """
-        Handles intro mouse events.
-        """
-        # left click launchs menu
-        self.evManager.Post(StateChangeEvent(STATE_MENU))
 
     def handleMouseEventsStateMenu(self, event):
         """
