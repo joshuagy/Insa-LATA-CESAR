@@ -1,5 +1,11 @@
-import pygame
-from EventManager.eventManager import *
+from EventManager.allEvent import *
+
+# State machine constants for the StateMachine class below
+STATE_INTRO = 1
+STATE_MENU = 2
+STATE_HELP = 3
+STATE_ABOUT = 4
+STATE_PLAY = 5
 
 class GameEngine(object):
     """
@@ -18,6 +24,7 @@ class GameEngine(object):
         evManager.RegisterListener(self)
         self.running = False
         self.state = StateMachine()
+        self.actualGame = None
 
     def notify(self, event):
         """
@@ -35,7 +42,7 @@ class GameEngine(object):
             else:
                 # push a new state on the stack
                 self.state.push(event.state)
-
+        
     def run(self):
         """
         Starts the game engine loop.
@@ -53,12 +60,7 @@ class GameEngine(object):
             newTick = TickEvent()
             self.evManager.Post(newTick)
 
-# State machine constants for the StateMachine class below
-STATE_INTRO = 1
-STATE_MENU = 2
-STATE_HELP = 3
-STATE_ABOUT = 4
-STATE_PLAY = 5
+
 
 class StateMachine(object):
     """
