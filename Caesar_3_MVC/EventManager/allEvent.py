@@ -1,8 +1,20 @@
 from EventManager.Event import Event
+
+class ExitEvent(Event):
+    """
+    Exit event.
+    ExitEvent exit the game.
+    ExitEvent is not QuitEvent.
+    """
     
+    def __init__ (self):
+        self.name = "Exit event"
+
 class QuitEvent(Event):
     """
     Quit event.
+    QuitEvent change state to STATE_QUIT.
+    QuitEvent is not ExitEvent.
     """
     
     def __init__ (self):
