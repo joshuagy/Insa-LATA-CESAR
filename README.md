@@ -1,6 +1,20 @@
 # INSA-lata_cesar
 
+## Required features 
+- [x] Done in Python 3.
+- [x] GUI framework of your choice : Pygame
+- [x] Graphical representation of the map
+- [x] Sprite Upscale x2
+- [ ] Save and load. Pause.
+- [ ] Faithful Caesar III mechanics and sprites.
+- [ ] Real-Time Aspects.
+- [ ] Walker visualisation
+- [ ] Variable Speed
+- [ ] Trading
 
+## Optional features
+- [ ] Disasters and Invasions/War
+- [ ] Gods and favour of Caesar
 
 ## Getting started
 
