@@ -11,7 +11,7 @@ class GameEngine(object):
 		evManager (EventManager): Allows posting messages to the event queue.
 		
 		Attributes:
-		running (bool): True while the engine is online. Changed via QuitEvent().
+		running (bool): True while the en:ine is online. Changed via QuitEvent().
 		"""
 		
 		self.evManager = evManager
@@ -28,14 +28,14 @@ class GameEngine(object):
 		Called by an event in the message queue. 
 		"""
 
-		if isinstance(event, QuitEvent):
+		if isinstance(event, ExitEvent):
 				self.running = False
 		if isinstance(event, StateChangeEvent):
 				# pop request
 				if not event.state:
 						# false if no more states are left
 						if not self.state.pop():
-								self.evManager.Post(QuitEvent())
+								self.evManager.Post(ExitEvent())
 				else:
 						# push a new state on the stack
 						self.state.push(event.state)

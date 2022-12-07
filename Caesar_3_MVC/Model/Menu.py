@@ -1,6 +1,6 @@
 import pygame
 from EventManager.allEvent import *
-from Model import model
+from Model.constants import *
 
 class Menu:
   def __init__(self, screen):
@@ -11,7 +11,7 @@ class Menu:
     self.initialize_items()
   
   def initialize_items(self):
-    startButton = TextButton("Start Game", (300, 50), StateChangeEvent(model.STATE_PLAY))
+    startButton = TextButton("Start Game", (300, 50), StateChangeEvent(STATE_PLAY))
     exitButton = TextButton("Exit", (300, 50), ExitEvent())
     
     self.items.append(startButton)
