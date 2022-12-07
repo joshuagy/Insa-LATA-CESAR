@@ -173,52 +173,8 @@ class Plateau():
                 "path3":path3,"water4":water4,"water5":water5,"rock3":rock3
                 }
 
-    def run(self):
-        self.clock.tick(60)
-        self.events()
-        self.update()
-        self.draw()
-
-
-
-    def events(self):
-        global cell_size
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
-
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_2:
-                    if cell_size==30:
-                        self.zoomed=True
-                        x,y=pygame.mouse.get_pos()
-                        self.camera.vect=pygame.Vector2(self.camera.vect.x-x-200, self.camera.vect.y-y)
-                        self.camera.get_cell_size(60)
-                        self.zoom(2,self.zoomed)
-                        cell_size=60
-                        self.zoomed=False
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_1:
-                    if cell_size==60:
-                        self.zoomed=True
-                        self.camera.vect = pygame.Vector2(-700,-100)
-                        cell_size=30
-                        self.camera.get_cell_size(30)
-                        self.zoom(0.5,self.zoomed)
-                        self.zoomed=False
-
-
-
     def update(self):
         self.camera.update()
-
-    def zoom(self):
-        if self.zoomed:
-            g1 
 
 
     def draw(self):

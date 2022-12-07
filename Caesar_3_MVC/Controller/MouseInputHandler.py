@@ -2,6 +2,9 @@ import pygame
 from Model.model import STATE_ABOUT, STATE_HELP, STATE_INTRO, STATE_MENU, STATE_PLAY
 from EventManager.Event import Event
 from EventManager.allEvent import StateChangeEvent, TickEvent, QuitEvent
+import sys
+
+cell_size = 30
 
 class MouseInputHandler:
     """
@@ -55,4 +58,4 @@ class MouseInputHandler:
         """
         Handles game mouse events
         """
-        print("Click on game")
+        pass

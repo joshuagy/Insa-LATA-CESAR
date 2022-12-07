@@ -84,9 +84,9 @@ class GraphicalView(object):
         """
         Render the game.
         """
-        pygame.init() 
-        pygame.mixer.init()
-        self.model.actualGame.run()
+        self.model.actualGame.update()
+        self.model.actualGame.draw()
+
 
     def initialize(self) -> None:
         """
