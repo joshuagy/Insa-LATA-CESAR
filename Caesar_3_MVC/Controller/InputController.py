@@ -23,7 +23,7 @@ class InputController:
 				# Called for each game tick. We check our mouse inputs here.
 				for event in pygame.event.get():
 						if event.type == pygame.QUIT:
-								self.evManager.Post(QuitEvent())
+								self.evManager.Post(ExitEvent())
 						if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP:
 								self.mouseInputHandler.handleInput(event)
 						if event.type == pygame.KEYDOWN:

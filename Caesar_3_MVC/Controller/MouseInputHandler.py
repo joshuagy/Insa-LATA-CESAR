@@ -41,8 +41,11 @@ class MouseInputHandler:
         """
         Handles menu mouse events.
         """
-        # left click exits
-        self.evManager.Post(StateChangeEvent(STATE_PLAY))
+
+        mousePos = event.pos
+        feedBack = self.model.menu.handleInput(mousePos)
+        print(feedBack)
+        self.evManager.Post(feedBack)
 
     def handleMouseEventsStatePlay(self, event):
         """
