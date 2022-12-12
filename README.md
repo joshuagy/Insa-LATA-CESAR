@@ -9,12 +9,17 @@
 - [ ] Faithful Caesar III mechanics and sprites.
 - [ ] Real-Time Aspects.
 - [ ] Walker visualisation
+
+
+## Recommended features
+
 - [ ] Variable Speed
 - [ ] Trading (Have neighbouring cities with which to trade specific goods)
 - [ ] Administration (Implement some degree of global control over your city to adjust tax levels, industry
 priorities, visualise service coverage and so on)
 
 ## Optional features
+
 - [ ] Disasters and Invasions/War
 - [ ] Gods and favour of Caesar
 
