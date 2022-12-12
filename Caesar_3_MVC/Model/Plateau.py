@@ -3,6 +3,7 @@ from Model.Zoom import Zoom
 from Model.Camera import Camera
 from Model.Case import Case
 from View.Menu_map import Menu_map
+from Model.Walker import Walker
 from Model.control_panel import *
 import sys
 
@@ -10,7 +11,7 @@ cell_size = 30
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[]):
+    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = []):
         
         self.screen = screen
         self.clock = clock
@@ -36,6 +37,15 @@ class Plateau():
 
         self.map = self.default_map()
 
+        #Tableau contenant l'intégralité des walker présents sur la map
+        self.entities = entities
+
+        #Tableau contenant toutes les cases occupées par les walkers
+        self.walkers = [[None for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)] 
+
+        #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
+        self.collision_matrix = self.create_collision_matrix()
+
     def default_map(self):
 
         map = []
@@ -47,8 +57,6 @@ class Plateau():
                 map[cell_x].append(cells_to_map)
                 render_pos = cells_to_map.render_pos
                 self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
-
-
         return map
         
     def cells_to_map(self, cell_x, cell_y):
@@ -62,7 +70,7 @@ class Plateau():
 
         isometric_cell = [self.cartesian_to_isometric(x, y) for x, y in rectangle_cell]
 
-        return Case(cell_x, cell_y, rectangle_cell, isometric_cell, [min([x for x, y in isometric_cell]), min([y for x, y in isometric_cell])], self.choose_image())        
+        return Case(cell_x, cell_y, rectangle_cell, isometric_cell, [min([x for x, y in isometric_cell]), min([y for x, y in isometric_cell])], sprite=self.choose_image())        
         
     def cartesian_to_isometric(self, x, y):
             return x - y,(x + y)/2
@@ -162,7 +170,7 @@ class Plateau():
         water2 = pygame.transform.scale(water2, (water2.get_width() / 2, water2.get_height() / 2))
         water3 = pygame.image.load("image/C3/Land1a_00141.png").convert_alpha()
         water3 = pygame.transform.scale(water3, (water3.get_width() / 2, water3.get_height() / 2))
-        water4=pygame.image.load("image/C3/Land1a_00146.png").convert_alpha()
+        water4 = pygame.image.load("image/C3/Land1a_00146.png").convert_alpha()
         water4 = pygame.transform.scale(water4, (water4.get_width() / 2, water4.get_height() / 2))
         water5 = pygame.image.load("image/C3/Land1a_00154.png").convert_alpha()
         water5 = pygame.transform.scale(water5, (water5.get_width() / 2, water5.get_height() / 2))
@@ -175,6 +183,8 @@ class Plateau():
 
     def update(self):
         self.camera.update()
+        #Update de la position des walker
+        for e in self.entities: e.update()
 
 
     def draw(self):
@@ -190,6 +200,13 @@ class Plateau():
                     self.screen.blit(self.image[image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                      render_pos[1] - (self.image[image].get_height() - cell_size) + self.camera.vect.y))
+                    
+                    #draw walkers à leur position d'origine
+                    walker = self.walkers[cell_x][cell_y]
+                    if walker is not None:
+                        self.screen.blit(walker.sprites[int(walker.index_sprite)], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                         render_pos[1] - (walker.sprites[0].get_height() - cell_size) + self.camera.vect.y))
 
         self.menu_map.draw_menu(self.screen)
 
@@ -323,11 +340,16 @@ class Plateau():
             self.screen.blit(pnl_527.img_scaled,(x,y))
             y+=pnl_527.dim[1]           
 
-
-
-
-
-
             self.screen.blit(deco_bas_full_menu.img_scaled,(1119,682))
 
         pygame.display.flip()
+    
+    def create_collision_matrix(self):
+        collision_matrix = [[1 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
+
+        #La suite sera pour quand on aura un système de collision
+        """for x in range(self.nbr_cell_x):
+            for y in range(self.nbr_cell_y):
+                if self.plateau[x][y]["collision"]:
+                    collision_matrix[x][y] = 0"""
+        return collision_matrix

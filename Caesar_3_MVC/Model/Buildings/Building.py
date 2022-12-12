@@ -1,14 +1,13 @@
 from types import NoneType
 
-
-
 class Building():
-    def __init__(self, position, size, desc, connectedToRoad, status=False):
+    def __init__(self, position, case, size, desc, connectedToRoad, fireRisk, collapseRisk, status=False):
         self.position = position
         self.size = size
         self.desc = desc
         self.connectedToRoad = connectedToRoad
         self.status = status
+        self.case = case
 
     def get_position(self):
         return self.position
@@ -42,15 +41,21 @@ class Building():
 
     def get_fireRisk(self):
         return self.fireRisk
-    
-    def set_riskLevel(self, newfireRisk):
-        self.fireRisk = newfireRisk
+
+    def set_fireRisk(self, newFireRisk):
+        self.fireRisk=newFireRisk
     
     def get_collapseRisk(self):
         return self.collapseRisk
     
     def set_collapseRisk(self, newcollapseRisk):
         self.collapseRisk = newcollapseRisk
+
+    def setCase(self, newCase):
+        self.case = newCase
+
+    def getCase(self):
+        return self.case
 
     def delete():
         pass
