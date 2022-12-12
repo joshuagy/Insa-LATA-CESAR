@@ -1,8 +1,9 @@
+import pygame
 from Building import Building
 
 class House(Building):
     def __init__(self, position, entertainLvl, nbHabMax, nbHab, size=(1,1), desc="Small Tent", connectedToRoad=0, fireRisk=0, collapseRisk=0, status=False):
-        super().__init__(position, size, desc, connectedToRoad, status, fireRisk, collapseRisk)
+        super().__init__(position, size, desc, connectedToRoad, status, fireRisk, collapseRisk, sprite="Housng1a_00001.png")
         self.entertainLvl = 0
         self.nbHab = 1
         self.nbHabMax = 5
@@ -25,11 +26,47 @@ class House(Building):
     def set_nbHabmax(self, newnbHabmax):
         self.nbHabmax = newnbHabmax
 
+    def setSprite(self, newSprite):
+        self.sprite=newSprite
+    
+    def getSprite(self):
+        return self.sprite
+
 
 class HousingSpot :
-    def __init__(self, position,connectedToRoad) :
+    def __init__(self, sprite, position, case, connectedToRoad) :
         self.position = position
+        self.case = case
         self.connectedToRoad = connectedToRoad
+        self.sprite= "Housng1a_00045.png"
+
+    def isConnectedToRoad(self):
+        return self.connectedToRoad
+    
+    def getSprite(self):
+        return self.sprite
+
+    def setCase(self, newCase):
+        self.case=newCase
+
+    def getCase(self):
+        return self.case
+
+    def getPosition(self):
+        return self.position
+
+    def placeAHousingSpot(coord):
+        for i in list :
+            if(list(i).coor==coord):
+                if(not(list(i).isAvailable) or not(list(i).isConnectedToRoad)):
+                    return
+        list(i).setFeature("HousingSpot")
+        HousingSpot.__init__(HousingSpot,"Housng1a_00045.png",coord,list(i),1)
+        
+        
+
+
+
 
 #class Ruin ?
 
@@ -59,7 +96,7 @@ def house_upgrade(house) :
 
 
 def house_checkForUpgrades(cityHouses):
-    for i in range (0,10) : # 10 = taille de la liste
+    for i in cityHouses : 
         if cityHouses(i).desc=="Small Tent" and cityHouses(i).waterSupply>0 :
             house_upgrade(cityHouses(i))
         if cityHouses(i).desc=="Large Tent" and cityHouses(i).desIn>0 :

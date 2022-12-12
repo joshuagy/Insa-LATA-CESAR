@@ -47,8 +47,6 @@ class Plateau():
                 map[cell_x].append(cells_to_map)
                 render_pos = cells_to_map.render_pos
                 self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
-
-
         return map
         
     def cells_to_map(self, cell_x, cell_y):
