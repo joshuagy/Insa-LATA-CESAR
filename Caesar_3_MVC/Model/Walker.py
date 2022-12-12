@@ -1,4 +1,4 @@
-import pygame as pg
+import pygame
 import random
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
@@ -7,15 +7,29 @@ from pathfinding.finder.a_star import AStarFinder
 #à connecter à la variable de constants.py
 cell_size = 30
 
+"""
+TO DO LIST
+- Directions
+- Déplacement fluide
+- Dab (important)
+- Déplacement aléatoire
+- TTW
+- Spawn à un bâtiment
+
+WIP :
+- Animation
+"""
+
+
 class Walker:
-    def __init__(self, case, plateau, name = "Plebius"):
+    def __init__(self, case, plateau, name = "Plebius Prepus"):
         """
         case : La case de départ sur laquelle est le Walker
         plateau : Le plateau sur lequel est le Walker
         name : Le nom du Walker
 
         Attributs :
-        image : Le sprite du Walker
+        sprites : Le sprite du Walker
         move_timer : 
         """
 
@@ -26,12 +40,12 @@ class Walker:
         
         self.plateau.entities.append(self)  #On ajoute le walker à la liste des entitées présentes sur le plateau
         
-        image = pg.image.load("image\Walkers\Citizen\HD\Citizen01_00001.png").convert_alpha()
-        self.image = pg.transform.scale(image, (image.get_width() / 2, image.get_height() / 2))
+        self.sprites = self.load_sprites()
+        self.index_sprite = 0
 
         # pathfinding
         self.plateau.walkers[case.x][case.y] = self
-        self.move_timer = pg.time.get_ticks()
+        self.move_timer = pygame.time.get_ticks()
 
         self.create_path()
     
@@ -77,7 +91,10 @@ class Walker:
         """
         Mise à jour de la position du walker 
         """
-        now = pg.time.get_ticks()
+        now = pygame.time.get_ticks()
+        self.index_sprite += 0.5
+        if(self.index_sprite >= len(self.sprites)):
+            self.index_sprite = 0
 
         if now - self.move_timer > 1000:
             new_pos = self.path[self.path_index]
@@ -90,3 +107,28 @@ class Walker:
             # On recréé un path si le dernier a été atteint
             if self.path_index == len(self.path) - 1:
                 self.create_path()
+    
+
+    def load_sprites(self):
+        
+        sprites = []
+
+        #HD
+        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00001.png").convert_alpha())
+        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00009.png").convert_alpha())
+        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00017.png").convert_alpha())
+        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00025.png").convert_alpha())
+        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00033.png").convert_alpha())
+        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00041.png").convert_alpha())
+        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00049.png").convert_alpha())
+        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00057.png").convert_alpha())
+        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00065.png").convert_alpha())
+        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00073.png").convert_alpha())
+        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00081.png").convert_alpha())
+        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00089.png").convert_alpha())
+
+
+        for i in range(12):
+            sprites[i] = pygame.transform.scale(sprites[i], (sprites[i].get_width() / 2, sprites[i].get_height() / 2))
+        
+        return sprites

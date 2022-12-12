@@ -206,9 +206,9 @@ class Plateau():
                     #draw walkers à leur position d'origine
                     walker = self.walkers[cell_x][cell_y]
                     if walker is not None:
-                        self.screen.blit(walker.image, 
+                        self.screen.blit(walker.sprites[int(walker.index_sprite)], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (walker.image.get_height() - cell_size) + self.camera.vect.y))
+                                         render_pos[1] - (walker.sprites[0].get_height() - cell_size) + self.camera.vect.y))
 
         self.menu_map.draw_menu(self.screen)
 
