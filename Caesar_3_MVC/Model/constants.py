@@ -9,4 +9,4 @@ STATE_HELP = 3
 STATE_QUIT = 4
 STATE_PLAY = 5
 
-list_of_collision = ["tree2", "tree1", "tree3", "path1", "path3", "path2", "water1", "water2", "water3", "water4", "water5", "rock1", "rock2", "rock3"]
+list_of_collision = ["tree2", "tree1", "tree3", "water1", "water2", "water3", "water4", "water5", "rock1", "rock2", "rock3"]
