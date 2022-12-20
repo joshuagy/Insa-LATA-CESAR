@@ -3,6 +3,7 @@ from Model.Zoom import Zoom
 from Model.Camera import Camera
 from Model.Case import Case
 from View.Menu_map import Menu_map
+from Model.Walker import Walker
 from Model.control_panel import *
 from Model.constants import *
 import sys
@@ -10,7 +11,7 @@ import sys
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[]):
+    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = []):
         
         self.screen = screen
         self.clock = clock
@@ -35,6 +36,15 @@ class Plateau():
         self.listeCase = listeCase
 
         self.map = self.default_map()
+        
+        #Tableau contenant l'intégralité des walker présents sur la map
+        self.entities = entities
+
+        #Tableau contenant toutes les cases occupées par les walkers
+        self.walkers = [[None for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)] 
+
+        #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
+        self.collision_matrix = self.create_collision_matrix()
 
     def default_map(self):
 
@@ -162,7 +172,7 @@ class Plateau():
         water2 = pygame.transform.scale(water2, (water2.get_width() / 2, water2.get_height() / 2))
         water3 = pygame.image.load("image/C3/Land1a_00141.png").convert_alpha()
         water3 = pygame.transform.scale(water3, (water3.get_width() / 2, water3.get_height() / 2))
-        water4=pygame.image.load("image/C3/Land1a_00146.png").convert_alpha()
+        water4 = pygame.image.load("image/C3/Land1a_00146.png").convert_alpha()
         water4 = pygame.transform.scale(water4, (water4.get_width() / 2, water4.get_height() / 2))
         water5 = pygame.image.load("image/C3/Land1a_00154.png").convert_alpha()
         water5 = pygame.transform.scale(water5, (water5.get_width() / 2, water5.get_height() / 2))
@@ -176,6 +186,8 @@ class Plateau():
     
     def update(self):
         self.camera.update()
+        #Update de la position des walker
+        for e in self.entities: e.update()
        
 
     def draw(self):
@@ -189,6 +201,9 @@ class Plateau():
                 if image != "":
 
                     self.screen.blit(self.image[image],
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                     render_pos[1] - (self.image[image].get_height() - cell_size) + self.camera.vect.y))
+                                      self.screen.blit(self.image[image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                      render_pos[1] - (self.image[image].get_height() - cell_size) + self.camera.vect.y))
 
@@ -462,3 +477,13 @@ class Plateau():
         
 
         pygame.display.flip()
+        
+        def create_collision_matrix(self):
+            collision_matrix = [[1 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
+
+            #La suite sera pour quand on aura un système de collision
+            """for x in range(self.nbr_cell_x):
+                for y in range(self.nbr_cell_y):
+                    if self.plateau[x][y]["collision"]:
+                        collision_matrix[x][y] = 0"""
+            return collision_matrix
