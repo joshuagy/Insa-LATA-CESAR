@@ -2,6 +2,7 @@ import pygame
 from Model.constants import *
 from EventManager.Event import Event
 from EventManager.allEvent import StateChangeEvent, TickEvent, QuitEvent
+from Model.control_panel import *
 
 cell_size = 30
 
@@ -51,4 +52,29 @@ class MouseInputHandler:
         """
         Handles game mouse events
         """
-        pass
+        #Handle the buttons of the control panel
+        overlays_button.handle_event(event)
+        hide_control_panel_button.handle_event(event)
+        display_control_panel_button.handle_event(event)
+        advisors_button.handle_event(event)
+        empire_map_button.handle_event(event)
+        assignement_button.handle_event(event)
+        compass_button.handle_event(event)
+        arrow_rotate_counterclockwise.handle_event(event)
+        arrow_rotate_clockwise.handle_event(event)
+        build_housing_button.handle_event(event)
+        clear_land_button.handle_event(event)
+        build_roads_button.handle_event(event)
+        water_related_structures.handle_event(event)
+        health_related_structures.handle_event(event)
+        religious_structures.handle_event(event)
+        education_structures.handle_event(event)
+        entertainment_structures.handle_event(event)
+        administration_or_government_structures.handle_event(event)
+        engineering_structures.handle_event(event)
+        security_structures.handle_event(event)
+        industrial_structures.handle_event(event)
+        undo_button.handle_event(event)
+        message_view_button.handle_event(event)
+        see_recent_troubles_button.handle_event(event)
+      

@@ -4,6 +4,7 @@ from Controller.KeyboardInputHandler import KeyboardInputHandler
 from EventManager.Event import Event
 from EventManager.allEvent import *
 
+
 class InputController: 
 	def __init__(self, evManager, model):
 		self.evManager = evManager
@@ -28,3 +29,6 @@ class InputController:
 								self.mouseInputHandler.handleInput(event)
 						if event.type == pygame.KEYDOWN:
 								self.keyboardInputHandler.handleInput(event)
+						self.mouseInputHandler.handleMouseEventsStatePlay(event)
+						
+						
