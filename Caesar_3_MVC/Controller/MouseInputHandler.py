@@ -3,8 +3,8 @@ from Model.constants import *
 from EventManager.Event import Event
 from EventManager.allEvent import StateChangeEvent, TickEvent, QuitEvent
 from Model.control_panel import *
+from Model.Plateau import Plateau, cell_size
 
-cell_size = 30
 
 class MouseInputHandler:
     """
@@ -27,14 +27,15 @@ class MouseInputHandler:
                         self.clicked = True
                         self.initialMouseCoordinate = pygame.mouse.get_pos()
         if event.type == pygame.MOUSEBUTTONUP:
-                self.finalClickCoordinate = pygame.mouse.get_pos()
                 if(self.clicked):
                         # get current state
+                        self.finalClickCoordinate = pygame.mouse.get_pos()
                         currentstate = self.model.state.peek()
                         if currentstate == STATE_MENU:
                                 self.handleMouseEventsStateMenu(event)
                         if currentstate == STATE_PLAY:
                                 self.handleMouseEventsStatePlay(event)
+
                 if event.button == 1:
                         self.clicked = False
 
@@ -78,3 +79,54 @@ class MouseInputHandler:
         message_view_button.handle_event(event)
         see_recent_troubles_button.handle_event(event)
       
+        if self.clicked:
+            x, y = self.initialMouseCoordinate
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x1 = int(cart_x // cell_size)
+            grid_y1 = int(cart_y // cell_size)
+
+            x, y = event.pos
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x2 = int(cart_x // cell_size)
+            grid_y2 = int(cart_y // cell_size)
+        
+            if grid_x1 <0:
+                grid_x1 = 0
+            if grid_x2 <0:
+                grid_x2 = 0
+            if grid_y1 <0:
+                grid_y1 = 0
+            if grid_y2 <0:
+                grid_y2 = 0
+
+            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+                grid_x1 = self.model.actualGame.nbr_cell_x-1
+            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+                grid_x2 = self.model.actualGame.nbr_cell_x-1
+            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+                grid_y1 = self.model.actualGame.nbr_cell_y-1
+            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+                grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+            if grid_x1 > grid_x2:
+                temp = grid_x1
+                grid_x1 = grid_x2
+                grid_x2 = temp
+
+            if grid_y1 > grid_y2:
+                temp = grid_y1
+                grid_y1 = grid_y2
+                grid_y2 = temp
+
+            for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                        self.model.actualGame.map[xi][yi].sprite = "land1"
+        

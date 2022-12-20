@@ -114,18 +114,18 @@ class Walker:
         sprites = []
 
         #HD
-        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00001.png").convert_alpha())
-        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00009.png").convert_alpha())
-        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00017.png").convert_alpha())
-        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00025.png").convert_alpha())
-        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00033.png").convert_alpha())
-        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00041.png").convert_alpha())
-        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00049.png").convert_alpha())
-        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00057.png").convert_alpha())
-        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00065.png").convert_alpha())
-        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00073.png").convert_alpha())
-        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00081.png").convert_alpha())
-        sprites.append(pygame.image.load("image\Walkers\Citizen\HD\Citizen01_00089.png").convert_alpha())
+        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00001.png").convert_alpha())
+        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00009.png").convert_alpha())
+        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00017.png").convert_alpha())
+        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00025.png").convert_alpha())
+        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00033.png").convert_alpha())
+        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00041.png").convert_alpha())
+        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00049.png").convert_alpha())
+        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00057.png").convert_alpha())
+        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00065.png").convert_alpha())
+        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00073.png").convert_alpha())
+        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00081.png").convert_alpha())
+        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00089.png").convert_alpha())
 
 
         for i in range(12):
