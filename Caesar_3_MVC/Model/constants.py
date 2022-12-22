@@ -1,6 +1,14 @@
 # Constant file
 
+
 cell_size = 30
+
+# Scale to redimension the sprites
+SCL = 1/2 
+
+#Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
 # State machine constants for the StateMachine class below
 STATE_INTRO = 1

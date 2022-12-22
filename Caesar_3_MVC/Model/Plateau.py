@@ -5,9 +5,9 @@ from Model.Case import Case
 from View.Menu_map import Menu_map
 from Model.Walker import Walker
 from Model.control_panel import *
+from Model.constants import *
 import sys
 
-cell_size = 30
 counter=1
 
 class Plateau():
@@ -45,6 +45,19 @@ class Plateau():
 
         #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
         self.collision_matrix = self.create_collision_matrix()
+
+        #Define the position of the button on the full panel button who won't change position after
+        overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
+        hide_control_panel_button.change_pos(self.width-hide_control_panel_button.dim[0]-4,24+5)
+        advisors_button.change_pos(self.width-155,179)
+        empire_map_button.change_pos(self.width-78,179)
+        assignement_button.change_pos(self.width-155,208)
+        compass_button.change_pos(self.width-116,208)
+        arrow_rotate_counterclockwise.change_pos(self.width-78,208)
+        arrow_rotate_clockwise.change_pos(self.width-39,208)                
+        undo_button.change_pos(self.width-149,445)
+        message_view_button.change_pos(self.width-99,445)
+        see_recent_troubles_button.change_pos(self.width-49,445)
 
     def default_map(self):
 
@@ -239,53 +252,148 @@ class Plateau():
             
             self.screen.blit(small_gap_menu.img_scaled, (self.width-small_gap_menu.dim[0], 24))
             self.screen.blit(deco_bas_small_menu.img_scaled, (self.width-42, 24+450))
-            self.screen.blit(display_control_panel_button.img_scaled, (self.width-display_control_panel_button.dim[0]-5, 24+4))
-            self.screen.blit(build_housing.img_scaled,(self.width-build_housing.dim[0]-1,24+32))
-            self.screen.blit(clear_land.img_scaled,(self.width-clear_land.dim[0]-1,24+67))
-            self.screen.blit(build_roads.img_scaled,(self.width-build_roads.dim[0]-1,24+102))
-            self.screen.blit(water_related_structures.img_scaled,(self.width-water_related_structures.dim[0]-1,24+137))
-            self.screen.blit(health_related_structures.img_scaled,(self.width-health_related_structures.dim[0]-1,24+172))
-            self.screen.blit(religious_structures.img_scaled,(self.width-religious_structures.dim[0]-1,24+207))
-            self.screen.blit(education_structures.img_scaled,(self.width-education_structures.dim[0]-1,24+242))
-            self.screen.blit(entertainment_structures.img_scaled,(self.width-entertainment_structures.dim[0]-1,24+277))
-            self.screen.blit(administration_or_government_structures.img_scaled,(self.width-administration_or_government_structures.dim[0]-1,24+312))
-            self.screen.blit(engineering_structures.img_scaled,(self.width-engineering_structures.dim[0]-1,24+347))
-            self.screen.blit(security_structures.img_scaled,(self.width-security_structures.dim[0]-1,24+382))
-            self.screen.blit(industrial_structures.img_scaled,(self.width-industrial_structures.dim[0]-1,24+417))
+            
+            display_control_panel_button.update()
+            display_control_panel_button.change_pos(self.width-display_control_panel_button.dim[0]-5,28)
+            display_control_panel_button.draw(self.screen)
+
+            build_housing_button.update()
+            build_housing_button.change_pos(self.width-build_housing_button.dim[0]-1,24+32)
+            build_housing_button.draw(self.screen)
+
+            clear_land_button.update()
+            clear_land_button.change_pos(self.width-clear_land_button.dim[0]-1,24+67)
+            clear_land_button.draw(self.screen)
+
+            build_roads_button.update()
+            build_roads_button.change_pos(self.width-build_roads_button.dim[0]-1,24+102)
+            build_roads_button.draw(self.screen)
+            
+
+            water_related_structures.update()
+            water_related_structures.change_pos(self.width-water_related_structures.dim[0]-1,24+137)
+            water_related_structures.draw(self.screen)
+           
+            health_related_structures.update()
+            health_related_structures.change_pos(self.width-health_related_structures.dim[0]-1,24+172)
+            health_related_structures.draw(self.screen)
+           
+            religious_structures.update()
+            religious_structures.change_pos(self.width-religious_structures.dim[0]-1,24+207)
+            religious_structures.draw(self.screen)
+            
+            education_structures.update()
+            education_structures.change_pos(self.width-education_structures.dim[0]-1,24+242)
+            education_structures.draw(self.screen)
+            
+            entertainment_structures.update()
+            entertainment_structures.change_pos(self.width-entertainment_structures.dim[0]-1,24+277)
+            entertainment_structures.draw(self.screen)
+            
+            administration_or_government_structures.update()
+            administration_or_government_structures.change_pos(self.width-administration_or_government_structures.dim[0]-1,24+312)
+            administration_or_government_structures.draw(self.screen)
+            
+            engineering_structures.update()
+            engineering_structures.change_pos(self.width-engineering_structures.dim[0]-1,24+347)
+            engineering_structures.draw(self.screen)
+            
+            security_structures.update()
+            security_structures.change_pos(self.width-security_structures.dim[0]-1,24+382)
+            security_structures.draw(self.screen)
+            
+            industrial_structures.update()
+            industrial_structures.change_pos(self.width-industrial_structures.dim[0]-1,24+417)
+            industrial_structures.draw(self.screen)
         
+                    
         if state_control_panel=="full":
 
             self.screen.blit(big_gap_menu.img_scaled,(self.width-big_gap_menu.dim[0],24))
             self.screen.blit(big_gap_menu.img_scaled,(self.width-big_gap_menu.dim[0],24+big_gap_menu.dim[1])) #usefull to have a white line cover all of the right menu, could be replaced by a white rectangle maybe
             
-            self.screen.blit(overlays_button.img_scaled,(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27))
-            self.screen.blit(hide_control_panel_button.img_scaled,(self.width-hide_control_panel_button.dim[0]-4,24+5))
-            
-            self.screen.blit(advisors.img_scaled,(self.width-155,179))
-            self.screen.blit(empire_map.img_scaled,(self.width-78,179))
+            overlays_button.update()
+            overlays_button.draw(self.screen)
 
-            self.screen.blit(assignement_scroll.img_scaled,(self.width-155,208))
-            self.screen.blit(compass.img_scaled,(self.width-116,208))
-            self.screen.blit(arrow_rotate_counterclockwise.img_scaled,(self.width-78,208))
-            self.screen.blit(arrow_rotate_clockwise.img_scaled,(self.width-39,208))
+            hide_control_panel_button.update()
+            hide_control_panel_button.draw(self.screen)
+            
+            advisors_button.update()
+            advisors_button.draw(self.screen)
+
+            empire_map_button.update()
+            empire_map_button.draw(self.screen)
+
+            assignement_button.update()
+            assignement_button.draw(self.screen)
+            
+            compass_button.update()
+            compass_button.draw(self.screen)
+
+            arrow_rotate_counterclockwise.update()
+            arrow_rotate_counterclockwise.draw(self.screen)
+           
+            arrow_rotate_clockwise.update()
+            arrow_rotate_clockwise.draw(self.screen)
 
             self.screen.blit(deco_milieu_menu_default.img_scaled,(self.width-deco_milieu_menu_default.dim[0]-7,239))
 
-            self.screen.blit(build_housing.img_scaled,(self.width-149,301))
-            self.screen.blit(clear_land.img_scaled,(self.width-99,301))
-            self.screen.blit(build_roads.img_scaled,(self.width-49,301))
-            self.screen.blit(water_related_structures.img_scaled,(self.width-149,337))
-            self.screen.blit(health_related_structures.img_scaled,(self.width-99,337))
-            self.screen.blit(religious_structures.img_scaled,(self.width-49,337))
-            self.screen.blit(education_structures.img_scaled,(self.width-149,373))
-            self.screen.blit(entertainment_structures.img_scaled,(self.width-99,373))
-            self.screen.blit(administration_or_government_structures.img_scaled,(self.width-49,373))
-            self.screen.blit(engineering_structures.img_scaled,(self.width-149,409))
-            self.screen.blit(security_structures.img_scaled,(self.width-99,409))
-            self.screen.blit(industrial_structures.img_scaled,(self.width-49,409))
-            self.screen.blit(undo_button.img_scaled,(self.width-149,445))
-            self.screen.blit(message_view_button.img_scaled,(self.width-99,445))
-            self.screen.blit(see_recent_troubles_button.img_scaled,(self.width-49,445))
+            build_housing_button.update()
+            build_housing_button.change_pos(self.width-149,301)
+            build_housing_button.draw(self.screen)
+
+            clear_land_button.update()
+            clear_land_button.change_pos(self.width-99,301)
+            clear_land_button.draw(self.screen)
+
+            build_roads_button.update()
+            build_roads_button.change_pos(self.width-49,301)
+            build_roads_button.draw(self.screen)
+
+            water_related_structures.update()
+            water_related_structures.change_pos(self.width-149,337)
+            water_related_structures.draw(self.screen)
+
+            health_related_structures.update()
+            health_related_structures.change_pos(self.width-99,337)
+            health_related_structures.draw(self.screen)
+
+            religious_structures.update()
+            religious_structures.change_pos(self.width-49,337)
+            religious_structures.draw(self.screen)
+            
+            education_structures.update()
+            education_structures.change_pos(self.width-149,373)
+            education_structures.draw(self.screen)
+
+            entertainment_structures.update()
+            entertainment_structures.change_pos(self.width-99,373)
+            entertainment_structures.draw(self.screen)
+            
+            administration_or_government_structures.update()
+            administration_or_government_structures.change_pos(self.width-49,373)
+            administration_or_government_structures.draw(self.screen)
+           
+            engineering_structures.update()
+            engineering_structures.change_pos(self.width-149,409)
+            engineering_structures.draw(self.screen)
+            
+            security_structures.update()
+            security_structures.change_pos(self.width-99,409)
+            security_structures.draw(self.screen)
+            
+            industrial_structures.update()
+            industrial_structures.change_pos(self.width-49,409)
+            industrial_structures.draw(self.screen)
+
+            undo_button.update()
+            undo_button.draw(self.screen)
+            
+            message_view_button.update()
+            message_view_button.draw(self.screen)
+            
+            see_recent_troubles_button.update()
+            see_recent_troubles_button.draw(self.screen)
 
             x=self.width-pnl_485.dim[0]-1
             y=24+big_gap_menu.dim[1]
@@ -340,8 +448,35 @@ class Plateau():
             self.screen.blit(pnl_527.img_scaled,(x,y))
             y+=pnl_527.dim[1]           
 
+
             self.screen.blit(deco_bas_full_menu.img_scaled,(1119,682))
 
+        #Display message of the button if mouse on it
+        overlays_button.show_tip(self.screen)
+        hide_control_panel_button.show_tip(self.screen)
+        display_control_panel_button.show_tip(self.screen)
+        advisors_button.show_tip(self.screen)
+        empire_map_button.show_tip(self.screen)
+        assignement_button.show_tip(self.screen)
+        compass_button.show_tip(self.screen)
+        arrow_rotate_counterclockwise.show_tip(self.screen)
+        arrow_rotate_clockwise.show_tip(self.screen)
+        build_housing_button.show_tip(self.screen)
+        clear_land_button.show_tip(self.screen)
+        build_roads_button.show_tip(self.screen)
+        water_related_structures.show_tip(self.screen)
+        health_related_structures.show_tip(self.screen)
+        religious_structures.show_tip(self.screen)
+        education_structures.show_tip(self.screen)
+        entertainment_structures.show_tip(self.screen)
+        administration_or_government_structures.show_tip(self.screen)
+        engineering_structures.show_tip(self.screen)
+        security_structures.show_tip(self.screen)
+        industrial_structures.show_tip(self.screen)
+        undo_button.show_tip(self.screen)
+        message_view_button.show_tip(self.screen)
+        see_recent_troubles_button.show_tip(self.screen)
+        
         pygame.display.flip()
     
     def create_collision_matrix(self):
