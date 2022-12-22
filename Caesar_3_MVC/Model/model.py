@@ -11,7 +11,7 @@ class GameEngine(object):
 		evManager (EventManager): Allows posting messages to the event queue.
 		
 		Attributes:
-		running (bool): True while the engine is online. Changed via QuitEvent().
+		running (bool): True while the en:ine is online. Changed via QuitEvent().
 		"""
 		
 		self.evManager = evManager
