@@ -28,3 +28,4 @@ class InputController:
 								self.mouseInputHandler.handleInput(event)
 						if event.type == pygame.KEYDOWN:
 								self.keyboardInputHandler.handleInput(event)
+						self.mouseInputHandler.handleMouseEventsStatePlay(event)
