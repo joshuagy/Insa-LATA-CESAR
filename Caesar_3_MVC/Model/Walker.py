@@ -44,7 +44,6 @@ class Walker:
         self.index_sprite = 0
 
         # pathfinding
-        self.plateau.walkers[case.x][case.y] = self
         self.move_timer = pygame.time.get_ticks()
 
         self.create_path()
@@ -62,7 +61,7 @@ class Walker:
             dest_case = self.plateau.map[x][y]
 
             #Si la destination est valide
-            if True: #Quand il y aura les collisions : if not dest_tile["collision"]:
+            if not dest_case.collision:
 
                 #On appelle la fonction Grid de pathfinding en lui passant en paramètre la matrice de collision
                 #On pourrait faire pareil avec une matrice de route si nécessaire
@@ -76,14 +75,18 @@ class Walker:
 
                 self.path_index = 0
                 self.path, runs = finder.find_path(self.start, self.end, self.grid)
-                searching_for_path = False
+                if self.path :
+                    searching_for_path = False
+
+                    #Permet d'observer facilement la map et le walker
+                    #print('operations:', runs, 'path length:', len(self.path))
+                    #print(self.grid.grid_str(path=self.path, start=self.start, end=self.end))
+        
 
     def change_tile(self, new_tile):
         """
-        Changement de case d'un walker. On actualise le tableau présent dans le plateau, et la case du walker
+        Changement de case d'un walker.
         """
-        self.plateau.walkers[self.case.x][self.case.y] = None
-        self.plateau.walkers[new_tile[0]][new_tile[1]] = self
         self.case = self.plateau.map[new_tile[0]][new_tile[1]]
 
     
@@ -97,7 +100,11 @@ class Walker:
             self.index_sprite = 0
 
         if now - self.move_timer > 1000:
-            new_pos = self.path[self.path_index]
+            try : new_pos = self.path[self.path_index]
+            except IndexError:
+                print(f"IndexError : Path : {self.path}, index : {self.path_index}")
+                self.create_path()
+                return
             # Mise à jour de la position sur le plateau
             self.change_tile(new_pos)
             self.path_index += 1
