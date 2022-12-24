@@ -487,11 +487,13 @@ class Plateau():
         pygame.display.flip()
     
     def create_collision_matrix(self):
-        collision_matrix = [[1 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
+        collision_matrix = [[1000 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
 
         #La suite sera pour quand on aura un système de collision
         for x in range(self.nbr_cell_x):
             for y in range(self.nbr_cell_y):
                 if self.map[x][y].collision:
                     collision_matrix[y][x] = 0
+                if self.map[x][y].road:
+                    collision_matrix[y][x] = 1
         return collision_matrix

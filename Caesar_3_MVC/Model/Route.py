@@ -7,6 +7,8 @@ class Route():
         self.plateau = plateau
         self.sprite = self.draw()
 
+    def __del__(self):
+        self.case.road = None
     
     def draw(self):
         return "path1"
