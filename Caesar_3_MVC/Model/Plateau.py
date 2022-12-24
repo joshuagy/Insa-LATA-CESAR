@@ -6,6 +6,7 @@ from View.Menu_map import Menu_map
 from Model.Walker import Walker
 from Model.control_panel import *
 from Model.constants import *
+from Model.Route import Route
 import sys
 
 counter=1
@@ -83,7 +84,12 @@ class Plateau():
 
         isometric_cell = [self.cartesian_to_isometric(x, y) for x, y in rectangle_cell]
 
-        return Case(cell_x, cell_y, rectangle_cell, isometric_cell, [min([x for x, y in isometric_cell]), min([y for x, y in isometric_cell])], sprite=self.choose_image())        
+        sprite=self.choose_image()
+        nouvelle_case = Case(cell_x, cell_y, rectangle_cell, isometric_cell, [min([x for x, y in isometric_cell]), min([y for x, y in isometric_cell])], sprite = sprite)
+        if sprite.startswith("path"):
+            nouvelle_case.sprite = "land1"
+            Route(nouvelle_case, self)
+        return nouvelle_case
         
     def cartesian_to_isometric(self, x, y):
             return x - y,(x + y)/2
@@ -113,9 +119,9 @@ class Plateau():
             elif (counter >= 761 and counter<=800):
                 image = "path1"
             elif (counter == 721):
-                image = "path3"
+                image = "sign2"
             elif (counter == 760):
-                image = "path2"
+                image = "sign1"
             elif (counter>=14 and counter<=19) or(counter>=55 and counter<=60)or(counter>=96 and counter<=101)or(counter>=137 and counter<=142)or(counter>=178 and counter<=183)or(counter>=219 and counter<=224)or(counter>=260 and counter<=265)or(counter>=301 and counter<=306)or(counter>=342 and counter<=347)or(counter>=383 and counter<=388)or(counter>=424 and counter<=429)or(counter>=465 and counter<=480)or(counter>=506 and counter<=520)or(counter>=547 and counter<=560)or(counter>=588 and counter<=600)or(counter>=629 and counter<=640)or(counter<=1573 and counter>=1569)or(counter<=1533 and counter>=1529)or(counter<=1493 and counter>=1489)or(counter<=1453 and counter>=1449)or(counter<=1413 and counter>=1409)or(counter<=1373 and counter>=1369)or(counter<=1333 and counter>=1329)or(counter<=1293 and counter>=1281)or(counter<=1253 and counter>=1241)or(counter<=1213 and counter>=1201)or(counter<=1173 and counter>=1161):
                 image = "water1"
             elif (counter==20) or (counter==61)or(counter==102)or(counter==143)or(counter==184)or(counter==225)or(counter==266)or(counter==307)or(counter==348)or(counter==389)or(counter>=430 and counter<=440 )or(counter<=1133 and counter>=1121):
@@ -171,10 +177,10 @@ class Plateau():
 
         path1 = pygame.image.load("image/C3/Land2a_00095.png").convert_alpha()
         path1 = pygame.transform.scale(path1, (path1.get_width() / 2, path1.get_height() / 2))
-        path2 = pygame.image.load("image/C3/land3a_00089.png").convert_alpha()
-        path2 = pygame.transform.scale(path2, (path2.get_width() / 2, path2.get_height() / 2))
-        path3 = pygame.image.load("image/C3/land3a_00087.png").convert_alpha()
-        path3 = pygame.transform.scale(path3, (path3.get_width() / 2, path3.get_height() / 2))
+        sign1 = pygame.image.load("image/C3/land3a_00089.png").convert_alpha()
+        sign1 = pygame.transform.scale(sign1, (sign1.get_width() / 2, sign1.get_height() / 2))
+        sign2 = pygame.image.load("image/C3/land3a_00087.png").convert_alpha()
+        sign2 = pygame.transform.scale(sign2, (sign2.get_width() / 2, sign2.get_height() / 2))
 
 
         water1 = pygame.image.load("image/C3/Land1a_00122.png").convert_alpha()
@@ -190,8 +196,8 @@ class Plateau():
 
         return {"land1": land1,"land2": land2, "tree1": tree1,"tree2": tree2,
                 "tree3": tree3,"rock1": rock1,"rock2": rock2,"water1":water1,
-                "water2":water2,"water3":water3,"path1":path1,"path2":path2,
-                "path3":path3,"water4":water4,"water5":water5,"rock3":rock3
+                "water2":water2,"water3":water3,"path1":path1,"sign1":sign1,
+                "sign2":sign2,"water4":water4,"water5":water5,"rock3":rock3
                 }
 
     def update(self):
@@ -207,12 +213,14 @@ class Plateau():
         for cell_x in range(self.nbr_cell_y):
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
-                image = self.map[cell_x][cell_y].sprite
+                if self.map[cell_x][cell_y].road == None:
+                    image = self.map[cell_x][cell_y].sprite
+                else :
+                    image = self.map[cell_x][cell_y].road.sprite
                 if image != "":
-
                     self.screen.blit(self.image[image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                     render_pos[1] - (self.image[image].get_height() - cell_size) + self.camera.vect.y))
+                                    render_pos[1] - (self.image[image].get_height() - cell_size) + self.camera.vect.y))
                     
 
         for e in self.entities:
