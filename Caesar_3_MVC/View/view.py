@@ -84,5 +84,5 @@ class GraphicalView(object):
         self.model.menu = Menu(self.screen)
         self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
 
-        #Création de 5 walkers au centre de la map
-        for _ in range(5): Walker(self.model.actualGame.map[20][20], self.model.actualGame)
+        #Création de walkers
+        Walker(self.model.actualGame.map[19][20], self.model.actualGame)

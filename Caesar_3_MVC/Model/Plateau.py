@@ -41,7 +41,7 @@ class Plateau():
         self.entities = entities
 
         #Tableau contenant toutes les cases occupées par les walkers
-        self.walkers = [[None for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)] 
+        #self.walkers = [[None for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)] 
 
         #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
         self.collision_matrix = self.create_collision_matrix()
@@ -214,13 +214,12 @@ class Plateau():
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                      render_pos[1] - (self.image[image].get_height() - cell_size) + self.camera.vect.y))
                     
-                    #draw walkers à leur position d'origine
-                    walker = self.walkers[cell_x][cell_y]
-                    if walker is not None:
-                        self.screen.blit(walker.sprites[int(walker.index_sprite)], 
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (walker.sprites[0].get_height() - cell_size) + self.camera.vect.y))
 
+        for e in self.entities:
+            render_pos =  self.map[e.case.x][e.case.y].render_pos
+            self.screen.blit(e.sprites[int(e.index_sprite)], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                         render_pos[1] - (e.sprites[0].get_height() - cell_size) + self.camera.vect.y))
         self.menu_map.draw_menu(self.screen)
 
         top_menu_axis_x = 0
@@ -483,8 +482,8 @@ class Plateau():
         collision_matrix = [[1 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
 
         #La suite sera pour quand on aura un système de collision
-        """for x in range(self.nbr_cell_x):
+        for x in range(self.nbr_cell_x):
             for y in range(self.nbr_cell_y):
-                if self.plateau[x][y]["collision"]:
-                    collision_matrix[x][y] = 0"""
+                if self.map[x][y].collision:
+                    collision_matrix[y][x] = 0
         return collision_matrix
