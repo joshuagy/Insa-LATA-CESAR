@@ -30,6 +30,7 @@ class Plateau():
 
         self.surface_cells = pygame.Surface((nbr_cell_x * cell_size * 2, nbr_cell_y * cell_size  + 2 * cell_size )).convert_alpha()
         self.image = self.load_images()
+        self.image_route = self.load_routes_images()
 
         self.zoom__=Zoom(self.image)
 
@@ -37,12 +38,10 @@ class Plateau():
         self.listeCase = listeCase
 
         self.map = self.default_map()
+        self.default_road()
 
         #Tableau contenant l'intégralité des walker présents sur la map
         self.entities = entities
-
-        #Tableau contenant toutes les cases occupées par les walkers
-        #self.walkers = [[None for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)] 
 
         #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
         self.collision_matrix = self.create_collision_matrix()
@@ -72,6 +71,10 @@ class Plateau():
                 render_pos = cells_to_map.render_pos
                 self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
         return map
+    def default_road(self):
+        for j in range(19, 20):
+            for i in range(self.nbr_cell_y):
+                Route(self.map[j][i], self)
         
     def cells_to_map(self, cell_x, cell_y):
 
@@ -117,7 +120,7 @@ class Plateau():
             elif (counter>=121 and counter<=129)or(counter>=161 and counter<=168)or(counter>=81 and counter<=89) or (counter>=241 and counter<=246)or(counter>=321 and counter<=324) or (counter>=401 and counter<=404)or (counter>=521 and counter<=522)or (counter>=601 and counter<=602)or (counter in range(62,81,1))or (counter in range(144,161,1))or (counter in range(226,241,1))or (counter in range(308,321,1))or (counter in range(390,401,1))or (counter==1440)or (counter in range(1395,1401,1))or (counter in range(1355,1361,1))or (counter in range(1315,1321,1))or (counter in range(1276,1281,1))or (counter==1240):
                 image = "tree1"
             elif (counter >= 761 and counter<=800):
-                image = "path1"
+                image = "land1" # route
             elif (counter == 721):
                 image = "sign2"
             elif (counter == 760):
@@ -199,6 +202,56 @@ class Plateau():
                 "water2":water2,"water3":water3,"path1":path1,"sign1":sign1,
                 "sign2":sign2,"water4":water4,"water5":water5,"rock3":rock3
                 }
+    def load_routes_images(self):
+        
+        west = pygame.image.load("image/Routes/Land2a_00104.png").convert_alpha()
+        west = pygame.transform.scale(west, (west.get_width() / 2, west.get_height() / 2))
+
+        east = pygame.image.load("image/Routes/Land2a_00102.png").convert_alpha()
+        east = pygame.transform.scale(east, (east.get_width() / 2, east.get_height() / 2))
+
+        east_west = pygame.image.load("image/Routes/Land2a_00094.png").convert_alpha()
+        east_west = pygame.transform.scale(east_west, (east_west.get_width() / 2, east_west.get_height() / 2))
+
+        south = pygame.image.load("image/Routes/Land2a_00101.png").convert_alpha()
+        south = pygame.transform.scale(south, (south.get_width() / 2, south.get_height() / 2))
+
+        south_west = pygame.image.load("image/Routes/Land2a_00100.png").convert_alpha()
+        south_west = pygame.transform.scale(south_west, (south_west.get_width() / 2, south_west.get_height() / 2))
+
+        south_east = pygame.image.load("image/Routes/Land2a_00097.png").convert_alpha()
+        south_east = pygame.transform.scale(south_east, (south_east.get_width() / 2, south_east.get_height() / 2))
+
+        south_east_west = pygame.image.load("image/Routes/Land2a_00109.png").convert_alpha()
+        south_east_west = pygame.transform.scale(south_east_west, (south_east_west.get_width() / 2, south_east_west.get_height() / 2))
+
+        north = pygame.image.load("image/Routes/Land2a_00105.png").convert_alpha()
+        north = pygame.transform.scale(north, (north.get_width() / 2, north.get_height() / 2))
+
+        north_west = pygame.image.load("image/Routes/Land2a_00099.png").convert_alpha()
+        north_west = pygame.transform.scale(north_west, (north_west.get_width() / 2, north_west.get_height() / 2))
+
+        north_south = pygame.image.load("image/Routes/Land2a_00095.png").convert_alpha()
+        north_south = pygame.transform.scale(north_south, (north_south.get_width() / 2, north_south.get_height() / 2))
+
+        north_south_west = pygame.image.load("image/Routes/Land2a_00108.png").convert_alpha()
+        north_south_west = pygame.transform.scale(north_south_west, (north_south_west.get_width() / 2, north_south_west.get_height() / 2))
+
+        north_east = pygame.image.load("image/Routes/Land2a_00098.png").convert_alpha()
+        north_east = pygame.transform.scale(north_east, (north_east.get_width() / 2, north_east.get_height() / 2))
+
+        north_east_west = pygame.image.load("image/Routes/Land2a_00107.png").convert_alpha()
+        north_east_west = pygame.transform.scale(north_east_west, (north_east_west.get_width() / 2, north_east_west.get_height() / 2))
+
+        north_south_east = pygame.image.load("image/Routes/Land2a_00106.png").convert_alpha()
+        north_south_east = pygame.transform.scale(north_south_east, (north_south_east.get_width() / 2, north_south_east.get_height() / 2))
+
+        north_south_east_west = pygame.image.load("image/Routes/Land2a_00110.png").convert_alpha()
+        north_south_east_west = pygame.transform.scale(north_south_east_west, (north_south_east_west.get_width() / 2, north_south_east_west.get_height() / 2))
+
+        return {0: north_south, 1: west, 2: south, 3: south_west, 4: east, 5: east_west, 6: south_east,
+                7: south_east_west, 8: north, 9: north_west, 10: north_south, 11: north_south_west,
+                12: north_east, 13: north_east_west, 14: north_south_east, 15: north_south_east_west}
 
     def update(self):
         self.camera.update()
@@ -215,12 +268,14 @@ class Plateau():
                 render_pos =  self.map[cell_x][cell_y].render_pos
                 if self.map[cell_x][cell_y].road == None:
                     image = self.map[cell_x][cell_y].sprite
-                else :
-                    image = self.map[cell_x][cell_y].road.sprite
-                if image != "":
                     self.screen.blit(self.image[image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (self.image[image].get_height() - cell_size) + self.camera.vect.y))
+                else :
+                    image = self.map[cell_x][cell_y].road.sprite
+                    self.screen.blit(self.image_route[image],
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                    render_pos[1] - (self.image_route[image].get_height() - cell_size) + self.camera.vect.y))
                     
 
         for e in self.entities:
