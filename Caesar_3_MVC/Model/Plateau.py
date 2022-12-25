@@ -73,7 +73,7 @@ class Plateau():
                 self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
         return map
     def default_road(self):
-        for j in range(19, 25):
+        for j in range(19, 20):
             for i in range(self.nbr_cell_y):
                 Route(self.map[j][i], self)
         
