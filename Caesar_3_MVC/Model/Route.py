@@ -1,6 +1,5 @@
 class Route():
     def __init__(self, case, plateau):
-        # connected = [0,0,0,1]: N, E, S, O
         self.case = case
         self.case.road = self
 

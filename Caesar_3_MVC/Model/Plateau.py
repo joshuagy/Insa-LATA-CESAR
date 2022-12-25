@@ -31,6 +31,7 @@ class Plateau():
         self.surface_cells = pygame.Surface((nbr_cell_x * cell_size * 2, nbr_cell_y * cell_size  + 2 * cell_size )).convert_alpha()
         self.image = self.load_images()
         self.image_route = self.load_routes_images()
+        self.image_walkers = self.load_walkers_images()
 
         self.zoom__=Zoom(self.image)
 
@@ -72,7 +73,7 @@ class Plateau():
                 self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
         return map
     def default_road(self):
-        for j in range(19, 20):
+        for j in range(19, 25):
             for i in range(self.nbr_cell_y):
                 Route(self.map[j][i], self)
         
@@ -177,9 +178,6 @@ class Plateau():
         rock3 = pygame.transform.scale(rock3, (rock3.get_width() / 2, rock3.get_height() / 2))
 
 
-
-        path1 = pygame.image.load("image/C3/Land2a_00095.png").convert_alpha()
-        path1 = pygame.transform.scale(path1, (path1.get_width() / 2, path1.get_height() / 2))
         sign1 = pygame.image.load("image/C3/land3a_00089.png").convert_alpha()
         sign1 = pygame.transform.scale(sign1, (sign1.get_width() / 2, sign1.get_height() / 2))
         sign2 = pygame.image.load("image/C3/land3a_00087.png").convert_alpha()
@@ -199,8 +197,8 @@ class Plateau():
 
         return {"land1": land1,"land2": land2, "tree1": tree1,"tree2": tree2,
                 "tree3": tree3,"rock1": rock1,"rock2": rock2,"water1":water1,
-                "water2":water2,"water3":water3,"path1":path1,"sign1":sign1,
-                "sign2":sign2,"water4":water4,"water5":water5,"rock3":rock3
+                "water2":water2,"water3":water3,"sign1":sign1,"sign2":sign2,
+                "water4":water4,"water5":water5,"rock3":rock3
                 }
     def load_routes_images(self):
         
@@ -249,10 +247,52 @@ class Plateau():
         north_south_east_west = pygame.image.load("image/Routes/Land2a_00110.png").convert_alpha()
         north_south_east_west = pygame.transform.scale(north_south_east_west, (north_south_east_west.get_width() / 2, north_south_east_west.get_height() / 2))
 
-        return {0: north_south, 1: west, 2: south, 3: south_west, 4: east, 5: east_west, 6: south_east,
+        return {0: north, 1: west, 2: south, 3: south_west, 4: east, 5: east_west, 6: south_east,
                 7: south_east_west, 8: north, 9: north_west, 10: north_south, 11: north_south_west,
                 12: north_east, 13: north_east_west, 14: north_south_east, 15: north_south_east_west}
+    def load_walkers_images(self):
+        walker_sprite = {}
 
+        #====== Citizens ======#
+        new_dict = {}
+
+        #North
+        new_list = list(pygame.image.load(f"image/Walkers/Citizen/Walk/UpRight/CitizenUpRightFrame{i}.png").convert_alpha() for i in range(1, 13))
+
+        for i in range(12):
+            new_list[i] = pygame.transform.scale(new_list[i], (new_list[i].get_width() / 2, new_list[i].get_height() / 2))
+                
+        new_dict |= {1 : new_list}
+
+        #East
+        new_list = list(pygame.image.load(f"image/Walkers/Citizen/Walk/DownRight/CitizenDownRightFrame{i}.png").convert_alpha() for i in range(1, 13))
+
+        for i in range(12):
+            new_list[i] = pygame.transform.scale(new_list[i], (new_list[i].get_width() / 2, new_list[i].get_height() / 2))
+                
+        new_dict |= {2 : new_list}
+
+        #South
+        new_list = list(pygame.image.load(f"image/Walkers/Citizen/Walk/DownLeft/CitizenDownLeftFrame{i}.png").convert_alpha() for i in range(1, 13))
+
+        for i in range(12):
+            new_list[i] = pygame.transform.scale(new_list[i], (new_list[i].get_width() / 2, new_list[i].get_height() / 2))
+                
+        new_dict |= {3 : new_list}
+
+        #West
+        new_list = list(pygame.image.load(f"image/Walkers/Citizen/Walk/UpLeft/CitizenUpLeftFrame{i}.png").convert_alpha() for i in range(1, 13))
+
+        for i in range(12):
+            new_list[i] = pygame.transform.scale(new_list[i], (new_list[i].get_width() / 2, new_list[i].get_height() / 2))
+                
+        new_dict |= {4 : new_list}
+
+        walker_sprite |= {"Citizen" : new_dict}
+
+        return walker_sprite
+
+    
     def update(self):
         self.camera.update()
         #Update de la position des walker
@@ -280,9 +320,9 @@ class Plateau():
 
         for e in self.entities:
             render_pos =  self.map[e.case.x][e.case.y].render_pos
-            self.screen.blit(e.sprites[int(e.index_sprite)], 
+            self.screen.blit(self.image_walkers[e.type][e.direction][int(e.index_sprite)], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (e.sprites[0].get_height() - cell_size) + self.camera.vect.y))
+                                         render_pos[1] - (self.image_walkers[e.type][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
         self.menu_map.draw_menu(self.screen)
 
         top_menu_axis_x = 0

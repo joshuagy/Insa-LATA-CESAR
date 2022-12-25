@@ -4,9 +4,6 @@ from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
-#à connecter à la variable de constants.py
-cell_size = 30
-
 """
 TO DO LIST
 - Directions
@@ -37,11 +34,12 @@ class Walker:
         self.case = case
         self.plateau = plateau
         self.name = name
+        self.type = "Citizen"
         
         self.plateau.entities.append(self)  #On ajoute le walker à la liste des entitées présentes sur le plateau
         
-        self.sprites = self.load_sprites()
         self.index_sprite = 0
+        self.direction = 1 # 1 : North 2 : East 3 : South 4 : West
 
         # pathfinding
         self.move_timer = pygame.time.get_ticks()
@@ -61,7 +59,7 @@ class Walker:
             dest_case = self.plateau.map[x][y]
 
             #Si la destination est valide
-            if not dest_case.collision:
+            if dest_case.road:
 
                 #On appelle la fonction Grid de pathfinding en lui passant en paramètre la matrice de collision
                 #On pourrait faire pareil avec une matrice de route si nécessaire
@@ -87,6 +85,14 @@ class Walker:
         """
         Changement de case d'un walker.
         """
+        if self.case.x < new_tile[0]:
+            self.direction = 2
+        elif self.case.x > new_tile[0]:
+            self.direction = 4
+        elif self.case.y > new_tile[1]:
+            self.direction = 1
+        elif self.case.y < new_tile[1]:
+            self.direction = 3
         self.case = self.plateau.map[new_tile[0]][new_tile[1]]
 
     
@@ -96,7 +102,7 @@ class Walker:
         """
         now = pygame.time.get_ticks()
         self.index_sprite += 0.5
-        if(self.index_sprite >= len(self.sprites)):
+        if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.direction])):
             self.index_sprite = 0
 
         if now - self.move_timer > 1000:
@@ -114,28 +120,3 @@ class Walker:
             # On recréé un path si le dernier a été atteint
             if self.path_index == len(self.path) - 1:
                 self.create_path()
-    
-
-    def load_sprites(self):
-        
-        sprites = []
-
-        #HD
-        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00001.png").convert_alpha())
-        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00009.png").convert_alpha())
-        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00017.png").convert_alpha())
-        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00025.png").convert_alpha())
-        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00033.png").convert_alpha())
-        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00041.png").convert_alpha())
-        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00049.png").convert_alpha())
-        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00057.png").convert_alpha())
-        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00065.png").convert_alpha())
-        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00073.png").convert_alpha())
-        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00081.png").convert_alpha())
-        sprites.append(pygame.image.load("image/Walkers/Citizen/HD/Citizen01_00089.png").convert_alpha())
-
-
-        for i in range(12):
-            sprites[i] = pygame.transform.scale(sprites[i], (sprites[i].get_width() / 2, sprites[i].get_height() / 2))
-        
-        return sprites
