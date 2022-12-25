@@ -85,4 +85,4 @@ class GraphicalView(object):
         self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
 
         #Création de walkers
-        Walker(self.model.actualGame.map[19][20], self.model.actualGame)
+        for _ in range(1) : Walker(self.model.actualGame.map[19][20], self.model.actualGame)

@@ -1,7 +1,7 @@
 from Model.constants import list_of_collision
 
 class Case():
-    def __init__(self, x, y, rectangle_cell, isometric_cell, render_pos, connectedToRoad=0, feature=None, sprite=None):
+    def __init__(self, x, y, rectangle_cell, isometric_cell, render_pos, connectedToRoad=0, feature=None, sprite=None, road = None):
         self.x = x
         self.y = y
         self.rectangle_cell = rectangle_cell
@@ -14,15 +14,9 @@ class Case():
             self.collision = 0 
         self.feature = feature
 
+        self.road = road
+
 
     def getRelative(case, dx, dy, plateau):
         if 0 < plateau.listeCase[30*(case.y+dy)+(case.y*dy)] < 1600 :
             return plateau.listeCase[30*(case.y+dy)+(case.y*dy)]
-       
-                
-
-class Route(Case):
-    def __init__(self, x, y, rectangle_cell, isometric_cell, render_pos, sprite):
-        # connected = [0,0,0,1]: N, E, S, O
-        super().__init__(x, y, rectangle_cell, isometric_cell, render_pos, sprite)
-        self.sprite = "path1"

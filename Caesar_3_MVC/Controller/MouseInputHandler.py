@@ -130,6 +130,8 @@ class MouseInputHandler:
                 for yi in range(grid_y1, grid_y2+1):
                         self.model.actualGame.map[xi][yi].sprite = "land1"
                         self.model.actualGame.map[xi][yi].collision = 0
+                        if self.model.actualGame.map[xi][yi].road :
+                            del self.model.actualGame.map[xi][yi].road
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
         
                 
