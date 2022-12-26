@@ -48,11 +48,13 @@ class MouseInputHandler:
         print(feedBack)
         self.evManager.Post(feedBack)
 
-    def handleMouseEventsStatePlay(self, event):
+    def checkEveryButton(self, event):
         """
-        Handles game mouse events
+            Check if a button has been pressed
         """
+        
         #Handle the buttons of the control panel
+        clear_land_button.handle_event(event)
         overlays_button.handle_event(event)
         hide_control_panel_button.handle_event(event)
         display_control_panel_button.handle_event(event)
@@ -63,7 +65,6 @@ class MouseInputHandler:
         arrow_rotate_counterclockwise.handle_event(event)
         arrow_rotate_clockwise.handle_event(event)
         build_housing_button.handle_event(event)
-        clear_land_button.handle_event(event)
         build_roads_button.handle_event(event)
         water_related_structures.handle_event(event)
         health_related_structures.handle_event(event)
@@ -78,8 +79,12 @@ class MouseInputHandler:
         message_view_button.handle_event(event)
         see_recent_troubles_button.handle_event(event)
 
+    def handleMouseEventsStatePlay(self, event):
+        """
+        Handles game mouse events
+        """
         #Pelle
-        if self.clicked:
+        if clear_land_button.clicked and not clear_land_button.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
             world_y = y - self.model.actualGame.camera.vect.y

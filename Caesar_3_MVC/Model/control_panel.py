@@ -99,13 +99,8 @@ class ButtonCtrlPnl():
                     self.clicked = False
                 else:
                     self.clicked = True
-                    print('clicked')
                     if self.unlocked and callable(self.call_func):
-                       self.call_func() 
-                       print('Do nothing yet')
-
-            else:
-                self.clicked = False
+                       self.call_func()
 class Sprite:
      
     def __init__(self, source):
