@@ -180,7 +180,7 @@ big_gap_menu=Sprite("image/C3/paneling_00017.png")
 small_gap_menu=Sprite("image/C3/paneling_00016.png")
 
 deco_bas_small_menu = Sprite("image/C3/paneling_00021.png")
-deco_bas_full_menu = Sprite("image/C3/paneling_00018.png")
+deco_bas_full_menu = Sprite("image/C3/map_panels_00003.png")
 deco_milieu_menu_default = Sprite("image/C3/panelwindows_00013.png")   #Image du milieu devra changer en fonction du bouton cliqué, à voir comment gérer ça plus tard
 
 
