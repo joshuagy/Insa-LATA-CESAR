@@ -7,9 +7,8 @@ class ButtonCtrlPnl():
 
     def __init__(self, function, text : str = None, x : int =0, y : int =0, image_normal=None, image_hovered=None, image_clicked=None, image_locked=None):
         """Create a button. Set the images to their path or to None if you don't want to have a hovered and clicked version of your button."""
-
+        list_of_buttons.append(self)
         self.func = function
-
         self.text = text
         pygame.init()
         self.textsurface = pygame.font.SysFont('default_font', 20).render(self.text, False, BLACK, WHITE)
@@ -98,6 +97,8 @@ class ButtonCtrlPnl():
                 if self.clicked:
                     self.clicked = False
                 else:
+                    for buttons in list_of_buttons:
+                        buttons.clicked = False
                     self.clicked = True
                     if self.unlocked and callable(self.call_func):
                        self.call_func()

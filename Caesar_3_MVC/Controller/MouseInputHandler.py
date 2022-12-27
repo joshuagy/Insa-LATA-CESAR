@@ -55,30 +55,8 @@ class MouseInputHandler:
         """
         
         #Handle the buttons of the control panel
-        clear_land_button.handle_event(event)
-        overlays_button.handle_event(event)
-        hide_control_panel_button.handle_event(event)
-        display_control_panel_button.handle_event(event)
-        advisors_button.handle_event(event)
-        empire_map_button.handle_event(event)
-        assignement_button.handle_event(event)
-        compass_button.handle_event(event)
-        arrow_rotate_counterclockwise.handle_event(event)
-        arrow_rotate_clockwise.handle_event(event)
-        build_housing_button.handle_event(event)
-        build_roads_button.handle_event(event)
-        water_related_structures.handle_event(event)
-        health_related_structures.handle_event(event)
-        religious_structures.handle_event(event)
-        education_structures.handle_event(event)
-        entertainment_structures.handle_event(event)
-        administration_or_government_structures.handle_event(event)
-        engineering_structures.handle_event(event)
-        security_structures.handle_event(event)
-        industrial_structures.handle_event(event)
-        undo_button.handle_event(event)
-        message_view_button.handle_event(event)
-        see_recent_troubles_button.handle_event(event)
+        for button in list_of_buttons:
+            button.handle_event(event)
 
     def handleMouseEventsStatePlay(self, event):
         """
@@ -186,7 +164,6 @@ class MouseInputHandler:
             if grid_y1 > grid_y2:
                 pattern += 2
 
-            print(f"{grid_x1}, {grid_x2}, {grid_y1}, {grid_y2}")
             match(pattern):
                 case 0:
                     for xi in range(grid_x1, grid_x2+1):
@@ -216,5 +193,5 @@ class MouseInputHandler:
                     for yi in range(grid_y1, grid_y2-1, -1):
                         if self.model.actualGame.map[grid_x1][yi].road == None:
                             Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
-                    print(pattern)
+                            
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
