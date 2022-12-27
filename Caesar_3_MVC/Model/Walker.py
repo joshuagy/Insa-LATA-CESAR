@@ -80,12 +80,20 @@ class Walker:
         if len(possibilities) == 0:
             match(self.direction):
                 case 1 :
+                    if self.plateau.map[self.case.x][self.case.y+1].road == None:
+                        self.ttw = 1
                     new_tile = (self.case.x, self.case.y+1)
                 case 2 :
+                    if self.plateau.map[self.case.x-1][self.case.y].road == None:
+                        self.ttw = 1
                     new_tile = (self.case.x-1, self.case.y)
                 case 3 :
+                    if self.plateau.map[self.case.x][self.case.y-1].road == None:
+                        self.ttw = 1
                     new_tile = (self.case.x, self.case.y-1)
                 case 4 :
+                    if self.plateau.map[self.case.x+1][self.case.y].road == None:
+                        self.ttw = 1
                     new_tile = (self.case.x+1, self.case.y)
         else:
             new_tile = possibilities[random.randint(0, len(possibilities)- 1)]
@@ -143,7 +151,7 @@ class Walker:
         if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.direction])):
             self.index_sprite = 0
 
-        if now - self.move_timer > 1000:
+        if now - self.move_timer > 500:
             if self.ttw > 0:
                 new_pos = self.random_path()
 

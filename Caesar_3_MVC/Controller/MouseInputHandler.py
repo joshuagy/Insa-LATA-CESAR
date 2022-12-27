@@ -4,6 +4,7 @@ from Model.control_panel import *
 from EventManager.Event import Event
 from EventManager.allEvent import StateChangeEvent, TickEvent, QuitEvent
 from Model.Plateau import Plateau, cell_size
+from Model.Route import Route
 
 class MouseInputHandler:
     """
@@ -54,30 +55,8 @@ class MouseInputHandler:
         """
         
         #Handle the buttons of the control panel
-        clear_land_button.handle_event(event)
-        overlays_button.handle_event(event)
-        hide_control_panel_button.handle_event(event)
-        display_control_panel_button.handle_event(event)
-        advisors_button.handle_event(event)
-        empire_map_button.handle_event(event)
-        assignement_button.handle_event(event)
-        compass_button.handle_event(event)
-        arrow_rotate_counterclockwise.handle_event(event)
-        arrow_rotate_clockwise.handle_event(event)
-        build_housing_button.handle_event(event)
-        build_roads_button.handle_event(event)
-        water_related_structures.handle_event(event)
-        health_related_structures.handle_event(event)
-        religious_structures.handle_event(event)
-        education_structures.handle_event(event)
-        entertainment_structures.handle_event(event)
-        administration_or_government_structures.handle_event(event)
-        engineering_structures.handle_event(event)
-        security_structures.handle_event(event)
-        industrial_structures.handle_event(event)
-        undo_button.handle_event(event)
-        message_view_button.handle_event(event)
-        see_recent_troubles_button.handle_event(event)
+        for button in list_of_buttons:
+            button.handle_event(event)
 
     def handleMouseEventsStatePlay(self, event):
         """
@@ -140,4 +119,79 @@ class MouseInputHandler:
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
         
                 
-            
+        #Routes
+        if build_roads_button.clicked and not build_roads_button.rect.collidepoint(event.pos):
+            x, y = self.initialMouseCoordinate
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x1 = int(cart_x // cell_size)
+            grid_y1 = int(cart_y // cell_size)
+
+            x, y = event.pos
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x2 = int(cart_x // cell_size)
+            grid_y2 = int(cart_y // cell_size)
+        
+            if grid_x1 <0:
+                grid_x1 = 0
+            if grid_x2 <0:
+                grid_x2 = 0
+            if grid_y1 <0:
+                grid_y1 = 0
+            if grid_y2 <0:
+                grid_y2 = 0
+
+            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+                grid_x1 = self.model.actualGame.nbr_cell_x-1
+            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+                grid_x2 = self.model.actualGame.nbr_cell_x-1
+            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+                grid_y1 = self.model.actualGame.nbr_cell_y-1
+            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+                grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+            pattern = 0
+            if grid_x1 > grid_x2:
+                pattern += 1
+
+            if grid_y1 > grid_y2:
+                pattern += 2
+
+            match(pattern):
+                case 0:
+                    for xi in range(grid_x1, grid_x2+1):
+                        if self.model.actualGame.map[xi][grid_y2].road == None:
+                            Route(self.model.actualGame.map[xi][grid_y2], self.model.actualGame)
+                    for yi in range(grid_y1, grid_y2+1):
+                        if self.model.actualGame.map[grid_x1][yi].road == None:
+                            Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
+                case 1:
+                    for xi in range(grid_x1, grid_x2-1, -1):
+                        if self.model.actualGame.map[xi][grid_y1].road == None:
+                            Route(self.model.actualGame.map[xi][grid_y1], self.model.actualGame)
+                    for yi in range(grid_y1, grid_y2+1):
+                        if self.model.actualGame.map[grid_x2][yi].road == None:
+                            Route(self.model.actualGame.map[grid_x2][yi], self.model.actualGame)
+                case 2:
+                    for xi in range(grid_x1, grid_x2+1):
+                        if self.model.actualGame.map[xi][grid_y1].road == None:
+                            Route(self.model.actualGame.map[xi][grid_y1], self.model.actualGame)
+                    for yi in range(grid_y1, grid_y2-1, -1):
+                        if self.model.actualGame.map[grid_x2][yi].road == None:
+                            Route(self.model.actualGame.map[grid_x2][yi], self.model.actualGame)
+                case 3:
+                    for xi in range(grid_x1, grid_x2-1, -1):
+                        if self.model.actualGame.map[xi][grid_y2].road == None:
+                            Route(self.model.actualGame.map[xi][grid_y2], self.model.actualGame)
+                    for yi in range(grid_y1, grid_y2-1, -1):
+                        if self.model.actualGame.map[grid_x1][yi].road == None:
+                            Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
+                            
+            self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()

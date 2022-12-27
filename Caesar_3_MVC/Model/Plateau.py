@@ -295,7 +295,7 @@ class Plateau():
     
     def update(self):
         self.camera.update()
-        #Update de la position des walker
+        #Update de la position des walkers
         for e in self.entities: e.update()
 
 
@@ -303,6 +303,7 @@ class Plateau():
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
        
+       # DRAW CELLS
         for cell_x in range(self.nbr_cell_y):
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
@@ -311,13 +312,14 @@ class Plateau():
                     self.screen.blit(self.image[image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (self.image[image].get_height() - cell_size) + self.camera.vect.y))
+                # DRAW ROADS
                 else :
                     image = self.map[cell_x][cell_y].road.sprite
                     self.screen.blit(self.image_route[image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (self.image_route[image].get_height() - cell_size) + self.camera.vect.y))
                     
-
+        # DRAW WALKERS
         for e in self.entities:
             render_pos =  self.map[e.case.x][e.case.y].render_pos
             self.screen.blit(self.image_walkers[e.type][e.direction][int(e.index_sprite)], 
