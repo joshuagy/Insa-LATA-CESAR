@@ -542,6 +542,8 @@ class Plateau():
                     y+=pnl_488.dim[1] 
                 x+=pnl_488.dim[0]   
                 y=tmp_y                      
+            
+            
 
             x=tmp_x+pnl_521.dim[0]*9
             for i in range(0,11):                                            #Fin dernière colonne - version simplifiée (1 seul pnl)
@@ -551,7 +553,7 @@ class Plateau():
             y+=pnl_527.dim[1]           
 
 
-            self.screen.blit(deco_bas_full_menu.img_scaled,(1119,682))
+            self.screen.blit(deco_bas_full_menu.img_scaled,(tmp_x,682))
 
         #Display message of the button if mouse on it
         overlays_button.show_tip(self.screen)
