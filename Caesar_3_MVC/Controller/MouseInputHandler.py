@@ -21,12 +21,11 @@ class MouseInputHandler:
         """
         Receive events posted to the message queue. 
         """
-
         if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: 
                         self.clicked = True
                         self.initialMouseCoordinate = pygame.mouse.get_pos()
-        if event.type == pygame.MOUSEBUTTONUP:
+        elif event.type == pygame.MOUSEBUTTONUP:
                 if(self.clicked):
                         # get current state
                         self.finalClickCoordinate = pygame.mouse.get_pos()
@@ -35,9 +34,14 @@ class MouseInputHandler:
                                 self.handleMouseEventsStateMenu(event)
                         if currentstate == STATE_PLAY:
                                 self.handleMouseEventsStatePlay(event)
-
                 if event.button == 1:
                         self.clicked = False
+                        self.initialMouseCoordinate = None
+        #  Preview clear land
+        elif event.type == pygame.MOUSEMOTION:
+            temp = pygame.mouse.get_pos()
+            if temp != self.initialMouseCoordinate and self.clicked:
+                self.handleMouseMouvement(event)
 
     def handleMouseEventsStateMenu(self, event):
         """
@@ -112,11 +116,13 @@ class MouseInputHandler:
 
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
-                        self.model.actualGame.map[xi][yi].sprite = "land1"
-                        self.model.actualGame.map[xi][yi].collision = 0
-                        if self.model.actualGame.map[xi][yi].road :
-                            del self.model.actualGame.map[xi][yi].road
+                        if self.model.actualGame.map[xi][yi].sprite not in list_of_undestructible:
+                            self.model.actualGame.map[xi][yi].sprite = "land1"
+                            self.model.actualGame.map[xi][yi].collision = 0
+                            if self.model.actualGame.map[xi][yi].road :
+                                del self.model.actualGame.map[xi][yi].road
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
+            # TODO: reset preview
         
                 
         #Routes
@@ -195,3 +201,10 @@ class MouseInputHandler:
                             Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
                             
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
+
+    def handleMouseMouvement(self, event):
+        """ Here we are going to manage the movement of the mouse"""
+        #Pelle
+        if clear_land_button.clicked and not clear_land_button.rect.collidepoint(event.pos) and self.initialMouseCoordinate != None:
+            red_rect = pygame.Rect(self.initialMouseCoordinate, pygame.mouse.get_pos())
+            pygame.draw.rect(self.model.actualGame.screen, pygame.Color(255,0,0),red_rect)

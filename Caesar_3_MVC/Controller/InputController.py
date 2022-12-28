@@ -24,7 +24,7 @@ class InputController:
 				for event in pygame.event.get():
 						if event.type == pygame.QUIT:
 								self.evManager.Post(ExitEvent())
-						if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP:
+						if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP or event.type == pygame.MOUSEMOTION:
 								self.mouseInputHandler.handleInput(event)
 						if event.type == pygame.KEYDOWN:
 								self.keyboardInputHandler.handleInput(event)
