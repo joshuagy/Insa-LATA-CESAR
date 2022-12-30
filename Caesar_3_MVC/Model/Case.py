@@ -1,7 +1,7 @@
 from Model.constants import list_of_collision
 
 class Case():
-    def __init__(self, x, y, rectangle_cell, isometric_cell, render_pos, connectedToRoad=0, feature=None, sprite=None, road = None):
+    def __init__(self, x, y, rectangle_cell, isometric_cell, render_pos, connectedToRoad=0, feature=None, sprite=None, road = None, building = None):
         self.x = x
         self.y = y
         self.rectangle_cell = rectangle_cell
@@ -15,6 +15,7 @@ class Case():
         self.feature = feature
 
         self.road = road
+        self.building = building
 
 
     def getRelative(case, dx, dy, plateau):

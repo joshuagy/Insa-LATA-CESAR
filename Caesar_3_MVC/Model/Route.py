@@ -21,7 +21,7 @@ class Route():
 
         
 
-    def __del__(self):
+    def delete(self):
         self.case.road = None
         if self.case.y < self.plateau.nbr_cell_y-1:
             if self.plateau.map[self.case.x][self.case.y+1].road:
@@ -35,6 +35,7 @@ class Route():
         if self.case.x > 0:
             if self.plateau.map[self.case.x-1][self.case.y].road:
                 self.plateau.map[self.case.x-1][self.case.y].road.draw()
+        del self
     
 
 
