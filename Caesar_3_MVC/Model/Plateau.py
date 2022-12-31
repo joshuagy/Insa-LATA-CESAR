@@ -12,7 +12,7 @@ import sys
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = []):
+    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], buildings = []):
         
         self.screen = screen
         self.clock = clock
@@ -29,9 +29,12 @@ class Plateau():
         self.nbr_cell_y = nbr_cell_y
 
         self.surface_cells = pygame.Surface((nbr_cell_x * cell_size * 2, nbr_cell_y * cell_size  + 2 * cell_size )).convert_alpha()
+
+        #Load de tous les spirtes
         self.image = self.load_images()
         self.image_route = self.load_routes_images()
         self.image_walkers = self.load_walkers_images()
+        self.image_buildings = self.load_buildings_images()
 
         self.zoom__=Zoom(self.image)
 
@@ -46,6 +49,9 @@ class Plateau():
 
         #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
         self.collision_matrix = self.create_collision_matrix()
+
+        #Tableau contenant l'intégralité des bâtiments présent sur la map
+        self.buildings = buildings
 
         #Define the position of the button on the full panel button who won't change position after
         overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
@@ -291,7 +297,11 @@ class Plateau():
         walker_sprite |= {"Citizen" : new_dict}
 
         return walker_sprite
+    def load_buildings_images(self):
+        default = pygame.image.load("image/Buildings/Housng1a_00001.png").convert_alpha()
+        default = pygame.transform.scale(default, (default.get_width() / 2, default.get_height() / 2))
 
+        return {"default" : default}
     
     def update(self):
         self.camera.update()
@@ -325,6 +335,14 @@ class Plateau():
             self.screen.blit(self.image_walkers[e.type][e.direction][int(e.index_sprite)], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                          render_pos[1] - (self.image_walkers[e.type][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
+        
+        # DRAW BUILDINGS
+        for b in self.buildings:
+            render_pos =  self.map[b.case.x][b.case.y].render_pos
+            self.screen.blit(self.image_buildings["default"], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                         render_pos[1] - (self.image_buildings["default"].get_height() - cell_size) + self.camera.vect.y))
+                                         
         self.menu_map.draw_menu(self.screen)
 
         top_menu_axis_x = 0

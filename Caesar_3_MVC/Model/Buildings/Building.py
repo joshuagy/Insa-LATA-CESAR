@@ -1,13 +1,21 @@
 from types import NoneType
 
 class Building():
-    def __init__(self, position, case, size, desc, connectedToRoad, fireRisk, collapseRisk, status=False):
+    def __init__(self, position, case, plateau, size, connectedToRoad, fireRisk, collapseRisk, desc = "Default", status=False):
         self.position = position
         self.size = size
         self.desc = desc
         self.connectedToRoad = connectedToRoad
         self.status = status
         self.case = case
+        self.case.building = self
+        self.plateau = plateau
+        self.plateau.buildings.append(self)
+    
+    def delete(self):
+        self.case.building = None
+        self.plateau.buildings.remove(self)
+        del self
 
     def get_position(self):
         return self.position
@@ -56,6 +64,3 @@ class Building():
 
     def getCase(self):
         return self.case
-
-    def delete():
-        pass

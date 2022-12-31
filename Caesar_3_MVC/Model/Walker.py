@@ -45,6 +45,12 @@ class Walker:
         self.ttw = ttwmax
 
         self.move_timer = pygame.time.get_ticks()
+
+
+    def delete(self) :
+        self.plateau.entities.remove(self)
+        del self
+
     
     def random_path(self):
         """
