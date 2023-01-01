@@ -6,6 +6,7 @@ from EventManager.allEvent import StateChangeEvent, TickEvent, QuitEvent
 from Model.Plateau import Plateau, cell_size
 from Model.Route import Route
 from Model.Buildings.Building import *
+from Model.Buildings.House import *
 
 class MouseInputHandler:
     """
@@ -251,4 +252,5 @@ class MouseInputHandler:
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
                     if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].building:
-                        Building((xi, yi), self.model.actualGame.map[xi][yi], self.model.actualGame, 1, False, 0, 0)
+                        HousingSpot.placeAHousingSpot(self.model.actualGame.map[xi][yi], self.model.actualGame)
+                        "Building((xi, yi), self.model.actualGame.map[xi][yi], self.model.actualGame, 1, False, 0, 0)"

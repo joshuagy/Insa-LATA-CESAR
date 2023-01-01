@@ -13,9 +13,13 @@ class Case():
         else:
             self.collision = 0 
         self.feature = feature
-
         self.road = road
         self.building = building
+
+    def setFeature(self,newFeature):
+        self.feature=newFeature
+    def getFeature(self):
+        return self.feature
 
 
     def getRelative(case, dx, dy, plateau):

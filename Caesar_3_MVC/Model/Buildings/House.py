@@ -1,7 +1,7 @@
 import pygame
-from Building import Building
-from Plateau import Plateau
-from Case import Case
+from Model.Buildings.Building import Building
+from Model.Plateau import Plateau
+from Model.Case import Case
 
 class House(Building):
 
@@ -95,8 +95,7 @@ class HousingSpot() :
 
     cityHousingSpots = []
 
-    def __init__(self, position, case, connectedToRoad) :
-        self.position = position
+    def __init__(self, case, connectedToRoad) :
         self.case = case
         self.connectedToRoad = connectedToRoad
 
@@ -112,20 +111,18 @@ class HousingSpot() :
     def getCase(self):
         return self.case
 
-    def getPosition(self):
-        return self.position
-
-    def placeAHousingSpot(coord, lePlateau):
-        listeCase = lePlateau.listeCase
-        p=30*coord(1)+coord(0) #Ajouter '-31' si on veut considérer la première ligne/colonne comme ayant l'indice 1.
-        if(not(listeCase[p].feature=="") or not(listeCase[p].isConnectedToRoad)):
+    def placeAHousingSpot(laCase,lePlateau):
+        "listeCase = lePlateau.listeCase"
+        "p=30*coord(1)+coord(0) #Ajouter '-31' si on veut considérer la première ligne/colonne comme ayant l'indice 1."
+        if not(laCase.building==None) :
                 return 0
         else :
-                listeCase[p].setFeature("HousingSpot")
-                listeCase[p].setSprite("Housng1a_00045.png")
+                laCase.setFeature("HousingSpot")
+                #laCase.setSprite("Housng1a_00045.png")
                 #listeCase[p].setIsAvailable(False)
-                newHousingSpot = HousingSpot(coord,listeCase[p],True)
+                newHousingSpot = HousingSpot(laCase,True)
                 HousingSpot.cityHousingSpots.append(newHousingSpot)
+                lePlateau.buildings.append(newHousingSpot)
                 
     def removeAHousingSpot(aHousingSpot) :
         laCase = aHousingSpot.case

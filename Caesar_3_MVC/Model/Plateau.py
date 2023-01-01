@@ -297,12 +297,20 @@ class Plateau():
         walker_sprite |= {"Citizen" : new_dict}
 
         return walker_sprite
-    def load_buildings_images(self):
-        default = pygame.image.load("image/Buildings/Housng1a_00001.png").convert_alpha()
-        default = pygame.transform.scale(default, (default.get_width() / 2, default.get_height() / 2))
 
-        return {"default" : default}
+    def load_buildings_images(self):
+        buildingsSprite = {}
+        hss = pygame.image.load("image/Buildings/Housng1a_00045.png").convert_alpha()
+        hss = pygame.transform.scale(hss, (hss.get_width() / 2, hss.get_height() / 2))
+
+        shs = pygame.image.load("image/Buildings/Housng1a_00001.png").convert_alpha()
+        shs = pygame.transform.scale(shs, (shs.get_width() / 2, shs.get_height() / 2))
+
+        buildingsSprite |= {"HousingSpot" : hss}
+        buildingsSprite |= {"SmallHouse" : shs}
     
+        return buildingsSprite
+
     def update(self):
         self.camera.update()
         #Update de la position des walkers
@@ -336,13 +344,24 @@ class Plateau():
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                          render_pos[1] - (self.image_walkers[e.type][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
         
+
         # DRAW BUILDINGS
         for b in self.buildings:
-            render_pos =  self.map[b.case.x][b.case.y].render_pos
-            self.screen.blit(self.image_buildings["default"], 
+            render_pos = self.map[b.case.x][b.case.y].render_pos
+            self.screen.blit(self.image_buildings["HousingSpot"], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (self.image_buildings["default"].get_height() - cell_size) + self.camera.vect.y))
-                                         
+                                         render_pos[1] - (self.image_buildings["HousingSpot"].get_height() - cell_size) + self.camera.vect.y))
+
+
+        """
+        # DRAW BUILDINGS
+        for b in self.buildings:
+            render_pos = self.map[b.case.x][b.case.y].render_pos
+            self.screen.blit(self.image_buildings["HousingSpot"], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                         render_pos[1] - (self.image_buildings["HousingSpot"].get_height() - cell_size) + self.camera.vect.y))
+        """
+
         self.menu_map.draw_menu(self.screen)
 
         top_menu_axis_x = 0
