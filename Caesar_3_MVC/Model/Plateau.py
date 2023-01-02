@@ -39,6 +39,12 @@ class Plateau():
         self.listeCase = listeCase
 
         self.map = self.default_map()
+        self.previewMap = self.map
+        # Noning the list
+        for x in range(self.previewMap):
+            for y in range(self.previewMap[0]):
+                self.previewMap[x][y] = None
+
         self.default_road()
 
         #Tableau contenant l'intégralité des walker présents sur la map
