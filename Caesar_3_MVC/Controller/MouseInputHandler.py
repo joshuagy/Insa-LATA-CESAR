@@ -118,8 +118,14 @@ class MouseInputHandler:
                         self.model.actualGame.map[xi][yi].collision = 0
                         if self.model.actualGame.map[xi][yi].road :
                             self.model.actualGame.map[xi][yi].road.delete()
+                            # Informe toutes les cases adjacentes qu'elles ne sont plus connectées à la route 
+                            # (Sauf bien sûr si elles sont connectées à une autre route)
+                            for xi in range(grid_x1, grid_x2+1):
+                                for yi in range(grid_y1, grid_y2-1, -1):
+                                    self.model.actualGame.map[xi][yi].changeConnectedToRoad(-1)
                         if self.model.actualGame.map[xi][yi].building :
                             self.model.actualGame.map[xi][yi].building.delete()
+                            
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
         
                 
@@ -198,6 +204,11 @@ class MouseInputHandler:
                     for yi in range(grid_y1, grid_y2-1, -1):
                         if self.model.actualGame.map[grid_x1][yi].road == None:
                             Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
+
+            #Connecte les cases adjacentes à la route :
+            for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2-1, -1):
+                    self.model.actualGame.map[xi][yi].changeConnectedToRoad(1)
                             
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
 

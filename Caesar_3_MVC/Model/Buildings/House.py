@@ -6,6 +6,7 @@ from Model.Case import Case
 class House(Building):
 
     cityHousesList = []
+    nbHabTotal = 0
 
     def __init__(self, position, case, entertainLvl, nbHabMax, nbHab, size=(1,1), desc="Small Tent", connectedToRoad=0, fireRisk=0, collapseRisk=0, religiousAccess =0, status=False):
         super().__init__(position, case, size, desc, connectedToRoad, status, fireRisk, collapseRisk)
@@ -111,25 +112,29 @@ class HousingSpot() :
     def getCase(self):
         return self.case
 
-    def placeAHousingSpot(laCase,lePlateau):
-        "listeCase = lePlateau.listeCase"
-        "p=30*coord(1)+coord(0) #Ajouter '-31' si on veut considérer la première ligne/colonne comme ayant l'indice 1."
+    def delete(self):
+        self.case.building = None
+        self.plateau.buildings.remove(self)
+        del self
+
+    def placeAHousingSpot(laCase, lePlateau):
         if not(laCase.building==None) :
                 return 0
-        else :
-                laCase.setFeature("HousingSpot")
-                #laCase.setSprite("Housng1a_00045.png")
-                #listeCase[p].setIsAvailable(False)
-                newHousingSpot = HousingSpot(laCase,True)
-                HousingSpot.cityHousingSpots.append(newHousingSpot)
-                lePlateau.buildings.append(newHousingSpot)
+        for x in range (laCase.x-2,laCase.x+2,1) :
+            for y in range (laCase.y-2,laCase.y+2,1) :
+                if lePlateau.map[x][y].getConnectedToRoad() > 0 :
+                    
+                    laCase.setFeature("HousingSpot")
+                    newHousingSpot = HousingSpot(laCase,True)
+                    HousingSpot.cityHousingSpots.append(newHousingSpot)
+                    lePlateau.buildings.append(newHousingSpot)
                 
-    def removeAHousingSpot(aHousingSpot) :
+    def removeAHousingSpot(aHousingSpot, lePlateau) :
         laCase = aHousingSpot.case
-        laCase.setSprite("Land1a_00001.png")
-        #laCase.setIsAvailable(True)
+        laCase.setBuilding(None)
         laCase.setFeature("")
         HousingSpot.cityHousingSpots.remove(aHousingSpot)
+        lePlateau.buildings.append(aHousingSpot)
 
 
 
