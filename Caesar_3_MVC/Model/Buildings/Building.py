@@ -1,11 +1,10 @@
 from types import NoneType
 
 class Building():
-    def __init__(self, case, plateau, size, desc, connectedToRoad, fireRisk, collapseRisk, status=False):
+    def __init__(self, case, plateau, size, desc):
         self.size = size
         self.desc = desc
-        self.connectedToRoad = connectedToRoad
-        self.status = status
+        self.connectedToRoad = 0
         self.case = case
         self.case.building = self
         self.plateau = plateau
