@@ -1,11 +1,12 @@
 import pygame
-from Building import Building
-from Plateau import Plateau
-from Case import Case
+from Model.Buildings.Building import Building
+from Model.Plateau import Plateau
+from Model.Case import Case
 
 class House(Building):
 
     cityHousesList = []
+    nbHabTotal = 0
 
     def __init__(self, position, case, entertainLvl, nbHabMax, nbHab, size=(1,1), desc="Small Tent", connectedToRoad=0, fireRisk=0, collapseRisk=0, religiousAccess =0, status=False):
         super().__init__(position, case, size, desc, connectedToRoad, status, fireRisk, collapseRisk)
@@ -14,6 +15,8 @@ class House(Building):
         self.nbHabMax = 5
         self.religiousAccess
         
+    def getDesc(self):
+        return self.desc
 
     def get_entertainLvl(self):
         return self.entertainLvl
@@ -95,10 +98,11 @@ class HousingSpot() :
 
     cityHousingSpots = []
 
-    def __init__(self, position, case, connectedToRoad) :
-        self.position = position
+    def __init__(self, case, plateau, connectedToRoad, desc="HousingSpot") :
         self.case = case
         self.connectedToRoad = connectedToRoad
+        self.desc = desc
+        plateau.buildings.append(self)
 
     def isConnectedToRoad(self):
         return self.connectedToRoad
@@ -112,27 +116,28 @@ class HousingSpot() :
     def getCase(self):
         return self.case
 
-    def getPosition(self):
-        return self.position
+    def delete(self):
+        self.case.building = None
+        self.plateau.buildings.remove(self)
+        del self
 
-    def placeAHousingSpot(coord, lePlateau):
-        listeCase = lePlateau.listeCase
-        p=30*coord(1)+coord(0) #Ajouter '-31' si on veut considérer la première ligne/colonne comme ayant l'indice 1.
-        if(not(listeCase[p].feature=="") or not(listeCase[p].isConnectedToRoad)):
+    def placeAHousingSpot(laCase, lePlateau):
+        if not(laCase.building==None) :
                 return 0
-        else :
-                listeCase[p].setFeature("HousingSpot")
-                listeCase[p].setSprite("Housng1a_00045.png")
-                #listeCase[p].setIsAvailable(False)
-                newHousingSpot = HousingSpot(coord,listeCase[p],True)
-                HousingSpot.cityHousingSpots.append(newHousingSpot)
+        for x in range (laCase.x-2,laCase.x+2,1) :
+            for y in range (laCase.y-2,laCase.y+2,1) :
+                if lePlateau.map[x][y].getConnectedToRoad() > 0 :
+                    
+                    laCase.setFeature("HousingSpot")
+                    newHousingSpot = HousingSpot(laCase,lePlateau,laCase.connectedToRoad)
+                    HousingSpot.cityHousingSpots.append(newHousingSpot)
                 
-    def removeAHousingSpot(aHousingSpot) :
+    def removeAHousingSpot(aHousingSpot, lePlateau) :
         laCase = aHousingSpot.case
-        laCase.setSprite("Land1a_00001.png")
-        #laCase.setIsAvailable(True)
+        laCase.setBuilding(None)
         laCase.setFeature("")
         HousingSpot.cityHousingSpots.remove(aHousingSpot)
+        lePlateau.buildings.remove(aHousingSpot)
 
 
 

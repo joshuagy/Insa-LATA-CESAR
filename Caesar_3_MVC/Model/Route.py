@@ -2,8 +2,14 @@ class Route():
     def __init__(self, case, plateau):
         self.case = case
         self.case.road = self
-
         self.plateau = plateau
+        for xi in range (self.case.x-1,self.case.x+1,1):
+            for yi in range (self.case.y-1,self.case.y+1,1):
+                self.plateau.map[xi][yi].changeConnectedToRoad(1)
+
+        
+
+    
         self.draw()
 
         if self.case.y < self.plateau.nbr_cell_y-1:

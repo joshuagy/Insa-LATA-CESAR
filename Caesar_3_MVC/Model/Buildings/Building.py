@@ -1,7 +1,7 @@
 from types import NoneType
 
 class Building():
-    def __init__(self, position, case, plateau, size, connectedToRoad, fireRisk, collapseRisk, desc = "Default", status=False):
+    def __init__(self, position, case, plateau, size, connectedToRoad, fireRisk, collapseRisk, desc = "default", status=False):
         self.position = position
         self.size = size
         self.desc = desc

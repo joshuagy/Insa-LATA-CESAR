@@ -13,9 +13,22 @@ class Case():
         else:
             self.collision = 0 
         self.feature = feature
-
         self.road = road
         self.building = building
+        self.connectedToRoad = connectedToRoad
+
+    def setFeature(self,newFeature):
+        self.feature=newFeature
+    def getFeature(self):
+        return self.feature
+    def setBuilding(self,newBuilding):
+        self.building=newBuilding
+    def getBuilding(self):
+        return self.building
+    def getConnectedToRoad(self):
+        return self.connectedToRoad
+    def changeConnectedToRoad(self, number):
+        self.connectedToRoad=self.connectedToRoad+number
 
 
     def getRelative(case, dx, dy, plateau):
