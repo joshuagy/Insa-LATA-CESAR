@@ -1,7 +1,7 @@
 import pygame
 from Model.Menu import Menu 
-from Model.Plateau import *
-from Model.Walker import Walker
+from Model.Plateau import Plateau
+from Model.Walker import *
 from EventManager.EventManager import EventManager
 from EventManager.allEvent import *
 from Model.constants import *
@@ -87,5 +87,5 @@ class GraphicalView(object):
         self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
         self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), 40 * cell_size * 2, 40 * cell_size + 2 * cell_size)
 
-        #Création de 5 walkers au centre de la map
-        for _ in range(5): Walker(self.model.actualGame.map[20][20], self.model.actualGame)
+        #Création de walkers
+        for _ in range(1) : Prefet(self.model.actualGame.map[19][20], self.model.actualGame)

@@ -5,13 +5,14 @@ from Model.Case import Case
 from View.Menu_map import Menu_map
 from Model.Walker import Walker
 from Model.control_panel import *
+from Model.constants import *
+from Model.Route import Route
 import sys
 
-cell_size = 30
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = []):
+    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], buildings = []):
         
         self.screen = screen
         self.clock = clock
@@ -28,7 +29,12 @@ class Plateau():
         self.nbr_cell_y = nbr_cell_y
 
         self.surface_cells = pygame.Surface((nbr_cell_x * cell_size * 2, nbr_cell_y * cell_size  + 2 * cell_size )).convert_alpha()
-        self.image = self.load_images()
+
+        #Load de tous les spirtes
+        self.image = self.load_cases_images()
+        self.image_route = self.load_routes_images()
+        self.image_walkers = self.load_walkers_images()
+        self.image_buildings = self.load_buildings_images()
 
         self.zoom__=Zoom(self.image)
 
@@ -36,16 +42,35 @@ class Plateau():
         self.listeCase = listeCase
 
         self.map = self.default_map()
+        self.previewMap = self.default_map()
+        # Noning the list
+        for x in range(len(self.previewMap)):
+            for y in range(len(self.previewMap[0])):
+                self.previewMap[x][y] = None
+
+        self.default_road()
 
         #Tableau contenant l'intégralité des walker présents sur la map
         self.entities = entities
 
-        #Tableau contenant toutes les cases occupées par les walkers
-        self.walkers = [[None for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)] 
-
         #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
         self.collision_matrix = self.create_collision_matrix()
 
+        #Tableau contenant l'intégralité des bâtiments présent sur la map
+        self.buildings = buildings
+
+        #Define the position of the button on the full panel button who won't change position after
+        overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
+        hide_control_panel_button.change_pos(self.width-hide_control_panel_button.dim[0]-4,24+5)
+        advisors_button.change_pos(self.width-155,179)
+        empire_map_button.change_pos(self.width-78,179)
+        assignement_button.change_pos(self.width-155,208)
+        compass_button.change_pos(self.width-116,208)
+        arrow_rotate_counterclockwise.change_pos(self.width-78,208)
+        arrow_rotate_clockwise.change_pos(self.width-39,208)                
+        undo_button.change_pos(self.width-149,445)
+        message_view_button.change_pos(self.width-99,445)
+        see_recent_troubles_button.change_pos(self.width-49,445)
 
     def default_map(self):
 
@@ -58,9 +83,11 @@ class Plateau():
                 map[cell_x].append(cells_to_map)
                 render_pos = cells_to_map.render_pos
                 self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
-
-
         return map
+    def default_road(self):
+        for j in range(19, 20):
+            for i in range(self.nbr_cell_y):
+                Route(self.map[j][i], self)
         
     def cells_to_map(self, cell_x, cell_y):
 
@@ -73,7 +100,12 @@ class Plateau():
 
         isometric_cell = [self.cartesian_to_isometric(x, y) for x, y in rectangle_cell]
 
-        return Case(cell_x, cell_y, rectangle_cell, isometric_cell, [min([x for x, y in isometric_cell]), min([y for x, y in isometric_cell])], self.choose_image())        
+        sprite=self.choose_image()
+        nouvelle_case = Case(cell_x, cell_y, rectangle_cell, isometric_cell, [min([x for x, y in isometric_cell]), min([y for x, y in isometric_cell])], sprite = sprite)
+        if sprite.startswith("path"):
+            nouvelle_case.sprite = "land1"
+            Route(nouvelle_case, self)
+        return nouvelle_case
         
     def cartesian_to_isometric(self, x, y):
             return x - y,(x + y)/2
@@ -101,11 +133,11 @@ class Plateau():
             elif (counter>=121 and counter<=129)or(counter>=161 and counter<=168)or(counter>=81 and counter<=89) or (counter>=241 and counter<=246)or(counter>=321 and counter<=324) or (counter>=401 and counter<=404)or (counter>=521 and counter<=522)or (counter>=601 and counter<=602)or (counter in range(62,81,1))or (counter in range(144,161,1))or (counter in range(226,241,1))or (counter in range(308,321,1))or (counter in range(390,401,1))or (counter==1440)or (counter in range(1395,1401,1))or (counter in range(1355,1361,1))or (counter in range(1315,1321,1))or (counter in range(1276,1281,1))or (counter==1240):
                 image = "tree1"
             elif (counter >= 761 and counter<=800):
-                image = "path1"
+                image = "land1" # route
             elif (counter == 721):
-                image = "path3"
+                image = "sign2"
             elif (counter == 760):
-                image = "path2"
+                image = "sign1"
             elif (counter>=14 and counter<=19) or(counter>=55 and counter<=60)or(counter>=96 and counter<=101)or(counter>=137 and counter<=142)or(counter>=178 and counter<=183)or(counter>=219 and counter<=224)or(counter>=260 and counter<=265)or(counter>=301 and counter<=306)or(counter>=342 and counter<=347)or(counter>=383 and counter<=388)or(counter>=424 and counter<=429)or(counter>=465 and counter<=480)or(counter>=506 and counter<=520)or(counter>=547 and counter<=560)or(counter>=588 and counter<=600)or(counter>=629 and counter<=640)or(counter<=1573 and counter>=1569)or(counter<=1533 and counter>=1529)or(counter<=1493 and counter>=1489)or(counter<=1453 and counter>=1449)or(counter<=1413 and counter>=1409)or(counter<=1373 and counter>=1369)or(counter<=1333 and counter>=1329)or(counter<=1293 and counter>=1281)or(counter<=1253 and counter>=1241)or(counter<=1213 and counter>=1201)or(counter<=1173 and counter>=1161):
                 image = "water1"
             elif (counter==20) or (counter==61)or(counter==102)or(counter==143)or(counter==184)or(counter==225)or(counter==266)or(counter==307)or(counter==348)or(counter==389)or(counter>=430 and counter<=440 )or(counter<=1133 and counter>=1121):
@@ -131,7 +163,7 @@ class Plateau():
             counter+=1
         return image
 
-    def load_images(self):
+    def load_cases_images(self):
 
 
         land1 = pygame.image.load("image/C3/Land1a_00116.png").convert_alpha()
@@ -158,13 +190,10 @@ class Plateau():
         rock3 = pygame.transform.scale(rock3, (rock3.get_width() / 2, rock3.get_height() / 2))
 
 
-
-        path1 = pygame.image.load("image/C3/Land2a_00095.png").convert_alpha()
-        path1 = pygame.transform.scale(path1, (path1.get_width() / 2, path1.get_height() / 2))
-        path2 = pygame.image.load("image/C3/land3a_00089.png").convert_alpha()
-        path2 = pygame.transform.scale(path2, (path2.get_width() / 2, path2.get_height() / 2))
-        path3 = pygame.image.load("image/C3/land3a_00087.png").convert_alpha()
-        path3 = pygame.transform.scale(path3, (path3.get_width() / 2, path3.get_height() / 2))
+        sign1 = pygame.image.load("image/C3/land3a_00089.png").convert_alpha()
+        sign1 = pygame.transform.scale(sign1, (sign1.get_width() / 2, sign1.get_height() / 2))
+        sign2 = pygame.image.load("image/C3/land3a_00087.png").convert_alpha()
+        sign2 = pygame.transform.scale(sign2, (sign2.get_width() / 2, sign2.get_height() / 2))
 
 
         water1 = pygame.image.load("image/C3/Land1a_00122.png").convert_alpha()
@@ -178,15 +207,68 @@ class Plateau():
         water5 = pygame.image.load("image/C3/Land1a_00154.png").convert_alpha()
         water5 = pygame.transform.scale(water5, (water5.get_width() / 2, water5.get_height() / 2))
 
+        red = pygame.image.load("image/C3/red.png").convert_alpha()
+        red = pygame.transform.scale(red, (red.get_width() / 2, red.get_height() / 2)) 
+
         return {"land1": land1,"land2": land2, "tree1": tree1,"tree2": tree2,
                 "tree3": tree3,"rock1": rock1,"rock2": rock2,"water1":water1,
-                "water2":water2,"water3":water3,"path1":path1,"path2":path2,
-                "path3":path3,"water4":water4,"water5":water5,"rock3":rock3
+                "water2":water2,"water3":water3,"sign1":sign1,"sign2":sign2,
+                "water4":water4,"water5":water5,"rock3":rock3, "red":red
                 }
+    def load_routes_images(self):
+        
+        west = load_image("image/Routes/Land2a_00104.png")
+        east = load_image("image/Routes/Land2a_00102.png")
+        east_west = load_image("image/Routes/Land2a_00094.png")
+        south = load_image("image/Routes/Land2a_00101.png")
+        south_west = load_image("image/Routes/Land2a_00100.png")
+        south_east = load_image("image/Routes/Land2a_00097.png")
+        south_east_west = load_image("image/Routes/Land2a_00109.png")
+        north = load_image("image/Routes/Land2a_00105.png")
+        north_west = load_image("image/Routes/Land2a_00099.png")
+        north_south = load_image("image/Routes/Land2a_00095.png")
+        north_south_west = load_image("image/Routes/Land2a_00108.png")
+        north_east = load_image("image/Routes/Land2a_00098.png")
+        north_east_west = load_image("image/Routes/Land2a_00107.png")
+        north_south_east = load_image("image/Routes/Land2a_00106.png")
+        north_south_east_west = load_image("image/Routes/Land2a_00110.png")
+
+        return {0: north, 1: west, 2: south, 3: south_west, 4: east, 5: east_west, 6: south_east,
+                7: south_east_west, 8: north, 9: north_west, 10: north_south, 11: north_south_west,
+                12: north_east, 13: north_east_west, 14: north_south_east, 15: north_south_east_west}
+    def load_walkers_images(self):
+        """walker_sprite[Type_Walker(String)][Action(Int)][Direction(Int)]""" #Directions : 1 -> North  2 -> East   3 -> South  4 -> West
+
+        #====== Citizens ======#
+        citizen = {1 : create_liste_sprites_walker("Citizen", "Walk", 12)}
+
+        #====== Prefet ======#
+        prefet = {1 : create_liste_sprites_walker("Prefet", "Walk", 12), 2 : create_liste_sprites_walker("Prefet", "FarmerWalk", 12), 3 : create_liste_sprites_walker("Prefet", "Throw", 6)}
+
+        walker_sprite = {"Citizen" : citizen, "Prefet" : prefet}
+
+        return walker_sprite
+
+    def load_buildings_images(self):
+        buildingsSprite = {}
+        hss = pygame.image.load("image/Buildings/Housng1a_00045.png").convert_alpha()
+        hss = pygame.transform.scale(hss, (hss.get_width() / 2, hss.get_height() / 2))
+
+        shs = pygame.image.load("image/Buildings/Housng1a_00001.png").convert_alpha()
+        shs = pygame.transform.scale(shs, (shs.get_width() / 2, shs.get_height() / 2))
+
+        ps = pygame.image.load("image/Buildings/Security_00001.png").convert_alpha()
+        ps = pygame.transform.scale(ps, (ps.get_width() / 2, ps.get_height() / 2))
+
+        buildingsSprite["HousingSpot"] = hss
+        buildingsSprite["SmallHouse"] = shs
+        buildingsSprite["Prefecture"] = ps
+    
+        return buildingsSprite
 
     def update(self):
         self.camera.update()
-        #Update de la position des walker
+        #Update de la position des walkers
         for e in self.entities: e.update()
 
 
@@ -194,22 +276,53 @@ class Plateau():
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
        
+       # DRAW CELLS
         for cell_x in range(self.nbr_cell_y):
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
-                image = self.map[cell_x][cell_y].sprite
-                if image != "land2":
 
+                if self.map[cell_x][cell_y].road == None:
+                    image = self.map[cell_x][cell_y].sprite
                     self.screen.blit(self.image[image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                     render_pos[1] - (self.image[image].get_height() - cell_size) + self.camera.vect.y))
-                    
-                    #draw walkers à leur position d'origine
-                    walker = self.walkers[cell_x][cell_y]
-                    if walker is not None:
-                        self.screen.blit(walker.image, 
+                                    render_pos[1] - (self.image[image].get_height() - cell_size) + self.camera.vect.y))
+                # DRAW ROADS
+                else :
+                    image = self.map[cell_x][cell_y].road.sprite
+                    self.screen.blit(self.image_route[image],
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                    render_pos[1] - (self.image_route[image].get_height() - cell_size) + self.camera.vect.y))
+                
+                # DRAW PREVIEW
+                if self.previewMap[cell_x][cell_y] != None:
+                    self.screen.blit(self.image["red"],
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                    render_pos[1] - (self.image["red"].get_height() - cell_size) + self.camera.vect.y))
+
+        # DRAW WALKERS
+        for e in self.entities:
+            render_pos =  self.map[e.case.x][e.case.y].render_pos
+            self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (walker.image.get_height() - cell_size) + self.camera.vect.y))
+                                         render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
+        
+        """
+        # DRAW BUILDINGS
+        for b in self.buildings:
+            render_pos = self.map[b.case.x][b.case.y].render_pos
+            self.screen.blit(self.image_buildings[b], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                         render_pos[1] - (self.image_buildings[b].get_height() - cell_size) + self.camera.vect.y))
+
+
+        """
+        # DRAW BUILDINGS
+        for b in self.buildings:
+            render_pos = self.map[b.case.x][b.case.y].render_pos
+            self.screen.blit(self.image_buildings[b.desc], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                         render_pos[1] - (self.image_buildings[b.desc].get_height() - cell_size) + self.camera.vect.y))
+        
 
         self.menu_map.draw_menu(self.screen)
 
@@ -242,53 +355,148 @@ class Plateau():
             
             self.screen.blit(small_gap_menu.img_scaled, (self.width-small_gap_menu.dim[0], 24))
             self.screen.blit(deco_bas_small_menu.img_scaled, (self.width-42, 24+450))
-            self.screen.blit(display_control_panel_button.img_scaled, (self.width-display_control_panel_button.dim[0]-5, 24+4))
-            self.screen.blit(build_housing.img_scaled,(self.width-build_housing.dim[0]-1,24+32))
-            self.screen.blit(clear_land.img_scaled,(self.width-clear_land.dim[0]-1,24+67))
-            self.screen.blit(build_roads.img_scaled,(self.width-build_roads.dim[0]-1,24+102))
-            self.screen.blit(water_related_structures.img_scaled,(self.width-water_related_structures.dim[0]-1,24+137))
-            self.screen.blit(health_related_structures.img_scaled,(self.width-health_related_structures.dim[0]-1,24+172))
-            self.screen.blit(religious_structures.img_scaled,(self.width-religious_structures.dim[0]-1,24+207))
-            self.screen.blit(education_structures.img_scaled,(self.width-education_structures.dim[0]-1,24+242))
-            self.screen.blit(entertainment_structures.img_scaled,(self.width-entertainment_structures.dim[0]-1,24+277))
-            self.screen.blit(administration_or_government_structures.img_scaled,(self.width-administration_or_government_structures.dim[0]-1,24+312))
-            self.screen.blit(engineering_structures.img_scaled,(self.width-engineering_structures.dim[0]-1,24+347))
-            self.screen.blit(security_structures.img_scaled,(self.width-security_structures.dim[0]-1,24+382))
-            self.screen.blit(industrial_structures.img_scaled,(self.width-industrial_structures.dim[0]-1,24+417))
+            
+            display_control_panel_button.update()
+            display_control_panel_button.change_pos(self.width-display_control_panel_button.dim[0]-5,28)
+            display_control_panel_button.draw(self.screen)
+
+            build_housing_button.update()
+            build_housing_button.change_pos(self.width-build_housing_button.dim[0]-1,24+32)
+            build_housing_button.draw(self.screen)
+
+            clear_land_button.update()
+            clear_land_button.change_pos(self.width-clear_land_button.dim[0]-1,24+67)
+            clear_land_button.draw(self.screen)
+
+            build_roads_button.update()
+            build_roads_button.change_pos(self.width-build_roads_button.dim[0]-1,24+102)
+            build_roads_button.draw(self.screen)
+            
+
+            water_related_structures.update()
+            water_related_structures.change_pos(self.width-water_related_structures.dim[0]-1,24+137)
+            water_related_structures.draw(self.screen)
+           
+            health_related_structures.update()
+            health_related_structures.change_pos(self.width-health_related_structures.dim[0]-1,24+172)
+            health_related_structures.draw(self.screen)
+           
+            religious_structures.update()
+            religious_structures.change_pos(self.width-religious_structures.dim[0]-1,24+207)
+            religious_structures.draw(self.screen)
+            
+            education_structures.update()
+            education_structures.change_pos(self.width-education_structures.dim[0]-1,24+242)
+            education_structures.draw(self.screen)
+            
+            entertainment_structures.update()
+            entertainment_structures.change_pos(self.width-entertainment_structures.dim[0]-1,24+277)
+            entertainment_structures.draw(self.screen)
+            
+            administration_or_government_structures.update()
+            administration_or_government_structures.change_pos(self.width-administration_or_government_structures.dim[0]-1,24+312)
+            administration_or_government_structures.draw(self.screen)
+            
+            engineering_structures.update()
+            engineering_structures.change_pos(self.width-engineering_structures.dim[0]-1,24+347)
+            engineering_structures.draw(self.screen)
+            
+            security_structures.update()
+            security_structures.change_pos(self.width-security_structures.dim[0]-1,24+382)
+            security_structures.draw(self.screen)
+            
+            industrial_structures.update()
+            industrial_structures.change_pos(self.width-industrial_structures.dim[0]-1,24+417)
+            industrial_structures.draw(self.screen)
         
+                    
         if state_control_panel=="full":
 
             self.screen.blit(big_gap_menu.img_scaled,(self.width-big_gap_menu.dim[0],24))
             self.screen.blit(big_gap_menu.img_scaled,(self.width-big_gap_menu.dim[0],24+big_gap_menu.dim[1])) #usefull to have a white line cover all of the right menu, could be replaced by a white rectangle maybe
             
-            self.screen.blit(overlays_button.img_scaled,(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27))
-            self.screen.blit(hide_control_panel_button.img_scaled,(self.width-hide_control_panel_button.dim[0]-4,24+5))
-            
-            self.screen.blit(advisors.img_scaled,(self.width-155,179))
-            self.screen.blit(empire_map.img_scaled,(self.width-78,179))
+            overlays_button.update()
+            overlays_button.draw(self.screen)
 
-            self.screen.blit(assignement_scroll.img_scaled,(self.width-155,208))
-            self.screen.blit(compass.img_scaled,(self.width-116,208))
-            self.screen.blit(arrow_rotate_counterclockwise.img_scaled,(self.width-78,208))
-            self.screen.blit(arrow_rotate_clockwise.img_scaled,(self.width-39,208))
+            hide_control_panel_button.update()
+            hide_control_panel_button.draw(self.screen)
+            
+            advisors_button.update()
+            advisors_button.draw(self.screen)
+
+            empire_map_button.update()
+            empire_map_button.draw(self.screen)
+
+            assignement_button.update()
+            assignement_button.draw(self.screen)
+            
+            compass_button.update()
+            compass_button.draw(self.screen)
+
+            arrow_rotate_counterclockwise.update()
+            arrow_rotate_counterclockwise.draw(self.screen)
+           
+            arrow_rotate_clockwise.update()
+            arrow_rotate_clockwise.draw(self.screen)
 
             self.screen.blit(deco_milieu_menu_default.img_scaled,(self.width-deco_milieu_menu_default.dim[0]-7,239))
 
-            self.screen.blit(build_housing.img_scaled,(self.width-149,301))
-            self.screen.blit(clear_land.img_scaled,(self.width-99,301))
-            self.screen.blit(build_roads.img_scaled,(self.width-49,301))
-            self.screen.blit(water_related_structures.img_scaled,(self.width-149,337))
-            self.screen.blit(health_related_structures.img_scaled,(self.width-99,337))
-            self.screen.blit(religious_structures.img_scaled,(self.width-49,337))
-            self.screen.blit(education_structures.img_scaled,(self.width-149,373))
-            self.screen.blit(entertainment_structures.img_scaled,(self.width-99,373))
-            self.screen.blit(administration_or_government_structures.img_scaled,(self.width-49,373))
-            self.screen.blit(engineering_structures.img_scaled,(self.width-149,409))
-            self.screen.blit(security_structures.img_scaled,(self.width-99,409))
-            self.screen.blit(industrial_structures.img_scaled,(self.width-49,409))
-            self.screen.blit(undo_button.img_scaled,(self.width-149,445))
-            self.screen.blit(message_view_button.img_scaled,(self.width-99,445))
-            self.screen.blit(see_recent_troubles_button.img_scaled,(self.width-49,445))
+            build_housing_button.update()
+            build_housing_button.change_pos(self.width-149,301)
+            build_housing_button.draw(self.screen)
+
+            clear_land_button.update()
+            clear_land_button.change_pos(self.width-99,301)
+            clear_land_button.draw(self.screen)
+
+            build_roads_button.update()
+            build_roads_button.change_pos(self.width-49,301)
+            build_roads_button.draw(self.screen)
+
+            water_related_structures.update()
+            water_related_structures.change_pos(self.width-149,337)
+            water_related_structures.draw(self.screen)
+
+            health_related_structures.update()
+            health_related_structures.change_pos(self.width-99,337)
+            health_related_structures.draw(self.screen)
+
+            religious_structures.update()
+            religious_structures.change_pos(self.width-49,337)
+            religious_structures.draw(self.screen)
+            
+            education_structures.update()
+            education_structures.change_pos(self.width-149,373)
+            education_structures.draw(self.screen)
+
+            entertainment_structures.update()
+            entertainment_structures.change_pos(self.width-99,373)
+            entertainment_structures.draw(self.screen)
+            
+            administration_or_government_structures.update()
+            administration_or_government_structures.change_pos(self.width-49,373)
+            administration_or_government_structures.draw(self.screen)
+           
+            engineering_structures.update()
+            engineering_structures.change_pos(self.width-149,409)
+            engineering_structures.draw(self.screen)
+            
+            security_structures.update()
+            security_structures.change_pos(self.width-99,409)
+            security_structures.draw(self.screen)
+            
+            industrial_structures.update()
+            industrial_structures.change_pos(self.width-49,409)
+            industrial_structures.draw(self.screen)
+
+            undo_button.update()
+            undo_button.draw(self.screen)
+            
+            message_view_button.update()
+            message_view_button.draw(self.screen)
+            
+            see_recent_troubles_button.update()
+            see_recent_troubles_button.draw(self.screen)
 
             x=self.width-pnl_485.dim[0]-1
             y=24+big_gap_menu.dim[1]
@@ -335,6 +543,8 @@ class Plateau():
                     y+=pnl_488.dim[1] 
                 x+=pnl_488.dim[0]   
                 y=tmp_y                      
+            
+            
 
             x=tmp_x+pnl_521.dim[0]*9
             for i in range(0,11):                                            #Fin dernière colonne - version simplifiée (1 seul pnl)
@@ -343,17 +553,53 @@ class Plateau():
             self.screen.blit(pnl_527.img_scaled,(x,y))
             y+=pnl_527.dim[1]           
 
-            self.screen.blit(deco_bas_full_menu.img_scaled,(1119,682))
 
+            self.screen.blit(deco_bas_full_menu.img_scaled,(tmp_x,682))
 
-
+        #Display message of the button if mouse on it
+        overlays_button.show_tip(self.screen)
+        hide_control_panel_button.show_tip(self.screen)
+        display_control_panel_button.show_tip(self.screen)
+        advisors_button.show_tip(self.screen)
+        empire_map_button.show_tip(self.screen)
+        assignement_button.show_tip(self.screen)
+        compass_button.show_tip(self.screen)
+        arrow_rotate_counterclockwise.show_tip(self.screen)
+        arrow_rotate_clockwise.show_tip(self.screen)
+        build_housing_button.show_tip(self.screen)
+        clear_land_button.show_tip(self.screen)
+        build_roads_button.show_tip(self.screen)
+        water_related_structures.show_tip(self.screen)
+        health_related_structures.show_tip(self.screen)
+        religious_structures.show_tip(self.screen)
+        education_structures.show_tip(self.screen)
+        entertainment_structures.show_tip(self.screen)
+        administration_or_government_structures.show_tip(self.screen)
+        engineering_structures.show_tip(self.screen)
+        security_structures.show_tip(self.screen)
+        industrial_structures.show_tip(self.screen)
+        undo_button.show_tip(self.screen)
+        message_view_button.show_tip(self.screen)
+        see_recent_troubles_button.show_tip(self.screen)
+        
+        pygame.display.flip()
     
     def create_collision_matrix(self):
-        collision_matrix = [[1 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
+        collision_matrix = [[1000 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
 
         #La suite sera pour quand on aura un système de collision
-        """for x in range(self.nbr_cell_x):
+        for x in range(self.nbr_cell_x):
             for y in range(self.nbr_cell_y):
-                if self.plateau[x][y]["collision"]:
-                    collision_matrix[x][y] = 0"""
+                if self.map[x][y].collision:
+                    collision_matrix[y][x] = 0
+                if self.map[x][y].road:
+                    collision_matrix[y][x] = 1
         return collision_matrix
+
+def load_image(path):
+    image = pygame.image.load(path).convert_alpha()
+    return pygame.transform.scale(image, (image.get_width() / 2, image.get_height() / 2))
+
+def create_liste_sprites_walker(type, action, nb_frame):
+    direction = {1 : "UpRight", 2 : "DownRight", 3 : "DownLeft", 4 : "UpLeft"}
+    return {j : list(load_image(f"image/Walkers/{type}/{action}/{direction[j]}/{type}{action}{direction[j]}Frame{i}.png") for i in range(1, nb_frame+1)) for j in range(1, 5)}

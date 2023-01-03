@@ -1,6 +1,6 @@
 from types import NoneType
 
-#
+
 
 class Building():
     def __init__(self, position, size, desc, connectedToRoad, status=False):
