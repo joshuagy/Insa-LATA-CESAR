@@ -222,15 +222,9 @@ class MouseInputHandler:
                         for yi in range(grid_y1, grid_y2-1, -1):
                             if self.model.actualGame.map[grid_x1][yi].road == None:
                                 Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
-
-            #Connecte les cases adjacentes à la route :
-            """
-            for xa in range(xi-1,xi+1,1):
-                for ya in range(grid_y2-1, grid_y2+1, 1):
-                    self.model.actualGame.map[xa][ya].changeConnectedToRoad(1)
                             
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
-            """
+            
         #Building
 
         if build_housing_button.clicked and not build_housing_button.rect.collidepoint(event.pos):
@@ -285,8 +279,12 @@ class MouseInputHandler:
             #Building Construction :
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
-                    if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].building:
-                            HousingSpot.placeAHousingSpot(self.model.actualGame.map[xi][yi], self.model.actualGame)
+                    for xcr in range (xi-2,xi+2,1) :
+                        for ycr in range (yi-2,yi+2,1) :
+                            if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].building:
+                                if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
+                                    HousingSpot(self.model.actualGame.map[xi][yi],self.model.actualGame)
+
                 
         if security_structures.clicked and not security_structures.rect.collidepoint(event.pos):
         
@@ -340,8 +338,16 @@ class MouseInputHandler:
             #Building Construction :
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
-                    if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].building:
-                            Prefecture.buildAPrefecture(self.model.actualGame.map[xi][yi],self.model.actualGame)
+                    for xcr in range (xi-1,xi+1,1) :
+                        for ycr in range (yi-1,yi+1,1) :
+                            if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
+                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].building:
+                                    newPrefect = Prefet(self.model.actualGame.map[xi][yi],self.model.actualGame,"Prefectus")
+                                    Prefecture(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Prefecture",newPrefect,1)
+                                    
+                                    
+
+                                
 
     def handleMouseMouvement(self, event):
         """ Here we are going to manage the movement of the mouse"""

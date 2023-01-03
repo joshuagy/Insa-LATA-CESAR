@@ -58,6 +58,8 @@ class Plateau():
 
         #Tableau contenant l'intégralité des bâtiments présent sur la map
         self.buildings = buildings
+        self.cityHousesList = []
+        self.cityHousingSpotsList = []
 
         #Define the position of the button on the full panel button who won't change position after
         overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
