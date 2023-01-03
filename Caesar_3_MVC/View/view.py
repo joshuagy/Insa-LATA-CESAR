@@ -5,6 +5,7 @@ from Model.Walker import *
 from EventManager.EventManager import EventManager
 from EventManager.allEvent import *
 from Model.constants import *
+from Model.MiniMap import MiniMap
 
 class GraphicalView(object):
     """
@@ -67,7 +68,8 @@ class GraphicalView(object):
         """
         self.model.actualGame.update()
         self.model.actualGame.draw()
-
+        self.model.mini_map.draw_position(self.model.actualGame.screen, self.model.actualGame.camera,self.model.actualGame.map,self.model.actualGame.nbr_cell_x,self.model.actualGame.nbr_cell_y,self.model.actualGame.image)
+        pygame.display.flip()
 
     def initialize(self) -> None:
         """
@@ -83,6 +85,7 @@ class GraphicalView(object):
         self.isinitialized = True
         self.model.menu = Menu(self.screen)
         self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
+        self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), 40 * cell_size * 2, 40 * cell_size + 2 * cell_size)
 
         #Création de walkers
         for _ in range(1) : Prefet(self.model.actualGame.map[19][20], self.model.actualGame)

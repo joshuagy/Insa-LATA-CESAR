@@ -119,7 +119,7 @@ class Plateau():
             self.zoom__.set_zoom(X__)
             self.surface_cells.fill((0,0,0))
             self.surface_cells = pygame.Surface((self.nbr_cell_x * cell_size * 2, self.nbr_cell_y * cell_size + 2 * cell_size)).convert_alpha()
-            self.create_map=self.default_map()
+            self.map=self.default_map()
 
     def set_self_num(self):
         self.num=1
@@ -280,6 +280,7 @@ class Plateau():
         for cell_x in range(self.nbr_cell_y):
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
+
                 if self.map[cell_x][cell_y].road == None:
                     image = self.map[cell_x][cell_y].sprite
                     self.screen.blit(self.image[image],

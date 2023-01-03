@@ -39,7 +39,7 @@ class Walker:
         self.action = 1
         
         self.plateau.entities.append(self)  #On ajoute le walker à la liste des entitées présentes sur le plateau
-        
+
         self.index_sprite = 0
         
         self.direction = 1 # | 1 : North | 2 : East | 3 : South | 4 : West |
