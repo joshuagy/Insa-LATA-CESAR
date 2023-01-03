@@ -3,7 +3,7 @@ from Model.Zoom import Zoom
 from Model.Camera import Camera
 from Model.Case import Case
 from View.Menu_map import Menu_map
-from Model.Walker import Walker
+from Model.Walker import *
 from Model.control_panel import *
 from Model.constants import *
 from Model.Route import Route
@@ -306,16 +306,7 @@ class Plateau():
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                          render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
         
-        """
-        # DRAW BUILDINGS
-        for b in self.buildings:
-            render_pos = self.map[b.case.x][b.case.y].render_pos
-            self.screen.blit(self.image_buildings[b], 
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (self.image_buildings[b].get_height() - cell_size) + self.camera.vect.y))
-
-
-        """
+      
         # DRAW BUILDINGS
         for b in self.buildings:
             render_pos = self.map[b.case.x][b.case.y].render_pos

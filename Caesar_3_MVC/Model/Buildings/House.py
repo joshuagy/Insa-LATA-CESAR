@@ -37,12 +37,12 @@ class House(Building):
         self.nbHabmax = newnbHabmax
 
     def buildAHouse(aHousingSpot):
-        laCase = aHousingSpot.case
-        newHouse = House(laCase.coor, laCase,0,10,1,(1,1),"Small Tent",1,0,0,0,True)
+        newHouse = House(aHousingSpot.case,0,10,1,(1,1),"Small Tent",1,0,0,0,True)
         aHousingSpot.case.setFeature("Small Tent")
-        aHousingSpot.case.setSprite("Housng1a_00001.png")
         House.cityHousesList.append(newHouse)
         HousingSpot.cityHousingSpots.remove(aHousingSpot)
+        aHousingSpot.delete()
+
 
     def removeAHouse(aHouse) :
         laCase = aHouse.case
@@ -100,9 +100,12 @@ class HousingSpot() :
 
     def __init__(self, case, plateau, connectedToRoad, desc="HousingSpot") :
         self.case = case
+        self.case.building=self
         self.connectedToRoad = connectedToRoad
         self.desc = desc
+        self.plateau=plateau
         plateau.buildings.append(self)
+        
 
     def isConnectedToRoad(self):
         return self.connectedToRoad
@@ -116,10 +119,13 @@ class HousingSpot() :
     def getCase(self):
         return self.case
 
-    def delete(self):
-        self.case.building = None
+    def delete(self) :
+        self.case.setBuilding(None)
+        self.case.setFeature("")
+        HousingSpot.cityHousingSpots.remove(self)
         self.plateau.buildings.remove(self)
         del self
+
 
     def placeAHousingSpot(laCase, lePlateau):
         if not(laCase.building==None) :
@@ -132,13 +138,6 @@ class HousingSpot() :
                     newHousingSpot = HousingSpot(laCase,lePlateau,laCase.connectedToRoad)
                     HousingSpot.cityHousingSpots.append(newHousingSpot)
                 
-    def removeAHousingSpot(aHousingSpot, lePlateau) :
-        laCase = aHousingSpot.case
-        laCase.setBuilding(None)
-        laCase.setFeature("")
-        HousingSpot.cityHousingSpots.remove(aHousingSpot)
-        lePlateau.buildings.remove(aHousingSpot)
-
 
 
 
