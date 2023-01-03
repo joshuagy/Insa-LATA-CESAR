@@ -581,8 +581,6 @@ class Plateau():
         undo_button.show_tip(self.screen)
         message_view_button.show_tip(self.screen)
         see_recent_troubles_button.show_tip(self.screen)
-        
-        pygame.display.flip()
     
     def create_collision_matrix(self):
         collision_matrix = [[1000 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
