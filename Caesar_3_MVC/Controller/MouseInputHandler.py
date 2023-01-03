@@ -180,6 +180,7 @@ class MouseInputHandler:
                     for xi in range(grid_x1, grid_x2+1):
                         if self.model.actualGame.map[xi][grid_y2].road == None:
                             Route(self.model.actualGame.map[xi][grid_y2], self.model.actualGame)
+
                     for yi in range(grid_y1, grid_y2+1):
                         if self.model.actualGame.map[grid_x1][yi].road == None:
                             Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
@@ -206,12 +207,13 @@ class MouseInputHandler:
                             Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
 
             #Connecte les cases adjacentes à la route :
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2-1, -1):
-                    self.model.actualGame.map[xi][yi].changeConnectedToRoad(1)
+            """
+            for xa in range(xi-1,xi+1,1):
+                for ya in range(grid_y2-1, grid_y2+1, 1):
+                    self.model.actualGame.map[xa][ya].changeConnectedToRoad(1)
                             
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
-
+            """
         #Building
         if build_housing_button.clicked and not build_housing_button.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
