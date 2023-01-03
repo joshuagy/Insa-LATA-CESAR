@@ -46,6 +46,7 @@ class Plateau():
         #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
         self.collision_matrix = self.create_collision_matrix()
 
+
     def default_map(self):
 
         map = []
@@ -86,7 +87,7 @@ class Plateau():
             self.zoom__.set_zoom(X__)
             self.surface_cells.fill((0,0,0))
             self.surface_cells = pygame.Surface((self.nbr_cell_x * cell_size * 2, self.nbr_cell_y * cell_size + 2 * cell_size)).convert_alpha()
-            self.create_map=self.default_map()
+            self.map=self.default_map()
 
     def set_self_num(self):
         self.num=1
@@ -197,7 +198,7 @@ class Plateau():
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
                 image = self.map[cell_x][cell_y].sprite
-                if image != "":
+                if image != "land2":
 
                     self.screen.blit(self.image[image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
@@ -344,7 +345,8 @@ class Plateau():
 
             self.screen.blit(deco_bas_full_menu.img_scaled,(1119,682))
 
-        pygame.display.flip()
+
+
     
     def create_collision_matrix(self):
         collision_matrix = [[1 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]

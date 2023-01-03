@@ -26,7 +26,7 @@ class Walker:
         
         self.plateau.entities.append(self)  #On ajoute le walker à la liste des entitées présentes sur le plateau
         
-        image = pg.image.load("image\Walkers\Citizen\HD\Citizen01_00001.png").convert_alpha()
+        image = pg.image.load("image/Walkers/Citizen/HD/Citizen01_00001.png").convert_alpha()
         self.image = pg.transform.scale(image, (image.get_width() / 2, image.get_height() / 2))
 
         # pathfinding
