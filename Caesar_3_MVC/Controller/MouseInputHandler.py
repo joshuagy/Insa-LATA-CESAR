@@ -318,6 +318,3 @@ class MouseInputHandler:
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
                     self.model.actualGame.previewMap[xi][yi] = "red"
-
-=======
-       
