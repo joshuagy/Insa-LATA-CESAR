@@ -39,10 +39,10 @@ class Plateau():
         self.listeCase = listeCase
 
         self.map = self.default_map()
-        self.previewMap = self.map
+        self.previewMap = self.default_map()
         # Noning the list
-        for x in range(self.previewMap):
-            for y in range(self.previewMap[0]):
+        for x in range(len(self.previewMap)):
+            for y in range(len(self.previewMap[0])):
                 self.previewMap[x][y] = None
 
         self.default_road()
@@ -201,10 +201,13 @@ class Plateau():
         water5 = pygame.image.load("image/C3/Land1a_00154.png").convert_alpha()
         water5 = pygame.transform.scale(water5, (water5.get_width() / 2, water5.get_height() / 2))
 
+        red = pygame.image.load("image/C3/red.png").convert_alpha()
+        red = pygame.transform.scale(red, (red.get_width() / 2, red.get_height() / 2)) 
+
         return {"land1": land1,"land2": land2, "tree1": tree1,"tree2": tree2,
                 "tree3": tree3,"rock1": rock1,"rock2": rock2,"water1":water1,
                 "water2":water2,"water3":water3,"sign1":sign1,"sign2":sign2,
-                "water4":water4,"water5":water5,"rock3":rock3
+                "water4":water4,"water5":water5,"rock3":rock3, "red":red
                 }
     def load_routes_images(self):
         
@@ -324,7 +327,13 @@ class Plateau():
                     self.screen.blit(self.image_route[image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (self.image_route[image].get_height() - cell_size) + self.camera.vect.y))
-                    
+                
+                # DRAW PREVIEW
+                if self.previewMap[cell_x][cell_y] != None:
+                    self.screen.blit(self.image["red"],
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                    render_pos[1] - (self.image["red"].get_height() - cell_size) + self.camera.vect.y))
+
         # DRAW WALKERS
         for e in self.entities:
             render_pos =  self.map[e.case.x][e.case.y].render_pos

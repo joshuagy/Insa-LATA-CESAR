@@ -122,7 +122,9 @@ class MouseInputHandler:
                             if self.model.actualGame.map[xi][yi].road :
                                 del self.model.actualGame.map[xi][yi].road
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
-            # TODO: reset preview
+            for xi in range(len(self.model.actualGame.previewMap)):
+                for yi in range(len(self.model.actualGame.previewMap[0])):
+                        self.model.actualGame.previewMap[xi][yi] = None
         
                 
         #Routes
@@ -206,5 +208,56 @@ class MouseInputHandler:
         """ Here we are going to manage the movement of the mouse"""
         #Pelle
         if clear_land_button.clicked and not clear_land_button.rect.collidepoint(event.pos) and self.initialMouseCoordinate != None:
-            red_rect = pygame.Rect(self.initialMouseCoordinate, pygame.mouse.get_pos())
-            pygame.draw.rect(self.model.actualGame.screen, pygame.Color(255,0,0),red_rect)
+            for xi in range(len(self.model.actualGame.previewMap)):
+                for yi in range(len(self.model.actualGame.previewMap[0])):
+                        self.model.actualGame.previewMap[xi][yi] = None
+
+            x, y = self.initialMouseCoordinate
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x1 = int(cart_x // cell_size)
+            grid_y1 = int(cart_y // cell_size)
+
+            x, y = event.pos
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x2 = int(cart_x // cell_size)
+            grid_y2 = int(cart_y // cell_size)
+        
+            if grid_x1 <0:
+                grid_x1 = 0
+            if grid_x2 <0:
+                grid_x2 = 0
+            if grid_y1 <0:
+                grid_y1 = 0
+            if grid_y2 <0:
+                grid_y2 = 0
+
+            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+                grid_x1 = self.model.actualGame.nbr_cell_x-1
+            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+                grid_x2 = self.model.actualGame.nbr_cell_x-1
+            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+                grid_y1 = self.model.actualGame.nbr_cell_y-1
+            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+                grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+            if grid_x1 > grid_x2:
+                temp = grid_x1
+                grid_x1 = grid_x2
+                grid_x2 = temp
+
+            if grid_y1 > grid_y2:
+                temp = grid_y1
+                grid_y1 = grid_y2
+                grid_y2 = temp
+
+            for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                        self.model.actualGame.previewMap[xi][yi] = "red"
