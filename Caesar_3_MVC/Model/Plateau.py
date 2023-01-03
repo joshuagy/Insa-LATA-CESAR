@@ -361,9 +361,9 @@ class Plateau():
         # DRAW BUILDINGS
         for b in self.buildings:
             render_pos = self.map[b.case.x][b.case.y].render_pos
-            self.screen.blit(self.image_buildings[b.getDesc()], 
+            self.screen.blit(self.image_buildings[b.desc], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (self.image_buildings[b.getDesc()].get_height() - cell_size) + self.camera.vect.y))
+                                         render_pos[1] - (self.image_buildings[b.desc].get_height() - cell_size) + self.camera.vect.y))
         
 
         self.menu_map.draw_menu(self.screen)

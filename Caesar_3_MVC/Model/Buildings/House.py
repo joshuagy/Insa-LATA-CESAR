@@ -98,12 +98,11 @@ class HousingSpot() :
 
     cityHousingSpots = []
 
-    def __init__(self, case, connectedToRoad) :
+    def __init__(self, case, plateau, connectedToRoad, desc="HousingSpot") :
         self.case = case
         self.connectedToRoad = connectedToRoad
-
-    def getDesc(self):
-        return "HousingSpot"
+        self.desc = desc
+        plateau.buildings.append(self)
 
     def isConnectedToRoad(self):
         return self.connectedToRoad
@@ -130,16 +129,15 @@ class HousingSpot() :
                 if lePlateau.map[x][y].getConnectedToRoad() > 0 :
                     
                     laCase.setFeature("HousingSpot")
-                    newHousingSpot = HousingSpot(laCase,True)
+                    newHousingSpot = HousingSpot(laCase,lePlateau,laCase.connectedToRoad)
                     HousingSpot.cityHousingSpots.append(newHousingSpot)
-                    lePlateau.buildings.append(newHousingSpot)
                 
     def removeAHousingSpot(aHousingSpot, lePlateau) :
         laCase = aHousingSpot.case
         laCase.setBuilding(None)
         laCase.setFeature("")
         HousingSpot.cityHousingSpots.remove(aHousingSpot)
-        lePlateau.buildings.append(aHousingSpot)
+        lePlateau.buildings.remove(aHousingSpot)
 
 
 
