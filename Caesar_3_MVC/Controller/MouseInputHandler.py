@@ -121,21 +121,22 @@ class MouseInputHandler:
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
                         if self.model.actualGame.map[xi][yi].sprite not in list_of_undestructible:
-                          self.model.actualGame.map[xi][yi].sprite = "land1"
-                          self.model.actualGame.map[xi][yi].collision = 0
-                          if self.model.actualGame.map[xi][yi].road :
-                              # Informe toutes les cases adjacentes qu'elles ne sont plus connectées à la route 
-                              # (Sauf bien sûr si elles sont connectées à une autre route)
-                              for x2 in range(grid_x1, grid_x2+1):
-                                  for y2 in range(grid_y1, grid_y2-1, -1):
-                                      self.model.actualGame.map[x2][y2].changeConnectedToRoad(-1)
-                              self.model.actualGame.map[xi][yi].road.delete()
-                              
-                          if self.model.actualGame.map[xi][yi].building :
+                            self.model.actualGame.map[xi][yi].sprite = "land1"
+                            self.model.actualGame.map[xi][yi].collision = 0
+                            if self.model.actualGame.map[xi][yi].road :
+                                self.model.actualGame.map[xi][yi].road.delete()
+                                # Informe toutes les cases adjacentes qu'elles ne sont plus connectées à la route 
+                                # (Sauf bien sûr si elles sont connectées à une autre route)
+                                for xa in range(xi-1,xi+1,1):
+                                    for ya in range(yi-1, yi+1, 1):
+                                        self.model.actualGame.map[xa][ya].changeConnectedToRoad(-1)
+                                      
+                            if self.model.actualGame.map[xi][yi].building :
                               self.model.actualGame.map[xi][yi].building.delete()
                            
-                          if self.model.actualGame.map[xi][yi].building :
-                            self.model.actualGame.map[xi][yi].building.delete()
+                            if self.model.actualGame.map[xi][yi].building :
+                                self.model.actualGame.map[xi][yi].building.delete()
+
                             
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
             for xi in range(len(self.model.actualGame.previewMap)):
@@ -231,10 +232,8 @@ class MouseInputHandler:
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
             """
         #Building
-        #Sélection du bâtiment pour ne pas dupliquer tout le code de sélection de terrain
-        if build_housing_button.clicked and not build_housing_button.rect.collidepoint(event.pos):
-            targetBuilding = "aHousingSpot"
 
+        if build_housing_button.clicked and not build_housing_button.rect.collidepoint(event.pos):
         
         #Mouse Selection :
             x, y = self.initialMouseCoordinate
@@ -287,13 +286,10 @@ class MouseInputHandler:
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
                     if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].building:
-                        if targetBuilding == "aHousingSpot" :
                             HousingSpot.placeAHousingSpot(self.model.actualGame.map[xi][yi], self.model.actualGame)
-                        if targetBuilding == "aPrefecture" :
-                            Prefecture.buildAPrefecture(self.model.actualGame.map[xi][yi],self.model.actualGame)
                 
         if security_structures.clicked and not security_structures.rect.collidepoint(event.pos):
-            targetBuilding = "aPrefecture"
+        
         #Mouse Selection :
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
@@ -345,9 +341,6 @@ class MouseInputHandler:
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
                     if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].building:
-                        if targetBuilding == "aHousingSpot" :
-                            HousingSpot.placeAHousingSpot(self.model.actualGame.map[xi][yi], self.model.actualGame)
-                        if targetBuilding == "aPrefecture" :
                             Prefecture.buildAPrefecture(self.model.actualGame.map[xi][yi],self.model.actualGame)
 
     def handleMouseMouvement(self, event):
