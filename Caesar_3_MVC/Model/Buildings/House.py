@@ -15,6 +15,8 @@ class House(Building):
         self.nbHabMax = 5
         self.religiousAccess
         
+    def getDesc(self):
+        return self.desc
 
     def get_entertainLvl(self):
         return self.entertainLvl
@@ -99,6 +101,9 @@ class HousingSpot() :
     def __init__(self, case, connectedToRoad) :
         self.case = case
         self.connectedToRoad = connectedToRoad
+
+    def getDesc(self):
+        return "HousingSpot"
 
     def isConnectedToRoad(self):
         return self.connectedToRoad

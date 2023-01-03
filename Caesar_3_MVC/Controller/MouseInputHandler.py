@@ -7,6 +7,7 @@ from Model.Plateau import Plateau, cell_size
 from Model.Route import Route
 from Model.Buildings.Building import *
 from Model.Buildings.House import *
+from Model.Buildings.WorkBuilding import *
 
 class MouseInputHandler:
     """
@@ -215,7 +216,13 @@ class MouseInputHandler:
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
             """
         #Building
+        #Sélection du bâtiment pour ne pas dupliquer tout le code de sélection de terrain
         if build_housing_button.clicked and not build_housing_button.rect.collidepoint(event.pos):
+            targetBuilding = "aHousingSpot"
+        if security_structures.clicked and not security_structures.rect.collidepoint(event.pos):
+            targetBuilding = "aPrefecture"
+        
+
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
             world_y = y - self.model.actualGame.camera.vect.y
@@ -265,5 +272,7 @@ class MouseInputHandler:
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
                     if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].building:
-                        HousingSpot.placeAHousingSpot(self.model.actualGame.map[xi][yi], self.model.actualGame)
-                        "Building((xi, yi), self.model.actualGame.map[xi][yi], self.model.actualGame, 1, False, 0, 0)"
+                        if targetBuilding == "aHousingSpot" :
+                            HousingSpot.placeAHousingSpot(self.model.actualGame.map[xi][yi], self.model.actualGame)
+                        if targetBuilding == "aPrefecture" :
+                            Prefecture.buildAPrefecture(self.model.actualGame.map[xi][yi],self.model.actualGame)
