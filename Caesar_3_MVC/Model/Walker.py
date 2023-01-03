@@ -24,7 +24,7 @@ class Walker:
 
         Attributs :
         case_de_départ : La case de spawn du walker
-        type : Quel type de walker il est (sera peut-être déprécié au profit de sous classes)
+        type : string qui contient le nom de la sous classe
         index_sprite : Permet d'animer le walker
         direction : Permet de connaître la direction dans laquelle il va
         ttw : Durée de la marche aléatoire avant de devoir rentrer au point de départ
@@ -35,7 +35,8 @@ class Walker:
         self.case_de_départ = case
         self.plateau = plateau
         self.name = name
-        self.type = "Citizen"
+        self.type = str(type(self))[21:-2]
+        self.action = 1
         
         self.plateau.entities.append(self)  #On ajoute le walker à la liste des entitées présentes sur le plateau
         
@@ -45,6 +46,12 @@ class Walker:
         self.ttw = ttwmax
 
         self.move_timer = pygame.time.get_ticks()
+
+
+    def delete(self) :
+        self.plateau.entities.remove(self)
+        del self
+
     
     def random_path(self):
         """
@@ -141,14 +148,48 @@ class Walker:
             self.direction = 3
         self.case = self.plateau.map[new_tile[0]][new_tile[1]]
 
+
+class Citizen(Walker):
+    def __init__(self, case, plateau, name="Plebius Prepus"):
+        super().__init__(case, plateau, name)
     
     def update(self):
         """
-        Mise à jour de la position du walker 
+        Mise à jour de la prochaine action du walker
         """
         now = pygame.time.get_ticks()
         self.index_sprite += 0.5
-        if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.direction])):
+        if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.action][self.direction])):
+            self.index_sprite = 0
+
+        """if now - self.move_timer > 500:
+            if self.ttw > 0:
+                new_pos = self.random_path()
+
+                self.ttw -= 1
+                if self.ttw == 0:
+                    self.create_path(self.case_de_départ)
+            else :
+                new_pos = self.path[self.path_index]
+                # Mise à jour de la position sur le plateau
+                self.path_index += 1
+                # On retourne en mode aléatoire si la destination a été atteint
+                if self.path_index >= len(self.path) - 1:
+                    self.ttw = ttwmax
+            self.change_tile(new_pos)
+            self.move_timer = now"""
+
+class Prefet(Walker):
+    def __init__(self, case, plateau, name="Plebius Prepus"):
+        super().__init__(case, plateau, name)
+    
+    def update(self):
+        """
+        Mise à jour de la prochaine action du walker
+        """
+        now = pygame.time.get_ticks()
+        self.index_sprite += 0.5
+        if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.action][self.direction])):
             self.index_sprite = 0
 
         if now - self.move_timer > 500:
