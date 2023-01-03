@@ -31,7 +31,7 @@ class Plateau():
         self.surface_cells = pygame.Surface((nbr_cell_x * cell_size * 2, nbr_cell_y * cell_size  + 2 * cell_size )).convert_alpha()
 
         #Load de tous les spirtes
-        self.image = self.load_images()
+        self.image = self.load_cases_images()
         self.image_route = self.load_routes_images()
         self.image_walkers = self.load_walkers_images()
         self.image_buildings = self.load_buildings_images()
@@ -42,6 +42,12 @@ class Plateau():
         self.listeCase = listeCase
 
         self.map = self.default_map()
+        self.previewMap = self.default_map()
+        # Noning the list
+        for x in range(len(self.previewMap)):
+            for y in range(len(self.previewMap[0])):
+                self.previewMap[x][y] = None
+
         self.default_road()
 
         #Tableau contenant l'intégralité des walker présents sur la map
@@ -157,7 +163,7 @@ class Plateau():
             counter+=1
         return image
 
-    def load_images(self):
+    def load_cases_images(self):
 
 
         land1 = pygame.image.load("image/C3/Land1a_00116.png").convert_alpha()
@@ -201,100 +207,45 @@ class Plateau():
         water5 = pygame.image.load("image/C3/Land1a_00154.png").convert_alpha()
         water5 = pygame.transform.scale(water5, (water5.get_width() / 2, water5.get_height() / 2))
 
+        red = pygame.image.load("image/C3/red.png").convert_alpha()
+        red = pygame.transform.scale(red, (red.get_width() / 2, red.get_height() / 2)) 
+
         return {"land1": land1,"land2": land2, "tree1": tree1,"tree2": tree2,
                 "tree3": tree3,"rock1": rock1,"rock2": rock2,"water1":water1,
                 "water2":water2,"water3":water3,"sign1":sign1,"sign2":sign2,
-                "water4":water4,"water5":water5,"rock3":rock3
+                "water4":water4,"water5":water5,"rock3":rock3, "red":red
                 }
     def load_routes_images(self):
         
-        west = pygame.image.load("image/Routes/Land2a_00104.png").convert_alpha()
-        west = pygame.transform.scale(west, (west.get_width() / 2, west.get_height() / 2))
-
-        east = pygame.image.load("image/Routes/Land2a_00102.png").convert_alpha()
-        east = pygame.transform.scale(east, (east.get_width() / 2, east.get_height() / 2))
-
-        east_west = pygame.image.load("image/Routes/Land2a_00094.png").convert_alpha()
-        east_west = pygame.transform.scale(east_west, (east_west.get_width() / 2, east_west.get_height() / 2))
-
-        south = pygame.image.load("image/Routes/Land2a_00101.png").convert_alpha()
-        south = pygame.transform.scale(south, (south.get_width() / 2, south.get_height() / 2))
-
-        south_west = pygame.image.load("image/Routes/Land2a_00100.png").convert_alpha()
-        south_west = pygame.transform.scale(south_west, (south_west.get_width() / 2, south_west.get_height() / 2))
-
-        south_east = pygame.image.load("image/Routes/Land2a_00097.png").convert_alpha()
-        south_east = pygame.transform.scale(south_east, (south_east.get_width() / 2, south_east.get_height() / 2))
-
-        south_east_west = pygame.image.load("image/Routes/Land2a_00109.png").convert_alpha()
-        south_east_west = pygame.transform.scale(south_east_west, (south_east_west.get_width() / 2, south_east_west.get_height() / 2))
-
-        north = pygame.image.load("image/Routes/Land2a_00105.png").convert_alpha()
-        north = pygame.transform.scale(north, (north.get_width() / 2, north.get_height() / 2))
-
-        north_west = pygame.image.load("image/Routes/Land2a_00099.png").convert_alpha()
-        north_west = pygame.transform.scale(north_west, (north_west.get_width() / 2, north_west.get_height() / 2))
-
-        north_south = pygame.image.load("image/Routes/Land2a_00095.png").convert_alpha()
-        north_south = pygame.transform.scale(north_south, (north_south.get_width() / 2, north_south.get_height() / 2))
-
-        north_south_west = pygame.image.load("image/Routes/Land2a_00108.png").convert_alpha()
-        north_south_west = pygame.transform.scale(north_south_west, (north_south_west.get_width() / 2, north_south_west.get_height() / 2))
-
-        north_east = pygame.image.load("image/Routes/Land2a_00098.png").convert_alpha()
-        north_east = pygame.transform.scale(north_east, (north_east.get_width() / 2, north_east.get_height() / 2))
-
-        north_east_west = pygame.image.load("image/Routes/Land2a_00107.png").convert_alpha()
-        north_east_west = pygame.transform.scale(north_east_west, (north_east_west.get_width() / 2, north_east_west.get_height() / 2))
-
-        north_south_east = pygame.image.load("image/Routes/Land2a_00106.png").convert_alpha()
-        north_south_east = pygame.transform.scale(north_south_east, (north_south_east.get_width() / 2, north_south_east.get_height() / 2))
-
-        north_south_east_west = pygame.image.load("image/Routes/Land2a_00110.png").convert_alpha()
-        north_south_east_west = pygame.transform.scale(north_south_east_west, (north_south_east_west.get_width() / 2, north_south_east_west.get_height() / 2))
+        west = load_image("image/Routes/Land2a_00104.png")
+        east = load_image("image/Routes/Land2a_00102.png")
+        east_west = load_image("image/Routes/Land2a_00094.png")
+        south = load_image("image/Routes/Land2a_00101.png")
+        south_west = load_image("image/Routes/Land2a_00100.png")
+        south_east = load_image("image/Routes/Land2a_00097.png")
+        south_east_west = load_image("image/Routes/Land2a_00109.png")
+        north = load_image("image/Routes/Land2a_00105.png")
+        north_west = load_image("image/Routes/Land2a_00099.png")
+        north_south = load_image("image/Routes/Land2a_00095.png")
+        north_south_west = load_image("image/Routes/Land2a_00108.png")
+        north_east = load_image("image/Routes/Land2a_00098.png")
+        north_east_west = load_image("image/Routes/Land2a_00107.png")
+        north_south_east = load_image("image/Routes/Land2a_00106.png")
+        north_south_east_west = load_image("image/Routes/Land2a_00110.png")
 
         return {0: north, 1: west, 2: south, 3: south_west, 4: east, 5: east_west, 6: south_east,
                 7: south_east_west, 8: north, 9: north_west, 10: north_south, 11: north_south_west,
                 12: north_east, 13: north_east_west, 14: north_south_east, 15: north_south_east_west}
     def load_walkers_images(self):
-        walker_sprite = {}
+        """walker_sprite[Type_Walker(String)][Action(Int)][Direction(Int)]""" #Directions : 1 -> North  2 -> East   3 -> South  4 -> West
 
         #====== Citizens ======#
-        new_dict = {}
+        citizen = {1 : create_liste_sprites_walker("Citizen", "Walk", 12)}
 
-        #North
-        new_list = list(pygame.image.load(f"image/Walkers/Citizen/Walk/UpRight/CitizenUpRightFrame{i}.png").convert_alpha() for i in range(1, 13))
+        #====== Prefet ======#
+        prefet = {1 : create_liste_sprites_walker("Prefet", "Walk", 12), 2 : create_liste_sprites_walker("Prefet", "FarmerWalk", 12), 3 : create_liste_sprites_walker("Prefet", "Throw", 6)}
 
-        for i in range(12):
-            new_list[i] = pygame.transform.scale(new_list[i], (new_list[i].get_width() / 2, new_list[i].get_height() / 2))
-                
-        new_dict |= {1 : new_list}
-
-        #East
-        new_list = list(pygame.image.load(f"image/Walkers/Citizen/Walk/DownRight/CitizenDownRightFrame{i}.png").convert_alpha() for i in range(1, 13))
-
-        for i in range(12):
-            new_list[i] = pygame.transform.scale(new_list[i], (new_list[i].get_width() / 2, new_list[i].get_height() / 2))
-                
-        new_dict |= {2 : new_list}
-
-        #South
-        new_list = list(pygame.image.load(f"image/Walkers/Citizen/Walk/DownLeft/CitizenDownLeftFrame{i}.png").convert_alpha() for i in range(1, 13))
-
-        for i in range(12):
-            new_list[i] = pygame.transform.scale(new_list[i], (new_list[i].get_width() / 2, new_list[i].get_height() / 2))
-                
-        new_dict |= {3 : new_list}
-
-        #West
-        new_list = list(pygame.image.load(f"image/Walkers/Citizen/Walk/UpLeft/CitizenUpLeftFrame{i}.png").convert_alpha() for i in range(1, 13))
-
-        for i in range(12):
-            new_list[i] = pygame.transform.scale(new_list[i], (new_list[i].get_width() / 2, new_list[i].get_height() / 2))
-                
-        new_dict |= {4 : new_list}
-
-        walker_sprite |= {"Citizen" : new_dict}
+        walker_sprite = {"Citizen" : citizen, "Prefet" : prefet}
 
         return walker_sprite
 
@@ -340,13 +291,19 @@ class Plateau():
                     self.screen.blit(self.image_route[image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (self.image_route[image].get_height() - cell_size) + self.camera.vect.y))
-                    
+                
+                # DRAW PREVIEW
+                if self.previewMap[cell_x][cell_y] != None:
+                    self.screen.blit(self.image["red"],
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                    render_pos[1] - (self.image["red"].get_height() - cell_size) + self.camera.vect.y))
+
         # DRAW WALKERS
         for e in self.entities:
             render_pos =  self.map[e.case.x][e.case.y].render_pos
-            self.screen.blit(self.image_walkers[e.type][e.direction][int(e.index_sprite)], 
+            self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (self.image_walkers[e.type][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
+                                         render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
         
         """
         # DRAW BUILDINGS
@@ -637,3 +594,11 @@ class Plateau():
                 if self.map[x][y].road:
                     collision_matrix[y][x] = 1
         return collision_matrix
+
+def load_image(path):
+    image = pygame.image.load(path).convert_alpha()
+    return pygame.transform.scale(image, (image.get_width() / 2, image.get_height() / 2))
+
+def create_liste_sprites_walker(type, action, nb_frame):
+    direction = {1 : "UpRight", 2 : "DownRight", 3 : "DownLeft", 4 : "UpLeft"}
+    return {j : list(load_image(f"image/Walkers/{type}/{action}/{direction[j]}/{type}{action}{direction[j]}Frame{i}.png") for i in range(1, nb_frame+1)) for j in range(1, 5)}
