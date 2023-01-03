@@ -218,8 +218,7 @@ class MouseInputHandler:
         #Building
         #Sélection du bâtiment pour ne pas dupliquer tout le code de sélection de terrain
 
-        if security_structures.clicked and not security_structures.rect.collidepoint(event.pos):
-            targetBuilding = "aPrefecture"
+        
         if build_housing_button.clicked and not build_housing_button.rect.collidepoint(event.pos):
             targetBuilding = "aHousingSpot"
 
@@ -279,4 +278,61 @@ class MouseInputHandler:
                             HousingSpot.placeAHousingSpot(self.model.actualGame.map[xi][yi], self.model.actualGame)
                         if targetBuilding == "aPrefecture" :
                             Prefecture.buildAPrefecture(self.model.actualGame.map[xi][yi],self.model.actualGame)
-                        
+                
+        if security_structures.clicked and not security_structures.rect.collidepoint(event.pos):
+            targetBuilding = "aPrefecture"
+        #Mouse Selection :
+            x, y = self.initialMouseCoordinate
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x1 = int(cart_x // cell_size)
+            grid_y1 = int(cart_y // cell_size)
+
+            x, y = event.pos
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x2 = int(cart_x // cell_size)
+            grid_y2 = int(cart_y // cell_size)
+        
+            if grid_x1 <0:
+                grid_x1 = 0
+            if grid_x2 <0:
+                grid_x2 = 0
+            if grid_y1 <0:
+                grid_y1 = 0
+            if grid_y2 <0:
+                grid_y2 = 0
+
+            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+                grid_x1 = self.model.actualGame.nbr_cell_x-1
+            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+                grid_x2 = self.model.actualGame.nbr_cell_x-1
+            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+                grid_y1 = self.model.actualGame.nbr_cell_y-1
+            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+                grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+            if grid_x1 > grid_x2:
+                temp = grid_x1
+                grid_x1 = grid_x2
+                grid_x2 = temp
+
+            if grid_y1 > grid_y2:
+                temp = grid_y1
+                grid_y1 = grid_y2
+                grid_y2 = temp
+
+            #Building Construction :
+            for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                    if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].building:
+                        if targetBuilding == "aHousingSpot" :
+                            HousingSpot.placeAHousingSpot(self.model.actualGame.map[xi][yi], self.model.actualGame)
+                        if targetBuilding == "aPrefecture" :
+                            Prefecture.buildAPrefecture(self.model.actualGame.map[xi][yi],self.model.actualGame)
