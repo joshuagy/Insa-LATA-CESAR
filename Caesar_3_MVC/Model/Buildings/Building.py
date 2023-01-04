@@ -6,13 +6,14 @@ class Building():
         self.desc = desc
         self.connectedToRoad = 0
         self.case = case
-        self.case.building = self
+        self.case.setStructure(self)
         self.plateau = plateau
-        self.plateau.buildings.append(self)
+        self.plateau.structures.append(self)
+        self.fireRisk = 0
     
     def delete(self):
-        self.case.building = None
-        self.plateau.buildings.remove(self)
+        self.case.setStructure(None)
+        self.plateau.structures.remove(self)
         del self
 
     def get_position(self):
@@ -62,3 +63,4 @@ class Building():
 
     def getCase(self):
         return self.case
+

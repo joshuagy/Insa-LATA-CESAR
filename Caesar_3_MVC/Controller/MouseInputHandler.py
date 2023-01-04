@@ -8,6 +8,7 @@ from Model.Route import Route
 from Model.Buildings.Building import *
 from Model.Buildings.House import *
 from Model.Buildings.WorkBuilding import *
+from Model.Buildings.UrbanPlanning import *
 
 class MouseInputHandler:
     """
@@ -131,11 +132,8 @@ class MouseInputHandler:
                                     for ya in range(yi-1, yi+1, 1):
                                         self.model.actualGame.map[xa][ya].changeConnectedToRoad(-1)
                                       
-                            if self.model.actualGame.map[xi][yi].building :
-                              self.model.actualGame.map[xi][yi].building.delete()
-                           
-                            if self.model.actualGame.map[xi][yi].building :
-                                self.model.actualGame.map[xi][yi].building.delete()
+                            if self.model.actualGame.map[xi][yi].structure :
+                              self.model.actualGame.map[xi][yi].structure.delete()
 
                             
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
@@ -281,7 +279,7 @@ class MouseInputHandler:
                 for yi in range(grid_y1, grid_y2+1):
                     for xcr in range (xi-2,xi+2,1) :
                         for ycr in range (yi-2,yi+2,1) :
-                            if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].building:
+                            if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure:
                                 if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
                                     HousingSpot(self.model.actualGame.map[xi][yi],self.model.actualGame)
 
@@ -341,9 +339,126 @@ class MouseInputHandler:
                     for xcr in range (xi-1,xi+1,1) :
                         for ycr in range (yi-1,yi+1,1) :
                             if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
-                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].building:
+                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure:
                                     newPrefect = Prefet(self.model.actualGame.map[xi][yi],self.model.actualGame,"Prefectus")
                                     Prefecture(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Prefecture",newPrefect,1)
+
+        if engineering_structures.clicked and not engineering_structures.rect.collidepoint(event.pos):
+        
+        #Mouse Selection :
+            x, y = self.initialMouseCoordinate
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x1 = int(cart_x // cell_size)
+            grid_y1 = int(cart_y // cell_size)
+
+            x, y = event.pos
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x2 = int(cart_x // cell_size)
+            grid_y2 = int(cart_y // cell_size)
+        
+            if grid_x1 <0:
+                grid_x1 = 0
+            if grid_x2 <0:
+                grid_x2 = 0
+            if grid_y1 <0:
+                grid_y1 = 0
+            if grid_y2 <0:
+                grid_y2 = 0
+
+            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+                grid_x1 = self.model.actualGame.nbr_cell_x-1
+            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+                grid_x2 = self.model.actualGame.nbr_cell_x-1
+            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+                grid_y1 = self.model.actualGame.nbr_cell_y-1
+            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+                grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+            if grid_x1 > grid_x2:
+                temp = grid_x1
+                grid_x1 = grid_x2
+                grid_x2 = temp
+
+            if grid_y1 > grid_y2:
+                temp = grid_y1
+                grid_y1 = grid_y2
+                grid_y2 = temp
+
+            #Building Construction :
+            for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                    for xcr in range (xi-1,xi+1,1) :
+                        for ycr in range (yi-1,yi+1,1) :
+                            if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
+                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure:
+                                    newCitizen = Prefet(self.model.actualGame.map[xi][yi],self.model.actualGame,"Pasuningenieur")
+                                    EnginnerPost(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"EngineerPost",newCitizen,1)
+
+        if water_related_structures.clicked and not water_related_structures.rect.collidepoint(event.pos):
+        
+        #Mouse Selection :
+            x, y = self.initialMouseCoordinate
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x1 = int(cart_x // cell_size)
+            grid_y1 = int(cart_y // cell_size)
+
+            x, y = event.pos
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x2 = int(cart_x // cell_size)
+            grid_y2 = int(cart_y // cell_size)
+        
+            if grid_x1 <0:
+                grid_x1 = 0
+            if grid_x2 <0:
+                grid_x2 = 0
+            if grid_y1 <0:
+                grid_y1 = 0
+            if grid_y2 <0:
+                grid_y2 = 0
+
+            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+                grid_x1 = self.model.actualGame.nbr_cell_x-1
+            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+                grid_x2 = self.model.actualGame.nbr_cell_x-1
+            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+                grid_y1 = self.model.actualGame.nbr_cell_y-1
+            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+                grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+            if grid_x1 > grid_x2:
+                temp = grid_x1
+                grid_x1 = grid_x2
+                grid_x2 = temp
+
+            if grid_y1 > grid_y2:
+                temp = grid_y1
+                grid_y1 = grid_y2
+                grid_y2 = temp
+
+            #Building Construction :
+            for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                    for xcr in range (xi-1,xi+1,1) :
+                        for ycr in range (yi-1,yi+1,1) :
+                            if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
+                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure:
+                                    Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
                                     
                                     
 

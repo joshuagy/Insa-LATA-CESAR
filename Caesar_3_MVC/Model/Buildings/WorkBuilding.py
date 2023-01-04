@@ -22,10 +22,10 @@ class WorkBuilding(Building):
         return self.active
 
     def delete(self):
-        self.case.setBuilding(None)
+        self.case.setStructure(None)
         self.case.setFeature("")
         self.walker.delete()
-        self.plateau.buildings.remove(self)
+        self.plateau.structures.remove(self)
         del self
 
 class Prefecture(WorkBuilding) :
@@ -37,4 +37,15 @@ class Prefecture(WorkBuilding) :
         aPrefecture.setActive(True)
         myPrefect=Prefet(aPrefecture.case,lePlateau,"Pompus Prefectus")
         aPrefecture.setWalker(myPrefect)
-        #Reste à afficher le drapeau rouge
+        #Reste à afficher le drapeau ROUGE
+
+class EnginnerPost(WorkBuilding) :
+
+    def __init__(self, case, plateau, size, desc, walker, active,):
+        super().__init__( case, plateau, size, desc, walker, active)
+
+    def activateEngineerPost(anEngineerPost,lePlateau) :
+        anEngineerPost.setActive(True)
+        myEngineer=Prefet(anEngineerPost.case,lePlateau,"Emerius")
+        anEngineerPost.setWalker(myEngineer)
+        #Reste à afficher le drapeau BLEU

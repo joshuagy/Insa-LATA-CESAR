@@ -36,20 +36,21 @@ class House(Building):
 
     def delete(self) :
         #Supprimer les habitants
-        self.case.setBuilding(None)
+        self.case.setStructure(None)
         self.case.setFeature("")
         self.plateau.cityHousesList.remove(self)
-        self.plateau.buildings.remove(self)
+        self.plateau.structures.remove(self)
         del self
+
 
 class HousingSpot() :
 
     def __init__(self, case, plateau, desc="HousingSpot") :
         self.case = case
-        self.case.building=self
+        self.case.setStructure(self)
         self.desc = desc
         self.plateau=plateau
-        plateau.buildings.append(self)
+        self.plateau.structures.append(self)
         self.case.setFeature("HousingSpot")
         self.plateau.cityHousingSpotsList.append(self)
 
@@ -66,19 +67,21 @@ class HousingSpot() :
         return self.case
 
     def delete(self) :
-        self.case.setBuilding(None)
+        self.case.setStructure(None)
         self.case.setFeature("")
         self.plateau.cityHousingSpotsList.remove(self)
-        self.plateau.buildings.remove(self)
+        self.plateau.structures.remove(self)
         del self
 
     def becomeAHouse(self):
         newHouse = House(self.case,self.plateau)
         self.case.setFeature("Small Tent")
-        self.plateau.buildings.append(newHouse)
+        self.plateau.structures.append(newHouse)
         self.plateau.cityHousesList.append(newHouse)
         self.plateau.cityHousingSpotsList.remove(self)
         self.delete()
+
+
 
 """
     def igniteAHouse(aHouse) :
