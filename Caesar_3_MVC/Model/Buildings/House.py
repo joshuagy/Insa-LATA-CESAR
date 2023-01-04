@@ -14,7 +14,6 @@ class House(Building):
         self.nbHabMax = 5
         self.religiousAccess = 0
         self.plateau.cityHousesList.append(self)
-        self.type = str(type(self))[30:-2]
     
     def get_desc(self):
         return self.desc
@@ -79,7 +78,7 @@ class HousingSpot() :
         del self
 
     def becomeAHouse(self):
-        House(self.case,self.plateau, 1, "SmallTent")
+        SmallHouse(self.case,self.plateau, 1)
         self.case.setFeature("Small Tent")
         self.delete()
     

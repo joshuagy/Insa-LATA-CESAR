@@ -8,7 +8,6 @@ class WorkBuilding(Building):
         self.walker = walker
         self.active = active
         self.case.setFeature(desc)
-        self.type = str(type(self))[37:-2]
 
     def setWalker(self,newWalker):
         self.walker=newWalker
