@@ -193,32 +193,32 @@ class MouseInputHandler:
                 match(pattern):
                     case 0:
                         for xi in range(grid_x1, grid_x2+1):
-                            if self.model.actualGame.map[xi][grid_y2].road == None:
+                            if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None:
                                 Route(self.model.actualGame.map[xi][grid_y2], self.model.actualGame)
 
                         for yi in range(grid_y1, grid_y2+1):
-                            if self.model.actualGame.map[grid_x1][yi].road == None:
+                            if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None:
                                 Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
                     case 1:
                         for xi in range(grid_x1, grid_x2-1, -1):
-                            if self.model.actualGame.map[xi][grid_y1].road == None:
+                            if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None:
                                 Route(self.model.actualGame.map[xi][grid_y1], self.model.actualGame)
                         for yi in range(grid_y1, grid_y2+1):
-                            if self.model.actualGame.map[grid_x2][yi].road == None:
+                            if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None:
                                 Route(self.model.actualGame.map[grid_x2][yi], self.model.actualGame)
                     case 2:
                         for xi in range(grid_x1, grid_x2+1):
-                            if self.model.actualGame.map[xi][grid_y1].road == None:
+                            if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None:
                                 Route(self.model.actualGame.map[xi][grid_y1], self.model.actualGame)
                         for yi in range(grid_y1, grid_y2-1, -1):
-                            if self.model.actualGame.map[grid_x2][yi].road == None:
+                            if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None:
                                 Route(self.model.actualGame.map[grid_x2][yi], self.model.actualGame)
                     case 3:
                         for xi in range(grid_x1, grid_x2-1, -1):
-                            if self.model.actualGame.map[xi][grid_y2].road == None:
+                            if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None:
                                 Route(self.model.actualGame.map[xi][grid_y2], self.model.actualGame)
                         for yi in range(grid_y1, grid_y2-1, -1):
-                            if self.model.actualGame.map[grid_x1][yi].road == None:
+                            if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None:
                                 Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
                             
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
