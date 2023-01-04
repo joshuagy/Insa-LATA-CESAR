@@ -247,33 +247,33 @@ class Plateau():
         #====== Prefet ======#
         prefet = {1 : create_liste_sprites_walker("Prefet", "Walk", 12), 2 : create_liste_sprites_walker("Prefet", "FarmerWalk", 12), 3 : create_liste_sprites_walker("Prefet", "Throw", 6)}
 
-        walker_sprite = {"Citizen" : citizen, "Prefet" : prefet}
+        #====== Immigrant ======#
+        immigrant = {1 : create_liste_sprites_walker("Immigrant", "Walk", 12)}
 
-        return walker_sprite
+        #====== Chariot ======#
+        chariot = {1 : create_liste_sprites_walker("Chariot", "Walk", 1)}
+
+        return {"Citizen" : citizen, "Prefet" : prefet, "Immigrant" : immigrant, "Chariot" : chariot}
+
 
     def load_structures_images(self):
         buildingsSprite = {}
-        hss = pygame.image.load("image/Buildings/Housng1a_00045.png").convert_alpha()
-        buildingsSprite["HousingSpot"] = pygame.transform.scale(hss, (hss.get_width() / 2, hss.get_height() / 2))
-        sts = pygame.image.load("image/Buildings/Housng1a_00001.png").convert_alpha()
-        buildingsSprite["SmallTent"] = pygame.transform.scale(sts, (sts.get_width() / 2, sts.get_height() / 2))
-        ps = pygame.image.load("image/Buildings/Security_00001.png").convert_alpha()
-        buildingsSprite["Prefecture"] = pygame.transform.scale(ps, (ps.get_width() / 2, ps.get_height() / 2))
-        eps = pygame.image.load("image/Buildings/transport_00056.png").convert_alpha()
-        buildingsSprite["EngineerPost"] = pygame.transform.scale(eps, (eps.get_width() / 2, eps.get_height() / 2))
-        ws = pygame.image.load("image/Buildings/Utilitya_00001.png").convert_alpha()
-        buildingsSprite["Well"] = pygame.transform.scale(ws, (ws.get_width() / 2, ws.get_height() / 2))
-        bsts = pygame.image.load("image/Buildings/Land2a_00208.png").convert_alpha()
-        buildingsSprite["BurningSmallTent"] = pygame.transform.scale(bsts, (bsts.get_width() / 2, bsts.get_height() / 2))
-        strs = pygame.image.load("image/Buildings/Land2a_00115.png").convert_alpha()
-        buildingsSprite["SmallTentRuins"] = pygame.transform.scale(strs, (strs.get_width() / 2, strs.get_height() / 2))
+        hss = load_image("image/Buildings/Housng1a_00045.png")
+        sts = load_image("image/Buildings/Housng1a_00001.png")
+        ps = load_image("image/Buildings/Security_00001.png")
+        eps = load_image("image/Buildings/transport_00056.png")
+        ws = load_image("image/Buildings/Utilitya_00001.png")
+        bsts = load_image("image/Buildings/Land2a_00208.png")
+        strs = load_image("image/Buildings/Land2a_00115.png")
 
-        return buildingsSprite
+        return {"HousingSpot" : hss, "SmallTent" : sts, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
+                "BurningSmallTent" : bsts, "SmallTentRuins" : strs}
 
     def update(self):
         self.camera.update()
         #Update de la position des walkers
         for e in self.entities: e.update()
+        for hs in self.cityHousingSpotsList: hs.generateImmigrant()
 
 
     def draw(self):

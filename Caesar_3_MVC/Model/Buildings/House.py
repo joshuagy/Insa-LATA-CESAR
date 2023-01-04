@@ -1,7 +1,9 @@
 import pygame
+from random import randint
 from Model.Buildings.Building import Building
 from Model.Plateau import *
 from Model.Case import *
+from Model.Walker import Immigrant
 
 class House(Building):
 
@@ -11,7 +13,7 @@ class House(Building):
         self.nbHab = 1
         self.nbHabMax = 5
         self.religiousAccess = 0
-        self.case = case
+        self.plateau.cityHousesList.append(self)
     
     def get_desc(self):
         return self.desc
@@ -53,6 +55,8 @@ class HousingSpot() :
         self.plateau.structures.append(self)
         self.case.setFeature("HousingSpot")
         self.plateau.cityHousingSpotsList.append(self)
+        self.spawn_timer = pygame.time.get_ticks()
+        self.nb_immigrant = 0
 
     def isConnectedToRoad(self):
         return self.connectedToRoad
@@ -74,14 +78,18 @@ class HousingSpot() :
         del self
 
     def becomeAHouse(self):
-        newHouse = House(self.case,self.plateau)
+        House(self.case,self.plateau, 1, "SmallTent")
         self.case.setFeature("Small Tent")
-        self.plateau.structures.append(newHouse)
-        self.plateau.cityHousesList.append(newHouse)
-        self.plateau.cityHousingSpotsList.remove(self)
         self.delete()
+    
+    def generateImmigrant(self):
+        now = pygame.time.get_ticks()
 
-
+        if now - self.spawn_timer > 500:
+            if randint(0, 10) == 0 and self.nb_immigrant < 1:
+                Immigrant(self.plateau.map[19][38], self.plateau, self.case)
+                self.nb_immigrant += 1
+            self.spawn_timer = now
 
 """
     def igniteAHouse(aHouse) :
