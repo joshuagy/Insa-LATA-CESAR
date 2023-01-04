@@ -145,6 +145,9 @@ def build_water_related_structures():
     """Build water related structures"""
     print("i'm in build_water_related_structures")
 
+def build_engineer_post():
+    print("i'm in build_engineer_post")
+
 def not_implemented_func():
     """Not implemented function"""
     print("i'm in not_implemented_func")
@@ -171,8 +174,8 @@ health_related_structures= ButtonCtrlPnl(not_implemented_func, "Health related s
 religious_structures = ButtonCtrlPnl(not_implemented_func,"Religious Structures", 0, 0,"image/C3/paneling_00151.png","image/C3/paneling_00152.png","image/C3/paneling_00153.png","image/C3/paneling_00154.png")
 education_structures = ButtonCtrlPnl(not_implemented_func,"Education Structures", 0, 0,"image/C3/paneling_00147.png","image/C3/paneling_00148.png","image/C3/paneling_00149.png","image/C3/paneling_00150.png")
 entertainment_structures= ButtonCtrlPnl(not_implemented_func,"Entertainment_structures", 0, 0,"image/C3/paneling_00143.png","image/C3/paneling_00144.png","image/C3/paneling_00145.png","image/C3/paneling_00146.png")      
-administration_or_government_structures = ButtonCtrlPnl(not_implemented_func,"Administration or Government Structures", 0, 0,"image/C3/paneling_00139.png","image/C3/paneling_00140.png","image/C3/paneling_00141.png","image/C3/paneling_00142.png")
-engineering_structures = ButtonCtrlPnl(not_implemented_func, "Engineering function", 0, 0,"image/C3/paneling_00167.png","image/C3/paneling_00168.png","image/C3/paneling_00169.png","image/C3/paneling_00170.png")
+administration_or_government_structures = ButtonCtrlPnl(not_implemented_func,"Administration or Government Structures", 0, 0,"image/C3/paneling_00139.png","image/C3/paneling_00140.png","image/C3/paneling_00141.png")
+engineering_structures = ButtonCtrlPnl(build_engineer_post, "Engineering function", 0, 0,"image/C3/paneling_00167.png","image/C3/paneling_00168.png","image/C3/paneling_00169.png")
 security_structures = ButtonCtrlPnl(build_prefecture,"Security Structures", 0, 0,"image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png")
 industrial_structures = ButtonCtrlPnl(not_implemented_func,"Industrial Structures", 0, 0,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png","image/C3/paneling_00158.png")
 undo_button = ButtonCtrlPnl(not_implemented_func,"Undo", 0, 0,"image/C3/paneling_00171.png","image/C3/paneling_00172.png","image/C3/paneling_00173.png","image/C3/paneling_00174.png")

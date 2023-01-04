@@ -12,7 +12,7 @@ import sys
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], buildings = []):
+    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = []):
         
         self.screen = screen
         self.clock = clock
@@ -34,7 +34,7 @@ class Plateau():
         self.image = self.load_cases_images()
         self.image_route = self.load_routes_images()
         self.image_walkers = self.load_walkers_images()
-        self.image_buildings = self.load_buildings_images()
+        self.image_structures = self.load_structures_images()
 
         self.zoom__=Zoom(self.image)
 
@@ -57,7 +57,7 @@ class Plateau():
         self.collision_matrix = self.create_collision_matrix()
 
         #Tableau contenant l'intégralité des bâtiments présent sur la map
-        self.buildings = buildings
+        self.structures = structures
         self.cityHousesList = []
         self.cityHousingSpotsList = []
 
@@ -251,21 +251,23 @@ class Plateau():
 
         return walker_sprite
 
-    def load_buildings_images(self):
+    def load_structures_images(self):
         buildingsSprite = {}
         hss = pygame.image.load("image/Buildings/Housng1a_00045.png").convert_alpha()
-        hss = pygame.transform.scale(hss, (hss.get_width() / 2, hss.get_height() / 2))
-
-        shs = pygame.image.load("image/Buildings/Housng1a_00001.png").convert_alpha()
-        shs = pygame.transform.scale(shs, (shs.get_width() / 2, shs.get_height() / 2))
-
+        buildingsSprite["HousingSpot"] = pygame.transform.scale(hss, (hss.get_width() / 2, hss.get_height() / 2))
+        sts = pygame.image.load("image/Buildings/Housng1a_00001.png").convert_alpha()
+        buildingsSprite["SmallTent"] = pygame.transform.scale(sts, (sts.get_width() / 2, sts.get_height() / 2))
         ps = pygame.image.load("image/Buildings/Security_00001.png").convert_alpha()
-        ps = pygame.transform.scale(ps, (ps.get_width() / 2, ps.get_height() / 2))
+        buildingsSprite["Prefecture"] = pygame.transform.scale(ps, (ps.get_width() / 2, ps.get_height() / 2))
+        eps = pygame.image.load("image/Buildings/transport_00056.png").convert_alpha()
+        buildingsSprite["EngineerPost"] = pygame.transform.scale(eps, (eps.get_width() / 2, eps.get_height() / 2))
+        ws = pygame.image.load("image/Buildings/Utilitya_00001.png").convert_alpha()
+        buildingsSprite["Well"] = pygame.transform.scale(ws, (ws.get_width() / 2, ws.get_height() / 2))
+        bsts = pygame.image.load("image/Buildings/Land2a_00208.png").convert_alpha()
+        buildingsSprite["BurningSmallTent"] = pygame.transform.scale(bsts, (bsts.get_width() / 2, bsts.get_height() / 2))
+        strs = pygame.image.load("image/Buildings/Land2a_00115.png").convert_alpha()
+        buildingsSprite["SmallTentRuins"] = pygame.transform.scale(strs, (strs.get_width() / 2, strs.get_height() / 2))
 
-        buildingsSprite["HousingSpot"] = hss
-        buildingsSprite["SmallHouse"] = shs
-        buildingsSprite["Prefecture"] = ps
-    
         return buildingsSprite
 
     def update(self):
@@ -310,11 +312,11 @@ class Plateau():
         
       
         # DRAW BUILDINGS
-        for b in self.buildings:
+        for b in self.structures:
             render_pos = self.map[b.case.x][b.case.y].render_pos
-            self.screen.blit(self.image_buildings[b.desc], 
+            self.screen.blit(self.image_structures[b.desc], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (self.image_buildings[b.desc].get_height() - cell_size) + self.camera.vect.y))
+                                         render_pos[1] - (self.image_structures[b.desc].get_height() - cell_size) + self.camera.vect.y))
         
 
         self.menu_map.draw_menu(self.screen)

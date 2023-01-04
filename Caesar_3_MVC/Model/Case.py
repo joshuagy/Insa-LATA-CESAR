@@ -1,7 +1,7 @@
 from Model.constants import list_of_collision
 
 class Case():
-    def __init__(self, x, y, rectangle_cell, isometric_cell, render_pos, connectedToRoad=0, feature=None, sprite=None, road = None, building = None):
+    def __init__(self, x, y, rectangle_cell, isometric_cell, render_pos, connectedToRoad=0, feature=None, sprite=None, road = None, structure = None):
         self.x = x
         self.y = y
         self.rectangle_cell = rectangle_cell
@@ -14,17 +14,18 @@ class Case():
             self.collision = 0 
         self.feature = feature
         self.road = road
-        self.building = building
+        self.structure = structure
         self.connectedToRoad = connectedToRoad
+        self.waterAccess = 0
 
     def setFeature(self,newFeature):
         self.feature=newFeature
     def getFeature(self):
         return self.feature
-    def setBuilding(self,newBuilding):
-        self.building=newBuilding
-    def getBuilding(self):
-        return self.building
+    def setStructure(self,newStruct):
+        self.structure=newStruct
+    def getStructure(self):
+        return self.structure
     def getConnectedToRoad(self):
         return self.connectedToRoad
     def changeConnectedToRoad(self, number):
