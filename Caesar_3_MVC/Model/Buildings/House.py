@@ -78,7 +78,7 @@ class HousingSpot() :
         del self
 
     def becomeAHouse(self):
-        SmallHouse(self.case,self.plateau, 1)
+        House(self.case,self.plateau, 1, "SmallTent")
         self.case.setFeature("Small Tent")
         self.delete()
     
