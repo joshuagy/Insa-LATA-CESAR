@@ -46,6 +46,6 @@ class EnginnerPost(WorkBuilding) :
 
     def activateEngineerPost(anEngineerPost,lePlateau) :
         anEngineerPost.setActive(True)
-        myEngineer=Prefet(anEngineerPost.case,lePlateau,"Emerius")
+        myEngineer=Engineer(anEngineerPost.case,lePlateau,"Emerius")
         anEngineerPost.setWalker(myEngineer)
         #Reste à afficher le drapeau BLEU

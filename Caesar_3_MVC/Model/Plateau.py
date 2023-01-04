@@ -253,7 +253,10 @@ class Plateau():
         #====== Chariot ======#
         chariot = {1 : create_liste_sprites_walker("Chariot", "Walk", 1)}
 
-        return {"Citizen" : citizen, "Prefet" : prefet, "Immigrant" : immigrant, "Chariot" : chariot}
+        #====== engineer ======#
+        engineer = {1 : create_liste_sprites_walker("Engineer", "Walk", 12)}
+
+        return {"Citizen" : citizen, "Prefet" : prefet, "Immigrant" : immigrant, "Chariot" : chariot, "Engineer" : engineer}
 
 
     def load_structures_images(self):

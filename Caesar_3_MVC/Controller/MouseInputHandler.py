@@ -399,7 +399,7 @@ class MouseInputHandler:
                         for ycr in range (yi-1,yi+1,1) :
                             if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
                                 if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure:
-                                    newCitizen = Prefet(self.model.actualGame.map[xi][yi],self.model.actualGame,"Pasuningenieur")
+                                    newCitizen = Engineer(self.model.actualGame.map[xi][yi],self.model.actualGame,"Pasuningenieur")
                                     EnginnerPost(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"EngineerPost",newCitizen,1)
 
         if water_related_structures.clicked and not water_related_structures.rect.collidepoint(event.pos):

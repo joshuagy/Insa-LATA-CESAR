@@ -245,3 +245,35 @@ class Chariot(Walker):
         super().__init__(case, plateau, name)
         self.owner = owner
         self.direction = self.owner.direction
+
+class Engineer(Walker):
+    def __init__(self, case, plateau, name="Plebius Prepus"):
+        super().__init__(case, plateau, name)
+        print("engineer")
+
+    
+    def update(self):
+        """
+        Mise à jour de la prochaine action du walker
+        """
+        now = pygame.time.get_ticks()
+        self.index_sprite += 0.5
+        if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.action][self.direction])):
+            self.index_sprite = 0
+
+        if now - self.move_timer > 500:
+            if self.ttw > 0:
+                new_pos = self.random_path()
+
+                self.ttw -= 1
+                if self.ttw == 0:
+                    self.create_path(self.case_de_départ)
+            else :
+                new_pos = self.path[self.path_index]
+                # Mise à jour de la position sur le plateau
+                self.path_index += 1
+                # On retourne en mode aléatoire si la destination a été atteint
+                if self.path_index >= len(self.path) - 1:
+                    self.ttw = ttwmax
+            self.change_tile(new_pos)
+            self.move_timer = now
