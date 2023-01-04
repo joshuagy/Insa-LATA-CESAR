@@ -39,6 +39,7 @@ class Walker:
         self.action = 1
         
         self.plateau.entities.append(self)  #On ajoute le walker à la liste des entitées présentes sur le plateau
+        self.plateau.walkers[case.x][case.y].append(self)
 
         self.index_sprite = 0
         
@@ -50,6 +51,9 @@ class Walker:
 
     def delete(self) :
         self.plateau.entities.remove(self)
+        print(self)
+        print(self.plateau.walkers[self.case.x][self.case.y])
+        self.plateau.walkers[self.case.x][self.case.y].remove(self)
         del self
 
     
@@ -146,6 +150,8 @@ class Walker:
             self.direction = 1
         elif self.case.y < new_tile[1]:
             self.direction = 3
+        self.plateau.walkers[self.case.x][self.case.y].remove(self)
+        self.plateau.walkers[new_tile[0]][new_tile[1]].append(self)
         self.case = self.plateau.map[new_tile[0]][new_tile[1]]
     
     def update(self):
@@ -236,9 +242,10 @@ class Immigrant(Walker):
                 self.chariot.delete()
                 self.target.structure.becomeAHouse()
                 self.delete()
-            self.chariot.change_tile((self.case.x, self.case.y))
-            self.change_tile(new_pos)
-            self.move_timer = now
+            else :
+                self.chariot.change_tile((self.case.x, self.case.y))
+                self.change_tile(new_pos)
+                self.move_timer = now
 
 class Chariot(Walker):
     def __init__(self, case, plateau, owner, name=""):
