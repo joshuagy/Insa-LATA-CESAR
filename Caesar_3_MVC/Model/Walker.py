@@ -51,8 +51,6 @@ class Walker:
 
     def delete(self) :
         self.plateau.entities.remove(self)
-        print(self)
-        print(self.plateau.walkers[self.case.x][self.case.y])
         self.plateau.walkers[self.case.x][self.case.y].remove(self)
         del self
 
@@ -256,7 +254,6 @@ class Chariot(Walker):
 class Engineer(Walker):
     def __init__(self, case, plateau, name="Plebius Prepus"):
         super().__init__(case, plateau, name)
-        print("engineer")
 
     
     def update(self):
