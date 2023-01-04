@@ -147,6 +147,9 @@ class Walker:
         elif self.case.y < new_tile[1]:
             self.direction = 3
         self.case = self.plateau.map[new_tile[0]][new_tile[1]]
+    
+    def update(self):
+        pass
 
 
 class Citizen(Walker):
@@ -208,3 +211,37 @@ class Prefet(Walker):
                     self.ttw = ttwmax
             self.change_tile(new_pos)
             self.move_timer = now
+
+class Immigrant(Walker):
+    def __init__(self, case, plateau, target, name="Plebius Prepus"):
+        super().__init__(case, plateau, name)
+        self.target = target
+        self.create_path(target)
+        self.chariot = Chariot(self.plateau.map[self.case.x][self.case.y+1], self.plateau, self)
+    
+    def update(self):
+        """
+        Mise à jour de la prochaine action du walker
+        """
+        now = pygame.time.get_ticks()
+        self.index_sprite += 0.5
+        if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.action][self.direction])):
+            self.index_sprite = 0
+
+        if now - self.move_timer > 500:
+            new_pos = self.path[self.path_index]
+            # Mise à jour de la position sur le plateau
+            self.path_index += 1
+            if self.path_index >= len(self.path) - 1:
+                self.chariot.delete()
+                self.target.structure.becomeAHouse()
+                self.delete()
+            self.chariot.change_tile((self.case.x, self.case.y))
+            self.change_tile(new_pos)
+            self.move_timer = now
+
+class Chariot(Walker):
+    def __init__(self, case, plateau, owner, name=""):
+        super().__init__(case, plateau, name)
+        self.owner = owner
+        self.direction = self.owner.direction

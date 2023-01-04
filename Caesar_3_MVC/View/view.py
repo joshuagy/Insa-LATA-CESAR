@@ -88,4 +88,4 @@ class GraphicalView(object):
         self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), 40 * cell_size * 2, 40 * cell_size + 2 * cell_size)
 
         #Création de walkers
-        for _ in range(1) : Prefet(self.model.actualGame.map[19][20], self.model.actualGame)
+        #for _ in range(1) : Immigrant(self.model.actualGame.map[19][38], self.model.actualGame, self.model.actualGame.map[19][20])
