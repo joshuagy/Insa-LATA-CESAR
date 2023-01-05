@@ -10,6 +10,7 @@ class Building():
         self.plateau = plateau
         self.plateau.structures.append(self)
         self.fireRisk = 0
+        self.collapseRisk= 0
     
     def delete(self):
         self.case.setStructure(None)
@@ -64,3 +65,24 @@ class Building():
     def getCase(self):
         return self.case
 
+    def collapse(self):
+        self.delete()
+        DamagedBuilding(self.case,self.plateau,"Ruins")
+
+    def ignite(self):
+        self.delete()
+        DamagedBuilding(self.case,self.plateau,"BurningBuilding")
+
+class DamagedBuilding :
+    def __init__(self, case, plateau, desc):
+        self.case=case
+        self.timeBurning=0
+        self.plateau = plateau
+        self.desc = desc
+        self.plateau.structures.append(self)
+        self.case.setStructure(self)
+
+    def delete(self):
+        self.plateau.structures.remove(self)
+        self.case.setStructure(None)
+        del self

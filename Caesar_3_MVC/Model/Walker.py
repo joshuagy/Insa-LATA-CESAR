@@ -238,6 +238,7 @@ class Immigrant(Walker):
             self.path_index += 1
             if self.path_index >= len(self.path) - 1:
                 self.chariot.delete()
+
                 self.target.structure.becomeAHouse()
                 self.delete()
             else :

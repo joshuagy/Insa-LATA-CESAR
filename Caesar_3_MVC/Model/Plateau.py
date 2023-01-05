@@ -7,6 +7,7 @@ from Model.Walker import *
 from Model.control_panel import *
 from Model.constants import *
 from Model.Route import Route
+from random import *
 import sys
 
 counter=1
@@ -270,17 +271,51 @@ class Plateau():
         eps = load_image("image/Buildings/transport_00056.png")
         ws = load_image("image/Buildings/Utilitya_00001.png")
         bsts = load_image("image/Buildings/Land2a_00208.png")
-        strs = load_image("image/Buildings/Land2a_00115.png")
+        burnruinss = load_image("image/Buildings/Land2a_00115.png")
+        ruinss = load_image("image/Buildings/Land2a_00044.png")
+
 
         return {"HousingSpot" : hss, "SmallTent" : sts, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
-                "BurningSmallTent" : bsts, "SmallTentRuins" : strs}
+                "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
 
     def update(self):
         self.camera.update()
         #Update de la position des walkers
         for e in self.entities: e.update()
         for hs in self.cityHousingSpotsList: hs.generateImmigrant()
+        self.riskCheck()
 
+    def riskCheck(self):
+        for b in self.structures :
+            #CollapseRisk :
+            if b.desc in list_of_brittle_structures :
+                #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
+                safeTime = 300          # Nombre de ticks pendant lequel le bâtiment est 100% safe
+                criticalTime = 30000    # Nombre de ticks après lequels le bâtiment s'écroule forcément
+                randC = randint(safeTime,criticalTime)
+                if randC+b.get_collapseRisk() >= safeTime+criticalTime :
+                    b.collapse()
+                else :
+                    b.set_collapseRisk(b.get_collapseRisk()+1)
+            #FireRisk :
+            if b.desc in list_of_flammable_structures :
+                #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
+                safeTime = 300          # Nombre de ticks pendant lequel le bâtiment est 100% safe
+                criticalTime = 30000    # Nombre de ticks après lesquels le bâtiment s'écroule forcément
+                randF = randint(safeTime,criticalTime)
+                if randF+b.get_fireRisk() >= safeTime+criticalTime :
+                    b.ignite()
+                else :
+                    b.set_fireRisk(b.get_fireRisk()+1)
+            # Chance qu'un incendie s'éteigne de lui-même (Pour l'instant 0,5% par tick après 1000 ticks)
+            if b.desc == "BurningBuilding" :
+                if b.timeBurning < 1000 :
+                    b.timeBurning = b.timeBurning+1
+                else :
+                    val = randint(0,1000)
+                    if val<=5 :
+                        b.desc="BurnedRuins"
+                    
 
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -303,7 +338,7 @@ class Plateau():
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (self.image_route[id_image].get_height() - cell_size) + self.camera.vect.y))
                 
-                # DRAW STRUCTURS
+                # DRAW STRUCTURES
                 else :
                     id_image = self.map[cell_x][cell_y].structure.desc
                     self.screen.blit(self.image_structures[id_image], 

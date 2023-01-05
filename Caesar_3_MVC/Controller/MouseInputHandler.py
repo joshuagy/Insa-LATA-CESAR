@@ -125,12 +125,6 @@ class MouseInputHandler:
                             self.model.actualGame.map[xi][yi].sprite = "land1"
                             if self.model.actualGame.map[xi][yi].road :
                                 self.model.actualGame.map[xi][yi].road.delete()
-                                # Informe toutes les cases adjacentes qu'elles ne sont plus connectées à la route 
-                                # (Sauf bien sûr si elles sont connectées à une autre route)
-                                for xa in range(xi-1,xi+1,1):
-                                    for ya in range(yi-1, yi+1, 1):
-                                        self.model.actualGame.map[xa][ya].changeConnectedToRoad(-1)
-                                      
                             if self.model.actualGame.map[xi][yi].structure :
                               self.model.actualGame.map[xi][yi].structure.delete()
 
@@ -276,11 +270,12 @@ class MouseInputHandler:
             #Building Construction :
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
-                    for xcr in range (xi-2,xi+2,1) :
-                        for ycr in range (yi-2,yi+2,1) :
-                            if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
-                                if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
-                                    HousingSpot(self.model.actualGame.map[xi][yi],self.model.actualGame)
+                        for xcr in range (xi-2,xi+2,1) :
+                            for ycr in range (yi-2,yi+2,1) :
+                                if 0<=xcr<self.model.actualGame.nbr_cell_x and 0<=ycr<self.model.actualGame.nbr_cell_y:
+                                    if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
+                                        if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
+                                            HousingSpot(self.model.actualGame.map[xi][yi],self.model.actualGame)
 
         #Prefecture     
         if security_structures.clicked and not security_structures.rect.collidepoint(event.pos):
@@ -335,11 +330,9 @@ class MouseInputHandler:
             #Building Construction :
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
-                    for xcr in range (xi-1,xi+1,1) :
-                        for ycr in range (yi-1,yi+1,1) :
-                            if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
-                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
-                                    Prefecture(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Prefecture",1)
+                    if self.model.actualGame.map[xi][yi].getConnectedToRoad() > 0 :
+                        if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
+                            Prefecture(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Prefecture",1)
 
         #Engineer
         if engineering_structures.clicked and not engineering_structures.rect.collidepoint(event.pos):
@@ -394,11 +387,9 @@ class MouseInputHandler:
             #Building Construction :
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
-                    for xcr in range (xi-1,xi+1,1) :
-                        for ycr in range (yi-1,yi+1,1) :
-                            if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
-                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
-                                    EnginnerPost(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"EngineerPost",1)
+                    if self.model.actualGame.map[xi][yi].getConnectedToRoad() > 0 :
+                        if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
+                            EnginnerPost(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"EngineerPost",1)
 
         #Well
         if water_related_structures.clicked and not water_related_structures.rect.collidepoint(event.pos):
@@ -453,9 +444,9 @@ class MouseInputHandler:
             #Building Construction :
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
-                    for xcr in range (xi-1,xi+1,1) :
-                        for ycr in range (yi-1,yi+1,1) :
-                            if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
+                    #for xcr in range (xi-1,xi+1,1) :
+                        #for ycr in range (yi-1,yi+1,1) :
+                            #if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
                                 if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                                     Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
                                     

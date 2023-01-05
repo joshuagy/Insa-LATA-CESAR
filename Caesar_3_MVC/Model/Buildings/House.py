@@ -1,6 +1,6 @@
 import pygame
 from random import randint
-from Model.Buildings.Building import Building
+from Model.Buildings.Building import *
 from Model.Plateau import *
 from Model.Case import *
 from Model.Walker import Immigrant
@@ -14,6 +14,7 @@ class House(Building):
         self.nbHabMax = 5
         self.religiousAccess = 0
         self.plateau.cityHousesList.append(self)
+
     
     def get_desc(self):
         return self.desc
