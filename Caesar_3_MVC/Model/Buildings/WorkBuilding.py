@@ -3,8 +3,8 @@ from Model.Walker import *
 from Model.Case import *
 
 class WorkBuilding(Building):
-    def __init__(self, case, plateau, size, desc, fireRisk, collapseRisk, active=0):
-        super().__init__( case, plateau, size, desc, fireRisk, collapseRisk)
+    def __init__(self, case, plateau, size, desc, active=0):
+        super().__init__( case, plateau, size, desc)
         self.active = active
         self.case.setFeature(desc)
 
@@ -23,8 +23,8 @@ class WorkBuilding(Building):
 
 class Prefecture(WorkBuilding) :
 
-    def __init__(self, case, plateau, size, desc, active, fireRisk=0, collapseRisk=0):
-        super().__init__( case, plateau, size, desc, active, collapseRisk)
+    def __init__(self, case, plateau, size, desc, active):
+        super().__init__( case, plateau, size, desc, active)
         self.walker = Prefet(self.case,self.plateau,"Prefectus")
 
     def activatePrefecture(aPrefecture,lePlateau) :
@@ -33,15 +33,13 @@ class Prefecture(WorkBuilding) :
         aPrefecture.setWalker(myPrefect)
         #Reste à afficher le drapeau ROUGE
     
-    def collapse(self):
-        self.delete()
-        DamagedBuilding(self.case,self.plateau,"Ruins")
+
         
 
 class EnginnerPost(WorkBuilding) :
 
-    def __init__(self, case, plateau, size, desc, active, fireRisk=0, collapseRisk=0):
-        super().__init__( case, plateau, size, desc, active, fireRisk, collapseRisk)
+    def __init__(self, case, plateau, size, desc, active):
+        super().__init__( case, plateau, size, desc, active)
         self.walker = Engineer(self.case,self.plateau,"UnIngenieur")
 
     def activateEngineerPost(anEngineerPost,lePlateau) :
@@ -50,6 +48,3 @@ class EnginnerPost(WorkBuilding) :
         anEngineerPost.setWalker(myEngineer)
         #Reste à afficher le drapeau BLEU
 
-    def ignite(self):
-        self.delete()
-        DamagedBuilding(self.case,self.plateau,"BurningBuilding")

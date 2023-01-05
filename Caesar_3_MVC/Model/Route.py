@@ -3,6 +3,7 @@ class Route():
         self.case = case
         self.case.road = self
         self.plateau = plateau
+        
         #Informe les cases adjacentes qu'elles sont maintenant connectées à la route :
         self.case.changeConnectedToRoad(1)
         if self.case.x != 0 :

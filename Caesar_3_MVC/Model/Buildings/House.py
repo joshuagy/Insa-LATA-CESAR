@@ -7,10 +7,8 @@ from Model.Walker import Immigrant
 
 class House(Building):
 
-    def __init__(self, case, plateau, size, desc, fireRisk=0, collapseRisk=0):
+    def __init__(self, case, plateau, size, desc):
         super().__init__(case, plateau, size, desc)
-        self.fireRisk=fireRisk
-        self.collapseRisk=collapseRisk
         self.entertainLvl = 0
         self.nbHab = 1
         self.nbHabMax = 5
@@ -38,14 +36,6 @@ class House(Building):
     
     def set_nbHabmax(self, newnbHabmax):
         self.nbHabmax = newnbHabmax
-
-    def collapse(self):
-        self.delete()
-        DamagedBuilding(self.case,self.plateau,"Ruins")
-
-    def ignite(self):
-        self.delete()
-        DamagedBuilding(self.case,self.plateau,"BurningBuilding")
 
     def delete(self) :
         #Supprimer les habitants

@@ -271,10 +271,12 @@ class Plateau():
         eps = load_image("image/Buildings/transport_00056.png")
         ws = load_image("image/Buildings/Utilitya_00001.png")
         bsts = load_image("image/Buildings/Land2a_00208.png")
-        ruinss = load_image("image/Buildings/Land2a_00115.png")
+        burnruinss = load_image("image/Buildings/Land2a_00115.png")
+        ruinss = load_image("image/Buildings/Land2a_00044.png")
+
 
         return {"HousingSpot" : hss, "SmallTent" : sts, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
-                "BurningBuilding" : bsts, "Ruins" : ruinss}
+                "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
 
     def update(self):
         self.camera.update()
@@ -289,7 +291,7 @@ class Plateau():
             if b.desc in list_of_brittle_structures :
                 #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
                 safeTime = 300          # Nombre de ticks pendant lequel le bâtiment est 100% safe
-                criticalTime = 30000    # Nombre de ticks après laquelle le bâtiment s'écroule forcément
+                criticalTime = 30000    # Nombre de ticks après lequels le bâtiment s'écroule forcément
                 val = randint(safeTime,criticalTime)
                 if val+b.get_collapseRisk() >= safeTime+criticalTime :
                     b.collapse()
@@ -299,13 +301,21 @@ class Plateau():
             if b.desc in list_of_flammable_structures :
                 #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
                 safeTime = 300          # Nombre de ticks pendant lequel le bâtiment est 100% safe
-                criticalTime = 30000    # Nombre de ticks après laquelle le bâtiment s'écroule forcément
+                criticalTime = 30000    # Nombre de ticks après lesquels le bâtiment s'écroule forcément
                 val = randint(safeTime,criticalTime)
                 if val+b.get_fireRisk() >= safeTime+criticalTime :
                     b.ignite()
                 else :
                     b.set_fireRisk(b.get_fireRisk()+1)
-  
+            # Chance qu'un incendie s'éteigne de lui-même (Pour l'instant 0,5% par tick après 1000 ticks)
+            if b.desc == "BurningBuilding" :
+                if b.timeBurning < 1000 :
+                    b.timeBurning = b.timeBurning+1
+                else :
+                    val = randint(0,1000)
+                    if val<=5 :
+                        b.desc="BurnedRuins"
+                    
 
     def draw(self):
         self.screen.fill((0, 0, 0))
