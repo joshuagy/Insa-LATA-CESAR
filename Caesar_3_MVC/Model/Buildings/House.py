@@ -57,6 +57,7 @@ class HousingSpot() :
         self.plateau.cityHousingSpotsList.append(self)
         self.spawn_timer = pygame.time.get_ticks()
         self.nb_immigrant = 0
+        self.immigrant = None
 
     def isConnectedToRoad(self):
         return self.connectedToRoad
@@ -75,19 +76,24 @@ class HousingSpot() :
         self.case.setFeature("")
         self.plateau.cityHousingSpotsList.remove(self)
         self.plateau.structures.remove(self)
+        if self.immigrant :
+            self.immigrant.chariot.delete()
+            self.immigrant.delete()
         del self
 
     def becomeAHouse(self):
+        self.plateau.cityHousingSpotsList.remove(self)
+        self.plateau.structures.remove(self)
         House(self.case,self.plateau, 1, "SmallTent")
         self.case.setFeature("Small Tent")
-        self.delete()
+        del self
     
     def generateImmigrant(self):
         now = pygame.time.get_ticks()
 
         if now - self.spawn_timer > 500:
             if randint(0, 10) == 0 and self.nb_immigrant < 1:
-                Immigrant(self.plateau.map[19][38], self.plateau, self.case)
+                self.immigrant = Immigrant(self.plateau.map[19][38], self.plateau, self.case)
                 self.nb_immigrant += 1
             self.spawn_timer = now
 

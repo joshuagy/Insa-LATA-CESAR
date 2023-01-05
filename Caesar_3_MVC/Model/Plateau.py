@@ -50,8 +50,11 @@ class Plateau():
 
         self.default_road()
 
+        #Tableau contenant toutes les cases occupées par les walkers
+        self.walkers = [[[] for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
+
         #Tableau contenant l'intégralité des walker présents sur la map
-        self.entities = entities
+        self.entities = entities 
 
         #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
         self.collision_matrix = self.create_collision_matrix()
@@ -253,7 +256,10 @@ class Plateau():
         #====== Chariot ======#
         chariot = {1 : create_liste_sprites_walker("Chariot", "Walk", 1)}
 
-        return {"Citizen" : citizen, "Prefet" : prefet, "Immigrant" : immigrant, "Chariot" : chariot}
+        #====== engineer ======#
+        engineer = {1 : create_liste_sprites_walker("Engineer", "Walk", 12)}
+
+        return {"Citizen" : citizen, "Prefet" : prefet, "Immigrant" : immigrant, "Chariot" : chariot, "Engineer" : engineer}
 
 
     def load_structures_images(self):
@@ -285,38 +291,37 @@ class Plateau():
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
 
-                if self.map[cell_x][cell_y].road == None:
-                    image = self.map[cell_x][cell_y].sprite
-                    self.screen.blit(self.image[image],
+                if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
+                    id_image = self.map[cell_x][cell_y].sprite
+                    self.screen.blit(self.image[id_image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image[image].get_height() - cell_size) + self.camera.vect.y))
+                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
                 # DRAW ROADS
-                else :
-                    image = self.map[cell_x][cell_y].road.sprite
-                    self.screen.blit(self.image_route[image],
+                elif self.map[cell_x][cell_y].road:
+                    id_image = self.map[cell_x][cell_y].road.sprite
+                    self.screen.blit(self.image_route[id_image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image_route[image].get_height() - cell_size) + self.camera.vect.y))
+                                    render_pos[1] - (self.image_route[id_image].get_height() - cell_size) + self.camera.vect.y))
+                
+                # DRAW STRUCTURS
+                else :
+                    id_image = self.map[cell_x][cell_y].structure.desc
+                    self.screen.blit(self.image_structures[id_image], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                         render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                
+                # DRAW WALKERS
+                for e in self.walkers[cell_x][cell_y]:
+                    self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                         render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
                 
                 # DRAW PREVIEW
                 if self.previewMap[cell_x][cell_y] != None:
                     self.screen.blit(self.image["red"],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (self.image["red"].get_height() - cell_size) + self.camera.vect.y))
-
-        # DRAW WALKERS
-        for e in self.entities:
-            render_pos =  self.map[e.case.x][e.case.y].render_pos
-            self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)], 
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
-        
-      
-        # DRAW BUILDINGS
-        for b in self.structures:
-            render_pos = self.map[b.case.x][b.case.y].render_pos
-            self.screen.blit(self.image_structures[b.desc], 
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (self.image_structures[b.desc].get_height() - cell_size) + self.camera.vect.y))
+            
         
 
         self.menu_map.draw_menu(self.screen)

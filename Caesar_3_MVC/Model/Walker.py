@@ -39,6 +39,7 @@ class Walker:
         self.action = 1
         
         self.plateau.entities.append(self)  #On ajoute le walker à la liste des entitées présentes sur le plateau
+        self.plateau.walkers[case.x][case.y].append(self)
 
         self.index_sprite = 0
         
@@ -50,6 +51,7 @@ class Walker:
 
     def delete(self) :
         self.plateau.entities.remove(self)
+        self.plateau.walkers[self.case.x][self.case.y].remove(self)
         del self
 
     
@@ -146,6 +148,8 @@ class Walker:
             self.direction = 1
         elif self.case.y < new_tile[1]:
             self.direction = 3
+        self.plateau.walkers[self.case.x][self.case.y].remove(self)
+        self.plateau.walkers[new_tile[0]][new_tile[1]].append(self)
         self.case = self.plateau.map[new_tile[0]][new_tile[1]]
     
     def update(self):
@@ -236,12 +240,44 @@ class Immigrant(Walker):
                 self.chariot.delete()
                 self.target.structure.becomeAHouse()
                 self.delete()
-            self.chariot.change_tile((self.case.x, self.case.y))
-            self.change_tile(new_pos)
-            self.move_timer = now
+            else :
+                self.chariot.change_tile((self.case.x, self.case.y))
+                self.change_tile(new_pos)
+                self.move_timer = now
 
 class Chariot(Walker):
     def __init__(self, case, plateau, owner, name=""):
         super().__init__(case, plateau, name)
         self.owner = owner
         self.direction = self.owner.direction
+
+class Engineer(Walker):
+    def __init__(self, case, plateau, name="Plebius Prepus"):
+        super().__init__(case, plateau, name)
+
+    
+    def update(self):
+        """
+        Mise à jour de la prochaine action du walker
+        """
+        now = pygame.time.get_ticks()
+        self.index_sprite += 0.5
+        if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.action][self.direction])):
+            self.index_sprite = 0
+
+        if now - self.move_timer > 500:
+            if self.ttw > 0:
+                new_pos = self.random_path()
+
+                self.ttw -= 1
+                if self.ttw == 0:
+                    self.create_path(self.case_de_départ)
+            else :
+                new_pos = self.path[self.path_index]
+                # Mise à jour de la position sur le plateau
+                self.path_index += 1
+                # On retourne en mode aléatoire si la destination a été atteint
+                if self.path_index >= len(self.path) - 1:
+                    self.ttw = ttwmax
+            self.change_tile(new_pos)
+            self.move_timer = now

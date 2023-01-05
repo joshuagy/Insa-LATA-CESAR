@@ -3,9 +3,8 @@ from Model.Walker import *
 from Model.Case import *
 
 class WorkBuilding(Building):
-    def __init__(self, case, plateau, size, desc, walker, active =0):
+    def __init__(self, case, plateau, size, desc, active =0):
         super().__init__( case, plateau, size, desc)
-        self.walker = walker
         self.active = active
         self.case.setFeature(desc)
 
@@ -30,8 +29,9 @@ class WorkBuilding(Building):
 
 class Prefecture(WorkBuilding) :
 
-    def __init__(self, case, plateau, size, desc, walker, active,):
-        super().__init__( case, plateau, size, desc, walker, active)
+    def __init__(self, case, plateau, size, desc, active,):
+        super().__init__( case, plateau, size, desc, active)
+        self.walker = Prefet(self.case,self.plateau,"Prefectus")
 
     def activatePrefecture(aPrefecture,lePlateau) :
         aPrefecture.setActive(True)
@@ -41,11 +41,12 @@ class Prefecture(WorkBuilding) :
 
 class EnginnerPost(WorkBuilding) :
 
-    def __init__(self, case, plateau, size, desc, walker, active,):
-        super().__init__( case, plateau, size, desc, walker, active)
+    def __init__(self, case, plateau, size, desc, active,):
+        super().__init__( case, plateau, size, desc, active)
+        self.walker = Engineer(self.case,self.plateau,"UnIngenieur")
 
     def activateEngineerPost(anEngineerPost,lePlateau) :
         anEngineerPost.setActive(True)
-        myEngineer=Prefet(anEngineerPost.case,lePlateau,"Emerius")
+        myEngineer=Engineer(anEngineerPost.case,lePlateau,"Emerius")
         anEngineerPost.setWalker(myEngineer)
         #Reste à afficher le drapeau BLEU
