@@ -8,12 +8,6 @@ class WorkBuilding(Building):
         self.active = active
         self.case.setFeature(desc)
 
-    def setWalker(self,newWalker):
-        self.walker=newWalker
-
-    def getWalker(self):
-        return self.walker
-
     def setActive(self,NewActive):
         self.active = NewActive
 
