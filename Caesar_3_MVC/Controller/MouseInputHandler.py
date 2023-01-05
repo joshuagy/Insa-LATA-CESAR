@@ -123,7 +123,6 @@ class MouseInputHandler:
                 for yi in range(grid_y1, grid_y2+1):
                         if self.model.actualGame.map[xi][yi].sprite not in list_of_undestructible:
                             self.model.actualGame.map[xi][yi].sprite = "land1"
-                            self.model.actualGame.map[xi][yi].collision = 0
                             if self.model.actualGame.map[xi][yi].road :
                                 self.model.actualGame.map[xi][yi].road.delete()
                                 # Informe toutes les cases adjacentes qu'elles ne sont plus connectées à la route 
