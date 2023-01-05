@@ -193,38 +193,38 @@ class MouseInputHandler:
                 match(pattern):
                     case 0:
                         for xi in range(grid_x1, grid_x2+1):
-                            if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None:
+                            if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None and self.model.actualGame.map[xi][grid_y2].sprite not in list_of_collision:
                                 Route(self.model.actualGame.map[xi][grid_y2], self.model.actualGame)
 
                         for yi in range(grid_y1, grid_y2+1):
-                            if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None:
+                            if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None and self.model.actualGame.map[grid_x1][yi].sprite not in list_of_collision:
                                 Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
                     case 1:
                         for xi in range(grid_x1, grid_x2-1, -1):
-                            if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None:
+                            if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None and self.model.actualGame.map[xi][grid_y1].sprite not in list_of_collision:
                                 Route(self.model.actualGame.map[xi][grid_y1], self.model.actualGame)
                         for yi in range(grid_y1, grid_y2+1):
-                            if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None:
+                            if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None and self.model.actualGame.map[grid_x2][yi].sprite not in list_of_collision:
                                 Route(self.model.actualGame.map[grid_x2][yi], self.model.actualGame)
                     case 2:
                         for xi in range(grid_x1, grid_x2+1):
-                            if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None:
+                            if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None and self.model.actualGame.map[xi][grid_y1].sprite not in list_of_collision:
                                 Route(self.model.actualGame.map[xi][grid_y1], self.model.actualGame)
                         for yi in range(grid_y1, grid_y2-1, -1):
-                            if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None:
+                            if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None and self.model.actualGame.map[grid_x2][yi].sprite not in list_of_collision:
                                 Route(self.model.actualGame.map[grid_x2][yi], self.model.actualGame)
                     case 3:
                         for xi in range(grid_x1, grid_x2-1, -1):
-                            if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None:
+                            if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None and self.model.actualGame.map[xi][grid_y2].sprite not in list_of_collision:
                                 Route(self.model.actualGame.map[xi][grid_y2], self.model.actualGame)
                         for yi in range(grid_y1, grid_y2-1, -1):
-                            if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None:
+                            if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None and self.model.actualGame.map[grid_x1][yi].sprite not in list_of_collision:
                                 Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
                             
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
             
-        #Building
-
+        #Buildings
+        #HousingSpot
         if build_housing_button.clicked and not build_housing_button.rect.collidepoint(event.pos):
         
         #Mouse Selection :
@@ -279,11 +279,11 @@ class MouseInputHandler:
                 for yi in range(grid_y1, grid_y2+1):
                     for xcr in range (xi-2,xi+2,1) :
                         for ycr in range (yi-2,yi+2,1) :
-                            if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure:
+                            if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                                 if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
                                     HousingSpot(self.model.actualGame.map[xi][yi],self.model.actualGame)
 
-                
+        #Prefecture     
         if security_structures.clicked and not security_structures.rect.collidepoint(event.pos):
         
         #Mouse Selection :
@@ -339,10 +339,10 @@ class MouseInputHandler:
                     for xcr in range (xi-1,xi+1,1) :
                         for ycr in range (yi-1,yi+1,1) :
                             if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
-                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure:
-                                    newPrefect = Prefet(self.model.actualGame.map[xi][yi],self.model.actualGame,"Prefectus")
-                                    Prefecture(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Prefecture",newPrefect,1)
+                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
+                                    Prefecture(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Prefecture",1)
 
+        #Engineer
         if engineering_structures.clicked and not engineering_structures.rect.collidepoint(event.pos):
         
         #Mouse Selection :
@@ -398,10 +398,10 @@ class MouseInputHandler:
                     for xcr in range (xi-1,xi+1,1) :
                         for ycr in range (yi-1,yi+1,1) :
                             if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
-                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure:
-                                    newCitizen = Engineer(self.model.actualGame.map[xi][yi],self.model.actualGame,"Pasuningenieur")
-                                    EnginnerPost(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"EngineerPost",newCitizen,1)
+                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
+                                    EnginnerPost(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"EngineerPost",1)
 
+        #Well
         if water_related_structures.clicked and not water_related_structures.rect.collidepoint(event.pos):
         
         #Mouse Selection :
@@ -457,7 +457,7 @@ class MouseInputHandler:
                     for xcr in range (xi-1,xi+1,1) :
                         for ycr in range (yi-1,yi+1,1) :
                             if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
-                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure:
+                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                                     Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
                                     
                                     
