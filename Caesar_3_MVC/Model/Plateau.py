@@ -292,8 +292,8 @@ class Plateau():
                 #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
                 safeTime = 300          # Nombre de ticks pendant lequel le bâtiment est 100% safe
                 criticalTime = 30000    # Nombre de ticks après lequels le bâtiment s'écroule forcément
-                val = randint(safeTime,criticalTime)
-                if val+b.get_collapseRisk() >= safeTime+criticalTime :
+                randC = randint(safeTime,criticalTime)
+                if randC+b.get_collapseRisk() >= safeTime+criticalTime :
                     b.collapse()
                 else :
                     b.set_collapseRisk(b.get_collapseRisk()+1)
@@ -302,8 +302,8 @@ class Plateau():
                 #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
                 safeTime = 300          # Nombre de ticks pendant lequel le bâtiment est 100% safe
                 criticalTime = 30000    # Nombre de ticks après lesquels le bâtiment s'écroule forcément
-                val = randint(safeTime,criticalTime)
-                if val+b.get_fireRisk() >= safeTime+criticalTime :
+                randF = randint(safeTime,criticalTime)
+                if randF+b.get_fireRisk() >= safeTime+criticalTime :
                     b.ignite()
                 else :
                     b.set_fireRisk(b.get_fireRisk()+1)

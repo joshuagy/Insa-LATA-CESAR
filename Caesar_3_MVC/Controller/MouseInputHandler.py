@@ -270,11 +270,12 @@ class MouseInputHandler:
             #Building Construction :
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
-                    for xcr in range (xi-2,xi+2,1) :
-                        for ycr in range (yi-2,yi+2,1) :
-                            if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
-                                if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 and 0<=xcr<self.model.actualGame.nbr_cell_x and 0<=ycr<self.model.actualGame.nbr_cell_y:
-                                    HousingSpot(self.model.actualGame.map[xi][yi],self.model.actualGame)
+                        for xcr in range (xi-2,xi+2,1) :
+                            for ycr in range (yi-2,yi+2,1) :
+                                if 0<=xcr<self.model.actualGame.nbr_cell_x and 0<=ycr<self.model.actualGame.nbr_cell_y:
+                                    if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
+                                        if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
+                                            HousingSpot(self.model.actualGame.map[xi][yi],self.model.actualGame)
 
         #Prefecture     
         if security_structures.clicked and not security_structures.rect.collidepoint(event.pos):
