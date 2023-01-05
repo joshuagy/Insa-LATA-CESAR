@@ -1,19 +1,22 @@
 import pygame
 from random import randint
-from Model.Buildings.Building import Building
+from Model.Buildings.Building import *
 from Model.Plateau import *
 from Model.Case import *
 from Model.Walker import Immigrant
 
 class House(Building):
 
-    def __init__(self, case, plateau, size, desc):
+    def __init__(self, case, plateau, size, desc, fireRisk=0, collapseRisk=0):
         super().__init__(case, plateau, size, desc)
+        self.fireRisk=fireRisk
+        self.collapseRisk=collapseRisk
         self.entertainLvl = 0
         self.nbHab = 1
         self.nbHabMax = 5
         self.religiousAccess = 0
         self.plateau.cityHousesList.append(self)
+
     
     def get_desc(self):
         return self.desc
@@ -35,6 +38,14 @@ class House(Building):
     
     def set_nbHabmax(self, newnbHabmax):
         self.nbHabmax = newnbHabmax
+
+    def collapse(self):
+        self.delete()
+        DamagedBuilding(self.case,self.plateau,"Ruins")
+
+    def ignite(self):
+        self.delete()
+        DamagedBuilding(self.case,self.plateau,"BurningBuilding")
 
     def delete(self) :
         #Supprimer les habitants
