@@ -28,5 +28,10 @@ class InputController:
 								self.mouseInputHandler.handleInput(event)
 						if event.type == pygame.KEYDOWN:
 								self.keyboardInputHandler.handleInput(event)
+
+						# Hover event
+						self.mouseInputHandler.hoverEvent(pygame.mouse.get_pos())
+
+						
 						self.mouseInputHandler.checkEveryButton(event)
 							

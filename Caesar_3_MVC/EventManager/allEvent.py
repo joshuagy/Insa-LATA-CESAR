@@ -20,7 +20,10 @@ class QuitEvent(Event):
     def __init__ (self):
         self.name = "Quit event"
     
-    
+class LoadEvent(Event):
+    def __init__ (self):
+        self.name = "Loadevent"
+
 class TickEvent(Event):
     """
     Tick event.

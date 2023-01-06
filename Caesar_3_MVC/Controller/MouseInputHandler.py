@@ -44,10 +44,28 @@ class MouseInputHandler:
                         self.clicked = False
                         self.initialMouseCoordinate = None
         #  Preview clear land
+        
         elif event.type == pygame.MOUSEMOTION:
             temp = pygame.mouse.get_pos()
             if temp != self.initialMouseCoordinate and self.clicked:
                 self.handleMouseMouvement(event)
+
+        self.hoverEvent(pygame.mouse.get_pos())
+
+    def hoverEvent(self, mousePos): 
+        currentstate = self.model.state.peek()
+        if currentstate == STATE_INTRO_SCENE:
+            self.handleHoverEventIntroScene(mousePos)
+        if currentstate == STATE_MENU:
+            self.handleHoverEventMenu(mousePos)
+            
+
+
+    def handleHoverEventIntroScene(self, mousePos):
+        self.model.introScene.handleHoverEvent(mousePos)
+
+    def handleHoverEventMenu(self, mousePos):
+        self.model.menu.handleHoverEvent(mousePos)
 
     def handleMouseEventsStateIntroScene(self, event):
         """

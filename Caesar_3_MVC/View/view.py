@@ -44,6 +44,7 @@ class GraphicalView(object):
             # shut down the pygame graphics
             self.isinitialized = False
             pygame.quit()
+            exit()
         elif isinstance(event, TickEvent):
             if not self.isinitialized:
                 return
