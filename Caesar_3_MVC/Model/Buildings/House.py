@@ -45,6 +45,18 @@ class House(Building):
         self.plateau.structures.remove(self)
         del self
 
+    def upgrade(self) :
+        if self.desc=="SmallTent" and self.size is (1,1):
+            self.desc="LargeTent"
+            self.set_nbHabmax(7)
+
+    def downgrade(self) :
+        if self.desc == "LargeTent" and self.size is (1,1):
+            self.desc = "SmallTent"
+            self.set_nbHabmax(5)
+            if self.nbHab > self.nbHabMax :
+                self.nbHab = self.nbHabMax
+
 
 class HousingSpot() :
 
@@ -86,7 +98,7 @@ class HousingSpot() :
     def becomeAHouse(self):
         self.plateau.cityHousingSpotsList.remove(self)
         self.plateau.structures.remove(self)
-        House(self.case,self.plateau, 1, "SmallTent")
+        House(self.case,self.plateau,(1,1), "SmallTent")
         self.case.setFeature("Small Tent")
         del self
     
@@ -100,11 +112,6 @@ class HousingSpot() :
             self.spawn_timer = now
 
 """
-    def house_upgrade(house) :
-        if house.desc=="Small Tent" and house.size is (1,1):
-            house.desc="Large Tent"
-            house.case.setSprite("LargeTentSprite1*1")
-            house.set_nbHabmax(house,7)
         if house.desc=="Small Tent" and house.size is (2,2):
             house.desc="Large Tent"
             house.case.setSprite("LargeTentSprite2*2")
@@ -117,16 +124,6 @@ class HousingSpot() :
             house.desc="Large Shack"
             house.case.setSprite("LargeShackSprite2*2")
             house.set_nbHabmax(house,44)    
-
-
-    def checkForUpgrades(cityHouses): # Manque critères : Desirability, waterSuppply, religiousAccess
-        for i in cityHouses : 
-            if cityHouses[i].desc=="Small Tent" and cityHouses[i].case.waterSupply>0 :
-                cityHouses.house_upgrade(cityHouses[i])
-            if cityHouses[i].desc=="Large Tent" and cityHouses[i].case.desIn>0 :
-                cityHouses.house_upgrade(cityHouses[i])
-            if cityHouses[i].desc=="Small Shack" and cityHouses[i].religiousAccess>0 :
-                cityHouses.house_upgrade(cityHouses[i])
 
 """
 

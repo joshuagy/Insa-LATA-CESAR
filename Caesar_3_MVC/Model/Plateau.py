@@ -269,6 +269,7 @@ class Plateau():
 
         hss = load_image("image/Buildings/Housng1a_00045.png")
         sts = load_image("image/Buildings/Housng1a_00001.png")
+        lts = load_image("image/Buildings/Housng1a_00004.png")
         ps = load_image("image/Buildings/Security_00001.png")
         eps = load_image("image/Buildings/transport_00056.png")
         ws = load_image("image/Buildings/Utilitya_00001.png")
@@ -277,7 +278,7 @@ class Plateau():
         ruinss = load_image("image/Buildings/Land2a_00044.png")
 
 
-        return {"HousingSpot" : hss, "SmallTent" : sts, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
+        return {"HousingSpot" : hss, "SmallTent" : sts, "LargeTent" : lts, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
 
     def update(self):
@@ -285,15 +286,16 @@ class Plateau():
         #Update de la position des walkers
         for e in self.entities: e.update()
         for hs in self.cityHousingSpotsList: hs.generateImmigrant()
-        self.riskCheck()
+        self.riskCheck()    # Vérifie et incrémente les risques d'incendies et d'effondrement
+        self.houseCheck()   # Vérifie les upgrades, downgrades et merge d'habitations
 
     def riskCheck(self):
         for b in self.structures :
             #CollapseRisk :
             if b.desc in list_of_brittle_structures :
                 #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
-                safeTime = 300          # Nombre de ticks pendant lequel le bâtiment est 100% safe
-                criticalTime = 30000    # Nombre de ticks après lequels le bâtiment s'écroule forcément
+                safeTime = 1000          # Nombre de ticks pendant lequel le bâtiment est 100% safe
+                criticalTime = 50000    # Nombre de ticks après lequels le bâtiment s'écroule forcément
                 randC = randint(safeTime,criticalTime)
                 if randC+b.get_collapseRisk() >= safeTime+criticalTime :
                     b.collapse()
@@ -302,8 +304,8 @@ class Plateau():
             #FireRisk :
             if b.desc in list_of_flammable_structures :
                 #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
-                safeTime = 300          # Nombre de ticks pendant lequel le bâtiment est 100% safe
-                criticalTime = 30000    # Nombre de ticks après lesquels le bâtiment s'écroule forcément
+                safeTime = 1000          # Nombre de ticks pendant lequel le bâtiment est 100% safe
+                criticalTime = 50000    # Nombre de ticks après lesquels le bâtiment s'écroule forcément
                 randF = randint(safeTime,criticalTime)
                 if randF+b.get_fireRisk() >= safeTime+criticalTime :
                     b.ignite()
@@ -317,6 +319,14 @@ class Plateau():
                     val = randint(0,1000)
                     if val<=5 :
                         b.desc="BurnedRuins"
+            
+    def houseCheck(self) :
+        for h in self.cityHousesList :
+            if h.desc == "SmallTent" and h.case.waterAccess>0 : #Il faudra ajouter plus tard la condition de désirabilité
+                h.upgrade()
+            if h.desc == "LargeTent" and h.case.waterAccess<1 : #Il faudra ajouter plus tard la condition de désirabilité
+                h.downgrade()
+            #il faudra également ajouter les merges en 2*2
                     
 
     def draw(self):
