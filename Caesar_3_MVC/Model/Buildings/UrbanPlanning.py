@@ -11,6 +11,7 @@ class Well:
         self.case.setStructure(self)
         self.plateau=plateau
         self.plateau.structures.append(self)
+        self.plateau.treasury = self.plateau.treasury - WELL_COST
         Well.listWell.append(self)
         for xi in range (self.case.x-2,self.case.x+2,1) :
             for yi in range (self.case.y-2,self.case.y+2,1) :

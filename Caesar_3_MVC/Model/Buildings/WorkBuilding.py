@@ -26,6 +26,7 @@ class Prefecture(WorkBuilding) :
     def __init__(self, case, plateau, size, desc, active):
         super().__init__( case, plateau, size, desc, active)
         self.walker = Prefet(self.case,self.plateau,"Prefectus")
+        self.plateau.treasury = self.plateau.treasury - PREFECTURE_COST
 
     def activatePrefecture(aPrefecture,lePlateau) :
         aPrefecture.setActive(True)
@@ -41,6 +42,8 @@ class EnginnerPost(WorkBuilding) :
     def __init__(self, case, plateau, size, desc, active):
         super().__init__( case, plateau, size, desc, active)
         self.walker = Engineer(self.case,self.plateau,"UnIngenieur")
+        self.plateau.treasury = self.plateau.treasury - ENGINEERPOST_COST
+        print(self.plateau.treasury)
 
     def activateEngineerPost(anEngineerPost,lePlateau) :
         anEngineerPost.setActive(True)

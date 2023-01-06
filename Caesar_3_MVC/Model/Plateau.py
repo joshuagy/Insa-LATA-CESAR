@@ -41,6 +41,8 @@ class Plateau():
 
         self.attractiveness = attractiveness
         self.listeCase = listeCase
+        #Trésorerie
+        self.treasury = START_TREASURY + self.nbr_cell_y * ROAD_COST    #Remboursement auto des routes par défaut
 
         self.map = self.default_map()
         self.previewMap = self.default_map()
@@ -264,7 +266,7 @@ class Plateau():
 
 
     def load_structures_images(self):
-        buildingsSprite = {}
+
         hss = load_image("image/Buildings/Housng1a_00045.png")
         sts = load_image("image/Buildings/Housng1a_00001.png")
         ps = load_image("image/Buildings/Security_00001.png")

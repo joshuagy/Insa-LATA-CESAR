@@ -11,6 +11,7 @@ class Building():
         self.plateau.structures.append(self)
         self.fireRisk = 0
         self.collapseRisk= 0
+        self.cost = 0
     
     def delete(self):
         self.case.setStructure(None)
