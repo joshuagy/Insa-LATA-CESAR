@@ -34,6 +34,8 @@ class MouseInputHandler:
                         # get current state
                         self.finalClickCoordinate = pygame.mouse.get_pos()
                         currentstate = self.model.state.peek()
+                        if currentstate == STATE_INTRO_SCENE:
+                                self.handleMouseEventsStateIntroScene(event)
                         if currentstate == STATE_MENU:
                                 self.handleMouseEventsStateMenu(event)
                         if currentstate == STATE_PLAY:
@@ -47,14 +49,18 @@ class MouseInputHandler:
             if temp != self.initialMouseCoordinate and self.clicked:
                 self.handleMouseMouvement(event)
 
+    def handleMouseEventsStateIntroScene(self, event):
+        """
+        Handles intro scene mouse events.
+        """
+        feedBack = self.model.introScene.handleMouseInput(event)
+        self.evManager.Post(feedBack)
+
     def handleMouseEventsStateMenu(self, event):
         """
         Handles menu mouse events.
         """
-
-        mousePos = event.pos
-        feedBack = self.model.menu.handleInput(mousePos)
-        print(feedBack)
+        feedBack = self.model.menu.handleMouseInput(event)
         self.evManager.Post(feedBack)
 
     def checkEveryButton(self, event):

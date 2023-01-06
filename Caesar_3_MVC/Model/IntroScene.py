@@ -2,35 +2,21 @@ import pygame
 from EventManager.allEvent import *
 from Model.constants import *
 
-class Menu:
+class IntroScene:
   def __init__(self, screen):
     self.screen = screen
-    self.image = pygame.image.load("./image/UI/menu/menu_background.png").convert_alpha()
+    self.image = pygame.image.load("./image/UI/intro/introScene_background.png").convert_alpha()
     self.surface = pygame.transform.scale(self.image, self.screen.get_size())
-    self.items = []
-    self.initialize_items()
 
     self.quitScene = QuitScene(self.screen, self.surface.copy())
     self.isQuitState = False
 
-    self.defaultFeedback = TickEvent() # do nothing
-
-  def initialize_items(self):
-    startButton = MenuButton(self.surface, "./image/UI/menu/menu_start_button.png", 0, StateChangeEvent(STATE_PLAY))
-    loadSaveButton = MenuButton(self.surface, "./image/UI/menu/menu_load_save_button.png", 1, TickEvent)
-    exitButton = MenuButton(self.surface, "./image/UI/menu/menu_exit_button.png", 2, QuitEvent())
-    
-    self.items.append(startButton)
-    self.items.append(loadSaveButton)
-    self.items.append(exitButton)
-
-  def renderItems(self) -> None:
-    for item in self.items:
-      item.render()
-
+    self.defaultFeedback  = StateChangeEvent(STATE_MENU)
+  
   def handleMouseInput(self, event) -> Event:
     if self.isQuitState:
       quitSceneFeedBack = self.quitScene.handleMouseInput(event)
+      print(quitSceneFeedBack)
       match quitSceneFeedBack:
         case 1:
           return ExitEvent()
@@ -39,24 +25,16 @@ class Menu:
           return TickEvent()
         case _:
           return TickEvent()
-    else:
-      for item in self.items:
-        if item.rect.collidepoint(event.pos):
-          print(item.feedback, isinstance(item.feedback, QuitEvent))
-          if isinstance(item.feedback, QuitEvent):
-            self.isQuitState = True
-            return TickEvent()
-          else:
-            return item.feedback
-
     return self.defaultFeedback
+    
+  def handleKeyboardInput(self, event) -> None:
+    if event.key == pygame.K_ESCAPE:
+      self.isQuitState = True
 
   def render(self):
     if self.isQuitState:
       self.quitScene.render()
-    else: 
-      self.renderItems()
-      self.screen.blit(self.surface, (0, 0))
+    else: self.screen.blit(self.surface, (0,0))
   
 class QuitScene:
   def __init__(self, screen, background_surface):
@@ -90,18 +68,4 @@ class QuitScene:
       
   def render(self):
     self.screen.blit(self.surface, (0, 0))
-
-
-class MenuButton:
-  def __init__(self, surface_to_blit, image, idx_item, feedback: Event):
-    self.surface_to_blit = surface_to_blit
-    self.image = pygame.image.load(image).convert_alpha()
-    self.surface = pygame.transform.scale(self.image, (270, 23))
-    self.pos = (self.surface_to_blit.get_width()/2 - self.surface.get_width()/2, 300+idx_item*40)
-    self.rect = pygame.Rect(self.pos, self.surface.get_size())
-
-    self.feedback = feedback
-
-  def render(self):
-    self.surface_to_blit.blit(self.surface, self.pos)
   
