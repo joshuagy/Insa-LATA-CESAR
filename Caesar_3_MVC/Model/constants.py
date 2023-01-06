@@ -11,7 +11,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 # State machine constants for the StateMachine class below
-STATE_INTRO = 1
+STATE_INTRO_SCENE = 1
 STATE_MENU = 2
 STATE_HELP = 3
 STATE_QUIT = 4

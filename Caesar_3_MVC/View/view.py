@@ -1,5 +1,6 @@
 import pygame
 from Model.Menu import Menu 
+from Model.IntroScene import IntroScene 
 from Model.Plateau import Plateau
 from Model.Walker import *
 from EventManager.EventManager import EventManager
@@ -47,13 +48,19 @@ class GraphicalView(object):
             if not self.isinitialized:
                 return
             currentstate = self.model.state.peek()
-            if currentstate == STATE_MENU:
+            if currentstate == STATE_INTRO_SCENE:
+                self.renderIntroScene();
+            elif currentstate == STATE_MENU:
                 self.renderMenu()
-            if currentstate == STATE_PLAY:
+            elif currentstate == STATE_PLAY:
                 self.renderGame()
             self.clock.tick(30)
 
-        
+    
+    def renderIntroScene(self) -> None:
+        self.model.introScene.render()
+        pygame.display.flip()
+
     def renderMenu(self) -> None:
         """
         Render the game menu.
@@ -83,6 +90,7 @@ class GraphicalView(object):
         self.clock = pygame.time.Clock()
         self.smallfont = pygame.font.Font(None, 40)
         self.isinitialized = True
+        self.model.introScene = IntroScene(self.screen)
         self.model.menu = Menu(self.screen)
         self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
         self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), 40 * cell_size * 2, 40 * cell_size + 2 * cell_size)
