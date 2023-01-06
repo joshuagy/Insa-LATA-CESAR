@@ -45,17 +45,67 @@ class House(Building):
         self.plateau.structures.remove(self)
         del self
 
+    def udmCheck(self) :
+            #Upgrade et Down grade triés par type de maison :
+            if (self.desc == "SmallTent" or self.desc =="SmallTent2") and self.case.waterAccess>0 : #Il faudra ajouter plus tard la condition de désirabilité
+                self.upgrade()
+            if (self.desc == "LargeTent" or self.desc =="LargeTent2") and self.case.waterAccess<1 : #Il faudra ajouter plus tard la condition de désirabilité
+                self.downgrade()
+
+            #Merge 4 1*1 en un 2*2 :
+            if (self.desc == "SmallTent" or self.desc =="LargeTent") :
+                if self.plateau.map[self.case.x-1][self.case.y].structure and self.plateau.map[self.case.x][self.case.y-1].structure and self.plateau.map[self.case.x-1][self.case.y-1].structure :
+                    ans = (self.desc == self.plateau.map[self.case.x-1][self.case.y].structure.desc,self.desc == self.plateau.map[self.case.x][self.case.y-1].structure.desc,self.desc == self.plateau.map[self.case.x-1][self.case.y-1].structure.desc)
+                    print(ans)
+                    if all(ans) :
+                        MergedHouse(self.case,self.plateau,(2,2),self.desc+"2",[self,self.plateau.map[self.case.x-1][self.case.y].structure,self.plateau.map[self.case.x][self.case.y-1].structure,self.plateau.map[self.case.x-1][self.case.y-1].structure])
+
+                        """
+                        self.size=(2,2)
+                        self.desc=self.desc + "2"
+
+                        print(self.desc)
+                        self.plateau.map[self.case.x-1][self.case.y].structure.delete()
+                        self.plateau.map[self.case.x-1][self.case.y].structure=self
+                        self.plateau.map[self.case.x][self.case.y-1].structure.delete()
+                        self.plateau.map[self.case.x][self.case.y-1].structure=self
+                        self.plateau.map[self.case.x-1][self.case.y-1].structure.delete()
+                        self.plateau.map[self.case.x-1][self.case.y-1].structure=self
+"""
+
     def upgrade(self) :
-        if self.desc=="SmallTent" and self.size is (1,1):
+        if self.desc=="SmallTent" : 
             self.desc="LargeTent"
-            self.set_nbHabmax(7)
+            self.set_nbHabmax(20)
+        if self.desc=="SmallTent2" : 
+            self.desc="LargeTent2"
+            self.set_nbHabmax(28)
 
     def downgrade(self) :
-        if self.desc == "LargeTent" and self.size is (1,1):
+        if self.desc == "LargeTent":
             self.desc = "SmallTent"
             self.set_nbHabmax(5)
-            if self.nbHab > self.nbHabMax :
-                self.nbHab = self.nbHabMax
+        if self.desc=="LargeTent2" : 
+            self.desc="SmallTent2"
+            self.set_nbHabmax(20)
+        #Ramène le nombre d'habitants au maximum de la nouvelle taille
+        if self.nbHab > self.nbHabMax :
+            self.nbHab = self.nbHabMax
+
+class MergedHouse(House) :
+    def __init__(self, case, plateau, size, desc, houses) :
+        super().__init__(case, plateau, size, desc)
+        self.nbHab = houses[0].nbHab+houses[1].nbHab+houses[2].nbHab+houses[3].nbHab
+        self.nbHabMax=self.nbHabMax * 4
+        self.secCases=[]
+        for h in houses :
+            self.secCases.append(h.case)
+            h.delete()
+        for c in self.secCases :
+            c.structure = self
+        self.plateau.structures.append(self)
+        self.plateau.cityHousesList.append(self)       
+
 
 
 class HousingSpot() :

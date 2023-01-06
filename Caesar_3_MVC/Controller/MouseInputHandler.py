@@ -300,7 +300,7 @@ class MouseInputHandler:
                             for ycr in range (yi-2,yi+2,1) :
                                 if 0<=xcr<self.model.actualGame.nbr_cell_x and 0<=ycr<self.model.actualGame.nbr_cell_y:
                                     if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
-                                        if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
+                                        if self.model.actualGame.map[xcr][ycr].road :
                                             HousingSpot(self.model.actualGame.map[xi][yi],self.model.actualGame)
 
         #Prefecture     

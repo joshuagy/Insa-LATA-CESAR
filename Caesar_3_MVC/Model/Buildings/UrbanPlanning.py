@@ -13,8 +13,8 @@ class Well:
         self.plateau.structures.append(self)
         self.plateau.treasury = self.plateau.treasury - WELL_COST
         Well.listWell.append(self)
-        for xi in range (self.case.x-2,self.case.x+2,1) :
-            for yi in range (self.case.y-2,self.case.y+2,1) :
+        for xi in range (self.case.x-2,self.case.x+3,1) :
+            for yi in range (self.case.y-2,self.case.y+3,1) :
                 if 0<=xi<self.plateau.nbr_cell_x and 0<=yi<self.plateau.nbr_cell_y: 
                     if self.plateau.map[xi][yi].waterAccess==0 :
                         self.plateau.map[xi][yi].waterAccess=1
@@ -24,8 +24,8 @@ class Well:
         self.case.setFeature("")
         self.plateau.structures.remove(self)
         Well.listWell.remove(self)
-        for xi in range (self.case.x-2,self.case.x+2,1) :
-            for yi in range (self.case.y-2,self.case.y+2,1) :
+        for xi in range (self.case.x-2,self.case.x+3,1) :
+            for yi in range (self.case.y-2,self.case.y+3,1) :
                 if 0<=xi<self.plateau.nbr_cell_x and 0<=yi<self.plateau.nbr_cell_y:
                     self.plateau.map[xi][yi].waterAccess=0
                     for cw in Well.listWell :
