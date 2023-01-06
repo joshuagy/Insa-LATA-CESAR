@@ -125,9 +125,11 @@ class MouseInputHandler:
                             self.model.actualGame.map[xi][yi].sprite = "land1"
                             if self.model.actualGame.map[xi][yi].road :
                                 self.model.actualGame.map[xi][yi].road.delete()
+                                self.model.actualGame.treasury = self.model.actualGame.treasury - DESTRUCTION_COST
                             if self.model.actualGame.map[xi][yi].structure :
-                              self.model.actualGame.map[xi][yi].structure.delete()
-
+                                self.model.actualGame.map[xi][yi].structure.delete()
+                                self.model.actualGame.treasury = self.model.actualGame.treasury - DESTRUCTION_COST
+                              
                             
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
             for xi in range(len(self.model.actualGame.previewMap)):

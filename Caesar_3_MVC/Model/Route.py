@@ -1,9 +1,11 @@
+from Model.constants import *
+
 class Route():
     def __init__(self, case, plateau):
         self.case = case
         self.case.road = self
         self.plateau = plateau
-        
+        self.plateau.treasury = self.plateau.treasury - ROAD_COST
         #Informe les cases adjacentes qu'elles sont maintenant connectées à la route :
         self.case.changeConnectedToRoad(1)
         if self.case.x != 0 :

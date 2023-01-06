@@ -110,6 +110,17 @@ class Sprite:
         self.dim = (self.img.get_rect().size[0]*SCL,self.img.get_rect().size[1]*SCL) #dim[0] is the width of the sprite, dim[1] is the height"""
         self.img_scaled=pygame.transform.scale(self.img,self.dim)
 
+class TextRender:
+    def __init__(self, text, size, colour = (255,255,255)) :
+        self.colour = colour
+        self.size=size
+        self.police = pygame.font.SysFont("monospace" ,15)
+        self.text_image = self.police.render ( text, 1 , self.colour )
+        #self.dim = (self.text_image.get_rect().size[0]*SCL,self.text_image.get_rect().size[1]*SCL)
+        self.img_scaled = pygame.transform.scale(self.text_image,size)
+
+
+
 # === VARIABLES === 
 state_control_panel = "full" # "full" or "reduced"
 
@@ -193,6 +204,7 @@ deco_milieu_menu_default = Sprite("image/C3/panelwindows_00013.png")   #Image du
 
 
 #panels du menu top bar
+
 pnl_1=Sprite("image/C3/paneling_00001.png")
 pnl_2=Sprite("image/C3/paneling_00002.png")
 pnl_3=Sprite("image/C3/paneling_00003.png")
@@ -201,6 +213,7 @@ pnl_5=Sprite("image/C3/paneling_00005.png")
 pnl_6=Sprite("image/C3/paneling_00006.png")
 pnl_7=Sprite("image/C3/paneling_00007.png")
 pnl_8=Sprite("image/C3/paneling_00008.png")
+
 bloc_top_menu=Sprite("image/C3/paneling_00015.png")
 
 #panels du control panel en bas à droite

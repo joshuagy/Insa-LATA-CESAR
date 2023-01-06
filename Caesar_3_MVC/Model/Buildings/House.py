@@ -54,6 +54,7 @@ class HousingSpot() :
         self.desc = desc
         self.plateau=plateau
         self.plateau.structures.append(self)
+        self.plateau.treasury = self.plateau.treasury - HOUSE_COST
         self.case.setFeature("HousingSpot")
         self.plateau.cityHousingSpotsList.append(self)
         self.spawn_timer = pygame.time.get_ticks()
@@ -99,17 +100,6 @@ class HousingSpot() :
             self.spawn_timer = now
 
 """
-    def igniteAHouse(aHouse) :
-        aHouse.set_nbHab(0)
-        aHouse.set_desc("Burning" + aHouse.get_desc)
-        # Gérer les sprites d'incendie
-        return
-
-    def burnDownAHouse(aHouse) :
-        House.removeAHouse(aHouse)
-        aHouse.case.setSprite("RuinSprite")
-
-
     def house_upgrade(house) :
         if house.desc=="Small Tent" and house.size is (1,1):
             house.desc="Large Tent"
