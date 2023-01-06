@@ -43,7 +43,6 @@ class EnginnerPost(WorkBuilding) :
         super().__init__( case, plateau, size, desc, active)
         self.walker = Engineer(self.case,self.plateau,"UnIngenieur")
         self.plateau.treasury = self.plateau.treasury - ENGINEERPOST_COST
-        print(self.plateau.treasury)
 
     def activateEngineerPost(anEngineerPost,lePlateau) :
         anEngineerPost.setActive(True)
