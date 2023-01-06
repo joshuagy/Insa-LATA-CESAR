@@ -59,6 +59,10 @@ class GraphicalView(object):
 
     
     def renderIntroScene(self) -> None:
+        """
+        Render the intro scene.
+        """
+        
         self.model.introScene.render()
         pygame.display.flip()
 
@@ -77,7 +81,7 @@ class GraphicalView(object):
         self.model.actualGame.update()
         self.model.actualGame.draw()
         self.model.mini_map.draw_position(self.model.actualGame.screen, self.model.actualGame.camera,self.model.actualGame.map,self.model.actualGame.nbr_cell_x,self.model.actualGame.nbr_cell_y,self.model.actualGame.image)
-        pygame.display.flip()
+        pygame.display.update(self.model.actualGame.surface_cells.get_rect())
 
     def initialize(self) -> None:
         """
