@@ -381,12 +381,14 @@ class Plateau():
             self.screen.blit(pnl_7.img_scaled,(top_menu_axis_x,0))
             top_menu_axis_x+=pnl_7.dim[0]
             self.screen.blit(pnl_8.img_scaled,(top_menu_axis_x,0))
-            top_menu_axis_x+=pnl_8.dim[0]
-         
+            top_menu_axis_x+=pnl_8.dim[0]         
          
             self.screen.blit(bloc_top_menu.img_scaled,(480,0))
             self.screen.blit(bloc_top_menu.img_scaled,(480+ bloc_top_menu.dim[0]+24,0))
-            self.screen.blit(bloc_top_menu.img_scaled,(480+(2*bloc_top_menu.dim[0])+120,0))        
+            self.screen.blit(bloc_top_menu.img_scaled,(480+(2*bloc_top_menu.dim[0])+120,0)) 
+            #Afficher la trésorerie dans la top bar :   
+            self.screen.blit(TextRender("Dn",(25,20)).img_scaled,(920,3.5))
+            self.screen.blit(TextRender(str(self.treasury),(70,20)).img_scaled,(850,3.5)) 
 
         if state_control_panel=="reduced":
             
