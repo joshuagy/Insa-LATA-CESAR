@@ -12,8 +12,7 @@ counter=1
 
 class Plateau():
     def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], buildings = []):
-        global counter
-        counter=1
+
         self.screen = screen
         self.clock = clock
         self.width, self.height = self.screen.get_size()
@@ -71,9 +70,10 @@ class Plateau():
         undo_button.change_pos(self.width-149,445)
         message_view_button.change_pos(self.width-99,445)
         see_recent_troubles_button.change_pos(self.width-49,445)
-
         self.pause=False
         self.restart=False
+        global counter
+        counter = 1
 
 
 

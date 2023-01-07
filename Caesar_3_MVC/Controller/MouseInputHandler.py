@@ -8,7 +8,8 @@ from Model.Route import Route
 from Model.Buildings.Building import *
 from Model.Buildings.House import *
 from Model.Buildings.WorkBuilding import *
-import sys
+
+
 
 class MouseInputHandler:
     """
@@ -31,8 +32,7 @@ class MouseInputHandler:
                         self.clicked = True
                         self.initialMouseCoordinate = pygame.mouse.get_pos()
                         if self.model.exit_menu.Exit_rect.collidepoint(event.pos):
-                            pygame.quit()
-                            sys.exit()
+                            self.model.exit_menu.exit()
                         if self.model.exit_menu.Continue_rect.collidepoint(event.pos):
                             self.model.exit_menu.choosen(False)
                             self.model.actualGame.set_pause(False)

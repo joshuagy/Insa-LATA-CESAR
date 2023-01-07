@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 
 pause=False
@@ -40,5 +42,7 @@ class Exitmenu:
             self.screen.blit(self.Replay, self.Replay_rect)
             self.screen.blit(self.Savegame, self.Savegame_rect)
             self.screen.blit(self.Exit, self.Exit_rect)
-
+    def exit(self):
+        pygame.quit()
+        sys.exit()
 
