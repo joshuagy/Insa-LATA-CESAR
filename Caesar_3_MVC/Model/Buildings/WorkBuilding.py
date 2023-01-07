@@ -27,6 +27,8 @@ class Prefecture(WorkBuilding) :
         super().__init__( case, plateau, size, desc, active)
         self.walker = Prefet(self.case,self.plateau,"Prefectus")
         self.plateau.treasury = self.plateau.treasury - PREFECTURE_COST
+        print(self.case.x)
+        print(self.case.y)
 
     def activatePrefecture(aPrefecture,lePlateau) :
         aPrefecture.setActive(True)
@@ -34,9 +36,7 @@ class Prefecture(WorkBuilding) :
         aPrefecture.setWalker(myPrefect)
         #Reste à afficher le drapeau ROUGE
     
-
-        
-
+    
 class EnginnerPost(WorkBuilding) :
 
     def __init__(self, case, plateau, size, desc, active):
