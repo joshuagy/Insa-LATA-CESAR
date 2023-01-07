@@ -55,7 +55,8 @@ class GraphicalView(object):
                 self.renderMenu()
             elif currentstate == STATE_PLAY:
                 self.renderGame()
-            self.clock.tick(30)
+            self.clock.tick(60)
+            #print("FPS:", int(self.clock.get_fps()))
 
     
     def renderIntroScene(self) -> None:
@@ -81,7 +82,7 @@ class GraphicalView(object):
         self.model.actualGame.update()
         self.model.actualGame.draw()
         self.model.mini_map.draw_position(self.model.actualGame.screen, self.model.actualGame.camera,self.model.actualGame.map,self.model.actualGame.nbr_cell_x,self.model.actualGame.nbr_cell_y,self.model.actualGame.image)
-        pygame.display.update(self.model.actualGame.surface_cells.get_rect())
+        pygame.display.flip()
 
     def initialize(self) -> None:
         """
