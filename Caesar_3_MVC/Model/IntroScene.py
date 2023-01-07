@@ -5,8 +5,20 @@ from Model.constants import *
 class IntroScene:
   def __init__(self, screen):
     self.screen = screen
-    self.image = pygame.image.load("./image/UI/intro/introScene_background.png").convert_alpha()
-    self.surface = pygame.transform.scale(self.image, self.screen.get_size())
+    self.image = pygame.image.load("./image/UI/intro/introScene_title.png").convert_alpha()
+    self.surface = pygame.Surface(self.screen.get_size())
+
+    self.imagePos = (self.surface.get_width()/2 - self.image.get_width()/2, self.surface.get_height()/2 - self.image.get_height()/2)
+    
+    self.surface.fill((0, 0, 0))
+
+    self.surface.blit(self.image, self.imagePos)
+
+    self.font = pygame.font.Font("./assets/caesar.ttf", 20)
+
+    self.textSurface = self.font.render("Click To Start", True, (255, 255, 255), (0, 0, 0))
+    self.textSurfacePos = (self.surface.get_width()/2 - self.textSurface.get_width()/2, self.surface.get_height()/2 + self.image.get_height()/2 + 25)
+    self.surface.blit(self.textSurface, self.textSurfacePos)
 
     self.quitScene = QuitScene(self.screen, self.surface.copy())
     self.isQuitState = False
@@ -39,7 +51,8 @@ class IntroScene:
   def render(self):
     if self.isQuitState:
       self.quitScene.render(self.currentMousePos)
-    else: self.screen.blit(self.surface, (0, 0))
+    else: 
+      self.screen.blit(self.surface, (0, 0))
   
 class QuitScene:
   def __init__(self, screen, background_surface):
@@ -85,4 +98,3 @@ class QuitScene:
 
     self.surface.blit(self.image, (self.posX, self.posY))
     self.screen.blit(self.surface, (0, 0))
-  
