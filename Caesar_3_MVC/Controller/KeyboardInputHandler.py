@@ -32,37 +32,30 @@ class KeyboardInputHandler:
 		"""
 		Handles game keyboard events
 		"""
-		global choosen
 		global cell_size
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_ESCAPE:
-
-				self.model.exit_menu.choosen(True)
-				self.model.actualGame.set_pause(True)
-
+				pygame.quit()
+				sys.exit()
 
 
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_2:
+				if cell_size==30:
+					self.zoomed=True
+					x,y=pygame.mouse.get_pos()
+					self.model.actualGame.camera.vect=pygame.Vector2(self.model.actualGame.camera.vect.x-x-200, self.model.actualGame.camera.vect.y-y)
+					self.model.actualGame.camera.get_cell_size(60)
+					self.model.actualGame.zoom(2,self.model.actualGame.zoomed)
+					cell_size=60
+					self.model.actualGame.zoomed=False
 
-
-
-
-	#	if event.type == pygame.KEYDOWN:
-	#		if event.key == pygame.K_2:
-	#			if cell_size==30:
-	#				self.zoomed=True
-	#				x,y=pygame.mouse.get_pos()
-	#				self.model.actualGame.camera.vect=pygame.Vector2(self.model.actualGame.camera.vect.x-x-200, self.model.actualGame.camera.vect.y-y)
-	#				self.model.actualGame.camera.get_cell_size(60)
-	#				self.model.actualGame.zoom(2,self.model.actualGame.zoomed)
-	#				cell_size=60
-	#				self.model.actualGame.zoomed=False
-
-	#	if event.type == pygame.KEYDOWN:
-	#		if event.key == pygame.K_1:
-	#			if cell_size==60:
-	#				self.model.actualGame.zoomed=True
-	#				self.model.actualGame.camera.vect = pygame.Vector2(-700,-100)
-	#				cell_size=30
-	#				self.model.actualGame.camera.get_cell_size(30)
-	#				self.model.actualGame.zoom(0.5,self.model.actualGame.zoomed)
-	#				self.model.actualGame.zoomed=False
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_1:
+				if cell_size==60:
+					self.model.actualGame.zoomed=True
+					self.model.actualGame.camera.vect = pygame.Vector2(-700,-100)
+					cell_size=30
+					self.model.actualGame.camera.get_cell_size(30)
+					self.model.actualGame.zoom(0.5,self.model.actualGame.zoomed)
+					self.model.actualGame.zoomed=False
