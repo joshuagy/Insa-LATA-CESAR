@@ -38,7 +38,6 @@ class House(Building):
         self.nbHabmax = newnbHabmax
 
     def delete(self) :
-        #Supprimer les habitants
         self.case.setStructure(None)
         self.case.setFeature("")
         self.plateau.cityHousesList.remove(self)
@@ -86,18 +85,18 @@ class MergedHouse(House) :
         self.nbHabMax=self.nbHabMax * 4
         self.case.render_pos=[self.case.render_pos[0], self.case.render_pos[1]+10]
         self.secCases=[]
-        for h in houses :
+        for h in houses[1:] :
             self.secCases.append(h.case)
+        for h in houses :
             h.delete()
         for c in self.secCases :
             c.structure = self
+        self.case.structure = self
         self.plateau.structures.append(self)
-        self.plateau.cityHousesList.append(self)
 
     def delete(self) :
-        #Supprimer les habitants
-        self.case.setStructure(None)
         self.case.render_pos=[self.case.render_pos[0], self.case.render_pos[1]-10]
+        self.case.setStructure(None)
         for oc in self.secCases :
             oc.setStructure(None)
         self.case.setFeature("")

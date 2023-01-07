@@ -47,6 +47,8 @@ class Plateau():
         self.listeCase = listeCase
         #Trésorerie
         self.treasury = START_TREASURY + self.nbr_cell_y * ROAD_COST    #Remboursement auto des routes par défaut
+        #Population
+        self.population = 0
 
         self.map = self.default_map()
         self.previewMap = self.default_map()
@@ -295,11 +297,14 @@ class Plateau():
         for b in self.structures :
             if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
             self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
-        for h in self.cityHousesList: h.udmCheck()   # Vérifie les upgrades, downgrades et merge d'habitations
+        self.population = 0
+        for h in self.cityHousesList: 
+            h.udmCheck()   # Vérifie les upgrades, downgrades et merge d'habitations
+            self.population = self.population + h.nbHab
             
     def nearbyRoadsCheck(self, b) :     #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
-        for xcr in range (b.case.x-2,b.case.x+2,1) :
-            for ycr in range (b.case.y-2,b.case.y+2,1) :
+        for xcr in range (b.case.x-2,b.case.x+3,1) :
+            for ycr in range (b.case.y-2,b.case.y+3,1) :
                     if 0<=xcr<self.nbr_cell_x and 0<=ycr<self.nbr_cell_y:
                         if self.map[xcr][ycr].road :
                             return
@@ -378,9 +383,14 @@ class Plateau():
             self.screen.blit(bloc_top_menu.img_scaled,(480+ bloc_top_menu.dim[0]+24,0))
             self.screen.blit(bloc_top_menu.img_scaled,(480+(2*bloc_top_menu.dim[0])+120,0)) 
             #Afficher la trésorerie dans la top bar :   
-            snss=15 if 99 < abs(self.treasury) < 1000 else 30 if abs(self.treasury)<100 else 50 if abs(self.treasury)<10 else 0  #Smaller number -> smaller size
-            self.screen.blit(TextRender("Dn",(25,20)).img_scaled,(920,3.5))
-            self.screen.blit(TextRender(str(self.treasury),(60-snss,20)).img_scaled,(850,3.5)) 
+            snss=15 if 99 < abs(self.treasury) < 1000 else 30 if 9<abs(self.treasury)<100 else 68 if abs(self.treasury)<10 else 0  #Smaller number -> smaller size
+            self.screen.blit(TextRender("Dn",(25,20)).img_scaled,(490,2.5))
+            self.screen.blit(TextRender(str(self.treasury),(60-snss,20)).img_scaled,(520,2.5)) 
+            #Afficher la population dans la top bar :   
+            snss=15 if 99 < abs(self.population) < 1000 else 30 if 9<abs(self.population)<100 else 40 if abs(self.population)<10 else 0  #Smaller number -> smaller size
+            self.screen.blit(TextRender("Pop",(30,20)).img_scaled,(637,2.5))
+            self.screen.blit(TextRender(str(self.population),(60-snss,20)).img_scaled,(680,2.5)) 
+
 
         if state_control_panel=="reduced":
             
