@@ -30,8 +30,3 @@ class Case():
         return self.connectedToRoad
     def changeConnectedToRoad(self, number):
         self.connectedToRoad=self.connectedToRoad+number
-
-
-    def getRelative(case, dx, dy, plateau):
-        if 0 < plateau.listeCase[30*(case.y+dy)+(case.y*dy)] < 1600 :
-            return plateau.listeCase[30*(case.y+dy)+(case.y*dy)]

@@ -38,12 +38,72 @@ class House(Building):
         self.nbHabmax = newnbHabmax
 
     def delete(self) :
-        #Supprimer les habitants
         self.case.setStructure(None)
         self.case.setFeature("")
         self.plateau.cityHousesList.remove(self)
         self.plateau.structures.remove(self)
         del self
+
+    def udmCheck(self) :
+            #Upgrade et Down grade triés par type de maison :
+            if (self.desc == "SmallTent" or self.desc =="SmallTent2") and self.case.waterAccess>0 : #Il faudra ajouter plus tard la condition de désirabilité
+                self.upgrade()
+            if (self.desc == "LargeTent" or self.desc =="LargeTent2") and self.case.waterAccess<1 : #Il faudra ajouter plus tard la condition de désirabilité
+                self.downgrade()
+
+            #Merge 4 1*1 en un 2*2 :
+            if (self.desc == "SmallTent" or self.desc =="LargeTent") :
+                if self.plateau.map[self.case.x][self.case.y-1].structure and self.plateau.map[self.case.x+1][self.case.y].structure and self.plateau.map[self.case.x+1][self.case.y-1].structure :
+                    ans = (self.desc == self.plateau.map[self.case.x][self.case.y-1].structure.desc,self.desc == self.plateau.map[self.case.x+1][self.case.y].structure.desc,self.desc == self.plateau.map[self.case.x+1][self.case.y-1].structure.desc)
+                    if all(ans) :
+                        MergedHouse(self.case,self.plateau,(2,2),self.desc+"2",[self,self.plateau.map[self.case.x][self.case.y-1].structure,self.plateau.map[self.case.x+1][self.case.y].structure,self.plateau.map[self.case.x+1][self.case.y-1].structure])
+
+
+    def upgrade(self) :
+        if self.desc=="SmallTent" : 
+            self.desc="LargeTent"
+            self.set_nbHabmax(20)
+        if self.desc=="SmallTent2" : 
+            self.desc="LargeTent2"
+            self.set_nbHabmax(28)
+
+    def downgrade(self) :
+        if self.desc == "LargeTent":
+            self.desc = "SmallTent"
+            self.set_nbHabmax(5)
+        if self.desc=="LargeTent2" : 
+            self.desc="SmallTent2"
+            self.set_nbHabmax(20)
+        #Ramène le nombre d'habitants au maximum de la nouvelle taille
+        if self.nbHab > self.nbHabMax :
+            self.nbHab = self.nbHabMax
+
+class MergedHouse(House) :
+    def __init__(self, case, plateau, size, desc, houses) :
+        super().__init__(case, plateau, size, desc)
+        self.nbHab = houses[0].nbHab+houses[1].nbHab+houses[2].nbHab+houses[3].nbHab
+        self.nbHabMax=self.nbHabMax * 4
+        self.case.render_pos=[self.case.render_pos[0], self.case.render_pos[1]+10]
+        self.secCases=[]
+        for h in houses[1:] :
+            self.secCases.append(h.case)
+        for h in houses :
+            h.delete()
+        for c in self.secCases :
+            c.structure = self
+        self.case.structure = self
+        self.plateau.structures.append(self)
+
+    def delete(self) :
+        self.case.render_pos=[self.case.render_pos[0], self.case.render_pos[1]-10]
+        self.case.setStructure(None)
+        for oc in self.secCases :
+            oc.setStructure(None)
+        self.case.setFeature("")
+        self.plateau.cityHousesList.remove(self)
+        self.plateau.structures.remove(self)
+        del self     
+
 
 
 class HousingSpot() :
@@ -86,7 +146,7 @@ class HousingSpot() :
     def becomeAHouse(self):
         self.plateau.cityHousingSpotsList.remove(self)
         self.plateau.structures.remove(self)
-        House(self.case,self.plateau, 1, "SmallTent")
+        House(self.case,self.plateau,(1,1), "SmallTent")
         self.case.setFeature("Small Tent")
         del self
     
@@ -100,11 +160,6 @@ class HousingSpot() :
             self.spawn_timer = now
 
 """
-    def house_upgrade(house) :
-        if house.desc=="Small Tent" and house.size is (1,1):
-            house.desc="Large Tent"
-            house.case.setSprite("LargeTentSprite1*1")
-            house.set_nbHabmax(house,7)
         if house.desc=="Small Tent" and house.size is (2,2):
             house.desc="Large Tent"
             house.case.setSprite("LargeTentSprite2*2")
@@ -117,16 +172,6 @@ class HousingSpot() :
             house.desc="Large Shack"
             house.case.setSprite("LargeShackSprite2*2")
             house.set_nbHabmax(house,44)    
-
-
-    def checkForUpgrades(cityHouses): # Manque critères : Desirability, waterSuppply, religiousAccess
-        for i in cityHouses : 
-            if cityHouses[i].desc=="Small Tent" and cityHouses[i].case.waterSupply>0 :
-                cityHouses.house_upgrade(cityHouses[i])
-            if cityHouses[i].desc=="Large Tent" and cityHouses[i].case.desIn>0 :
-                cityHouses.house_upgrade(cityHouses[i])
-            if cityHouses[i].desc=="Small Shack" and cityHouses[i].religiousAccess>0 :
-                cityHouses.house_upgrade(cityHouses[i])
 
 """
 
