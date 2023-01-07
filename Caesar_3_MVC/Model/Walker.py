@@ -190,6 +190,21 @@ class Prefet(Walker):
     def __init__(self, case, plateau, name="Plebius Prepus"):
         super().__init__(case, plateau, name)
     
+    def reduceRisk(self):
+        x_min = self.case.x - 2
+        if x_min < 0 : x_min = 0
+        x_max = self.case.x + 3
+        if x_max > self.plateau.nbr_cell_x : x_max = self.plateau.nbr_cell_x
+        y_min = self.case.y - 2
+        if y_min < 0 : y_min = 0
+        y_max = self.case.y + 3
+        if y_max > self.plateau.nbr_cell_y : y_max = self.plateau.nbr_cell_y
+
+        for i in range(x_min, x_max):
+            for j in range(y_min, y_max):
+                if self.plateau.map[i][j].getStructure() and self.plateau.map[i][j].structure not in self.plateau.cityHousingSpotsList:
+                    self.plateau.map[i][j].structure.set_fireRisk(0)
+
     def update(self):
         """
         Mise à jour de la prochaine action du walker
@@ -198,22 +213,30 @@ class Prefet(Walker):
         self.index_sprite += 0.5
         if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.action][self.direction])):
             self.index_sprite = 0
-
         if now - self.move_timer > 500:
-            if self.ttw > 0:
-                new_pos = self.random_path()
+            match(self.action):
+                case 1 : #Ronde
+                    #Déplacement
+                    if self.ttw > 0:    #Déplacement aléatoire
+                        new_pos = self.random_path()
 
-                self.ttw -= 1
-                if self.ttw == 0:
-                    self.create_path(self.case_de_départ)
-            else :
-                new_pos = self.path[self.path_index]
-                # Mise à jour de la position sur le plateau
-                self.path_index += 1
-                # On retourne en mode aléatoire si la destination a été atteint
-                if self.path_index >= len(self.path) - 1:
-                    self.ttw = ttwmax
-            self.change_tile(new_pos)
+                        self.ttw -= 1
+                        if self.ttw == 0:
+                            self.create_path(self.case_de_départ)
+                    else :              #Retour à la préfecture
+                        new_pos = self.path[self.path_index]
+                        # Mise à jour de la position sur le plateau
+                        self.path_index += 1
+                        # On retourne en mode aléatoire si la destination a été atteint
+                        if self.path_index >= len(self.path) - 1:
+                            self.ttw = ttwmax
+                    self.change_tile(new_pos)
+                    self.reduceRisk()
+
+                case 2 : #Se dirige vers un feu
+                    pass
+                case 3 : #Eteint un feu
+                    pass
             self.move_timer = now
 
 class Immigrant(Walker):
@@ -256,6 +279,20 @@ class Engineer(Walker):
     def __init__(self, case, plateau, name="Plebius Prepus"):
         super().__init__(case, plateau, name)
 
+    def reduceRisk(self):
+        x_min = self.case.x - 2
+        if x_min < 0 : x_min = 0
+        x_max = self.case.x + 3
+        if x_max > self.plateau.nbr_cell_x : x_max = self.plateau.nbr_cell_x
+        y_min = self.case.y - 2
+        if y_min < 0 : y_min = 0
+        y_max = self.case.y + 3
+        if y_max > self.plateau.nbr_cell_y : y_max = self.plateau.nbr_cell_y
+
+        for i in range(x_min, x_max):
+            for j in range(y_min, y_max):
+                if self.plateau.map[i][j].getStructure() and self.plateau.map[i][j].structure not in self.plateau.cityHousingSpotsList:
+                    self.plateau.map[i][j].structure.set_collapseRisk(0)
     
     def update(self):
         """
@@ -281,4 +318,5 @@ class Engineer(Walker):
                 if self.path_index >= len(self.path) - 1:
                     self.ttw = ttwmax
             self.change_tile(new_pos)
+            self.reduceRisk()
             self.move_timer = now
