@@ -110,6 +110,16 @@ class Sprite:
         self.dim = (self.img.get_rect().size[0]*SCL,self.img.get_rect().size[1]*SCL) #dim[0] is the width of the sprite, dim[1] is the height"""
         self.img_scaled=pygame.transform.scale(self.img,self.dim)
 
+class TextRender:
+    def __init__(self, text, size, colour = (255,255,255)) :
+        self.colour = colour
+        self.size=size
+        self.police = pygame.font.SysFont("monospace" ,15)
+        self.text_image = self.police.render ( text, 1 , self.colour )
+        self.img_scaled = pygame.transform.scale(self.text_image,size)
+
+
+
 # === VARIABLES === 
 state_control_panel = "full" # "full" or "reduced"
 
@@ -137,9 +147,16 @@ def build_roads():
     """Build roads"""
     print("i'm in build_roads")
 
+def build_prefecture():
+    """Build Prefecture"""
+    print("i'm in build_prefecture")
+
 def build_water_related_structures():
     """Build water related structures"""
     print("i'm in build_water_related_structures")
+
+def build_engineer_post():
+    print("i'm in build_engineer_post")
 
 def not_implemented_func():
     """Not implemented function"""
@@ -167,9 +184,9 @@ health_related_structures= ButtonCtrlPnl(not_implemented_func, "Health related s
 religious_structures = ButtonCtrlPnl(not_implemented_func,"Religious Structures", 0, 0,"image/C3/paneling_00151.png","image/C3/paneling_00152.png","image/C3/paneling_00153.png","image/C3/paneling_00154.png")
 education_structures = ButtonCtrlPnl(not_implemented_func,"Education Structures", 0, 0,"image/C3/paneling_00147.png","image/C3/paneling_00148.png","image/C3/paneling_00149.png","image/C3/paneling_00150.png")
 entertainment_structures= ButtonCtrlPnl(not_implemented_func,"Entertainment_structures", 0, 0,"image/C3/paneling_00143.png","image/C3/paneling_00144.png","image/C3/paneling_00145.png","image/C3/paneling_00146.png")      
-administration_or_government_structures = ButtonCtrlPnl(not_implemented_func,"Administration or Government Structures", 0, 0,"image/C3/paneling_00139.png","image/C3/paneling_00140.png","image/C3/paneling_00141.png","image/C3/paneling_00142.png")
-engineering_structures = ButtonCtrlPnl(not_implemented_func, "Engineering function", 0, 0,"image/C3/paneling_00167.png","image/C3/paneling_00168.png","image/C3/paneling_00169.png","image/C3/paneling_00170.png")
-security_structures = ButtonCtrlPnl(not_implemented_func,"Security Structures", 0, 0,"image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png","image/C3/paneling_00162.png")
+administration_or_government_structures = ButtonCtrlPnl(not_implemented_func,"Administration or Government Structures", 0, 0,"image/C3/paneling_00139.png","image/C3/paneling_00140.png","image/C3/paneling_00141.png")
+engineering_structures = ButtonCtrlPnl(build_engineer_post, "Engineering function", 0, 0,"image/C3/paneling_00167.png","image/C3/paneling_00168.png","image/C3/paneling_00169.png")
+security_structures = ButtonCtrlPnl(build_prefecture,"Security Structures", 0, 0,"image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png")
 industrial_structures = ButtonCtrlPnl(not_implemented_func,"Industrial Structures", 0, 0,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png","image/C3/paneling_00158.png")
 undo_button = ButtonCtrlPnl(not_implemented_func,"Undo", 0, 0,"image/C3/paneling_00171.png","image/C3/paneling_00172.png","image/C3/paneling_00173.png","image/C3/paneling_00174.png")
 message_view_button = ButtonCtrlPnl(not_implemented_func,"Message View", 0, 0,"image/C3/paneling_00115.png","image/C3/paneling_00116.png","image/C3/paneling_00117.png","image/C3/paneling_00118.png")
@@ -186,6 +203,7 @@ deco_milieu_menu_default = Sprite("image/C3/panelwindows_00013.png")   #Image du
 
 
 #panels du menu top bar
+
 pnl_1=Sprite("image/C3/paneling_00001.png")
 pnl_2=Sprite("image/C3/paneling_00002.png")
 pnl_3=Sprite("image/C3/paneling_00003.png")
@@ -194,6 +212,7 @@ pnl_5=Sprite("image/C3/paneling_00005.png")
 pnl_6=Sprite("image/C3/paneling_00006.png")
 pnl_7=Sprite("image/C3/paneling_00007.png")
 pnl_8=Sprite("image/C3/paneling_00008.png")
+
 bloc_top_menu=Sprite("image/C3/paneling_00015.png")
 
 #panels du control panel en bas à droite

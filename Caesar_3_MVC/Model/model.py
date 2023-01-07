@@ -19,6 +19,7 @@ class GameEngine(object):
 		self.running = False
 		self.state = StateMachine()
 
+		self.introScene = None
 		self.menu = None
 		self.actualGame = None
      
@@ -50,8 +51,8 @@ class GameEngine(object):
 		self.running = True
 		self.evManager.Post(InitializeEvent())
 
-		# initialize initial state as STATE_INTRO
-		self.state.push(STATE_MENU)
+		# initialize initial state as STATE_INTRO_SCENE
+		self.state.push(STATE_INTRO_SCENE)
 		
 		while self.running:
 				newTick = TickEvent()
