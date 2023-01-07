@@ -3,21 +3,16 @@ from Model.Zoom import Zoom
 from Model.Camera import Camera
 from Model.Case import Case
 from View.Menu_map import Menu_map
-from Model.Walker import *
+from Model.Walker import Walker
 from Model.control_panel import *
 from Model.constants import *
 from Model.Route import Route
-from Model.Buildings.Building import Building
-from Model.Buildings.House import House
-from Model.Buildings.House import HousingSpot
-from Model.Buildings.WorkBuilding import *
-from random import *
 import sys
 
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = []):
+    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], buildings = []):
         
         self.screen = screen
         self.clock = clock
@@ -39,16 +34,12 @@ class Plateau():
         self.image = self.load_cases_images()
         self.image_route = self.load_routes_images()
         self.image_walkers = self.load_walkers_images()
-        self.image_structures = self.load_structures_images()
+        self.image_buildings = self.load_buildings_images()
 
         self.zoom__=Zoom(self.image)
 
         self.attractiveness = attractiveness
         self.listeCase = listeCase
-        #Trésorerie
-        self.treasury = START_TREASURY + self.nbr_cell_y * ROAD_COST    #Remboursement auto des routes par défaut
-        #Population
-        self.population = 0
 
         self.map = self.default_map()
         self.previewMap = self.default_map()
@@ -59,19 +50,14 @@ class Plateau():
 
         self.default_road()
 
-        #Tableau contenant toutes les cases occupées par les walkers
-        self.walkers = [[[] for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
-
         #Tableau contenant l'intégralité des walker présents sur la map
-        self.entities = entities 
+        self.entities = entities
 
         #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
         self.collision_matrix = self.create_collision_matrix()
 
         #Tableau contenant l'intégralité des bâtiments présent sur la map
-        self.structures = structures
-        self.cityHousesList = []
-        self.cityHousingSpotsList = []
+        self.buildings = buildings
 
         #Define the position of the button on the full panel button who won't change position after
         overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
@@ -259,59 +245,31 @@ class Plateau():
         #====== Prefet ======#
         prefet = {1 : create_liste_sprites_walker("Prefet", "Walk", 12), 2 : create_liste_sprites_walker("Prefet", "FarmerWalk", 12), 3 : create_liste_sprites_walker("Prefet", "Throw", 6)}
 
-        #====== Immigrant ======#
-        immigrant = {1 : create_liste_sprites_walker("Immigrant", "Walk", 12)}
+        walker_sprite = {"Citizen" : citizen, "Prefet" : prefet}
 
-        #====== Chariot ======#
-        chariot = {1 : create_liste_sprites_walker("Chariot", "Walk", 1)}
+        return walker_sprite
 
-        #====== engineer ======#
-        engineer = {1 : create_liste_sprites_walker("Engineer", "Walk", 12)}
+    def load_buildings_images(self):
+        buildingsSprite = {}
+        hss = pygame.image.load("image/Buildings/Housng1a_00045.png").convert_alpha()
+        hss = pygame.transform.scale(hss, (hss.get_width() / 2, hss.get_height() / 2))
 
-        return {"Citizen" : citizen, "Prefet" : prefet, "Immigrant" : immigrant, "Chariot" : chariot, "Engineer" : engineer}
+        shs = pygame.image.load("image/Buildings/Housng1a_00001.png").convert_alpha()
+        shs = pygame.transform.scale(shs, (shs.get_width() / 2, shs.get_height() / 2))
 
+        ps = pygame.image.load("image/Buildings/Security_00001.png").convert_alpha()
+        ps = pygame.transform.scale(ps, (ps.get_width() / 2, ps.get_height() / 2))
 
-    def load_structures_images(self):
-
-        hss = load_image("image/Buildings/Housng1a_00045.png")
-        st1s = load_image("image/Buildings/Housng1a_00001.png")
-        st2s = load_image("image/Buildings/Housng1a_00005.png")
-        lt1s = load_image("image/Buildings/Housng1a_00004.png")
-        lt2s = load_image("image/Buildings/Housng1a_00006.png")
-        ps = load_image("image/Buildings/Security_00001.png")
-        eps = load_image("image/Buildings/transport_00056.png")
-        ws = load_image("image/Buildings/Utilitya_00001.png")
-        bsts = load_image("image/Buildings/Land2a_00208.png")
-        burnruinss = load_image("image/Buildings/Land2a_00115.png")
-        ruinss = load_image("image/Buildings/Land2a_00044.png")
-
-
-        return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
-                "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
+        buildingsSprite["HousingSpot"] = hss
+        buildingsSprite["SmallHouse"] = shs
+        buildingsSprite["Prefecture"] = ps
+    
+        return buildingsSprite
 
     def update(self):
         self.camera.update()
         #Update de la position des walkers
         for e in self.entities: e.update()
-        for hs in self.cityHousingSpotsList: hs.generateImmigrant()
-        for b in self.structures :
-            if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
-            self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
-        self.population = 0
-        for h in self.cityHousesList: 
-            h.udmCheck()   # Vérifie les upgrades, downgrades et merge d'habitations
-            self.population = self.population + h.nbHab
-            
-    def nearbyRoadsCheck(self, b) :     #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
-        for xcr in range (b.case.x-2,b.case.x+3,1) :
-            for ycr in range (b.case.y-2,b.case.y+3,1) :
-                    if 0<=xcr<self.nbr_cell_x and 0<=ycr<self.nbr_cell_y:
-                        if self.map[xcr][ycr].road :
-                            return
-        if isinstance(b,HousingSpot) or isinstance(b,House) :
-            b.delete()
-        if isinstance(b,WorkBuilding) and b.active==True :
-            b.active = False
 
 
     def draw(self):
@@ -323,38 +281,47 @@ class Plateau():
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
 
-                if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
-                    id_image = self.map[cell_x][cell_y].sprite
-                    self.screen.blit(self.image[id_image],
+                if self.map[cell_x][cell_y].road == None:
+                    image = self.map[cell_x][cell_y].sprite
+                    self.screen.blit(self.image[image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
+                                    render_pos[1] - (self.image[image].get_height() - cell_size) + self.camera.vect.y))
                 # DRAW ROADS
-                elif self.map[cell_x][cell_y].road:
-                    id_image = self.map[cell_x][cell_y].road.sprite
-                    self.screen.blit(self.image_route[id_image],
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image_route[id_image].get_height() - cell_size) + self.camera.vect.y))
-                
-                # DRAW STRUCTURES
                 else :
-                    if self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
-                        id_image = self.map[cell_x][cell_y].structure.desc
-                        self.screen.blit(self.image_structures[id_image], 
-                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                             render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
-                
-                # DRAW WALKERS
-                for e in self.walkers[cell_x][cell_y]:
-                    self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)], 
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
+                    image = self.map[cell_x][cell_y].road.sprite
+                    self.screen.blit(self.image_route[image],
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                    render_pos[1] - (self.image_route[image].get_height() - cell_size) + self.camera.vect.y))
                 
                 # DRAW PREVIEW
                 if self.previewMap[cell_x][cell_y] != None:
                     self.screen.blit(self.image["red"],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (self.image["red"].get_height() - cell_size) + self.camera.vect.y))
-            
+
+        # DRAW WALKERS
+        for e in self.entities:
+            render_pos =  self.map[e.case.x][e.case.y].render_pos
+            self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                         render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
+        
+        """
+        # DRAW BUILDINGS
+        for b in self.buildings:
+            render_pos = self.map[b.case.x][b.case.y].render_pos
+            self.screen.blit(self.image_buildings[b], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                         render_pos[1] - (self.image_buildings[b].get_height() - cell_size) + self.camera.vect.y))
+
+
+        """
+        # DRAW BUILDINGS
+        for b in self.buildings:
+            render_pos = self.map[b.case.x][b.case.y].render_pos
+            self.screen.blit(self.image_buildings[b.desc], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                         render_pos[1] - (self.image_buildings[b.desc].get_height() - cell_size) + self.camera.vect.y))
         
 
         self.menu_map.draw_menu(self.screen)
@@ -377,20 +344,12 @@ class Plateau():
             self.screen.blit(pnl_7.img_scaled,(top_menu_axis_x,0))
             top_menu_axis_x+=pnl_7.dim[0]
             self.screen.blit(pnl_8.img_scaled,(top_menu_axis_x,0))
-            top_menu_axis_x+=pnl_8.dim[0]         
+            top_menu_axis_x+=pnl_8.dim[0]
+         
          
             self.screen.blit(bloc_top_menu.img_scaled,(480,0))
             self.screen.blit(bloc_top_menu.img_scaled,(480+ bloc_top_menu.dim[0]+24,0))
-            self.screen.blit(bloc_top_menu.img_scaled,(480+(2*bloc_top_menu.dim[0])+120,0)) 
-            #Afficher la trésorerie dans la top bar :   
-            snss=15 if 99 < abs(self.treasury) < 1000 else 30 if 9<abs(self.treasury)<100 else 68 if abs(self.treasury)<10 else 0  #Smaller number -> smaller size
-            self.screen.blit(TextRender("Dn",(25,20)).img_scaled,(490,2.5))
-            self.screen.blit(TextRender(str(self.treasury),(60-snss,20)).img_scaled,(520,2.5)) 
-            #Afficher la population dans la top bar :   
-            snss=15 if 99 < abs(self.population) < 1000 else 30 if 9<abs(self.population)<100 else 40 if abs(self.population)<10 else 0  #Smaller number -> smaller size
-            self.screen.blit(TextRender("Pop",(30,20)).img_scaled,(637,2.5))
-            self.screen.blit(TextRender(str(self.population),(60-snss,20)).img_scaled,(680,2.5)) 
-
+            self.screen.blit(bloc_top_menu.img_scaled,(480+(2*bloc_top_menu.dim[0])+120,0))        
 
         if state_control_panel=="reduced":
             
@@ -622,6 +581,8 @@ class Plateau():
         undo_button.show_tip(self.screen)
         message_view_button.show_tip(self.screen)
         see_recent_troubles_button.show_tip(self.screen)
+        
+        pygame.display.flip()
     
     def create_collision_matrix(self):
         collision_matrix = [[1000 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
