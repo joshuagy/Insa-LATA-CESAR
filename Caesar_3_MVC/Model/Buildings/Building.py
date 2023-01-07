@@ -1,4 +1,6 @@
 from types import NoneType
+from Model.constants import *
+from random import *
 
 class Building():
     def __init__(self, case, plateau, size, desc):
@@ -65,6 +67,36 @@ class Building():
 
     def getCase(self):
         return self.case
+
+    def riskCheck(self) :
+        #CollapseRisk :
+        if self.desc in list_of_brittle_structures :
+            #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
+            safeTime = 1000          # Nombre de ticks pendant lequel le bâtiment est 100% safe
+            criticalTime = 50000    # Nombre de ticks après lequels le bâtiment s'écroule forcément
+            randC = randint(safeTime,criticalTime)
+            if randC+self.get_collapseRisk() >= safeTime+criticalTime :
+                self.collapse()
+            else :
+                self.set_collapseRisk(self.get_collapseRisk()+1)
+        #FireRisk :
+        if self.desc in list_of_flammable_structures :
+            #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
+            safeTime = 1000          # Nombre de ticks pendant lequel le bâtiment est 100% safe
+            criticalTime = 50000    # Nombre de ticks après lesquels le bâtiment s'écroule forcément
+            randF = randint(safeTime,criticalTime)
+            if randF+self.get_fireRisk() >= safeTime+criticalTime :
+                self.ignite()
+            else :
+                self.set_fireRisk(self.get_fireRisk()+1)
+            # Chance qu'un incendie s'éteigne de lui-même (Pour l'instant 0,5% par tick après 1000 ticks)
+        if self.desc == "BurningBuilding" :
+            if self.timeBurning < 1000 :
+                self.timeBurning = self.timeBurning+1
+            else :
+                val = randint(0,1000)
+                if val<=5 :
+                    self.desc="BurnedRuins"
 
     def collapse(self):
         self.delete()

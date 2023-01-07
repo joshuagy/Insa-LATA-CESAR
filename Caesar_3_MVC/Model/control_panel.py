@@ -116,7 +116,6 @@ class TextRender:
         self.size=size
         self.police = pygame.font.SysFont("monospace" ,15)
         self.text_image = self.police.render ( text, 1 , self.colour )
-        #self.dim = (self.text_image.get_rect().size[0]*SCL,self.text_image.get_rect().size[1]*SCL)
         self.img_scaled = pygame.transform.scale(self.text_image,size)
 
 

@@ -7,6 +7,10 @@ from Model.Walker import *
 from Model.control_panel import *
 from Model.constants import *
 from Model.Route import Route
+from Model.Buildings.Building import Building
+from Model.Buildings.House import House
+from Model.Buildings.House import HousingSpot
+from Model.Buildings.WorkBuilding import *
 from random import *
 import sys
 
@@ -43,6 +47,8 @@ class Plateau():
         self.listeCase = listeCase
         #Trésorerie
         self.treasury = START_TREASURY + self.nbr_cell_y * ROAD_COST    #Remboursement auto des routes par défaut
+        #Population
+        self.population = 0
 
         self.map = self.default_map()
         self.previewMap = self.default_map()
@@ -268,7 +274,10 @@ class Plateau():
     def load_structures_images(self):
 
         hss = load_image("image/Buildings/Housng1a_00045.png")
-        sts = load_image("image/Buildings/Housng1a_00001.png")
+        st1s = load_image("image/Buildings/Housng1a_00001.png")
+        st2s = load_image("image/Buildings/Housng1a_00005.png")
+        lt1s = load_image("image/Buildings/Housng1a_00004.png")
+        lt2s = load_image("image/Buildings/Housng1a_00006.png")
         ps = load_image("image/Buildings/Security_00001.png")
         eps = load_image("image/Buildings/transport_00056.png")
         ws = load_image("image/Buildings/Utilitya_00001.png")
@@ -277,7 +286,7 @@ class Plateau():
         ruinss = load_image("image/Buildings/Land2a_00044.png")
 
 
-        return {"HousingSpot" : hss, "SmallTent" : sts, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
+        return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
 
     def update(self):
@@ -285,39 +294,25 @@ class Plateau():
         #Update de la position des walkers
         for e in self.entities: e.update()
         for hs in self.cityHousingSpotsList: hs.generateImmigrant()
-        self.riskCheck()
-
-    def riskCheck(self):
         for b in self.structures :
-            #CollapseRisk :
-            if b.desc in list_of_brittle_structures :
-                #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
-                safeTime = 300          # Nombre de ticks pendant lequel le bâtiment est 100% safe
-                criticalTime = 30000    # Nombre de ticks après lequels le bâtiment s'écroule forcément
-                randC = randint(safeTime,criticalTime)
-                if randC+b.get_collapseRisk() >= safeTime+criticalTime :
-                    b.collapse()
-                else :
-                    b.set_collapseRisk(b.get_collapseRisk()+1)
-            #FireRisk :
-            if b.desc in list_of_flammable_structures :
-                #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
-                safeTime = 300          # Nombre de ticks pendant lequel le bâtiment est 100% safe
-                criticalTime = 30000    # Nombre de ticks après lesquels le bâtiment s'écroule forcément
-                randF = randint(safeTime,criticalTime)
-                if randF+b.get_fireRisk() >= safeTime+criticalTime :
-                    b.ignite()
-                else :
-                    b.set_fireRisk(b.get_fireRisk()+1)
-            # Chance qu'un incendie s'éteigne de lui-même (Pour l'instant 0,5% par tick après 1000 ticks)
-            if b.desc == "BurningBuilding" :
-                if b.timeBurning < 1000 :
-                    b.timeBurning = b.timeBurning+1
-                else :
-                    val = randint(0,1000)
-                    if val<=5 :
-                        b.desc="BurnedRuins"
-                    
+            if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
+            self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
+        self.population = 0
+        for h in self.cityHousesList: 
+            h.udmCheck()   # Vérifie les upgrades, downgrades et merge d'habitations
+            self.population = self.population + h.nbHab
+            
+    def nearbyRoadsCheck(self, b) :     #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
+        for xcr in range (b.case.x-2,b.case.x+3,1) :
+            for ycr in range (b.case.y-2,b.case.y+3,1) :
+                    if 0<=xcr<self.nbr_cell_x and 0<=ycr<self.nbr_cell_y:
+                        if self.map[xcr][ycr].road :
+                            return
+        if isinstance(b,HousingSpot) or isinstance(b,House) :
+            b.delete()
+        if isinstance(b,WorkBuilding) and b.active==True :
+            b.active = False
+
 
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -342,10 +337,11 @@ class Plateau():
                 
                 # DRAW STRUCTURES
                 else :
-                    id_image = self.map[cell_x][cell_y].structure.desc
-                    self.screen.blit(self.image_structures[id_image], 
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                    if self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
+                        id_image = self.map[cell_x][cell_y].structure.desc
+                        self.screen.blit(self.image_structures[id_image], 
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                             render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
                 
                 # DRAW WALKERS
                 for e in self.walkers[cell_x][cell_y]:
@@ -387,8 +383,14 @@ class Plateau():
             self.screen.blit(bloc_top_menu.img_scaled,(480+ bloc_top_menu.dim[0]+24,0))
             self.screen.blit(bloc_top_menu.img_scaled,(480+(2*bloc_top_menu.dim[0])+120,0)) 
             #Afficher la trésorerie dans la top bar :   
-            self.screen.blit(TextRender("Dn",(25,20)).img_scaled,(920,3.5))
-            self.screen.blit(TextRender(str(self.treasury),(70,20)).img_scaled,(850,3.5)) 
+            snss=15 if 99 < abs(self.treasury) < 1000 else 30 if 9<abs(self.treasury)<100 else 68 if abs(self.treasury)<10 else 0  #Smaller number -> smaller size
+            self.screen.blit(TextRender("Dn",(25,20)).img_scaled,(490,2.5))
+            self.screen.blit(TextRender(str(self.treasury),(60-snss,20)).img_scaled,(520,2.5)) 
+            #Afficher la population dans la top bar :   
+            snss=15 if 99 < abs(self.population) < 1000 else 30 if 9<abs(self.population)<100 else 40 if abs(self.population)<10 else 0  #Smaller number -> smaller size
+            self.screen.blit(TextRender("Pop",(30,20)).img_scaled,(637,2.5))
+            self.screen.blit(TextRender(str(self.population),(60-snss,20)).img_scaled,(680,2.5)) 
+
 
         if state_control_panel=="reduced":
             
