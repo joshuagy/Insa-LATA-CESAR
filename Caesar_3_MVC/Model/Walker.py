@@ -54,6 +54,10 @@ class Walker:
         self.plateau.walkers[self.case.x][self.case.y].remove(self)
         del self
 
+    def set_action(self, newAction) :
+        self.index_sprite = 0
+        self.action = newAction
+
     
     def random_path(self):
         """
@@ -189,7 +193,22 @@ class Citizen(Walker):
 class Prefet(Walker):
     def __init__(self, case, plateau, name="Plebius Prepus"):
         super().__init__(case, plateau, name)
+        self.plateau.prefets.append(self)
+        if len(self.plateau.burningBuildings) > 0:
+            self.target = random.choice(self.plateau.burningBuildings)
+            self.create_path(self.target.case)
+            self.set_action(2)
     
+    def delete(self):
+        self.plateau.prefets.remove(self)
+        super().delete()
+
+    def newFire(self):
+        if self.action == 1:
+            self.target = random.choice(self.plateau.burningBuildings)
+            self.create_path(self.target.case)
+            self.set_action(2)
+
     def reduceRisk(self):
         x_min = self.case.x - 2
         if x_min < 0 : x_min = 0
@@ -234,9 +253,26 @@ class Prefet(Walker):
                     self.reduceRisk()
 
                 case 2 : #Se dirige vers un feu
-                    pass
+                    new_pos = self.path[self.path_index]
+                    self.path_index += 1
+                    if self.path_index >= len(self.path) - 2:
+                        self.set_action(3)
+                        self.throw_timer = 0
+                    self.change_tile(new_pos)
+                    self.reduceRisk()
                 case 3 : #Eteint un feu
-                    pass
+                    if self.throw_timer < 3:
+                        self.throw_timer += 1
+                    else :
+                        self.target.off()
+                        if len(self.plateau.burningBuildings) > 0:
+                            self.target = random.choice(self.plateau.burningBuildings)
+                            self.create_path(self.target.case)
+                            self.set_action(2)
+                        else :
+                            self.create_path(self.case_de_départ)
+                            self.ttw = 0
+                            self.set_action(1)
             self.move_timer = now
 
 class Immigrant(Walker):

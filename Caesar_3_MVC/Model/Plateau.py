@@ -17,7 +17,7 @@ import sys
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = []):
+    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], prefets = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
         
         self.screen = screen
         self.clock = clock
@@ -64,14 +64,16 @@ class Plateau():
 
         #Tableau contenant l'intégralité des walker présents sur la map
         self.entities = entities 
+        self.prefets = prefets
 
         #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
         self.collision_matrix = self.create_collision_matrix()
 
         #Tableau contenant l'intégralité des bâtiments présent sur la map
         self.structures = structures
-        self.cityHousesList = []
-        self.cityHousingSpotsList = []
+        self.cityHousesList = cityHousesList
+        self.cityHousingSpotsList = cityHousingSpotsList
+        self.burningBuildings = burningBuildings
 
         #Define the position of the button on the full panel button who won't change position after
         overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
@@ -269,8 +271,6 @@ class Plateau():
         engineer = {1 : create_liste_sprites_walker("Engineer", "Walk", 12)}
 
         return {"Citizen" : citizen, "Prefet" : prefet, "Immigrant" : immigrant, "Chariot" : chariot, "Engineer" : engineer}
-
-
     def load_structures_images(self):
 
         hss = load_image("image/Buildings/Housng1a_00045.png")
@@ -281,8 +281,8 @@ class Plateau():
         ps = load_image("image/Buildings/Security_00001.png")
         eps = load_image("image/Buildings/transport_00056.png")
         ws = load_image("image/Buildings/Utilitya_00001.png")
-        bsts = load_image("image/Buildings/Land2a_00208.png")
-        burnruinss = load_image("image/Buildings/Land2a_00115.png")
+        bsts = list(load_image(f"image/Buildings/BurningBuilding/BurningBuildingFrame{i}.png") for i in range(1, 9))
+        burnruinss = load_image("image/Buildings/BurningBuilding/Land2a_00187.png")
         ruinss = load_image("image/Buildings/Land2a_00044.png")
 
 
@@ -294,6 +294,7 @@ class Plateau():
         #Update de la position des walkers
         for e in self.entities: e.update()
         for hs in self.cityHousingSpotsList: hs.generateImmigrant()
+        for bb in self.burningBuildings: bb.update()
         for b in self.structures :
             if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
             self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
@@ -337,7 +338,11 @@ class Plateau():
                 
                 # DRAW STRUCTURES
                 else :
-                    if self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
+                    if isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
+                        self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                         render_pos[1] - (self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
+                    elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
                         id_image = self.map[cell_x][cell_y].structure.desc
                         self.screen.blit(self.image_structures[id_image], 
                                             (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
