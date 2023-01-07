@@ -157,6 +157,7 @@ class Citizen(Walker):
         """
         Mise à jour de la prochaine action du walker
         """
+
         now = pygame.time.get_ticks()
         self.index_sprite += 0.5
         if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.action][self.direction])):
@@ -187,6 +188,7 @@ class Prefet(Walker):
         """
         Mise à jour de la prochaine action du walker
         """
+
         now = pygame.time.get_ticks()
         self.index_sprite += 0.5
         if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.action][self.direction])):

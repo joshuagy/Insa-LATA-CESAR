@@ -8,6 +8,7 @@ from Model.Route import Route
 from Model.Buildings.Building import *
 from Model.Buildings.House import *
 from Model.Buildings.WorkBuilding import *
+import sys
 
 class MouseInputHandler:
     """
@@ -16,7 +17,7 @@ class MouseInputHandler:
     def __init__(self, evManager, model) -> None:
         self.evManager = evManager
         self.model = model
-        self.clicked = False
+        self.clicked=False
         self.initialMouseCoordinate = False
         self.finalClickCoordinate = False
 
@@ -24,10 +25,35 @@ class MouseInputHandler:
         """
         Receive events posted to the message queue. 
         """
+
         if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: 
                         self.clicked = True
                         self.initialMouseCoordinate = pygame.mouse.get_pos()
+                        if self.model.exit_menu.Exit_rect.collidepoint(event.pos):
+                            pygame.quit()
+                            sys.exit()
+                        if self.model.exit_menu.Continue_rect.collidepoint(event.pos):
+                            self.model.exit_menu.choosen(False)
+                            self.model.actualGame.set_pause(False)
+
+                        if self.model.exit_menu.Savegame_rect.collidepoint(event.pos):
+                            pass
+
+                        if self.model.exit_menu.Replay_rect.collidepoint(event.pos):
+                            self.model.actualGame.restart = True
+                            self.model.actualGame.update()
+                            self.model.exit_menu.choosen(False)
+                            self.model.actualGame.set_pause(False)
+
+
+
+
+
+
+
+
+
         elif event.type == pygame.MOUSEBUTTONUP:
                 if(self.clicked):
                         # get current state
@@ -38,7 +64,7 @@ class MouseInputHandler:
                         if currentstate == STATE_PLAY:
                                 self.handleMouseEventsStatePlay(event)
                 if event.button == 1:
-                        self.clicked = False
+                        clicked = False
                         self.initialMouseCoordinate = None
         #  Preview clear land
         elif event.type == pygame.MOUSEMOTION:
@@ -64,6 +90,7 @@ class MouseInputHandler:
         #Handle the buttons of the control panel
         for button in list_of_buttons:
             button.handle_event(event)
+
 
     def handleMouseEventsStatePlay(self, event):
         """

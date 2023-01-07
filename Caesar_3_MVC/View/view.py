@@ -6,6 +6,7 @@ from EventManager.EventManager import EventManager
 from EventManager.allEvent import *
 from Model.constants import *
 from Model.MiniMap import MiniMap
+from Model.Exit_menu import *
 
 class GraphicalView(object):
     """
@@ -66,9 +67,15 @@ class GraphicalView(object):
         """
         Render the game.
         """
+
+
+        if self.model.actualGame.restart:
+            self.initialize()
         self.model.actualGame.update()
         self.model.actualGame.draw()
         self.model.mini_map.draw_position(self.model.actualGame.screen, self.model.actualGame.camera,self.model.actualGame.map,self.model.actualGame.nbr_cell_x,self.model.actualGame.nbr_cell_y,self.model.actualGame.image)
+        self.model.exit_menu.draw_exit_menu()
+        self.model.actualGame.restart = False
         pygame.display.flip()
 
     def initialize(self) -> None:
@@ -86,6 +93,7 @@ class GraphicalView(object):
         self.model.menu = Menu(self.screen)
         self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
         self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), 40 * cell_size * 2, 40 * cell_size + 2 * cell_size)
+        self.model.exit_menu = Exitmenu(self.screen.get_width(),self.screen.get_height(),self.screen)
 
         #Création de walkers
         for _ in range(1) : Prefet(self.model.actualGame.map[19][20], self.model.actualGame)
