@@ -290,7 +290,6 @@ class Plateau():
         burnruinss = load_image("image/Buildings/BurningBuilding/Land2a_00187.png")
         ruinss = load_image("image/Buildings/Land2a_00044.png")
 
-
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
 
