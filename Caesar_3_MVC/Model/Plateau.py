@@ -297,7 +297,6 @@ class Plateau():
         if self.restart:
             self.entities.clear()
             self.listeCase.clear()
-            self.prefets.clear()
             self.structures.clear()
             self.cityHousesList.clear()
             self.cityHousingSpotsList.clear()
