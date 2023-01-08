@@ -81,7 +81,7 @@ class GraphicalView(object):
         """
         self.model.actualGame.update()
         self.model.actualGame.draw()
-        self.model.mini_map.draw_position(self.model.actualGame.screen, self.model.actualGame.camera,self.model.actualGame.map,self.model.actualGame.nbr_cell_x,self.model.actualGame.nbr_cell_y,self.model.actualGame.image)
+        #self.model.mini_map.draw_position(self.model.actualGame.screen, self.model.actualGame.camera,self.model.actualGame.map,self.model.actualGame.nbr_cell_x,self.model.actualGame.nbr_cell_y,self.model.actualGame.image)
         pygame.display.flip()
 
     def initialize(self) -> None:
@@ -98,7 +98,7 @@ class GraphicalView(object):
         self.isinitialized = True
         self.model.introScene = IntroScene(self.screen)
         self.model.menu = Menu(self.screen)
-        self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
+        self.model.actualGame = Plateau(self.screen, self.clock)
         self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), 40 * cell_size * 2, 40 * cell_size + 2 * cell_size)
 
         #Création de walkers

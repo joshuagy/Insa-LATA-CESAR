@@ -1,4 +1,7 @@
 import pygame
+from typing import List
+from random import *
+
 from Model.Zoom import Zoom
 from Model.Camera import Camera
 from Model.Case import Case
@@ -11,25 +14,22 @@ from Model.Buildings.Building import Building
 from Model.Buildings.House import House
 from Model.Buildings.House import HousingSpot
 from Model.Buildings.WorkBuilding import *
-from random import *
-import sys
+
 
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = []):
+    def __init__(self, screen, clock, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = []):
         
         self.screen = screen
         self.clock = clock
-        self.width, self.height = self.screen.get_size()
-        self.camera = Camera(self.width, self.height)
-        self.running = True
-        self.zoomed = True
-        self.menu_map = Menu_map(self.width,self.height)
 
-        self.name = name
-        self.heigthScreen = heigth
-        self.widthScreen = width
+        self.width, self.height = self.screen.get_size()
+
+        self.camera = Camera(self.width, self.height)
+    
+        self.menu_map = Menu_map(self.width, self.height)
+
         self.nbr_cell_x = nbr_cell_x
         self.nbr_cell_y = nbr_cell_y
 
@@ -56,6 +56,8 @@ class Plateau():
         for x in range(len(self.previewMap)):
             for y in range(len(self.previewMap[0])):
                 self.previewMap[x][y] = None
+
+        self.previewRoad = [[None for _ in range(self.nbr_cell_x)] for _ in range(self.nbr_cell_y)]
 
         self.default_road()
 
@@ -86,7 +88,7 @@ class Plateau():
         message_view_button.change_pos(self.width-99,445)
         see_recent_troubles_button.change_pos(self.width-49,445)
 
-    def default_map(self):
+    def default_map(self) -> List[List[Case]]:
 
         map = []
 
@@ -98,12 +100,13 @@ class Plateau():
                 render_pos = cells_to_map.render_pos
                 self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
         return map
+
     def default_road(self):
         for j in range(19, 20):
             for i in range(self.nbr_cell_y):
                 Route(self.map[j][i], self)
         
-    def cells_to_map(self, cell_x, cell_y):
+    def cells_to_map(self, cell_x, cell_y) -> Case:
 
         rectangle_cell = [
             (cell_x * cell_size , cell_y * cell_size ),
@@ -122,7 +125,7 @@ class Plateau():
         return nouvelle_case
         
     def cartesian_to_isometric(self, x, y):
-            return x - y,(x + y)/2
+            return x - y, (x + y)/2
 
     def zoom(self,X__,bol):
         if bol:
@@ -132,6 +135,8 @@ class Plateau():
             cell_size *= X__
             self.zoom__.set_zoom(X__)
             self.surface_cells.fill((0,0,0))
+
+
             self.surface_cells = pygame.Surface((self.nbr_cell_x * cell_size * 2, self.nbr_cell_y * cell_size + 2 * cell_size)).convert_alpha()
             self.map=self.default_map()
 
@@ -290,7 +295,9 @@ class Plateau():
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
 
     def update(self):
+        #Update la position de la map
         self.camera.update()
+
         #Update de la position des walkers
         for e in self.entities: e.update()
         for hs in self.cityHousingSpotsList: hs.generateImmigrant()
@@ -322,7 +329,8 @@ class Plateau():
         for cell_x in range(self.nbr_cell_y):
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
-
+                
+                # DRAW DEFAULT
                 if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
                     id_image = self.map[cell_x][cell_y].sprite
                     self.screen.blit(self.image[id_image],
@@ -349,13 +357,39 @@ class Plateau():
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                          render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
                 
-                # DRAW PREVIEW
+                # DRAW PREVIEW CLEAN LAND (pelle)
                 if self.previewMap[cell_x][cell_y] != None:
-                    self.screen.blit(self.image["red"],
+
+                    # apply preview effect
+                    id_image = self.map[cell_x][cell_y].sprite
+                    image = self.image[id_image].copy()
+                    previewedImage = pygame.Surface(image.get_size()).convert_alpha()
+                    previewedImage.fill((200, 0, 0))
+                    image.blit(previewedImage, (0,0), special_flags = pygame.BLEND_RGBA_MULT)
+
+                    self.screen.blit(image,
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image["red"].get_height() - cell_size) + self.camera.vect.y))
+                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
             
-        
+                # DRAW PREVIEW ROAD
+                if self.previewRoad[cell_x][cell_y] != None:
+                    
+                    id_image = self.map[cell_x][cell_y].sprite
+                    image = self.image[id_image].copy()
+                    previewedImage = pygame.Surface(image.get_size()).convert_alpha()
+
+                    # apply preview effect
+                    if self.previewRoad[cell_x][cell_y] == 'redEffect':
+                        previewedImage.fill((200, 0, 0))
+                        
+                    elif self.previewRoad[cell_x][cell_y] == 'greenEffect':
+                        previewedImage.fill((0, 200, 0))
+                    
+                    image.blit(previewedImage, (0,0), special_flags = pygame.BLEND_RGBA_MULT)  
+                    self.screen.blit(image,
+                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                        render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
+                  
 
         self.menu_map.draw_menu(self.screen)
 

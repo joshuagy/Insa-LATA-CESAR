@@ -18,6 +18,7 @@ class MouseInputHandler:
         self.evManager = evManager
         self.model = model
         self.clicked = False
+        self.isDragging = False
         self.initialMouseCoordinate = False
         self.finalClickCoordinate = False
 
@@ -25,15 +26,21 @@ class MouseInputHandler:
         """
         Receive events posted to the message queue. 
         """
+        
+        currentstate = self.model.state.peek()
+
+        # MOUSE DOWN
+        
         if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: 
                         self.clicked = True
                         self.initialMouseCoordinate = pygame.mouse.get_pos()
+        
+        # MOUSE UP
         elif event.type == pygame.MOUSEBUTTONUP:
                 if(self.clicked):
                         # get current state
                         self.finalClickCoordinate = pygame.mouse.get_pos()
-                        currentstate = self.model.state.peek()
                         if currentstate == STATE_INTRO_SCENE:
                                 self.handleMouseEventsStateIntroScene(event)
                         if currentstate == STATE_MENU:
@@ -43,29 +50,31 @@ class MouseInputHandler:
                 if event.button == 1:
                         self.clicked = False
                         self.initialMouseCoordinate = None
-        #  Preview clear land
         
+        # MOTION
         elif event.type == pygame.MOUSEMOTION:
-            temp = pygame.mouse.get_pos()
-            if temp != self.initialMouseCoordinate and self.clicked:
+            if currentstate == STATE_INTRO_SCENE:
+                self.handleMouseMouvementsIntroScene(event)
+            if currentstate == STATE_MENU:
+                self.handleMouseMouvementsMenu(event)
+            if currentstate == STATE_PLAY:
                 self.handleMouseMouvement(event)
-
-        self.hoverEvent(pygame.mouse.get_pos())
-
-    def hoverEvent(self, mousePos): 
-        currentstate = self.model.state.peek()
-        if currentstate == STATE_INTRO_SCENE:
-            self.handleHoverEventIntroScene(mousePos)
-        if currentstate == STATE_MENU:
-            self.handleHoverEventMenu(mousePos)
             
+    def handleMouseMouvementsIntroScene(self, event):
+        """
+        Handles all motions event if currentState is STATE_INTRO_SCENE
+        """
 
+        # Handles hover (quand le cursor se place sur un boutton ce dernier change de couleur)
+        self.model.introScene.handleHoverEvent(event.pos)
 
-    def handleHoverEventIntroScene(self, mousePos):
-        self.model.introScene.handleHoverEvent(mousePos)
+    def handleMouseMouvementsMenu(self, event):
+        """
+        Handles all motions event if currentState is STATE_MENU
+        """
 
-    def handleHoverEventMenu(self, mousePos):
-        self.model.menu.handleHoverEvent(mousePos)
+        # Handles hover (quand le cursor se place sur un boutton ce dernier change de couleur)
+        self.model.menu.handleHoverEvent(event.pos)
 
     def handleMouseEventsStateIntroScene(self, event):
         """
@@ -163,7 +172,7 @@ class MouseInputHandler:
                 
         #Routes
         if build_roads_button.clicked and not build_roads_button.rect.collidepoint(event.pos):
-        
+
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
             world_y = y - self.model.actualGame.camera.vect.y
@@ -241,7 +250,10 @@ class MouseInputHandler:
                                 Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
                             
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
-            
+        
+        else:            
+            self.model.actualGame.previewRoad = [[None for _ in range(self.model.actualGame.nbr_cell_x)] for _ in range(self.model.actualGame.nbr_cell_y)]
+
         #Buildings
         #HousingSpot
         if build_housing_button.clicked and not build_housing_button.rect.collidepoint(event.pos):
@@ -476,64 +488,105 @@ class MouseInputHandler:
                                 if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                                     Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
                                     
-                                    
-
-                                
-
     def handleMouseMouvement(self, event):
-        """ Here we are going to manage the movement of the mouse"""
-        #Pelle
-        if clear_land_button.clicked and not clear_land_button.rect.collidepoint(event.pos) and self.initialMouseCoordinate != None:
-            for xi in range(len(self.model.actualGame.previewMap)):
-                for yi in range(len(self.model.actualGame.previewMap[0])):
-                        self.model.actualGame.previewMap[xi][yi] = None
-                        x, y = self.initialMouseCoordinate
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x1 = int(cart_x // cell_size)
-            grid_y1 = int(cart_y // cell_size)
-
-            x, y = event.pos
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x2 = int(cart_x // cell_size)
-            grid_y2 = int(cart_y // cell_size)
+        """ 
+        Here we are going to manage the movement of the mouse
+        """
         
-            if grid_x1 <0:
-                grid_x1 = 0
-            if grid_x2 <0:
-                grid_x2 = 0
-            if grid_y1 <0:
-                grid_y1 = 0
-            if grid_y2 <0:
-                grid_y2 = 0
+        mousePos = event.pos
+        if mousePos != self.initialMouseCoordinate:
+            grid_x, grid_y = self.mousePos_to_gridPos(mousePos)
+            # Preview clear land
+            if self.clicked:       
+                if clear_land_button.clicked and not clear_land_button.rect.collidepoint(event.pos) and self.initialMouseCoordinate != None:
+                    for xi in range(len(self.model.actualGame.previewMap)):
+                        for yi in range(len(self.model.actualGame.previewMap[0])):
+                                self.model.actualGame.previewMap[xi][yi] = None
+                                x, y = self.initialMouseCoordinate
+                    world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+                    world_y = y - self.model.actualGame.camera.vect.y
 
-            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
-                grid_x1 = self.model.actualGame.nbr_cell_x-1
-            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
-                grid_x2 = self.model.actualGame.nbr_cell_x-1
-            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
-                grid_y1 = self.model.actualGame.nbr_cell_y-1
-            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
-                grid_y2 = self.model.actualGame.nbr_cell_y-1
+                    cart_y = (2 * world_y - world_x) / 2
+                    cart_x = cart_y + world_x
+                    grid_x1 = int(cart_x // cell_size)
+                    grid_y1 = int(cart_y // cell_size)
 
-            if grid_x1 > grid_x2:
-                temp = grid_x1
-                grid_x1 = grid_x2
-                grid_x2 = temp
+                    x, y = event.pos
+                    world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+                    world_y = y - self.model.actualGame.camera.vect.y
 
-            if grid_y1 > grid_y2:
-                temp = grid_y1
-                grid_y1 = grid_y2
-                grid_y2 = temp
+                    cart_y = (2 * world_y - world_x) / 2
+                    cart_x = cart_y + world_x
+                    grid_x2 = int(cart_x // cell_size)
+                    grid_y2 = int(cart_y // cell_size)
+                
+                    if grid_x1 <0:
+                        grid_x1 = 0
+                    if grid_x2 <0:
+                        grid_x2 = 0
+                    if grid_y1 <0:
+                        grid_y1 = 0
+                    if grid_y2 <0:
+                        grid_y2 = 0
 
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                    self.model.actualGame.previewMap[xi][yi] = "red"
+                    if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+                        grid_x1 = self.model.actualGame.nbr_cell_x-1
+                    if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+                        grid_x2 = self.model.actualGame.nbr_cell_x-1
+                    if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+                        grid_y1 = self.model.actualGame.nbr_cell_y-1
+                    if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+                        grid_y2 = self.model.actualGame.nbr_cell_y-1
 
+                    if grid_x1 > grid_x2:
+                        temp = grid_x1
+                        grid_x1 = grid_x2
+                        grid_x2 = temp
+
+                    if grid_y1 > grid_y2:
+                        temp = grid_y1
+                        grid_y1 = grid_y2
+                        grid_y2 = temp
+
+                    for xi in range(grid_x1, grid_x2+1):
+                        for yi in range(grid_y1, grid_y2+1):
+                            self.model.actualGame.previewMap[xi][yi] = "red" 
+        
+            # Preview road
+            elif build_roads_button.clicked:
+                
+                if not self.clicked:   
+                    self.model.actualGame.previewRoad = [[None for _ in range(self.model.actualGame.nbr_cell_x)] for _ in range(self.model.actualGame.nbr_cell_y)]
+                    
+                    if (self.model.actualGame.map[grid_x][grid_y].sprite in list_of_road_constructable) and (not self.model.actualGame.map[grid_x][grid_y].road):
+                        self.model.actualGame.previewRoad[grid_x][grid_y] = 'greenEffect'
+                    else:
+                        self.model.actualGame.previewRoad[grid_x][grid_y] = 'redEffect'
+
+                else: 
+                    pass
+
+    def mousePos_to_gridPos(self, mousePos):
+        x, y = mousePos
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
+
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+
+        grid_x = int(cart_x // cell_size)
+        grid_y = int(cart_y // cell_size)
+
+        if grid_x <0:
+            grid_x = 0
+
+        if grid_y <0:
+            grid_y = 0
+
+
+        if grid_x > self.model.actualGame.nbr_cell_x-1:
+            grid_x = self.model.actualGame.nbr_cell_x-1
+
+        if grid_y > self.model.actualGame.nbr_cell_y-1:
+            grid_y = self.model.actualGame.nbr_cell_y-1 
+        return grid_x, grid_y
