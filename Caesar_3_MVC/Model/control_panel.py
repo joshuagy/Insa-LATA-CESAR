@@ -87,9 +87,7 @@ class ButtonCtrlPnl():
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEMOTION:
-            self.hovered = self.rect.collidepoint(event.pos)
-            if not self.hovered: 
-                print(self.rect, event.pos)                                                                        
+            self.hovered = self.rect.collidepoint(event.pos)                                                                      
                 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             #We consider that the button is in the clicked state until we click again
@@ -117,8 +115,6 @@ class TextRender:
         self.police = pygame.font.SysFont("monospace" ,15)
         self.text_image = self.police.render ( text, 1 , self.colour )
         self.img_scaled = pygame.transform.scale(self.text_image,size)
-
-
 
 # === VARIABLES === 
 state_control_panel = "full" # "full" or "reduced"
