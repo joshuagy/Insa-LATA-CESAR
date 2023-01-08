@@ -72,7 +72,6 @@ class Controls:
     staticSurface.blit(pnl_527.img_scaled,(x,y))
     y+=pnl_527.dim[1]           
 
-
     staticSurface.blit(deco_bas_full_menu.img_scaled,(tmp_x, 682 - originY))
   
     return staticSurface
@@ -83,7 +82,6 @@ class Controls:
 
     listOfButtons = []
 
-    # not working for now
     self.hide_control_panel_button = ButtonCtrlPnl(self, display_reduced_ctrl_panel,"Hide the Control Panel to see a wider playing area", 0, 0,"image/C3/paneling_00097.png","image/C3/paneling_00098.png","image/C3/paneling_00099.png")
     self.hide_control_panel_button.change_pos(self.screenWidth-self.hide_control_panel_button.dim[0]-4 - originX, 24+5 - originY)
     listOfButtons.append(self.hide_control_panel_button)
@@ -95,7 +93,7 @@ class Controls:
     self.advisors_button = ButtonCtrlPnl(self, not_implemented_func,"Visit your advisors", self.screenWidth -155 - originX, 179 - originY,"image/C3/paneling_00079.png","image/C3/paneling_00080.png","image/C3/paneling_00081.png")
     listOfButtons.append(self.advisors_button)
 
-    self.empire_map_button = ButtonCtrlPnl(self, not_implemented_func,"Go to the map of the Empire", self.screenWidth - 78 - originY ,179 - originY, "image/C3/paneling_00082.png","image/C3/paneling_00083.png","image/C3/paneling_00084.png")
+    self.empire_map_button = ButtonCtrlPnl(self, not_implemented_func,"Go to the map of the Empire", self.screenWidth - 78 - originX ,179 - originY, "image/C3/paneling_00082.png","image/C3/paneling_00083.png","image/C3/paneling_00084.png")
     listOfButtons.append(self.empire_map_button)
 
     self.assignement_button = ButtonCtrlPnl(self, not_implemented_func,"Review your assignement",self.screenWidth-155-originX,208-originY, "image/C3/paneling_00085.png","image/C3/paneling_00086.png","image/C3/paneling_00087.png")

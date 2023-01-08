@@ -109,11 +109,11 @@ class Sprite:
         self.img_scaled=pygame.transform.scale(self.img,self.dim)
 
 class TextRender:
-    def __init__(self, text, size, colour = (255,255,255)) :
+    def __init__(self, text, size, colour = (255,255,255), bg = None) :
         self.colour = colour
         self.size=size
         self.police = pygame.font.SysFont("monospace" ,15)
-        self.text_image = self.police.render ( text, 1 , self.colour )
+        self.text_image = self.police.render ( text, 1 , self.colour, bg)
         self.img_scaled = pygame.transform.scale(self.text_image,size)
 
 # === VARIABLES === 

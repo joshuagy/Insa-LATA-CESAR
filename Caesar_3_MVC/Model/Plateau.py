@@ -12,6 +12,7 @@ from Model.Buildings.House import House
 from Model.Buildings.House import HousingSpot
 from Model.Buildings.WorkBuilding import *
 from Model.Controls import Controls
+from Model.TopBar import TopBar
 from random import *
 
 counter=1
@@ -77,6 +78,7 @@ class Plateau():
         self.burningBuildings = burningBuildings
 
         self.controls = Controls(self.screen)
+        self.topbar = TopBar(self.screen, self.treasury, self.population)
 
         #Define the position of the button on the full panel button who won't change position after
         # overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
@@ -295,6 +297,7 @@ class Plateau():
     def update(self):
         self.camera.update()
         self.controls.update()
+        self.topbar.update(self.treasury, self.population)
 
         #Update de la position des walkers
         for e in self.entities: e.update()
@@ -371,40 +374,7 @@ class Plateau():
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
                    
-        self.menu_map.draw_menu(self.screen)
-
-        # top_menu_axis_x = 0
-        # while (top_menu_axis_x < self.width):
-            
-        #     self.screen.blit(pnl_1.img_scaled,(top_menu_axis_x,0))
-        #     top_menu_axis_x+=pnl_1.dim[0]
-        #     self.screen.blit(pnl_2.img_scaled,(top_menu_axis_x,0))
-        #     top_menu_axis_x+=pnl_2.dim[0]
-        #     self.screen.blit(pnl_3.img_scaled,(top_menu_axis_x,0))
-        #     top_menu_axis_x+=pnl_3.dim[0]
-        #     self.screen.blit(pnl_4.img_scaled,(top_menu_axis_x,0))
-        #     top_menu_axis_x+=pnl_4.dim[0]
-        #     self.screen.blit(pnl_5.img_scaled,(top_menu_axis_x,0))
-        #     top_menu_axis_x+=pnl_5.dim[0]
-        #     self.screen.blit(pnl_6.img_scaled,(top_menu_axis_x,0))
-        #     top_menu_axis_x+=pnl_6.dim[0]
-        #     self.screen.blit(pnl_7.img_scaled,(top_menu_axis_x,0))
-        #     top_menu_axis_x+=pnl_7.dim[0]
-        #     self.screen.blit(pnl_8.img_scaled,(top_menu_axis_x,0))
-        #     top_menu_axis_x+=pnl_8.dim[0]         
-         
-        #     self.screen.blit(bloc_top_menu.img_scaled,(480,0))
-        #     self.screen.blit(bloc_top_menu.img_scaled,(480+ bloc_top_menu.dim[0]+24,0))
-        #     self.screen.blit(bloc_top_menu.img_scaled,(480+(2*bloc_top_menu.dim[0])+120,0)) 
-        #     #Afficher la trésorerie dans la top bar :   
-        #     snss=15 if 99 < abs(self.treasury) < 1000 else 30 if 9<abs(self.treasury)<100 else 68 if abs(self.treasury)<10 else 0  #Smaller number -> smaller size
-        #     self.screen.blit(TextRender("Dn",(25,20)).img_scaled,(490,2.5))
-        #     self.screen.blit(TextRender(str(self.treasury),(60-snss,20)).img_scaled,(520,2.5)) 
-        #     #Afficher la population dans la top bar :   
-        #     snss=15 if 99 < abs(self.population) < 1000 else 30 if 9<abs(self.population)<100 else 40 if abs(self.population)<10 else 0  #Smaller number -> smaller size
-        #     self.screen.blit(TextRender("Pop",(30,20)).img_scaled,(637,2.5))
-        #     self.screen.blit(TextRender(str(self.population),(60-snss,20)).img_scaled,(680,2.5)) 
-
+    
 
         # if state_control_panel=="reduced":
             
@@ -637,6 +607,7 @@ class Plateau():
         # message_view_button.show_tip(self.screen)
         # see_recent_troubles_button.show_tip(self.screen)
 
+        self.topbar.render()
         self.controls.render()
 
         fpsText = self.font.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
