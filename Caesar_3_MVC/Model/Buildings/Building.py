@@ -145,3 +145,4 @@ class BurningBuilding(Building) :
             val = randint(0,1000)
             if val<=5 :
                 self.off()
+                
