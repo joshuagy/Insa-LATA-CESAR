@@ -169,9 +169,10 @@ def display_overlay_selection():
 
 #Create buttons
 overlays_button = ButtonCtrlPnl(display_overlay_selection,"Select a city overlay report", 0, 0,"image/UI/menu/menu_overlay_button.png","image/UI/menu/menu_overlay_button_clicked.png","image/UI/menu/menu_overlay_button_clicked.png")
-fire_overlay = ButtonCtrlPnl(not_implemented_func,"Show the risk of the structure to catch fire", 0, 0,"image/UI/menu/menu_overlay_button.png","image/UI/menu/menu_overlay_button_clicked.png","image/UI/menu/menu_overlay_button_clicked.png")
-damage_overlay = ButtonCtrlPnl(not_implemented_func,"Show the risk of the structure to collapse", 0, 0,"image/UI/menu/menu_overlay_button.png","image/UI/menu/menu_overlay_button_clicked.png","image/UI/menu/menu_overlay_button_clicked.png")
-entertainment_overlay = ButtonCtrlPnl(not_implemented_func,"Show the level of entertainment of each case", 0, 0,"image/UI/menu/menu_overlay_button.png","image/UI/menu/menu_overlay_button_clicked.png","image/UI/menu/menu_overlay_button_clicked.png")
+fire_overlay = ButtonCtrlPnl(not_implemented_func,"Show the risk of the structure to catch fire", 0, 0,"image/UI/menu/menu_fire_button.png","image/UI/menu/menu_fire_button_clicked.png","image/UI/menu/menu_fire_button_clicked.png")
+damage_overlay = ButtonCtrlPnl(not_implemented_func,"Show the risk of the structure to collapse", 0, 0,"image/UI/menu/menu_damage_button.png","image/UI/menu/menu_damage_button_clicked.png","image/UI/menu/menu_damage_button_clicked.png")
+entertainment_overlay = ButtonCtrlPnl(not_implemented_func,"Show the level of entertainment of each case", 0, 0,"image/UI/menu/menu_entertainment_button.png","image/UI/menu/menu_entertainment_button_clicked.png","image/UI/menu/menu_entertainment_button_clicked.png")
+water_overlay = ButtonCtrlPnl(not_implemented_func,"Show the water level of each case", 0, 0,"image/UI/menu/menu_water_button.png","image/UI/menu/menu_water_button_clicked.png","image/UI/menu/menu_water_button_clicked.png")
 
 hide_control_panel_button = ButtonCtrlPnl(display_reduced_ctrl_panel,"Hide the Control Panel to see a wider playing area", 0, 0,"image/C3/paneling_00097.png","image/C3/paneling_00098.png","image/C3/paneling_00099.png")
 display_control_panel_button = ButtonCtrlPnl(display_full_ctrl_panel,"Display the Control Panel", 0, 0,"image/C3/paneling_00101.png","image/C3/paneling_00102.png","image/C3/paneling_00103.png") #1238, 28?
