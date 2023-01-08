@@ -374,12 +374,20 @@ class Plateau():
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
                    
-    
+
+        self.topbar.render()
+        self.controls.render()
+
+        fpsText = self.font.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
+        self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
+
+        # s = self.screen.copy()
+        # s = pygame.transform.scale(s, (200, 200))
+        # self.screen.blit(s, (0, 0), (0, int(pnl_4.dim[1])+1, self.width-380, self.height - int(pnl_4.dim[1])+1))
 
         # if state_control_panel=="reduced":
             
         #     self.screen.blit(small_gap_menu.img_scaled, (self.width-small_gap_menu.dim[0], 24))
-        #     self.screen.blit(deco_bas_small_menu.img_scaled, (self.width-42, 24+450))
             
         #     display_control_panel_button.update()
         #     display_control_panel_button.change_pos(self.width-display_control_panel_button.dim[0]-5,28)
@@ -606,12 +614,6 @@ class Plateau():
         # undo_button.show_tip(self.screen)
         # message_view_button.show_tip(self.screen)
         # see_recent_troubles_button.show_tip(self.screen)
-
-        self.topbar.render()
-        self.controls.render()
-
-        fpsText = self.font.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
-        self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
 
     def create_collision_matrix(self):
         collision_matrix = [[1000 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]

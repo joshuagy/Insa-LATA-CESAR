@@ -21,9 +21,6 @@ class TopBar:
     self.populationBlocWithDynamicText = self.populationBloc.copy()
     self.populationBlocWithDynamicText.blit(TextRender(str(self.population), (60-self.get_snss_population(), 20)).img_scaled, (680 - self.populationBlocPos[0], 2.5))
     
-    # self.populationDynamicText = TextRender(str(self.population),(60-self.get_snss_population(),20)).img_scaled
-    # self.populationDynamicTextPos = (680, 2.5)
-
   def generateStaticSurface(self):
     staticSurface = pygame.Surface((self.screenWidth, int(pnl_4.dim[1])+1))
     top_menu_axis_x = 0
@@ -45,12 +42,7 @@ class TopBar:
         staticSurface.blit(pnl_8.img_scaled,(top_menu_axis_x,0))
         top_menu_axis_x+=pnl_8.dim[0]         
       
-        #staticSurface.blit(bloc_top_menu.img_scaled,(480,0))
-        #staticSurface.blit(bloc_top_menu.img_scaled,(480+ bloc_top_menu.dim[0]+24,0))
         staticSurface.blit(bloc_top_menu.img_scaled,(480+(2*bloc_top_menu.dim[0])+120,0)) 
-
-        # staticSurface.blit(TextRender("Dn",(25,20)).img_scaled,(490,2.5))
-        # staticSurface.blit(TextRender("Pop",(30,20)).img_scaled,(637,2.5))
 
     return staticSurface
       
@@ -70,7 +62,7 @@ class TopBar:
       self.population = population   
       self.populationBlocWithDynamicText = self.populationBloc.copy()
       self.populationBlocWithDynamicText.blit(TextRender(str(self.population), (60-self.get_snss_population(), 20)).img_scaled, (680 - self.populationBlocPos[0], 2.5))
-      
+
   def render(self):
     self.staticSurface.blit(self.treasuryBlocWithDynamicText, self.treasuryBlocPos)
     self.staticSurface.blit(self.populationBlocWithDynamicText, self.populationBlocPos)
