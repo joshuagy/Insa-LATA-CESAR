@@ -356,12 +356,17 @@ class Plateau():
                 
                 # DRAW PREVIEW
                 if self.previewMap[cell_x][cell_y] != None:
-                    self.screen.blit(self.image["red"],
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image["red"].get_height() - cell_size) + self.camera.vect.y))
-            
-        
+                    # apply preview effect
+                    id_image = self.map[cell_x][cell_y].sprite
+                    image = self.image[id_image].copy()
+                    previewedImage = pygame.Surface(image.get_size()).convert_alpha()
+                    previewedImage.fill((200, 0, 0))
+                    image.blit(previewedImage, (0,0), special_flags = pygame.BLEND_RGBA_MULT)
 
+                    self.screen.blit(image,
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
+                   
         self.menu_map.draw_menu(self.screen)
 
         top_menu_axis_x = 0
