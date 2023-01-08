@@ -162,10 +162,14 @@ def not_implemented_func():
     """Not implemented function"""
     print("i'm in not_implemented_func")
 
+def display_overlay_selection():
+    """ This function is going to show the differrent ooverlay that we can select"""
+    pass
 
 
 #Create buttons
-overlays_button = ButtonCtrlPnl(not_implemented_func,"Select a city overlay report", 0, 0,"image/C3/paneling_00234.png","image/C3/paneling_00235.png","image/C3/paneling_00236.png")
+overlays_button = ButtonCtrlPnl(display_overlay_selection,"Select a city overlay report", 0, 0,"image/UI/menu/menu_overlay_button.png","image/UI/menu/menu_overlay_button_clicked.png","image/UI/menu/menu_overlay_button_clicked.png")
+
 hide_control_panel_button = ButtonCtrlPnl(display_reduced_ctrl_panel,"Hide the Control Panel to see a wider playing area", 0, 0,"image/C3/paneling_00097.png","image/C3/paneling_00098.png","image/C3/paneling_00099.png")
 display_control_panel_button = ButtonCtrlPnl(display_full_ctrl_panel,"Display the Control Panel", 0, 0,"image/C3/paneling_00101.png","image/C3/paneling_00102.png","image/C3/paneling_00103.png") #1238, 28?
 
