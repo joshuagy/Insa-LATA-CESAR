@@ -191,23 +191,14 @@ class Citizen(Walker):
             self.move_timer = now"""
 
 class Prefet(Walker):
-    def __init__(self, case, plateau, name="Plebius Prepus"):
+    def __init__(self, case, plateau, workplace, name="Plebius Prepus"):
         super().__init__(case, plateau, name)
-        self.plateau.prefets.append(self)
-        if len(self.plateau.burningBuildings) > 0:
-            self.target = random.choice(self.plateau.burningBuildings)
-            self.create_path(self.target.case)
-            self.set_action(2)
+        self.workplace = workplace
+        self.rest = 0
     
     def delete(self):
-        self.plateau.prefets.remove(self)
         super().delete()
-
-    def newFire(self):
-        if self.action == 1:
-            self.target = random.choice(self.plateau.burningBuildings)
-            self.create_path(self.target.case)
-            self.set_action(2)
+        self.workplace.walker = None
 
     def reduceRisk(self):
         x_min = self.case.x - 2
@@ -246,12 +237,19 @@ class Prefet(Walker):
                         new_pos = self.path[self.path_index]
                         # Mise à jour de la position sur le plateau
                         self.path_index += 1
-                        # On retourne en mode aléatoire si la destination a été atteint
+                        # On supprime le walker si la destination a été atteint
                         if self.path_index >= len(self.path) - 1:
-                            self.ttw = ttwmax
+                            self.rest = 1
                     self.change_tile(new_pos)
                     self.reduceRisk()
+                    if self.rest:
+                        self.delete()
 
+                    #Check s'il y a un feu
+                    if len(self.plateau.burningBuildings) > 0:
+                        self.target = random.choice(self.plateau.burningBuildings)
+                        self.create_path(self.target.case)
+                        self.set_action(2)
                 case 2 : #Se dirige vers un feu
                     new_pos = self.path[self.path_index]
                     self.path_index += 1
@@ -312,8 +310,14 @@ class Chariot(Walker):
         self.direction = self.owner.direction
 
 class Engineer(Walker):
-    def __init__(self, case, plateau, name="Plebius Prepus"):
+    def __init__(self, case, plateau, workplace, name="Plebius Prepus"):
         super().__init__(case, plateau, name)
+        self.workplace = workplace
+        self.rest = 0
+
+    def delete(self):
+        super().delete()
+        self.workplace.walker = None
 
     def reduceRisk(self):
         x_min = self.case.x - 2
@@ -352,7 +356,9 @@ class Engineer(Walker):
                 self.path_index += 1
                 # On retourne en mode aléatoire si la destination a été atteint
                 if self.path_index >= len(self.path) - 1:
-                    self.ttw = ttwmax
+                    self.rest = 1
             self.change_tile(new_pos)
             self.reduceRisk()
+            if self.rest:
+                self.delete()
             self.move_timer = now

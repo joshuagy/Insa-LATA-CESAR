@@ -81,7 +81,6 @@ class Building():
                 self.set_fireRisk(self.get_fireRisk()+1)
                 if(self.get_fireRisk() > 6):
                     self.ignite()
-                    for e in self.plateau.prefets : e.newFire()
 
     def collapse(self):
         self.delete()
