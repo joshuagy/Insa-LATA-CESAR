@@ -35,8 +35,8 @@ class KeyboardInputHandler:
 		global cell_size
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_ESCAPE:
-				pygame.quit()
-				sys.exit()
+				self.model.pause_menu.pause=True
+				self.model.actualGame.pause=True
 
 
 		if event.type == pygame.KEYDOWN:

@@ -29,6 +29,22 @@ class MouseInputHandler:
                 if event.button == 1: 
                         self.clicked = True
                         self.initialMouseCoordinate = pygame.mouse.get_pos()
+
+                        if self.model.pause_menu.Exit_rect.collidepoint(event.pos):
+                            self.model.pause_menu.exit()
+
+                        if self.model.pause_menu.Continue_rect.collidepoint(event.pos):
+                            self.model.pause_menu.pause=False
+                            self.model.actualGame.pause=False
+
+                        if self.model.pause_menu.Savegame_rect.collidepoint(event.pos):
+                            pass
+
+                        if self.model.pause_menu.Replay_rect.collidepoint(event.pos):
+                            self.model.actualGame.restart = True
+                            self.model.actualGame.update()
+                            self.model.pause_menu.pause=False
+                            self.model.actualGame.pause=False
         elif event.type == pygame.MOUSEBUTTONUP:
                 if(self.clicked):
                         # get current state
