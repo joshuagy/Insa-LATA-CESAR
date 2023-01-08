@@ -91,6 +91,7 @@ class Plateau():
         self.restart = False
         global counter
         counter = 1
+        self.cnt=1
 
     def default_map(self):
 
@@ -331,6 +332,7 @@ class Plateau():
 
 
     def draw(self):
+
         if not self.pause:
             self.screen.fill((0, 0, 0))
             self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
