@@ -1,12 +1,16 @@
 from Model.control_panel import *
 
 class Controls:
-  def __init__(self, screen):
+  def __init__(self, screen, font):
     self.screen = screen
+    self.font = font
     self.screenWidth, self.screenHeight = self.screen.get_size()
     self.staticSurface = self.generateStaticSurface()
     self.staticSurfacePos = (self.screenWidth-big_gap_menu.dim[0], 24)
     self.listOfButtons = self.generateListOfButtons()
+
+    self.originX = self.screenWidth-big_gap_menu.dim[0]
+    self.originY = 24
 
   def generateStaticSurface(self) -> pygame.Surface:
     originX = self.screenWidth-big_gap_menu.dim[0];
@@ -154,13 +158,24 @@ class Controls:
     self.see_recent_troubles_button = ButtonCtrlPnl(self, not_implemented_func,"See recent troubles", self.screenWidth-49-originY,445-originY,"image/C3/paneling_00119.png","image/C3/paneling_00120.png","image/C3/paneling_00121.png","image/C3/paneling_00122.png")
     listOfButtons.append(self.see_recent_troubles_button)
 
+    self.variable_speed_up = ButtonSpeed(self, not_implemented_func, "Game speed up", self.screenWidth - 149 - originX, 490 - originY, "image/UI/menu/variable_speed/paneling_00247.png","image/UI/menu/variable_speed/paneling_00248.png","image/UI/menu/variable_speed/paneling_00249.png")
+    listOfButtons.append(self.variable_speed_up)
+
+    self.variable_speed_down = ButtonSpeed(self, not_implemented_func, "Game speed down", self.screenWidth + self.variable_speed_up.dim[0] - 145 - originX, 490 - originY, "image/UI/menu/variable_speed/paneling_00251.png","image/UI/menu/variable_speed/paneling_00252.png","image/UI/menu/variable_speed/paneling_00253.png")
+    listOfButtons.append(self.variable_speed_down)
+
     return listOfButtons
 
-  def update(self):
+  def update(self, currentSpeed):
     for button in self.listOfButtons:
       button.update()
+    self.currentSpeedRender(currentSpeed)
 
-  def render(self):  
+  def currentSpeedRender(self, currentSpeed: int) -> pygame.Surface:
+    textSurface = self.font.render(f"{str(currentSpeed)}%", 0, (255, 255, 255))
+    self.staticSurface.blit(textSurface, (self.screenWidth - 50 - self.originX, 490 - self.originY))
+
+  def render(self):
     self.screen.blit(self.staticSurface, self.staticSurfacePos)
     for button in self.listOfButtons:
       button.draw(self.staticSurface)

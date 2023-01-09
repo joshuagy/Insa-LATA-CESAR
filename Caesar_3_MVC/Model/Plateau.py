@@ -23,7 +23,7 @@ class Plateau():
         
         self.screen = screen
         self.clock = clock
-        self.font = pygame.font.SysFont(None, 20)
+        self.minimalFont = pygame.font.SysFont(None, 20)
         self.width, self.height = self.screen.get_size()
         self.camera = Camera(self.width, self.height)
         self.running = True
@@ -74,7 +74,7 @@ class Plateau():
         self.cityHousingSpotsList = cityHousingSpotsList
         self.burningBuildings = burningBuildings
 
-        self.controls = Controls(self.screen)
+        self.controls = Controls(self.screen, self.minimalFont)
         self.topbar = TopBar(self.screen, self.treasury, self.population)
 
         #Define the position of the button on the full panel button who won't change position after
@@ -95,6 +95,7 @@ class Plateau():
         global counter
         counter = 1
 
+        self.currentSpeed = 100
 
     def default_map(self):
 
@@ -307,7 +308,7 @@ class Plateau():
 
         if not self.pause:
             self.camera.update()
-            self.controls.update()
+            self.controls.update(self.currentSpeed)
             self.topbar.update(self.treasury, self.population)
 
             #Update de la position des walkers
@@ -386,7 +387,7 @@ class Plateau():
         self.topbar.render()
         self.controls.render()
         
-        fpsText = self.font.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
+        fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
         self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
 
         # if state_control_panel=="reduced":
