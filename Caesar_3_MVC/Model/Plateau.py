@@ -18,7 +18,7 @@ from random import *
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], prefets = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
+    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
         
         self.screen = screen
         self.clock = clock
@@ -66,7 +66,6 @@ class Plateau():
 
         #Tableau contenant l'intégralité des walker présents sur la map
         self.entities = entities 
-        self.prefets = prefets
 
         #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
         self.collision_matrix = self.create_collision_matrix()
@@ -92,6 +91,11 @@ class Plateau():
         # undo_button.change_pos(self.width-149,445)
         # message_view_button.change_pos(self.width-99,445)
         # see_recent_troubles_button.change_pos(self.width-49,445)
+        self.pause = False
+        self.restart = False
+        global counter
+        counter = 1
+
 
     def default_map(self):
 
@@ -294,21 +298,31 @@ class Plateau():
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
 
     def update(self):
-        self.camera.update()
-        self.controls.update()
-        self.topbar.update(self.treasury, self.population)
+        if self.restart:
+            self.entities.clear()
+            self.listeCase.clear()
+            self.structures.clear()
+            self.cityHousesList.clear()
+            self.cityHousingSpotsList.clear()
+            self.burningBuildings.clear()
 
-        #Update de la position des walkers
-        for e in self.entities: e.update()
-        for hs in self.cityHousingSpotsList: hs.generateImmigrant()
-        for bb in self.burningBuildings: bb.update()
-        for b in self.structures :
-            if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
-            self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
-        self.population = 0
-        for h in self.cityHousesList: 
-            h.udmCheck()   # Vérifie les upgrades, downgrades et merge d'habitations
-            self.population = self.population + h.nbHab
+        if not self.pause:
+
+            self.camera.update()
+            self.controls.update()
+            self.topbar.update(self.treasury, self.population)
+            #Update de la position des walkers
+            for e in self.entities: e.update()
+            for hs in self.cityHousingSpotsList: hs.generateImmigrant()
+            for bb in self.burningBuildings: bb.update()
+            for b in self.structures :
+                if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
+                if isinstance(b,WorkBuilding): b.delay()
+                self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
+            self.population = 0
+            for h in self.cityHousesList:
+                h.udmCheck()   # Vérifie les upgrades, downgrades et merge d'habitations
+                self.population = self.population + h.nbHab
             
     def nearbyRoadsCheck(self, b):     #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
         for xcr in range (b.case.x-2,b.case.x+3,1) :

@@ -71,25 +71,16 @@ class Building():
     def riskCheck(self) :
         #CollapseRisk :
         if self.desc in list_of_brittle_structures :
-            #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
-            safeTime = 1000          # Nombre de ticks pendant lequel le bâtiment est 100% safe
-            criticalTime = 50000    # Nombre de ticks après lequels le bâtiment s'écroule forcément
-            randC = randint(safeTime,criticalTime)
-            if randC+self.get_collapseRisk() >= safeTime+criticalTime :
-                self.collapse()
-            else :
+            if randint(0, 200) == 0:
                 self.set_collapseRisk(self.get_collapseRisk()+1)
+                if(self.get_collapseRisk() > 6):
+                    self.collapse()
         #FireRisk :
         if self.desc in list_of_flammable_structures :
-            #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
-            safeTime = 1000         # Nombre de ticks pendant lequel le bâtiment est 100% safe
-            criticalTime = 50000    # Nombre de ticks après lesquels le bâtiment brule forcément
-            randF = randint(safeTime,criticalTime)
-            if randF+self.get_fireRisk() >= safeTime+criticalTime :
-                self.ignite()
-                for e in self.plateau.prefets : e.newFire()
-            else :
+            if randint(0, 200) == 0:
                 self.set_fireRisk(self.get_fireRisk()+1)
+                if(self.get_fireRisk() > 6):
+                    self.ignite()
 
     def collapse(self):
         self.delete()
@@ -145,3 +136,4 @@ class BurningBuilding(Building) :
             val = randint(0,1000)
             if val<=5 :
                 self.off()
+                
