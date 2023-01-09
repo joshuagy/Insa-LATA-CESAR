@@ -123,10 +123,19 @@ class Controls:
     self.health_related_structures= ButtonCtrlPnl(self, not_implemented_func, "Health related structures", self.screenWidth-99-originX,337-originY, "image/C3/paneling_00163.png", "image/C3/paneling_00164.png", "image/C3/paneling_00165.png","image/C3/paneling_00166.png")
     listOfButtons.append(self.health_related_structures)
 
-    # list_of_buttons.append(religious_structures)
-    # list_of_buttons.append(education_structures)
-    # list_of_buttons.append(entertainment_structures)
-    # list_of_buttons.append(administration_or_government_structures)
+    self.religious_structures = ButtonCtrlPnl(self, not_implemented_func,"Religious Structures", 0, 0,"image/C3/paneling_00151.png","image/C3/paneling_00152.png","image/C3/paneling_00153.png","image/C3/paneling_00154.png")
+    self.religious_structures.change_pos(self.screenWidth - 49 - originX, 337 - originY)
+    listOfButtons.append(self.religious_structures)
+
+    self.education_structures = ButtonCtrlPnl(self, not_implemented_func,"Education Structures", 0, 0,"image/C3/paneling_00147.png","image/C3/paneling_00148.png","image/C3/paneling_00149.png","image/C3/paneling_00150.png")
+    self.education_structures.change_pos(self.screenWidth - 149 - originX, 377 - originY)
+    listOfButtons.append(self.education_structures)
+
+    self.entertainment_structures= ButtonCtrlPnl(self, not_implemented_func,"Entertainment_structures", self.screenWidth-99-originX,373-originY,"image/C3/paneling_00143.png","image/C3/paneling_00144.png","image/C3/paneling_00145.png","image/C3/paneling_00146.png")      
+    listOfButtons.append(self.entertainment_structures)
+
+    self.administration_or_government_structures = ButtonCtrlPnl(self, not_implemented_func,"Administration or Government Structures", self.screenWidth-49-originX,373-originY,"image/C3/paneling_00139.png","image/C3/paneling_00140.png","image/C3/paneling_00141.png")
+    listOfButtons.append(self.administration_or_government_structures)
 
     self.engineering_structures = ButtonCtrlPnl(self, build_engineer_post, "Engineering function", self.screenWidth - 149 - originX,409 - originY,"image/C3/paneling_00167.png","image/C3/paneling_00168.png","image/C3/paneling_00169.png")
     listOfButtons.append(self.engineering_structures)

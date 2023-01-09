@@ -220,7 +220,6 @@ class Plateau():
         sign2 = pygame.image.load("image/C3/land3a_00087.png").convert_alpha()
         sign2 = pygame.transform.scale(sign2, (sign2.get_width() / 2, sign2.get_height() / 2))
 
-
         water1 = pygame.image.load("image/C3/Land1a_00122.png").convert_alpha()
         water1 = pygame.transform.scale(water1, (water1.get_width() / 2, water1.get_height() / 2))
         water2 = pygame.image.load("image/C3/Land1a_00132.png").convert_alpha()
