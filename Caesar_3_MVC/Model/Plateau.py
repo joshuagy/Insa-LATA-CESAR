@@ -53,11 +53,8 @@ class Plateau():
         self.population = 0
 
         self.map = self.default_map()
-        self.previewMap = self.default_map()
-        # Noning the list
-        for x in range(len(self.previewMap)):
-            for y in range(len(self.previewMap[0])):
-                self.previewMap[x][y] = None
+
+        self.previewMap = [[None for _ in range(self.nbr_cell_x)] for _ in range(self.nbr_cell_y)]
 
         self.default_road()
 
@@ -91,6 +88,7 @@ class Plateau():
         # undo_button.change_pos(self.width-149,445)
         # message_view_button.change_pos(self.width-99,445)
         # see_recent_troubles_button.change_pos(self.width-49,445)
+
         self.pause = False
         self.restart = False
         global counter
@@ -109,6 +107,7 @@ class Plateau():
                 render_pos = cells_to_map.render_pos
                 self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
         return map
+
     def default_road(self):
         for j in range(19, 20):
             for i in range(self.nbr_cell_y):
@@ -380,9 +379,12 @@ class Plateau():
                     id_image = self.map[cell_x][cell_y].sprite
                     image = self.image[id_image].copy()
                     previewedImage = pygame.Surface(image.get_size()).convert_alpha()
-                    previewedImage.fill((200, 0, 0))
-                    image.blit(previewedImage, (0,0), special_flags = pygame.BLEND_RGBA_MULT)
+                    if self.previewMap[cell_x][cell_y] == 'red':
+                        previewedImage.fill((200, 0, 0))
+                    elif self.previewMap[cell_x][cell_y] == 'default':
+                        previewedImage.fill((150, 150, 150))
 
+                    image.blit(previewedImage, (0,0), special_flags = pygame.BLEND_RGBA_MULT)
                     self.screen.blit(image,
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
