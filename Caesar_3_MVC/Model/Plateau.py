@@ -17,7 +17,7 @@ import sys
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], prefets = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
+    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
         
         self.screen = screen
         self.clock = clock
@@ -64,7 +64,6 @@ class Plateau():
 
         #Tableau contenant l'intégralité des walker présents sur la map
         self.entities = entities 
-        self.prefets = prefets
 
         #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
         self.collision_matrix = self.create_collision_matrix()
@@ -311,6 +310,7 @@ class Plateau():
             for bb in self.burningBuildings: bb.update()
             for b in self.structures :
                 if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
+                if isinstance(b,WorkBuilding): b.delay()
                 self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
             self.population = 0
             for h in self.cityHousesList:
