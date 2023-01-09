@@ -8,7 +8,6 @@ class Camera:
         self.height = height
         self.cell_size=30
 
-
         self.vect = pygame.Vector2(-100, -100)
         self.dx = 0
         self.dy = 0
@@ -23,13 +22,12 @@ class Camera:
         mouse_pos = pygame.mouse.get_pos()
 
         # x movement
-        if mouse_pos[0] > self.width * 0.98:
+        if mouse_pos[0] > self.width * 0.995:
             self.dx = -self.speed
         elif mouse_pos[0] < self.width * 0.02:
             self.dx = self.speed
         else:
             self.dx = 0
-
 
         if mouse_pos[1] > self.height * 0.98:
             self.dy = -self.speed

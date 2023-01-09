@@ -5,12 +5,12 @@ from Model.constants import *
 # === CLASSES === 
 class ButtonCtrlPnl():
 
-    def __init__(self, function, text : str = None, x : int =0, y : int =0, image_normal=None, image_hovered=None, image_clicked=None, image_locked=None):
+    def __init__(self, controls, function, text : str = None, x : int =0, y : int =0, image_normal=None, image_hovered=None, image_clicked=None, image_locked=None):
         """Create a button. Set the images to their path or to None if you don't want to have a hovered and clicked version of your button."""
-        list_of_buttons.append(self)
+        # list_of_buttons.append(self)
+        self.controls = controls
         self.func = function
         self.text = text
-        pygame.init()
         self.textsurface = pygame.font.SysFont('default_font', 20).render(self.text, False, BLACK, WHITE)
 
         self.image_normal =  pygame.image.load(image_normal)
@@ -86,10 +86,8 @@ class ButtonCtrlPnl():
         surface.blit(self.image, self.rect)
 
     def handle_event(self, event):
-
         if event.type == pygame.MOUSEMOTION:
-            self.hovered = self.rect.collidepoint(event.pos)
-                                                                        
+            self.hovered = self.rect.collidepoint(event.pos)                                                                      
                 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             #We consider that the button is in the clicked state until we click again
@@ -97,13 +95,13 @@ class ButtonCtrlPnl():
                 if self.clicked:
                     self.clicked = False
                 else:
-                    for buttons in list_of_buttons:
-                        buttons.clicked = False
+                    for button in self.controls.listOfButtons:
+                        button.clicked = False
                     self.clicked = True
                     if self.unlocked and callable(self.call_func):
                        self.call_func()
-class Sprite:
-     
+
+class Sprite:   
     def __init__(self, source):
         self.source=source
         self.img = pygame.image.load(source)
@@ -111,14 +109,12 @@ class Sprite:
         self.img_scaled=pygame.transform.scale(self.img,self.dim)
 
 class TextRender:
-    def __init__(self, text, size, colour = (255,255,255)) :
+    def __init__(self, text, size, colour = (255,255,255), bg = None) :
         self.colour = colour
         self.size=size
         self.police = pygame.font.SysFont("monospace" ,15)
-        self.text_image = self.police.render ( text, 1 , self.colour )
+        self.text_image = self.police.render ( text, 1 , self.colour, bg)
         self.img_scaled = pygame.transform.scale(self.text_image,size)
-
-
 
 # === VARIABLES === 
 state_control_panel = "full" # "full" or "reduced"
@@ -165,32 +161,32 @@ def not_implemented_func():
 
 
 #Create buttons
-overlays_button = ButtonCtrlPnl(not_implemented_func,"Select a city overlay report", 0, 0,"image/C3/paneling_00234.png","image/C3/paneling_00235.png","image/C3/paneling_00236.png")
-hide_control_panel_button = ButtonCtrlPnl(display_reduced_ctrl_panel,"Hide the Control Panel to see a wider playing area", 0, 0,"image/C3/paneling_00097.png","image/C3/paneling_00098.png","image/C3/paneling_00099.png")
-display_control_panel_button = ButtonCtrlPnl(display_full_ctrl_panel,"Display the Control Panel", 0, 0,"image/C3/paneling_00101.png","image/C3/paneling_00102.png","image/C3/paneling_00103.png") #1238, 28?
+# overlays_button = ButtonCtrlPnl(not_implemented_func,"Select a city overlay report", 0, 0,"image/C3/paneling_00234.png","image/C3/paneling_00235.png","image/C3/paneling_00236.png")
+# hide_control_panel_button = ButtonCtrlPnl(display_reduced_ctrl_panel,"Hide the Control Panel to see a wider playing area", 0, 0,"image/C3/paneling_00097.png","image/C3/paneling_00098.png","image/C3/paneling_00099.png")
+# display_control_panel_button = ButtonCtrlPnl(display_full_ctrl_panel,"Display the Control Panel", 0, 0,"image/C3/paneling_00101.png","image/C3/paneling_00102.png","image/C3/paneling_00103.png") #1238, 28?
 
-advisors_button= ButtonCtrlPnl(not_implemented_func,"Visit your advisors", 0, 0,"image/C3/paneling_00079.png","image/C3/paneling_00080.png","image/C3/paneling_00081.png")
-empire_map_button = ButtonCtrlPnl(not_implemented_func,"Go to the map of the Empire", 0, 0,"image/C3/paneling_00082.png","image/C3/paneling_00083.png","image/C3/paneling_00084.png")
-assignement_button = ButtonCtrlPnl(not_implemented_func,"Review your assignement", 0, 0,"image/C3/paneling_00085.png","image/C3/paneling_00086.png","image/C3/paneling_00087.png")
-compass_button = ButtonCtrlPnl(not_implemented_func,"Re_orient your view to Due North", 0, 0,"image/C3/paneling_00088.png","image/C3/paneling_00089.png","image/C3/paneling_00090.png")
-arrow_rotate_counterclockwise = ButtonCtrlPnl(not_implemented_func,"Rotate the map counterclockwise", 0, 0,"image/C3/paneling_00091.png","image/C3/paneling_00092.png","image/C3/paneling_00093.png")
-arrow_rotate_clockwise = ButtonCtrlPnl(not_implemented_func,"Rotate the map clockwise", 0, 0,"image/C3/paneling_00094.png","image/C3/paneling_00095.png","image/C3/paneling_00096.png")
+# advisors_button= ButtonCtrlPnl(not_implemented_func,"Visit your advisors", 0, 0,"image/C3/paneling_00079.png","image/C3/paneling_00080.png","image/C3/paneling_00081.png")
+# empire_map_button = ButtonCtrlPnl(not_implemented_func,"Go to the map of the Empire", 0, 0,"image/C3/paneling_00082.png","image/C3/paneling_00083.png","image/C3/paneling_00084.png")
+# assignement_button = ButtonCtrlPnl(not_implemented_func,"Review your assignement", 0, 0,"image/C3/paneling_00085.png","image/C3/paneling_00086.png","image/C3/paneling_00087.png")
+# compass_button = ButtonCtrlPnl(not_implemented_func,"Re_orient your view to Due North", 0, 0,"image/C3/paneling_00088.png","image/C3/paneling_00089.png","image/C3/paneling_00090.png")
+# arrow_rotate_counterclockwise = ButtonCtrlPnl(not_implemented_func,"Rotate the map counterclockwise", 0, 0,"image/C3/paneling_00091.png","image/C3/paneling_00092.png","image/C3/paneling_00093.png")
+# arrow_rotate_clockwise = ButtonCtrlPnl(not_implemented_func,"Rotate the map clockwise", 0, 0,"image/C3/paneling_00094.png","image/C3/paneling_00095.png","image/C3/paneling_00096.png")
 
-build_housing_button = ButtonCtrlPnl(build_housing,"Build housing", 0, 0,"image/C3/paneling_00123.png","image/C3/paneling_00124.png","image/C3/paneling_00125.png")
-clear_land_button = ButtonCtrlPnl(clear_land,"Clear land", 0, 0, "image/C3/paneling_00131.png", "image/C3/paneling_00132.png","image/C3/paneling_00133.png")
-build_roads_button = ButtonCtrlPnl(build_roads,"Build roads", 0, 0,"image/C3/paneling_00135.png","image/C3/paneling_00136.png","image/C3/paneling_00137.png")
-water_related_structures = ButtonCtrlPnl(build_water_related_structures, "Water related structure", 0, 0,"image/C3/paneling_00127.png","image/C3/paneling_00128.png","image/C3/paneling_00129.png")
-health_related_structures= ButtonCtrlPnl(not_implemented_func, "Health related structures", 0, 0, "image/C3/paneling_00163.png", "image/C3/paneling_00164.png", "image/C3/paneling_00165.png","image/C3/paneling_00166.png")
-religious_structures = ButtonCtrlPnl(not_implemented_func,"Religious Structures", 0, 0,"image/C3/paneling_00151.png","image/C3/paneling_00152.png","image/C3/paneling_00153.png","image/C3/paneling_00154.png")
-education_structures = ButtonCtrlPnl(not_implemented_func,"Education Structures", 0, 0,"image/C3/paneling_00147.png","image/C3/paneling_00148.png","image/C3/paneling_00149.png","image/C3/paneling_00150.png")
-entertainment_structures= ButtonCtrlPnl(not_implemented_func,"Entertainment_structures", 0, 0,"image/C3/paneling_00143.png","image/C3/paneling_00144.png","image/C3/paneling_00145.png","image/C3/paneling_00146.png")      
-administration_or_government_structures = ButtonCtrlPnl(not_implemented_func,"Administration or Government Structures", 0, 0,"image/C3/paneling_00139.png","image/C3/paneling_00140.png","image/C3/paneling_00141.png")
-engineering_structures = ButtonCtrlPnl(build_engineer_post, "Engineering function", 0, 0,"image/C3/paneling_00167.png","image/C3/paneling_00168.png","image/C3/paneling_00169.png")
-security_structures = ButtonCtrlPnl(build_prefecture,"Security Structures", 0, 0,"image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png")
-industrial_structures = ButtonCtrlPnl(not_implemented_func,"Industrial Structures", 0, 0,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png","image/C3/paneling_00158.png")
-undo_button = ButtonCtrlPnl(not_implemented_func,"Undo", 0, 0,"image/C3/paneling_00171.png","image/C3/paneling_00172.png","image/C3/paneling_00173.png","image/C3/paneling_00174.png")
-message_view_button = ButtonCtrlPnl(not_implemented_func,"Message View", 0, 0,"image/C3/paneling_00115.png","image/C3/paneling_00116.png","image/C3/paneling_00117.png","image/C3/paneling_00118.png")
-see_recent_troubles_button = ButtonCtrlPnl(not_implemented_func,"See recent troubles", 0, 0,"image/C3/paneling_00119.png","image/C3/paneling_00120.png","image/C3/paneling_00121.png","image/C3/paneling_00122.png")
+#build_housing_button = ButtonCtrlPnl(build_housing,"Build housing", 0, 0,"image/C3/paneling_00123.png","image/C3/paneling_00124.png","image/C3/paneling_00125.png")
+#clear_land_button = ButtonCtrlPnl(clear_land,"Clear land", 0, 0, "image/C3/paneling_00131.png", "image/C3/paneling_00132.png","image/C3/paneling_00133.png")
+# build_roads_button = ButtonCtrlPnl(build_roads,"Build roads", 0, 0,"image/C3/paneling_00135.png","image/C3/paneling_00136.png","image/C3/paneling_00137.png")
+# water_related_structures = ButtonCtrlPnl(build_water_related_structures, "Water related structure", 0, 0,"image/C3/paneling_00127.png","image/C3/paneling_00128.png","image/C3/paneling_00129.png")
+# health_related_structures= ButtonCtrlPnl(not_implemented_func, "Health related structures", 0, 0, "image/C3/paneling_00163.png", "image/C3/paneling_00164.png", "image/C3/paneling_00165.png","image/C3/paneling_00166.png")
+# religious_structures = ButtonCtrlPnl(not_implemented_func,"Religious Structures", 0, 0,"image/C3/paneling_00151.png","image/C3/paneling_00152.png","image/C3/paneling_00153.png","image/C3/paneling_00154.png")
+# education_structures = ButtonCtrlPnl(not_implemented_func,"Education Structures", 0, 0,"image/C3/paneling_00147.png","image/C3/paneling_00148.png","image/C3/paneling_00149.png","image/C3/paneling_00150.png")
+# entertainment_structures= ButtonCtrlPnl(not_implemented_func,"Entertainment_structures", 0, 0,"image/C3/paneling_00143.png","image/C3/paneling_00144.png","image/C3/paneling_00145.png","image/C3/paneling_00146.png")      
+# administration_or_government_structures = ButtonCtrlPnl(not_implemented_func,"Administration or Government Structures", 0, 0,"image/C3/paneling_00139.png","image/C3/paneling_00140.png","image/C3/paneling_00141.png")
+# engineering_structures = ButtonCtrlPnl(build_engineer_post, "Engineering function", 0, 0,"image/C3/paneling_00167.png","image/C3/paneling_00168.png","image/C3/paneling_00169.png")
+# security_structures = ButtonCtrlPnl(build_prefecture,"Security Structures", 0, 0,"image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png")
+# industrial_structures = ButtonCtrlPnl(not_implemented_func,"Industrial Structures", 0, 0,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png","image/C3/paneling_00158.png")
+# undo_button = ButtonCtrlPnl(not_implemented_func,"Undo", 0, 0,"image/C3/paneling_00171.png","image/C3/paneling_00172.png","image/C3/paneling_00173.png","image/C3/paneling_00174.png")
+# message_view_button = ButtonCtrlPnl(not_implemented_func,"Message View", 0, 0,"image/C3/paneling_00115.png","image/C3/paneling_00116.png","image/C3/paneling_00117.png","image/C3/paneling_00118.png")
+# see_recent_troubles_button = ButtonCtrlPnl(not_implemented_func,"See recent troubles", 0, 0,"image/C3/paneling_00119.png","image/C3/paneling_00120.png","image/C3/paneling_00121.png","image/C3/paneling_00122.png")
 
 
 #Create sprites

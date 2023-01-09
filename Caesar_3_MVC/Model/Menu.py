@@ -31,7 +31,7 @@ class Menu:
 
   def renderItems(self) -> None:
     for item in self.items:
-      item.render()
+      item.render(self.currentMousePos)
 
   def handleMouseInput(self, event) -> Event:
     if self.isQuitState:
@@ -209,10 +209,19 @@ class MenuButton:
     self.surface_to_blit = surface_to_blit
     self.image = pygame.image.load(image).convert_alpha()
     self.surface = pygame.transform.scale(self.image, (274, 26))
+
+    self.hoveredSurface = self.surface.copy()
+    filter = pygame.Surface(self.surface.get_size()).convert_alpha()
+    filter.fill((180, 180, 180))
+    self.hoveredSurface.blit(filter, (0,0), special_flags = pygame.BLEND_RGBA_MULT)
+
     self.pos = (self.surface_to_blit.get_width()/2 - self.surface.get_width()/2, 300+idx_item*40)
     self.rect = pygame.Rect(self.pos, self.surface.get_size())
 
     self.feedback = feedback
 
-  def render(self):
-    self.surface_to_blit.blit(self.surface, self.pos)
+  def render(self, currentMousePos):
+    if self.rect.collidepoint(currentMousePos):
+      self.surface_to_blit.blit(self.hoveredSurface, self.pos)
+    else: 
+      self.surface_to_blit.blit(self.surface, self.pos)
