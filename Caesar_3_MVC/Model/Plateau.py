@@ -75,6 +75,10 @@ class Plateau():
 
         #Define the position of the button on the full panel button who won't change position after
         overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
+        fire_overlay.change_pos(self.width-fire_overlay.dim[0]-hide_control_panel_button.dim[0]-11,27)
+        damage_overlay.change_pos(self.width-damage_overlay.dim[0]-hide_control_panel_button.dim[0]-12,27)
+        entertainment_overlay.change_pos(self.width-entertainment_overlay.dim[0]-hide_control_panel_button.dim[0]-13,27)
+        water_overlay.change_pos(self.width-water_overlay.dim[0]-hide_control_panel_button.dim[0]-14,27)
         hide_control_panel_button.change_pos(self.width-hide_control_panel_button.dim[0]-4,24+5)
         advisors_button.change_pos(self.width-155,179)
         empire_map_button.change_pos(self.width-78,179)
@@ -459,6 +463,18 @@ class Plateau():
             overlays_button.update()
             overlays_button.draw(self.screen)
 
+            fire_overlay.update()
+            fire_overlay.draw(self.screen)
+            
+            damage_overlay.update()
+            damage_overlay.draw(self.screen)
+
+            entertainment_overlay.update()
+            entertainment_overlay.draw(self.screen)
+
+            water_overlay.update()
+            water_overlay.draw(self.screen)
+
             hide_control_panel_button.update()
             hide_control_panel_button.draw(self.screen)
             
@@ -599,6 +615,10 @@ class Plateau():
 
         #Display message of the button if mouse on it
         overlays_button.show_tip(self.screen)
+        fire_overlay.show_tip(self.screen)
+        damage_overlay.show_tip(self.screen)
+        entertainment_overlay.show_tip(self.screen)
+        water_overlay.show_tip(self.screen)
         hide_control_panel_button.show_tip(self.screen)
         display_control_panel_button.show_tip(self.screen)
         advisors_button.show_tip(self.screen)
