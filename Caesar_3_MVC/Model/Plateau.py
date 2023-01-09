@@ -37,6 +37,7 @@ class Plateau():
         self.nbr_cell_y = nbr_cell_y
 
         self.surface_cells = pygame.Surface((nbr_cell_x * cell_size * 2, nbr_cell_y * cell_size  + 2 * cell_size )).convert_alpha()
+        
 
         #Load de tous les spirtes
         self.image = self.load_cases_images()
