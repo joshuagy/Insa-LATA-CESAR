@@ -15,7 +15,6 @@ class Controls:
     staticSurface = pygame.Surface((big_gap_menu.img_scaled.get_width(), self.screenHeight - 24))
 
     staticSurface.blit(big_gap_menu.img_scaled, (self.screenWidth-big_gap_menu.dim[0] - originX, 24 - originY))
-
     staticSurface.blit(deco_milieu_menu_default.img_scaled, (self.screenWidth-deco_milieu_menu_default.dim[0]-7 - originX, 239 - originY))
 
     x=self.screenWidth-pnl_485.dim[0]-1 - originX
@@ -46,27 +45,27 @@ class Controls:
     tmp_y=y #490
     tmp_x=x #1119
 
-    for i in range(0,11):
+    for _ in range(0,11):
       staticSurface.blit(pnl_486.img_scaled,(x,y))
       y+=pnl_486.dim[1] 
     staticSurface.blit(pnl_521.img_scaled,(x,y))      #Fin 1ère colonne - version simplifiée (1 seul pnl)
 
     x+=pnl_521.dim[0]            
-    for i in range(0,8):
+    for _ in range(0,8):
       staticSurface.blit(pnl_525.img_scaled,(x,y))
       x+=pnl_525.dim[0]            #Fin dernière ligne - version simplifiée (1 seul pnl)
         
     y=tmp_y #490                                                        
     x=tmp_x+pnl_521.dim[0]
-    for j in range(0,8):                                           #"bloc" milieu sans les bords"  - version simplifiée (1 seul pnl)
-        for i in range(0,11):
+    for _ in range(0,8):                                           #"bloc" milieu sans les bords"  - version simplifiée (1 seul pnl)
+        for _ in range(0,11):
             staticSurface.blit(pnl_488.img_scaled,(x,y))
             y+=pnl_488.dim[1] 
         x+=pnl_488.dim[0]   
         y=tmp_y
 
     x=tmp_x+pnl_521.dim[0]*9
-    for i in range(0,11):                                            #Fin dernière colonne - version simplifiée (1 seul pnl)
+    for _ in range(0,11):                                            #Fin dernière colonne - version simplifiée (1 seul pnl)
       staticSurface.blit(pnl_520.img_scaled,(x,y))
       y+=pnl_520.dim[1] 
     staticSurface.blit(pnl_527.img_scaled,(x,y))
