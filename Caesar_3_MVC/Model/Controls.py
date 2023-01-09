@@ -156,3 +156,4 @@ class Controls:
     self.screen.blit(self.staticSurface, self.staticSurfacePos)
     for button in self.listOfButtons:
       button.draw(self.staticSurface)
+      button.show_tip(self.screen)
