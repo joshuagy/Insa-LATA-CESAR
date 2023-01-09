@@ -180,7 +180,6 @@ class MouseInputHandler:
             for xi in range(len(self.model.actualGame.previewMap)):
                 for yi in range(len(self.model.actualGame.previewMap[0])):
                         self.model.actualGame.previewMap[xi][yi] = None
-        
                 
         #Routes
         if self.model.actualGame.controls.build_roads_button.clicked and not self.model.actualGame.controls.build_roads_button.rect.collidepoint(event.pos):

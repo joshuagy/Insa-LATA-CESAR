@@ -336,14 +336,32 @@ class Plateau():
 
     def draw(self):
         self.screen.fill((0, 0, 0))
-        self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
+        #self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
+
        
        # DRAW CELLS
         for cell_x in range(self.nbr_cell_y):
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
 
-                if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
+                # DRAW PREVIEWED CELLS AND HOVERED CELLS
+                if self.previewMap[cell_x][cell_y] != None:
+                    # apply preview effect
+                    id_image = self.map[cell_x][cell_y].sprite
+                    image = self.image[id_image].copy()
+                    previewedImage = pygame.Surface(image.get_size()).convert_alpha()
+                    if self.previewMap[cell_x][cell_y] == 'red':
+                        previewedImage.fill((200, 0, 0))
+                    elif self.previewMap[cell_x][cell_y] == 'default':
+                        previewedImage.fill((150, 150, 150))
+
+                    image.blit(previewedImage, (0,0), special_flags = pygame.BLEND_RGBA_MULT)
+                    self.screen.blit(image,
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
+
+                # DRAW DEFAULT CELLS
+                elif not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
                     id_image = self.map[cell_x][cell_y].sprite
                     self.screen.blit(self.image[id_image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
@@ -354,7 +372,7 @@ class Plateau():
                     self.screen.blit(self.image_route[id_image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (self.image_route[id_image].get_height() - cell_size) + self.camera.vect.y))
-                
+
                 # DRAW STRUCTURES
                 else :
                     if isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
@@ -373,26 +391,13 @@ class Plateau():
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                          render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
                 
-                # DRAW PREVIEW
-                if self.previewMap[cell_x][cell_y] != None:
-                    # apply preview effect
-                    id_image = self.map[cell_x][cell_y].sprite
-                    image = self.image[id_image].copy()
-                    previewedImage = pygame.Surface(image.get_size()).convert_alpha()
-                    if self.previewMap[cell_x][cell_y] == 'red':
-                        previewedImage.fill((200, 0, 0))
-                    elif self.previewMap[cell_x][cell_y] == 'default':
-                        previewedImage.fill((150, 150, 150))
-
-                    image.blit(previewedImage, (0,0), special_flags = pygame.BLEND_RGBA_MULT)
-                    self.screen.blit(image,
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
-                   
+        # miniMap = self.surface_cells.copy()
+        # miniMap = pygame.transform.scale(miniMap, (150, 150))
+        # self.screen.blit(miniMap, (0, 0))
 
         self.topbar.render()
         self.controls.render()
-
+        
         fpsText = self.font.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
         self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
 
