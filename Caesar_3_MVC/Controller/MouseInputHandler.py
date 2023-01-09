@@ -64,7 +64,7 @@ class MouseInputHandler:
         
         elif event.type == pygame.MOUSEMOTION:
             temp = pygame.mouse.get_pos()
-            if temp != self.initialMouseCoordinate and self.clicked:
+            if temp != self.initialMouseCoordinate:
                 self.handleMouseMouvement(event)
 
         # Handle all hover
@@ -116,7 +116,7 @@ class MouseInputHandler:
         Handles game mouse events
         """
         #Pelle
-        if self.model.actualGame.controls.clear_land_button.clicked and not self.model.actualGame.controls.clear_land_button.rect.collidepoint(event.pos):
+        if self.model.actualGame.controls.clear_land_button.clicked and not self.model.actualGame.controls.clear_land_button.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
             world_y = y - self.model.actualGame.camera.vect.y
@@ -177,13 +177,11 @@ class MouseInputHandler:
                               
                             
             self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
-            for xi in range(len(self.model.actualGame.previewMap)):
-                for yi in range(len(self.model.actualGame.previewMap[0])):
-                        self.model.actualGame.previewMap[xi][yi] = None
-        
+            
+            self.model.actualGame.foreground.initForegroundGrid()
                 
         #Routes
-        if self.model.actualGame.controls.build_roads_button.clicked and not self.model.actualGame.controls.build_roads_button.rect.collidepoint(event.pos):
+        if self.model.actualGame.controls.build_roads_button.clicked and not self.model.actualGame.controls.build_roads_button.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
         
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
@@ -265,7 +263,7 @@ class MouseInputHandler:
             
         #Buildings
         #HousingSpot
-        if self.model.actualGame.controls.build_housing_button.clicked and not self.model.actualGame.controls.build_housing_button.rect.collidepoint(event.pos):
+        if self.model.actualGame.controls.build_housing_button.clicked and not self.model.actualGame.controls.build_housing_button.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
         
         #Mouse Selection :
             x, y = self.initialMouseCoordinate
@@ -325,7 +323,7 @@ class MouseInputHandler:
                                             HousingSpot(self.model.actualGame.map[xi][yi],self.model.actualGame)
 
         #Prefecture     
-        if self.model.actualGame.controls.security_structures.clicked and not self.model.actualGame.controls.security_structures.rect.collidepoint(event.pos):
+        if self.model.actualGame.controls.security_structures.clicked and not self.model.actualGame.controls.security_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
         
         #Mouse Selection :
             x, y = self.initialMouseCoordinate
@@ -382,7 +380,7 @@ class MouseInputHandler:
                             Prefecture(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Prefecture",1)
 
         #Engineer
-        if self.model.actualGame.controls.engineering_structures.clicked and not self.model.actualGame.controls.engineering_structures.rect.collidepoint(event.pos):
+        if self.model.actualGame.controls.engineering_structures.clicked and not self.model.actualGame.controls.engineering_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
         
         #Mouse Selection :
             x, y = self.initialMouseCoordinate
@@ -439,7 +437,7 @@ class MouseInputHandler:
                             EnginnerPost(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"EngineerPost",1)
 
         #Well
-        if self.model.actualGame.controls.water_related_structures.clicked and not self.model.actualGame.controls.water_related_structures.rect.collidepoint(event.pos):
+        if self.model.actualGame.controls.water_related_structures.clicked and not self.model.actualGame.controls.water_related_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
         
         #Mouse Selection :
             x, y = self.initialMouseCoordinate
@@ -496,61 +494,86 @@ class MouseInputHandler:
                             #if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
                                 if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                                     Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
-                                    
+
+    def mousePosToGridPos(self, mousePos):
+        x, y = mousePos
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
+
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+        grid_x1 = int(cart_x // cell_size)
+        grid_y1 = int(cart_y // cell_size)
+
+        if grid_x1 <0:
+            grid_x1 = 0
+        
+        if grid_y1 <0:
+            grid_y1 = 0
+   
+        if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+            grid_x1 = self.model.actualGame.nbr_cell_x-1
+        if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+            grid_y1 = self.model.actualGame.nbr_cell_y-1
+        return (grid_x1, grid_y1)
+
     def handleMouseMouvement(self, event):
         """ Here we are going to manage the movement of the mouse"""
         #Pelle
-        if self.model.actualGame.controls.clear_land_button.clicked and not self.model.actualGame.controls.clear_land_button.rect.collidepoint(event.pos) and self.initialMouseCoordinate != None:
-            for xi in range(len(self.model.actualGame.previewMap)):
-                for yi in range(len(self.model.actualGame.previewMap[0])):
-                        self.model.actualGame.previewMap[xi][yi] = None
-                        x, y = self.initialMouseCoordinate
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
+        if self.clicked:
+            if self.model.actualGame.controls.clear_land_button.clicked and not self.model.actualGame.controls.clear_land_button.rect.collidepoint(event.pos) and self.initialMouseCoordinate != None:
+                self.model.actualGame.foreground.initForegroundGrid()
 
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x1 = int(cart_x // cell_size)
-            grid_y1 = int(cart_y // cell_size)
+                x, y = self.initialMouseCoordinate
+                world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+                world_y = y - self.model.actualGame.camera.vect.y
 
-            x, y = event.pos
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
+                cart_y = (2 * world_y - world_x) / 2
+                cart_x = cart_y + world_x
+                grid_x1 = int(cart_x // cell_size)
+                grid_y1 = int(cart_y // cell_size)
 
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x2 = int(cart_x // cell_size)
-            grid_y2 = int(cart_y // cell_size)
-        
-            if grid_x1 <0:
-                grid_x1 = 0
-            if grid_x2 <0:
-                grid_x2 = 0
-            if grid_y1 <0:
-                grid_y1 = 0
-            if grid_y2 <0:
-                grid_y2 = 0
+                x, y = event.pos
+                world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+                world_y = y - self.model.actualGame.camera.vect.y
 
-            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
-                grid_x1 = self.model.actualGame.nbr_cell_x-1
-            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
-                grid_x2 = self.model.actualGame.nbr_cell_x-1
-            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
-                grid_y1 = self.model.actualGame.nbr_cell_y-1
-            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
-                grid_y2 = self.model.actualGame.nbr_cell_y-1
+                cart_y = (2 * world_y - world_x) / 2
+                cart_x = cart_y + world_x
+                grid_x2 = int(cart_x // cell_size)
+                grid_y2 = int(cart_y // cell_size)
+            
+                if grid_x1 <0:
+                    grid_x1 = 0
+                if grid_x2 <0:
+                    grid_x2 = 0
+                if grid_y1 <0:
+                    grid_y1 = 0
+                if grid_y2 <0:
+                    grid_y2 = 0
 
-            if grid_x1 > grid_x2:
-                temp = grid_x1
-                grid_x1 = grid_x2
-                grid_x2 = temp
+                if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+                    grid_x1 = self.model.actualGame.nbr_cell_x-1
+                if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+                    grid_x2 = self.model.actualGame.nbr_cell_x-1
+                if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+                    grid_y1 = self.model.actualGame.nbr_cell_y-1
+                if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+                    grid_y2 = self.model.actualGame.nbr_cell_y-1
 
-            if grid_y1 > grid_y2:
-                temp = grid_y1
-                grid_y1 = grid_y2
-                grid_y2 = temp
+                if grid_x1 > grid_x2:
+                    temp = grid_x1
+                    grid_x1 = grid_x2
+                    grid_x2 = temp
 
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                    self.model.actualGame.previewMap[xi][yi] = "red"
+                if grid_y1 > grid_y2:
+                    temp = grid_y1
+                    grid_y1 = grid_y2
+                    grid_y2 = temp
 
+                for xi in range(grid_x1, grid_x2+1):
+                    for yi in range(grid_y1, grid_y2+1):
+                        self.model.actualGame.foreground.addEffect(xi, yi, 'red')
+        # else:
+        #     self.model.actualGame.foreground.initForegroundGrid()
+        #     (x, y) = self.mousePosToGridPos(event.pos)
+        #     self.model.actualGame.foreground.addEffect(x, y, 'default')

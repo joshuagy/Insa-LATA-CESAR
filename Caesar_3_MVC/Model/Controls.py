@@ -15,7 +15,6 @@ class Controls:
     staticSurface = pygame.Surface((big_gap_menu.img_scaled.get_width(), self.screenHeight - 24))
 
     staticSurface.blit(big_gap_menu.img_scaled, (self.screenWidth-big_gap_menu.dim[0] - originX, 24 - originY))
-
     staticSurface.blit(deco_milieu_menu_default.img_scaled, (self.screenWidth-deco_milieu_menu_default.dim[0]-7 - originX, 239 - originY))
 
     x=self.screenWidth-pnl_485.dim[0]-1 - originX
@@ -46,27 +45,27 @@ class Controls:
     tmp_y=y #490
     tmp_x=x #1119
 
-    for i in range(0,11):
+    for _ in range(0,11):
       staticSurface.blit(pnl_486.img_scaled,(x,y))
       y+=pnl_486.dim[1] 
     staticSurface.blit(pnl_521.img_scaled,(x,y))      #Fin 1ère colonne - version simplifiée (1 seul pnl)
 
     x+=pnl_521.dim[0]            
-    for i in range(0,8):
+    for _ in range(0,8):
       staticSurface.blit(pnl_525.img_scaled,(x,y))
       x+=pnl_525.dim[0]            #Fin dernière ligne - version simplifiée (1 seul pnl)
         
     y=tmp_y #490                                                        
     x=tmp_x+pnl_521.dim[0]
-    for j in range(0,8):                                           #"bloc" milieu sans les bords"  - version simplifiée (1 seul pnl)
-        for i in range(0,11):
+    for _ in range(0,8):                                           #"bloc" milieu sans les bords"  - version simplifiée (1 seul pnl)
+        for _ in range(0,11):
             staticSurface.blit(pnl_488.img_scaled,(x,y))
             y+=pnl_488.dim[1] 
         x+=pnl_488.dim[0]   
         y=tmp_y
 
     x=tmp_x+pnl_521.dim[0]*9
-    for i in range(0,11):                                            #Fin dernière colonne - version simplifiée (1 seul pnl)
+    for _ in range(0,11):                                            #Fin dernière colonne - version simplifiée (1 seul pnl)
       staticSurface.blit(pnl_520.img_scaled,(x,y))
       y+=pnl_520.dim[1] 
     staticSurface.blit(pnl_527.img_scaled,(x,y))
@@ -77,7 +76,7 @@ class Controls:
     return staticSurface
 
   def generateListOfButtons(self):
-    originX = self.screenWidth-big_gap_menu.dim[0];
+    originX = self.screenWidth-big_gap_menu.dim[0]
     originY = 24
 
     listOfButtons = []
@@ -90,7 +89,7 @@ class Controls:
     self.overlays_button.change_pos(self.screenWidth-self.overlays_button.dim[0]-self.hide_control_panel_button.dim[0]-10 - originX, 27 - originY)
     listOfButtons.append(self.overlays_button)
     
-    self.advisors_button = ButtonCtrlPnl(self, not_implemented_func,"Visit your advisors", self.screenWidth -155 - originX, 179 - originY,"image/C3/paneling_00079.png","image/C3/paneling_00080.png","image/C3/paneling_00081.png")
+    self.advisors_button = ButtonCtrlPnl(self, not_implemented_func, "Visit your advisors", self.screenWidth - 155 - originX, 179 - originY,"image/C3/paneling_00079.png","image/C3/paneling_00080.png","image/C3/paneling_00081.png")
     listOfButtons.append(self.advisors_button)
 
     self.empire_map_button = ButtonCtrlPnl(self, not_implemented_func,"Go to the map of the Empire", self.screenWidth - 78 - originX ,179 - originY, "image/C3/paneling_00082.png","image/C3/paneling_00083.png","image/C3/paneling_00084.png")
@@ -123,10 +122,19 @@ class Controls:
     self.health_related_structures= ButtonCtrlPnl(self, not_implemented_func, "Health related structures", self.screenWidth-99-originX,337-originY, "image/C3/paneling_00163.png", "image/C3/paneling_00164.png", "image/C3/paneling_00165.png","image/C3/paneling_00166.png")
     listOfButtons.append(self.health_related_structures)
 
-    # list_of_buttons.append(religious_structures)
-    # list_of_buttons.append(education_structures)
-    # list_of_buttons.append(entertainment_structures)
-    # list_of_buttons.append(administration_or_government_structures)
+    self.religious_structures = ButtonCtrlPnl(self, not_implemented_func,"Religious Structures", 0, 0,"image/C3/paneling_00151.png","image/C3/paneling_00152.png","image/C3/paneling_00153.png","image/C3/paneling_00154.png")
+    self.religious_structures.change_pos(self.screenWidth - 49 - originX, 337 - originY)
+    listOfButtons.append(self.religious_structures)
+
+    self.education_structures = ButtonCtrlPnl(self, not_implemented_func,"Education Structures", 0, 0,"image/C3/paneling_00147.png","image/C3/paneling_00148.png","image/C3/paneling_00149.png","image/C3/paneling_00150.png")
+    self.education_structures.change_pos(self.screenWidth - 149 - originX, 377 - originY)
+    listOfButtons.append(self.education_structures)
+
+    self.entertainment_structures= ButtonCtrlPnl(self, not_implemented_func,"Entertainment_structures", self.screenWidth-99-originX,373-originY,"image/C3/paneling_00143.png","image/C3/paneling_00144.png","image/C3/paneling_00145.png","image/C3/paneling_00146.png")      
+    listOfButtons.append(self.entertainment_structures)
+
+    self.administration_or_government_structures = ButtonCtrlPnl(self, not_implemented_func,"Administration or Government Structures", self.screenWidth-49-originX,373-originY,"image/C3/paneling_00139.png","image/C3/paneling_00140.png","image/C3/paneling_00141.png")
+    listOfButtons.append(self.administration_or_government_structures)
 
     self.engineering_structures = ButtonCtrlPnl(self, build_engineer_post, "Engineering function", self.screenWidth - 149 - originX,409 - originY,"image/C3/paneling_00167.png","image/C3/paneling_00168.png","image/C3/paneling_00169.png")
     listOfButtons.append(self.engineering_structures)
