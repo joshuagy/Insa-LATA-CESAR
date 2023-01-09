@@ -13,6 +13,7 @@ from Model.Buildings.House import HousingSpot
 from Model.Buildings.WorkBuilding import *
 from Model.Controls import Controls
 from Model.TopBar import TopBar
+from Model.Foreground import Foreground
 from random import *
 
 counter=1
@@ -54,7 +55,7 @@ class Plateau():
 
         self.map = self.default_map()
 
-        self.previewMap = [[None for _ in range(self.nbr_cell_x)] for _ in range(self.nbr_cell_y)]
+        self.foreground = Foreground(self.screen, self.nbr_cell_x, self.nbr_cell_y)
 
         self.default_road()
 
@@ -306,10 +307,10 @@ class Plateau():
             self.burningBuildings.clear()
 
         if not self.pause:
-
             self.camera.update()
             self.controls.update()
             self.topbar.update(self.treasury, self.population)
+
             #Update de la position des walkers
             for e in self.entities: e.update()
             for hs in self.cityHousingSpotsList: hs.generateImmigrant()
@@ -336,32 +337,16 @@ class Plateau():
 
     def draw(self):
         self.screen.fill((0, 0, 0))
-        #self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
+        self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
 
-       
-       # DRAW CELLS
+        # DRAW CELLS
         for cell_x in range(self.nbr_cell_y):
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
-
-                # DRAW PREVIEWED CELLS AND HOVERED CELLS
-                if self.previewMap[cell_x][cell_y] != None:
-                    # apply preview effect
-                    id_image = self.map[cell_x][cell_y].sprite
-                    image = self.image[id_image].copy()
-                    previewedImage = pygame.Surface(image.get_size()).convert_alpha()
-                    if self.previewMap[cell_x][cell_y] == 'red':
-                        previewedImage.fill((200, 0, 0))
-                    elif self.previewMap[cell_x][cell_y] == 'default':
-                        previewedImage.fill((150, 150, 150))
-
-                    image.blit(previewedImage, (0,0), special_flags = pygame.BLEND_RGBA_MULT)
-                    self.screen.blit(image,
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
+                id_image = self.map[cell_x][cell_y].sprite
 
                 # DRAW DEFAULT CELLS
-                elif not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
+                if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
                     id_image = self.map[cell_x][cell_y].sprite
                     self.screen.blit(self.image[id_image],
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
@@ -374,36 +359,36 @@ class Plateau():
                                     render_pos[1] - (self.image_route[id_image].get_height() - cell_size) + self.camera.vect.y))
 
                 # DRAW STRUCTURES
-                else :
-                    if isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
-                        self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)], 
+                elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
+                    self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)], 
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                        render_pos[1] - (self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
+                                        
+                elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
+                    id_image = self.map[cell_x][cell_y].structure.desc
+                    self.screen.blit(self.image_structures[id_image], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
-                    elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
-                        id_image = self.map[cell_x][cell_y].structure.desc
-                        self.screen.blit(self.image_structures[id_image], 
-                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                             render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
-                
+                                            render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+
+                # DRAW PREVIEWED CELLS AND HOVERED CELLS
+                if self.foreground.hasEffect(cell_x, cell_y):
+                    id_image = self.map[cell_x][cell_y].sprite
+                    effectedImage = self.foreground.getEffectedImage(self.image[id_image].copy(), cell_x, cell_y)
+                    self.screen.blit(effectedImage,
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
+
                 # DRAW WALKERS
                 for e in self.walkers[cell_x][cell_y]:
                     self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                          render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
-                
-        # miniMap = self.surface_cells.copy()
-        # miniMap = pygame.transform.scale(miniMap, (150, 150))
-        # self.screen.blit(miniMap, (0, 0))
 
         self.topbar.render()
         self.controls.render()
         
         fpsText = self.font.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
         self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
-
-        # s = self.screen.copy()
-        # s = pygame.transform.scale(s, (200, 200))
-        # self.screen.blit(s, (0, 0), (0, int(pnl_4.dim[1])+1, self.width-380, self.height - int(pnl_4.dim[1])+1))
 
         # if state_control_panel=="reduced":
             
@@ -461,179 +446,6 @@ class Plateau():
         #     industrial_structures.update()
         #     industrial_structures.change_pos(self.width-industrial_structures.dim[0]-1,24+417)
         #     industrial_structures.draw(self.screen)
-        
-                    
-        # if state_control_panel=="full":
- 
-            # self.screen.blit(big_gap_menu.img_scaled, (self.width-big_gap_menu.dim[0],24))
-            #self.screen.blit(big_gap_menu.img_scaled,(self.width-big_gap_menu.dim[0],24+big_gap_menu.dim[1])) #usefull to have a white line cover all of the right menu, could be replaced by a white rectangle maybe
-            
-        #     overlays_button.update()
-        #     overlays_button.draw(self.screen)
-
-        #     hide_control_panel_button.update()
-        #     hide_control_panel_button.draw(self.screen)
-            
-        #     advisors_button.update()
-        #     advisors_button.draw(self.screen)
-
-        #     empire_map_button.update()
-        #     empire_map_button.draw(self.screen)
-
-        #     assignement_button.update()
-        #     assignement_button.draw(self.screen)
-            
-        #     compass_button.update()
-        #     compass_button.draw(self.screen)
-
-        #     arrow_rotate_counterclockwise.update()
-        #     arrow_rotate_counterclockwise.draw(self.screen)
-           
-        #     arrow_rotate_clockwise.update()
-        #     arrow_rotate_clockwise.draw(self.screen)
-
-            # self.screen.blit(deco_milieu_menu_default.img_scaled,(self.width-deco_milieu_menu_default.dim[0]-7,239))
-
-            # build_housing_button.update()
-            # build_housing_button.change_pos(self.width-149,301)
-            # build_housing_button.draw(self.screen)
-
-        #     clear_land_button.update()
-        #     clear_land_button.change_pos(self.width-99,301)
-        #     clear_land_button.draw(self.screen)
-
-        #     build_roads_button.update()
-        #     build_roads_button.change_pos(self.width-49,301)
-        #     build_roads_button.draw(self.screen)
-
-        #     water_related_structures.update()
-        #     water_related_structures.change_pos(self.width-149,337)
-        #     water_related_structures.draw(self.screen)
-
-        #     health_related_structures.update()
-        #     health_related_structures.change_pos(self.width-99,337)
-        #     health_related_structures.draw(self.screen)
-
-        #     religious_structures.update()
-        #     religious_structures.change_pos(self.width-49,337)
-        #     religious_structures.draw(self.screen)
-            
-        #     education_structures.update()
-        #     education_structures.change_pos(self.width-149,373)
-        #     education_structures.draw(self.screen)
-
-        #     entertainment_structures.update()
-        #     entertainment_structures.change_pos(self.width-99,373)
-        #     entertainment_structures.draw(self.screen)
-            
-        #     administration_or_government_structures.update()
-        #     administration_or_government_structures.change_pos(self.width-49,373)
-        #     administration_or_government_structures.draw(self.screen)
-           
-        #     engineering_structures.update()
-        #     engineering_structures.change_pos(self.width-149,409)
-        #     engineering_structures.draw(self.screen)
-            
-        #     security_structures.update()
-        #     security_structures.change_pos(self.width-99,409)
-        #     security_structures.draw(self.screen)
-            
-        #     industrial_structures.update()
-        #     industrial_structures.change_pos(self.width-49,409)
-        #     industrial_structures.draw(self.screen)
-
-        #     undo_button.update()
-        #     undo_button.draw(self.screen)
-            
-        #     message_view_button.update()
-        #     message_view_button.draw(self.screen)
-            
-        #     see_recent_troubles_button.update()
-        #     see_recent_troubles_button.draw(self.screen)
-
-            # x=self.width-pnl_485.dim[0]-1
-            # y=24+big_gap_menu.dim[1]
-            # self.screen.blit(pnl_485.img_scaled,(x,y))
-
-            # x-=pnl_485.dim[0]
-            # self.screen.blit(pnl_482.img_scaled,(x,y))
-            # x-=pnl_482.dim[0]
-            # self.screen.blit(pnl_481.img_scaled,(x,y))
-            # x-=pnl_481.dim[0]
-            # self.screen.blit(pnl_480.img_scaled,(x,y))
-            # x-=pnl_480.dim[0]                
-            # self.screen.blit(pnl_484.img_scaled,(x,y))
-            # x-=pnl_484.dim[0]                
-            # self.screen.blit(pnl_483.img_scaled,(x,y))
-            # x-=pnl_483.dim[0]            
-            # self.screen.blit(pnl_482.img_scaled,(x,y))
-            # x-=pnl_482.dim[0]
-            # self.screen.blit(pnl_481.img_scaled,(x,y))
-            # x-=pnl_481.dim[0]
-            # self.screen.blit(pnl_480.img_scaled,(x,y))  
-            # x-=pnl_480.dim[0]
-            # self.screen.blit(pnl_479.img_scaled,(x,y))  #Fin 1ère ligne
-            # y+=pnl_479.dim[1]
-            
-            # tmp_y=y #490
-            # tmp_x=x #1119
-            
-            # for i in range(0,11):
-            #     self.screen.blit(pnl_486.img_scaled,(x,y))
-            #     y+=pnl_486.dim[1] 
-            # self.screen.blit(pnl_521.img_scaled,(x,y))      #Fin 1ère colonne - version simplifiée (1 seul pnl)
-
-            # x+=pnl_521.dim[0]            
-            # for i in range(0,8):
-            #     self.screen.blit(pnl_525.img_scaled,(x,y))
-            #     x+=pnl_525.dim[0]            #Fin dernière ligne - version simplifiée (1 seul pnl)
-            
-            # y=tmp_y #490                                                        
-            # x=tmp_x+pnl_521.dim[0]
-            # for j in range(0,8):                                           #"bloc" milieu sans les bords"  - version simplifiée (1 seul pnl)
-            #     for i in range(0,11):
-            #         self.screen.blit(pnl_488.img_scaled,(x,y))
-            #         y+=pnl_488.dim[1] 
-            #     x+=pnl_488.dim[0]   
-            #     y=tmp_y                      
-            
-            
-
-            # x=tmp_x+pnl_521.dim[0]*9
-            # for i in range(0,11):                                            #Fin dernière colonne - version simplifiée (1 seul pnl)
-            #     self.screen.blit(pnl_520.img_scaled,(x,y))
-            #     y+=pnl_520.dim[1] 
-            # self.screen.blit(pnl_527.img_scaled,(x,y))
-            # y+=pnl_527.dim[1]           
-
-
-            # self.screen.blit(deco_bas_full_menu.img_scaled,(tmp_x,682))
-
-        # #Display message of the button if mouse on it
-        # overlays_button.show_tip(self.screen)
-        # hide_control_panel_button.show_tip(self.screen)
-        # display_control_panel_button.show_tip(self.screen)
-        # advisors_button.show_tip(self.screen)
-        # empire_map_button.show_tip(self.screen)
-        # assignement_button.show_tip(self.screen)
-        # compass_button.show_tip(self.screen)
-        # arrow_rotate_counterclockwise.show_tip(self.screen)
-        # arrow_rotate_clockwise.show_tip(self.screen)
-        # build_housing_button.show_tip(self.screen)
-        # clear_land_button.show_tip(self.screen)
-        # build_roads_button.show_tip(self.screen)
-        # water_related_structures.show_tip(self.screen)
-        # health_related_structures.show_tip(self.screen)
-        # religious_structures.show_tip(self.screen)
-        # education_structures.show_tip(self.screen)
-        # entertainment_structures.show_tip(self.screen)
-        # administration_or_government_structures.show_tip(self.screen)
-        # engineering_structures.show_tip(self.screen)
-        # security_structures.show_tip(self.screen)
-        # industrial_structures.show_tip(self.screen)
-        # undo_button.show_tip(self.screen)
-        # message_view_button.show_tip(self.screen)
-        # see_recent_troubles_button.show_tip(self.screen)
 
     def create_collision_matrix(self):
         collision_matrix = [[1000 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]

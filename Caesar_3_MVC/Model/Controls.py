@@ -77,7 +77,7 @@ class Controls:
     return staticSurface
 
   def generateListOfButtons(self):
-    originX = self.screenWidth-big_gap_menu.dim[0];
+    originX = self.screenWidth-big_gap_menu.dim[0]
     originY = 24
 
     listOfButtons = []
@@ -90,7 +90,7 @@ class Controls:
     self.overlays_button.change_pos(self.screenWidth-self.overlays_button.dim[0]-self.hide_control_panel_button.dim[0]-10 - originX, 27 - originY)
     listOfButtons.append(self.overlays_button)
     
-    self.advisors_button = ButtonCtrlPnl(self, not_implemented_func,"Visit your advisors", self.screenWidth -155 - originX, 179 - originY,"image/C3/paneling_00079.png","image/C3/paneling_00080.png","image/C3/paneling_00081.png")
+    self.advisors_button = ButtonCtrlPnl(self, not_implemented_func, "Visit your advisors", self.screenWidth - 155 - originX, 179 - originY,"image/C3/paneling_00079.png","image/C3/paneling_00080.png","image/C3/paneling_00081.png")
     listOfButtons.append(self.advisors_button)
 
     self.empire_map_button = ButtonCtrlPnl(self, not_implemented_func,"Go to the map of the Empire", self.screenWidth - 78 - originX ,179 - originY, "image/C3/paneling_00082.png","image/C3/paneling_00083.png","image/C3/paneling_00084.png")
