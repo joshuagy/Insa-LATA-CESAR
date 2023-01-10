@@ -3,11 +3,11 @@ from Model.Walker import *
 from Model.Case import *
 
 class WorkBuilding(Building):
-    def __init__(self, case, plateau, size, desc, active=0, walker = None):
-        super().__init__( case, plateau, size, desc)
+    def __init__(self, case, plateau, size, desc, active=0, fireRisk = 0, collapseRisk = 0):
+        super().__init__( case, plateau, size, desc, fireRisk, collapseRisk)
         self.active = active
         self.case.setFeature(desc)
-        self.walker = walker
+        self.walker = None
         self.timer = 0
 
     def setActive(self,NewActive):
@@ -19,7 +19,7 @@ class WorkBuilding(Building):
     def delete(self):
         self.case.setStructure(None)
         self.case.setFeature("")
-        if self.walker :
+        if self.walker:
             self.walker.delete()
         self.plateau.structures.remove(self)
         del self
@@ -37,8 +37,8 @@ class WorkBuilding(Building):
 
 class Prefecture(WorkBuilding) :
 
-    def __init__(self, case, plateau, size, desc, active, walker = None):
-        super().__init__( case, plateau, size, desc, active, walker)
+    def __init__(self, case, plateau, size, desc, active, fireRisk = 0, collapseRisk = 0):
+        super().__init__( case, plateau, size, desc, active, fireRisk, collapseRisk)
         self.plateau.treasury = self.plateau.treasury - PREFECTURE_COST
 
     """def activatePrefecture(aPrefecture,lePlateau) :
@@ -48,13 +48,13 @@ class Prefecture(WorkBuilding) :
         #Reste à afficher le drapeau ROUGE"""
     
     def spawnWalker(self):
-        self.walker = Prefet(self.case,self.plateau, self, "Prefectus")
+        Prefet(self.case,self.plateau, self, "Prefectus")
     
     
 class EnginnerPost(WorkBuilding) :
 
-    def __init__(self, case, plateau, size, desc, active, walker = None):
-        super().__init__( case, plateau, size, desc, active, walker)
+    def __init__(self, case, plateau, size, desc, active, fireRisk = 0, collapseRisk = 0):
+        super().__init__( case, plateau, size, desc, active, fireRisk, collapseRisk)
         self.plateau.treasury = self.plateau.treasury - ENGINEERPOST_COST
 
     """def activateEngineerPost(anEngineerPost,lePlateau) :
@@ -64,5 +64,5 @@ class EnginnerPost(WorkBuilding) :
         #Reste à afficher le drapeau BLEU"""
     
     def spawnWalker(self):
-        self.walker = Engineer(self.case,self.plateau, self, "UnIngenieur")
+        Engineer(self.case,self.plateau, self, "UnIngenieur")
 

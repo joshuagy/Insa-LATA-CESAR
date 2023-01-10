@@ -63,3 +63,11 @@ class KeyboardInputHandler:
 					self.model.actualGame.camera.get_cell_size(30)
 					self.model.actualGame.zoom(0.5,self.model.actualGame.zoomed)
 					self.model.actualGame.zoomed=False
+		
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_c:
+				self.model.actualGame.save_game("test.pickle")
+		
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_v:
+				self.model.actualGame.load_savefile("test.pickle")

@@ -9,13 +9,14 @@ from Model.Buildings.Building import DamagedBuilding
 
 class House(Building):
 
-    def __init__(self, case, plateau, size, desc):
-        super().__init__(case, plateau, size, desc)
-        self.entertainLvl = 0
+    def __init__(self, case, plateau, size, desc, entertainLvl = 0, nbHab = 1, nbHabMax = 5, religiousAccess = 0, fireRisk = 0, collapseRisk = 0):
+        super().__init__(case, plateau, size, desc, fireRisk, collapseRisk)
+        self.entertainLvl = entertainLvl
         self.wheat = 0
         self.wheatMax = 10
-        self.nbHab = 1
-        self.nbHabMax = 5
+        self.nbHab = nbHab
+        self.nbHabMax = nbHabMax
+        self.religiousAccess = religiousAccess
         self.plateau.cityHousesList.append(self)
 
     
@@ -69,9 +70,14 @@ class House(Building):
                 if self.plateau.map[self.case.x][self.case.y-1].structure and self.plateau.map[self.case.x+1][self.case.y].structure and self.plateau.map[self.case.x+1][self.case.y-1].structure :
                     ans = (self.desc == self.plateau.map[self.case.x][self.case.y-1].structure.desc,self.desc == self.plateau.map[self.case.x+1][self.case.y].structure.desc,self.desc == self.plateau.map[self.case.x+1][self.case.y-1].structure.desc)
                     if all(ans) :
-                        fornh = self.nbHab
-                        self.delete()
-                        MergedHouse(self.case,self.plateau,(2,2),self.desc+"2",[self.plateau.map[self.case.x][self.case.y-1].structure,self.plateau.map[self.case.x+1][self.case.y].structure,self.plateau.map[self.case.x+1][self.case.y-1].structure],fornh)
+                        houses = [self,self.plateau.map[self.case.x][self.case.y-1].structure,self.plateau.map[self.case.x+1][self.case.y].structure,self.plateau.map[self.case.x+1][self.case.y-1].structure]
+                        nbHab = houses[0].nbHab+houses[1].nbHab+houses[2].nbHab+houses[3].nbHab
+                        secCases=[]
+                        for h in houses[1:] :
+                            secCases.append(h.case)
+                        for h in houses :
+                            h.delete()
+                        MergedHouse(self.case,self.plateau,(2,2),self.desc+"2",nbHab, secCases)
 
 
     def upgrade(self) :
@@ -101,15 +107,12 @@ class House(Building):
             self.nbHab = self.nbHabMax
 
 class MergedHouse(House) :
-    def __init__(self, case, plateau, size, desc, ohouses, fornh) :
-        super().__init__(case, plateau, size, desc)
-        self.nbHab = fornh+ohouses[0].nbHab+ohouses[1].nbHab+ohouses[2].nbHab
+    def __init__(self, case, plateau, size, desc, nbHab, secCases, fireRisk = 0, collapseRisk = 0) :
+        super().__init__(case, plateau, size, desc, fireRisk, collapseRisk)
+        self.nbHab = nbHab
         self.nbHabMax=self.nbHabMax * 4
         self.case.render_pos=[self.case.render_pos[0], self.case.render_pos[1]+10]
-        self.secCases=[]
-        for h in ohouses :
-            self.secCases.append(h.case)
-            h.delete()
+        self.secCases=secCases
         for c in self.secCases :
             c.setStructure(self)
 
@@ -130,7 +133,7 @@ class MergedHouse(House) :
 
 class HousingSpot() :
 
-    def __init__(self, case, plateau, desc="HousingSpot") :
+    def __init__(self, case, plateau, desc="HousingSpot", nb_immigrant = 0) :
         self.case = case
         self.case.setStructure(self)
         self.desc = desc
@@ -140,7 +143,7 @@ class HousingSpot() :
         self.case.setFeature("HousingSpot")
         self.plateau.cityHousingSpotsList.append(self)
         self.spawn_timer = pygame.time.get_ticks()
-        self.nb_immigrant = 0
+        self.nb_immigrant = nb_immigrant
         self.immigrant = None
 
     def isConnectedToRoad(self):
@@ -161,7 +164,6 @@ class HousingSpot() :
         self.plateau.cityHousingSpotsList.remove(self)
         self.plateau.structures.remove(self)
         if self.immigrant :
-            self.immigrant.chariot.delete()
             self.immigrant.delete()
         del self
 
@@ -177,7 +179,7 @@ class HousingSpot() :
 
         if now - self.spawn_timer > 500:
             if randint(0, 10) == 0 and self.nb_immigrant < 1:
-                self.immigrant = Immigrant(self.plateau.map[19][38], self.plateau, self.case)
+                Immigrant(self.plateau.map[19][38], self.plateau, self.case)
                 self.nb_immigrant += 1
             self.spawn_timer = now
 
