@@ -12,12 +12,15 @@ from Model.Buildings.Building import BurningBuilding
 from Model.Buildings.Building import DamagedBuilding
 from Model.Buildings.House import House
 from Model.Buildings.House import HousingSpot
+from Model.Buildings.House import MergedHouse
+from Model.Buildings.UrbanPlanning import Well
 from Model.Buildings.RessourceBuilding import *
 from Model.Buildings.WorkBuilding import *
 from Model.Controls import Controls
 from Model.control_panel import TextRender
 from Model.TopBar import TopBar
 from Model.Foreground import Foreground
+from Model.Sauvegarde import *
 from random import *
 
 counter=1
@@ -70,16 +73,16 @@ class Plateau():
         self.walkers = [[[] for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
 
         #Tableau contenant l'intégralité des walker présents sur la map
-        self.entities = entities 
+        self.entities = [] 
 
         #Tableau des collisions de la map (pour le moment la map ne contient pas de collision)
         self.collision_matrix = self.create_collision_matrix()
 
         #Tableau contenant l'intégralité des bâtiments présent sur la map
-        self.structures = structures
-        self.cityHousesList = cityHousesList
-        self.cityHousingSpotsList = cityHousingSpotsList
-        self.burningBuildings = burningBuildings
+        self.structures = []
+        self.cityHousesList = []
+        self.cityHousingSpotsList = []
+        self.burningBuildings = []
 
         self.currentSpeed = 100
         self.buttonsFunctions = self.getButtonsFunctions()
@@ -107,6 +110,190 @@ class Plateau():
         counter = 1
         self.overlayCounter = 0
         self.riviere()
+
+    def save_game(self, filename):
+        save = Sauvegarde(self)
+        save_object(save, filename)
+        print("save !")
+
+    def load_savefile(self, filename : str):
+        save = load_object(filename)
+        if save == "error":
+            return "error"
+        #============== CLEAR ==============#
+
+        #Clear Buildings
+        """for s in self.structures:
+            s.delete()"""
+        self.structures = []
+        self.cityHousesList = []
+        self.cityHousingSpotsList = []
+        self.burningBuildings = []
+
+        #Clear Walkers
+        """for e in self.entities:
+            e.delete()"""
+        self.walkers = [[[] for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
+        self.entities = []
+        #Clear Cases
+        """for x in range(self.nbr_cell_x):
+            for y in range(self.nbr_cell_y):
+                if self.map[x][y].road :
+                    self.map[x][y].road.delete()
+                self.map[x][y].delete()"""
+        self.map = []
+
+        #============== LOAD ==============#
+
+        # Cases
+        for cell_x in range(self.nbr_cell_x):
+            self.map.append([])
+            for cell_y in range(self.nbr_cell_y):
+                cells_to_map = self.cells_to_map(save.map[cell_x][cell_y]["x"], save.map[cell_x][cell_y]["y"], save.map[cell_x][cell_y]["sprite"])
+                self.map[cell_x].append(cells_to_map)
+                cells_to_map.feature = save.map[cell_x][cell_y]["feature"]
+                #Surface cell
+                render_pos = cells_to_map.render_pos
+                self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
+        #Routes
+        for cell_x in range(self.nbr_cell_x):
+            for cell_y in range(self.nbr_cell_y):
+                if save.map[cell_x][cell_y]["road"]:
+                    Route(self.map[cell_x][cell_y], self)
+        #Buildings
+        for s in save.structures:
+            match(s["type"]):
+                case "HousingSpot":
+                    HousingSpot(self.map[s["x"]][s["y"]], self, s["type"], s["nb_immigrant"])
+                case "SmallTent" | "LargeTent":
+                    House(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["entertainLvl"], s["nbHab"], s["nbHabMax"], s["religiousAccess"], s["fireRisk"], s["collapseRisk"])
+                case "SmallTent2" | "LargeTent2":
+                    MergedHouse(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["nbHab"], [self.map[s["case1_x"]][s["case1_y"]], self.map[s["case2_x"]][s["case2_y"]], self.map[s["case3_x"]][s["case3_y"]]], s["fireRisk"], s["collapseRisk"])
+                case "Prefecture":
+                    Prefecture(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["active"], s["fireRisk"], s["collapseRisk"])
+                case "EngineerPost":
+                    EnginnerPost(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["active"], s["fireRisk"], s["collapseRisk"])   
+                case "Well":
+                    Well(self.map[s["x"]][s["y"]], self, s["type"])
+                case "BurningBuilding":
+                    BurningBuilding(self.map[s["x"]][s["y"]], self, s["type"], s["fireRisk"], s["collapseRisk"], s["timeBurning"])
+                case "Ruins" | "BurnedRuins":
+                    DamagedBuilding(self.map[s["x"]][s["y"]], self, s["type"], s["fireRisk"], s["collapseRisk"])
+        
+        #Walker
+        #Immigrant
+        for e in save.entities:
+            match(e["type"]):
+                case "Citizen":
+                    Citizen(self.map[e["x"]][e["y"]], self, e["name"], e["ttw"], e["action"], e["direction"])
+                case "Prefet":
+                    Prefet(self.map[e["x"]][e["y"]], self,self.map[e["workplace_x"]][e["workplace_y"]].structure, e["name"], e["rest"], e["ttw"], e["action"], e["direction"], self.map[e["target_x"]][e["target_y"]])
+                case "Engineer":
+                    Engineer(self.map[e["x"]][e["y"]], self,self.map[e["workplace_x"]][e["workplace_y"]].structure, e["name"], e["rest"], e["ttw"], e["action"], e["direction"])
+                case "Immigrant":
+                    Immigrant(self.map[e["x"]][e["y"]], self, self.map[e["target_x"]][e["target_y"]], e["name"], e["ttw"], e["action"], e["direction"])
+        
+        #Ville
+        self.attractiveness = save.attractiveness
+        self.treasury = save.treasury
+        self.population = save.population
+
+
+                
+
+
+    def save_game(self, filename):
+        save = Sauvegarde(self)
+        save_object(save, filename)
+        print("save !")
+
+    def load_savefile(self, filename : str):
+        save = load_object(filename)
+        if save == "error":
+            return "error"
+        #============== CLEAR ==============#
+
+        #Clear Buildings
+        """for s in self.structures:
+            s.delete()"""
+        self.structures = []
+        self.cityHousesList = []
+        self.cityHousingSpotsList = []
+        self.burningBuildings = []
+
+        #Clear Walkers
+        """for e in self.entities:
+            e.delete()"""
+        self.walkers = [[[] for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
+        self.entities = []
+        #Clear Cases
+        """for x in range(self.nbr_cell_x):
+            for y in range(self.nbr_cell_y):
+                if self.map[x][y].road :
+                    self.map[x][y].road.delete()
+                self.map[x][y].delete()"""
+        self.map = []
+
+        #============== LOAD ==============#
+
+        # Cases
+        for cell_x in range(self.nbr_cell_x):
+            self.map.append([])
+            for cell_y in range(self.nbr_cell_y):
+                cells_to_map = self.cells_to_map(save.map[cell_x][cell_y]["x"], save.map[cell_x][cell_y]["y"], save.map[cell_x][cell_y]["sprite"])
+                self.map[cell_x].append(cells_to_map)
+                cells_to_map.feature = save.map[cell_x][cell_y]["feature"]
+                #Surface cell
+                render_pos = cells_to_map.render_pos
+                self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
+        #Routes
+        for cell_x in range(self.nbr_cell_x):
+            for cell_y in range(self.nbr_cell_y):
+                if save.map[cell_x][cell_y]["road"]:
+                    Route(self.map[cell_x][cell_y], self)
+        #Buildings
+        for s in save.structures:
+            match(s["type"]):
+                case "HousingSpot":
+                    HousingSpot(self.map[s["x"]][s["y"]], self, s["type"], s["nb_immigrant"])
+                case "SmallTent" | "LargeTent":
+                    House(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["entertainLvl"], s["nbHab"], s["nbHabMax"], s["religiousAccess"], s["fireRisk"], s["collapseRisk"])
+                case "SmallTent2" | "LargeTent2":
+                    MergedHouse(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["nbHab"], [self.map[s["case1_x"]][s["case1_y"]], self.map[s["case2_x"]][s["case2_y"]], self.map[s["case3_x"]][s["case3_y"]]], s["fireRisk"], s["collapseRisk"])
+                case "Prefecture":
+                    Prefecture(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["active"], s["fireRisk"], s["collapseRisk"])
+                case "EngineerPost":
+                    EnginnerPost(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["active"], s["fireRisk"], s["collapseRisk"])   
+                case "Well":
+                    Well(self.map[s["x"]][s["y"]], self, s["type"])
+                case "BurningBuilding":
+                    BurningBuilding(self.map[s["x"]][s["y"]], self, s["type"], s["fireRisk"], s["collapseRisk"], s["timeBurning"])
+                case "Ruins" | "BurnedRuins":
+                    DamagedBuilding(self.map[s["x"]][s["y"]], self, s["type"], s["fireRisk"], s["collapseRisk"])
+        
+        #Walker
+        #Immigrant
+        for e in save.entities:
+            match(e["type"]):
+                case "Citizen":
+                    Citizen(self.map[e["x"]][e["y"]], self, e["name"], e["ttw"], e["action"], e["direction"])
+                case "Prefet":
+                    Prefet(self.map[e["x"]][e["y"]], self,self.map[e["workplace_x"]][e["workplace_y"]].structure, e["name"], e["rest"], e["ttw"], e["action"], e["direction"], self.map[e["target_x"]][e["target_y"]])
+                case "Engineer":
+                    Engineer(self.map[e["x"]][e["y"]], self,self.map[e["workplace_x"]][e["workplace_y"]].structure, e["name"], e["rest"], e["ttw"], e["action"], e["direction"])
+                case "Immigrant":
+                    Immigrant(self.map[e["x"]][e["y"]], self, self.map[e["target_x"]][e["target_y"]], e["name"], e["ttw"], e["action"], e["direction"])
+        
+        #Ville
+        self.attractiveness = save.attractiveness
+        self.treasury = save.treasury
+        self.population = save.population
+
+
+                
+
+
+
     def default_map(self):
 
         map = []
@@ -114,7 +301,8 @@ class Plateau():
         for cell_x in range(self.nbr_cell_x):
             map.append([])
             for cell_y in range(self.nbr_cell_y):
-                cells_to_map = self.cells_to_map(cell_x, cell_y)
+                sprite = self.choose_image()
+                cells_to_map = self.cells_to_map(cell_x, cell_y, sprite)
                 map[cell_x].append(cells_to_map)
                 render_pos = cells_to_map.render_pos
                 self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
@@ -125,7 +313,7 @@ class Plateau():
             for i in range(self.nbr_cell_y):
                 Route(self.map[j][i], self)
         
-    def cells_to_map(self, cell_x, cell_y):
+    def cells_to_map(self, cell_x, cell_y, sprite):
 
         rectangle_cell = [
             (cell_x * cell_size , cell_y * cell_size ),
@@ -136,11 +324,7 @@ class Plateau():
 
         isometric_cell = [self.cartesian_to_isometric(x, y) for x, y in rectangle_cell]
 
-        sprite=self.choose_image()
         nouvelle_case = Case(cell_x, cell_y, rectangle_cell, isometric_cell, [min([x for x, y in isometric_cell]), min([y for x, y in isometric_cell])], sprite = sprite)
-        if sprite.startswith("path"):
-            nouvelle_case.sprite = "land1"
-            Route(nouvelle_case, self)
         return nouvelle_case
         
     def cartesian_to_isometric(self, x, y):
@@ -307,7 +491,7 @@ class Plateau():
         #====== Chariot ======#
         chariot = {1 : create_liste_sprites_walker("Chariot", "Walk", 1)}
 
-        #====== engineer ======#
+        #====== Engineer ======#
         engineer = {1 : create_liste_sprites_walker("Engineer", "Walk", 12)}
 
         return {"Citizen" : citizen, "Prefet" : prefet, "Immigrant" : immigrant, "Chariot" : chariot, "Engineer" : engineer}

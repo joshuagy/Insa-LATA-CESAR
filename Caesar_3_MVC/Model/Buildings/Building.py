@@ -4,7 +4,7 @@ from random import *
 from Model.Buildings.House import *
 
 class Building():
-    def __init__(self, case, plateau, size, desc):
+    def __init__(self, case, plateau, size, desc, fireRisk = 0, collapseRisk = 0):
         self.size = size
         self.desc = desc
         self.connectedToRoad = 0
@@ -12,8 +12,8 @@ class Building():
         self.case.setStructure(self)
         self.plateau = plateau
         self.plateau.structures.append(self)
-        self.fireRisk = 0
-        self.collapseRisk= 0
+        self.fireRisk = fireRisk
+        self.collapseRisk= collapseRisk
         self.cost = 0
     
     def delete(self):
@@ -92,12 +92,15 @@ class Building():
         BurningBuilding(self.case,self.plateau,"BurningBuilding")
 
 class DamagedBuilding(Building) :
-    def __init__(self, case, plateau, desc):
+    def __init__(self, case, plateau, desc, size = (1,1), fireRisk = 0, collapseRisk = 0):
         self.case=case
+        self.size = size
         self.plateau = plateau
         self.desc = desc
         self.plateau.structures.append(self)
         self.case.setStructure(self)
+        self.fireRisk = fireRisk 
+        self.collapseRisk = collapseRisk
 
     def delete(self):
         self.plateau.structures.remove(self)
@@ -106,14 +109,17 @@ class DamagedBuilding(Building) :
 
 
 class BurningBuilding(Building) :
-    def __init__(self, case, plateau, desc):
+    def __init__(self, case, plateau, desc, size = (1,1), fireRisk = 0, collapseRisk = 0, timeBurning = 0):
         self.case=case
-        self.timeBurning=0
+        self.timeBurning=timeBurning
         self.plateau = plateau
         self.desc = desc
+        self.size = size
         self.plateau.structures.append(self)
         self.case.setStructure(self)
         self.plateau.burningBuildings.append(self)
+        self.fireRisk = fireRisk 
+        self.collapseRisk = collapseRisk
         self.index_sprite = 0
     
     def delete(self):
