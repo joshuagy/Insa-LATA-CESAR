@@ -71,32 +71,16 @@ class Building():
     def riskCheck(self) :
         #CollapseRisk :
         if self.desc in list_of_brittle_structures :
-            #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
-            safeTime = 1000          # Nombre de ticks pendant lequel le bâtiment est 100% safe
-            criticalTime = 50000    # Nombre de ticks après lequels le bâtiment s'écroule forcément
-            randC = randint(safeTime,criticalTime)
-            if randC+self.get_collapseRisk() >= safeTime+criticalTime :
-                self.collapse()
-            else :
+            if randint(0, 200) == 0:
                 self.set_collapseRisk(self.get_collapseRisk()+1)
+                if(self.get_collapseRisk() > 6):
+                    self.collapse()
         #FireRisk :
         if self.desc in list_of_flammable_structures :
-            #Formule de base mêlant ancienneté du bâtiment et hasard. Pourra être modifiée si besoin
-            safeTime = 1000          # Nombre de ticks pendant lequel le bâtiment est 100% safe
-            criticalTime = 50000    # Nombre de ticks après lesquels le bâtiment s'écroule forcément
-            randF = randint(safeTime,criticalTime)
-            if randF+self.get_fireRisk() >= safeTime+criticalTime :
-                self.ignite()
-            else :
+            if randint(0, 200) == 0:
                 self.set_fireRisk(self.get_fireRisk()+1)
-            # Chance qu'un incendie s'éteigne de lui-même (Pour l'instant 0,5% par tick après 1000 ticks)
-        if self.desc == "BurningBuilding" :
-            if self.timeBurning < 1000 :
-                self.timeBurning = self.timeBurning+1
-            else :
-                val = randint(0,1000)
-                if val<=5 :
-                    self.desc="BurnedRuins"
+                if(self.get_fireRisk() > 6):
+                    self.ignite()
 
     def collapse(self):
         self.delete()
@@ -104,12 +88,11 @@ class Building():
 
     def ignite(self):
         self.delete()
-        DamagedBuilding(self.case,self.plateau,"BurningBuilding")
+        BurningBuilding(self.case,self.plateau,"BurningBuilding")
 
-class DamagedBuilding :
+class DamagedBuilding(Building) :
     def __init__(self, case, plateau, desc):
         self.case=case
-        self.timeBurning=0
         self.plateau = plateau
         self.desc = desc
         self.plateau.structures.append(self)
@@ -119,3 +102,38 @@ class DamagedBuilding :
         self.plateau.structures.remove(self)
         self.case.setStructure(None)
         del self
+
+
+class BurningBuilding(Building) :
+    def __init__(self, case, plateau, desc):
+        self.case=case
+        self.timeBurning=0
+        self.plateau = plateau
+        self.desc = desc
+        self.plateau.structures.append(self)
+        self.case.setStructure(self)
+        self.plateau.burningBuildings.append(self)
+        self.index_sprite = 0
+    
+    def delete(self):
+        self.plateau.structures.remove(self)
+        self.case.setStructure(None)
+        self.plateau.burningBuildings.remove(self)
+        del self
+    
+    def off(self):
+        self.delete()
+        DamagedBuilding(self.case,self.plateau,"BurnedRuins")
+
+    def update(self):
+        self.index_sprite += 0.5
+        if(self.index_sprite >= len(self.plateau.image_structures["BurningBuilding"])):
+            self.index_sprite = 0
+        # Chance qu'un incendie s'éteigne de lui-même (Pour l'instant 0,5% par tick après 1000 ticks)
+        if self.timeBurning < 1000 :
+            self.timeBurning = self.timeBurning+1
+        else :
+            val = randint(0,1000)
+            if val<=5 :
+                self.off()
+                
