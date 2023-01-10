@@ -276,14 +276,28 @@ class MouseInputHandler:
         # #Buildings
         # #HousingSpot
         elif controlsCurrentState == 'buildHousing' and not self.model.actualGame.controls.build_housing_button.rect.collidepoint(mousePosRelative):
-            grid_x1, grid_y1 = self.mousePosToGridPos(event.pos)
+            grid_x1, grid_y1 = self.mousePosToGridPos(self.initialMouseCoordinate)
+            grid_x2, grid_y2 = self.mousePosToGridPos(event.pos)
+            
+            if grid_x1 > grid_x2:
+                    temp = grid_x1
+                    grid_x1 = grid_x2
+                    grid_x2 = temp
 
-            for xcr in range (grid_x1-2,grid_x1+3,1) :
-                for ycr in range (grid_y1-2,grid_y1+3,1) :
-                    if 0<=xcr<self.model.actualGame.nbr_cell_x and 0<=ycr<self.model.actualGame.nbr_cell_y:
-                        if not self.model.actualGame.map[grid_x1][grid_y1].road and not self.model.actualGame.map[grid_x1][grid_y1].structure and self.model.actualGame.map[grid_x1][grid_y1].sprite not in list_of_collision:
-                            if self.model.actualGame.map[xcr][ycr].road:
-                                HousingSpot(self.model.actualGame.map[grid_x1][grid_y1], self.model.actualGame)
+            if grid_y1 > grid_y2:
+                temp = grid_y1
+                grid_y1 = grid_y2
+                grid_y2 = temp
+                
+            for xi in range(grid_x1, grid_x2+1):
+                    for yi in range(grid_y1, grid_y2+1):
+                            for xcr in range (xi-2,xi+3,1) :
+                                for ycr in range (yi-2,yi+3,1) :
+                                    if 0<=xcr<self.model.actualGame.nbr_cell_x and 0<=ycr<self.model.actualGame.nbr_cell_y:
+                                        if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
+                                            if self.model.actualGame.map[xcr][ycr].road :
+                                                HousingSpot(self.model.actualGame.map[xi][yi], self.model.actualGame)
+                                
     
         # #Prefecture     
         elif controlsCurrentState == 'securityStructures' and not self.model.actualGame.controls.security_structures.rect.collidepoint(mousePosRelative):
@@ -558,11 +572,11 @@ class MouseInputHandler:
                                     if 0<=xcr<self.model.actualGame.nbr_cell_x and 0<=ycr<self.model.actualGame.nbr_cell_y:
                                         if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                                             if self.model.actualGame.map[xcr][ycr].road :
-                                                HousingSpot(self.model.actualGame.map[xi][yi],self.model.actualGame)
-                            
+                                                self.model.actualGame.foreground.addEffect(xi, yi, 'defaultBuildHouse')
+
             elif self.isMousePosInGrid(event.pos):
                 (x, y) = self.mousePosToGridPos(event.pos)
-                self.model.actualGame.foreground.addEffect(x, y, 'default')
+                self.model.actualGame.foreground.addEffect(x, y, 'defaultBuildHouse')
 
         if controlsCurrentState == 'buildRoads':
             self.model.actualGame.foreground.initForegroundGrid()
