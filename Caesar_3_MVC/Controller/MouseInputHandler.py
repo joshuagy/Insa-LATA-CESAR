@@ -61,11 +61,10 @@ class MouseInputHandler:
                         self.initialMouseCoordinate = None
 
         #  Preview clear land
-        
-        elif event.type == pygame.MOUSEMOTION:
+        else:
             temp = pygame.mouse.get_pos()
             if temp != self.initialMouseCoordinate:
-                self.handleMouseMouvement(event)
+                self.handleMouseMouvementWhenClicked(event)
 
         # Handle all hover
         self.hoverEvent(event)
@@ -73,12 +72,19 @@ class MouseInputHandler:
     def hoverEvent(self, event):
         mousePos = event.pos 
         currentstate = self.model.state.peek()
+        controlsCurrentState = self.model.actualGame.controls.getCurrentState()
+
         if currentstate == STATE_INTRO_SCENE:
             self.handleHoverEventIntroScene(mousePos)
         elif currentstate == STATE_MENU:
             self.handleHoverEventMenu(mousePos)
         elif currentstate == STATE_PLAY:
             self.checkEveryButton(event)
+            if controlsCurrentState == 'default':
+                self.model.actualGame.foreground.initForegroundGrid()
+                if self.isMousePosInGrid(mousePos):
+                    (x, y) = self.mousePosToGridPos(mousePos)
+                    self.model.actualGame.foreground.addEffect(x, y, 'default')
             
     def handleHoverEventIntroScene(self, mousePos):
         self.model.introScene.handleHoverEvent(mousePos)
@@ -115,8 +121,12 @@ class MouseInputHandler:
         """
         Handles game mouse events
         """
-        #Pelle
-        if self.model.actualGame.controls.clear_land_button.clicked and not self.model.actualGame.controls.clear_land_button.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
+
+        mousePosRelative = (event.pos[0] - (self.model.actualGame.width - big_gap_menu.dim[0] - 1758.0) - 1758.0, event.pos[1] -24)
+        controlsCurrentState = self.model.actualGame.controls.getCurrentState()
+
+        # Pelle
+        if controlsCurrentState == 'clearLand' and not self.model.actualGame.controls.clear_land_button.rect.collidepoint(mousePosRelative):
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
             world_y = y - self.model.actualGame.camera.vect.y
@@ -163,107 +173,93 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                               
                 grid_y2 = temp
-
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                        if self.model.actualGame.map[xi][yi].sprite not in list_of_undestructible:
-                            self.model.actualGame.map[xi][yi].sprite = "land1"
-                            if self.model.actualGame.map[xi][yi].road :
-                                self.model.actualGame.map[xi][yi].road.delete()
-                                self.model.actualGame.treasury = self.model.actualGame.treasury - DESTRUCTION_COST
-                            if self.model.actualGame.map[xi][yi].structure :
-                                self.model.actualGame.map[xi][yi].structure.delete()
-                                self.model.actualGame.treasury = self.model.actualGame.treasury - DESTRUCTION_COST
-                              
-                            
-            self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
             
-            self.model.actualGame.foreground.initForegroundGrid()
-                
-        #Routes
-        if self.model.actualGame.controls.build_roads_button.clicked and not self.model.actualGame.controls.build_roads_button.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
-        
-            x, y = self.initialMouseCoordinate
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x1 = int(cart_x // cell_size)
-            grid_y1 = int(cart_y // cell_size)
-
-            x, y = event.pos
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x2 = int(cart_x // cell_size)
-            grid_y2 = int(cart_y // cell_size)
-        
-            if grid_x1 <0:
-                grid_x1 = 0
-            if grid_x2 <0:
-                grid_x2 = 0
-            if grid_y1 <0:
-                grid_y1 = 0
-            if grid_y2 <0:
-                grid_y2 = 0
-
-            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
-                grid_x1 = self.model.actualGame.nbr_cell_x-1
-            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
-                grid_x2 = self.model.actualGame.nbr_cell_x-1
-            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
-                grid_y1 = self.model.actualGame.nbr_cell_y-1
-            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
-                grid_y2 = self.model.actualGame.nbr_cell_y-1
-
-            pattern = 0
-            if grid_x1 > grid_x2:
-                pattern += 1
-
-            if grid_y1 > grid_y2:
-                pattern += 2
-
-            if self.model.actualGame.map[grid_x1][grid_y1].sprite not in list_of_undestructible and self.model.actualGame.map[grid_x2][grid_y2].sprite not in list_of_undestructible:
-
-                match(pattern):
-                    case 0:
-                        for xi in range(grid_x1, grid_x2+1):
-                            if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None and self.model.actualGame.map[xi][grid_y2].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[xi][grid_y2], self.model.actualGame)
-
-                        for yi in range(grid_y1, grid_y2+1):
-                            if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None and self.model.actualGame.map[grid_x1][yi].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
-                    case 1:
-                        for xi in range(grid_x1, grid_x2-1, -1):
-                            if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None and self.model.actualGame.map[xi][grid_y1].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[xi][grid_y1], self.model.actualGame)
-                        for yi in range(grid_y1, grid_y2+1):
-                            if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None and self.model.actualGame.map[grid_x2][yi].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[grid_x2][yi], self.model.actualGame)
-                    case 2:
-                        for xi in range(grid_x1, grid_x2+1):
-                            if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None and self.model.actualGame.map[xi][grid_y1].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[xi][grid_y1], self.model.actualGame)
-                        for yi in range(grid_y1, grid_y2-1, -1):
-                            if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None and self.model.actualGame.map[grid_x2][yi].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[grid_x2][yi], self.model.actualGame)
-                    case 3:
-                        for xi in range(grid_x1, grid_x2-1, -1):
-                            if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None and self.model.actualGame.map[xi][grid_y2].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[xi][grid_y2], self.model.actualGame)
-                        for yi in range(grid_y1, grid_y2-1, -1):
-                            if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None and self.model.actualGame.map[grid_x1][yi].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
-                            
-            self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
+            self.model.actualGame.clearLand(grid_x1, grid_x2, grid_y1, grid_y2)
             
-        #Buildings
-        #HousingSpot
-        if self.model.actualGame.controls.build_housing_button.clicked and not self.model.actualGame.controls.build_housing_button.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
+        # Routes
+        # if self.model.actualGame.controls.build_roads_button.clicked and not self.model.actualGame.controls.build_roads_button.rect.collidepoint(mousePosRelative):
+        
+            # x, y = self.initialMouseCoordinate
+            # world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            # world_y = y - self.model.actualGame.camera.vect.y
+
+            # cart_y = (2 * world_y - world_x) / 2
+            # cart_x = cart_y + world_x
+            # grid_x1 = int(cart_x // cell_size)
+            # grid_y1 = int(cart_y // cell_size)
+
+            # x, y = event.pos
+            # world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            # world_y = y - self.model.actualGame.camera.vect.y
+
+            # cart_y = (2 * world_y - world_x) / 2
+            # cart_x = cart_y + world_x
+            # grid_x2 = int(cart_x // cell_size)
+            # grid_y2 = int(cart_y // cell_size)
+        
+            # if grid_x1 <0:
+            #     grid_x1 = 0
+            # if grid_x2 <0:
+            #     grid_x2 = 0
+            # if grid_y1 <0:
+            #     grid_y1 = 0
+            # if grid_y2 <0:
+            #     grid_y2 = 0
+
+            # if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+            #     grid_x1 = self.model.actualGame.nbr_cell_x-1
+            # if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+            #     grid_x2 = self.model.actualGame.nbr_cell_x-1
+            # if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+            #     grid_y1 = self.model.actualGame.nbr_cell_y-1
+            # if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+            #     grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+            # pattern = 0
+            # if grid_x1 > grid_x2:
+            #     pattern += 1
+
+            # if grid_y1 > grid_y2:
+            #     pattern += 2
+
+            # if self.model.actualGame.map[grid_x1][grid_y1].sprite not in list_of_undestructible and self.model.actualGame.map[grid_x2][grid_y2].sprite not in list_of_undestructible:
+
+            #     match(pattern):
+            #         case 0:
+            #             for xi in range(grid_x1, grid_x2+1):
+            #                 if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None and self.model.actualGame.map[xi][grid_y2].sprite not in list_of_collision:
+            #                     Route(self.model.actualGame.map[xi][grid_y2], self.model.actualGame)
+
+            #             for yi in range(grid_y1, grid_y2+1):
+            #                 if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None and self.model.actualGame.map[grid_x1][yi].sprite not in list_of_collision:
+            #                     Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
+            #         case 1:
+            #             for xi in range(grid_x1, grid_x2-1, -1):
+            #                 if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None and self.model.actualGame.map[xi][grid_y1].sprite not in list_of_collision:
+            #                     Route(self.model.actualGame.map[xi][grid_y1], self.model.actualGame)
+            #             for yi in range(grid_y1, grid_y2+1):
+            #                 if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None and self.model.actualGame.map[grid_x2][yi].sprite not in list_of_collision:
+            #                     Route(self.model.actualGame.map[grid_x2][yi], self.model.actualGame)
+            #         case 2:
+            #             for xi in range(grid_x1, grid_x2+1):
+            #                 if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None and self.model.actualGame.map[xi][grid_y1].sprite not in list_of_collision:
+            #                     Route(self.model.actualGame.map[xi][grid_y1], self.model.actualGame)
+            #             for yi in range(grid_y1, grid_y2-1, -1):
+            #                 if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None and self.model.actualGame.map[grid_x2][yi].sprite not in list_of_collision:
+            #                     Route(self.model.actualGame.map[grid_x2][yi], self.model.actualGame)
+            #         case 3:
+            #             for xi in range(grid_x1, grid_x2-1, -1):
+            #                 if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None and self.model.actualGame.map[xi][grid_y2].sprite not in list_of_collision:
+            #                     Route(self.model.actualGame.map[xi][grid_y2], self.model.actualGame)
+            #             for yi in range(grid_y1, grid_y2-1, -1):
+            #                 if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None and self.model.actualGame.map[grid_x1][yi].sprite not in list_of_collision:
+            #                     Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
+                            
+            # self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
+            
+        # #Buildings
+        # #HousingSpot
+        if controlsCurrentState == 'buildHouse' and not self.model.actualGame.controls.build_housing_button.rect.collidepoint(mousePosRelative):
         
         #Mouse Selection :
             x, y = self.initialMouseCoordinate
@@ -322,178 +318,196 @@ class MouseInputHandler:
                                         if self.model.actualGame.map[xcr][ycr].road :
                                             HousingSpot(self.model.actualGame.map[xi][yi],self.model.actualGame)
 
-        #Prefecture     
-        if self.model.actualGame.controls.security_structures.clicked and not self.model.actualGame.controls.security_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
+        # #Prefecture     
+        # if self.model.actualGame.controls.security_structures.clicked and not self.model.actualGame.controls.security_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
         
-        #Mouse Selection :
-            x, y = self.initialMouseCoordinate
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
+        # #Mouse Selection :
+        #     x, y = self.initialMouseCoordinate
+        #     world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        #     world_y = y - self.model.actualGame.camera.vect.y
 
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x1 = int(cart_x // cell_size)
-            grid_y1 = int(cart_y // cell_size)
+        #     cart_y = (2 * world_y - world_x) / 2
+        #     cart_x = cart_y + world_x
+        #     grid_x1 = int(cart_x // cell_size)
+        #     grid_y1 = int(cart_y // cell_size)
 
-            x, y = event.pos
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
+        #     x, y = event.pos
+        #     world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        #     world_y = y - self.model.actualGame.camera.vect.y
 
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x2 = int(cart_x // cell_size)
-            grid_y2 = int(cart_y // cell_size)
+        #     cart_y = (2 * world_y - world_x) / 2
+        #     cart_x = cart_y + world_x
+        #     grid_x2 = int(cart_x // cell_size)
+        #     grid_y2 = int(cart_y // cell_size)
         
-            if grid_x1 <0:
-                grid_x1 = 0
-            if grid_x2 <0:
-                grid_x2 = 0
-            if grid_y1 <0:
-                grid_y1 = 0
-            if grid_y2 <0:
-                grid_y2 = 0
+        #     if grid_x1 <0:
+        #         grid_x1 = 0
+        #     if grid_x2 <0:
+        #         grid_x2 = 0
+        #     if grid_y1 <0:
+        #         grid_y1 = 0
+        #     if grid_y2 <0:
+        #         grid_y2 = 0
 
-            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
-                grid_x1 = self.model.actualGame.nbr_cell_x-1
-            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
-                grid_x2 = self.model.actualGame.nbr_cell_x-1
-            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
-                grid_y1 = self.model.actualGame.nbr_cell_y-1
-            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
-                grid_y2 = self.model.actualGame.nbr_cell_y-1
+        #     if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+        #         grid_x1 = self.model.actualGame.nbr_cell_x-1
+        #     if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+        #         grid_x2 = self.model.actualGame.nbr_cell_x-1
+        #     if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+        #         grid_y1 = self.model.actualGame.nbr_cell_y-1
+        #     if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+        #         grid_y2 = self.model.actualGame.nbr_cell_y-1
 
-            if grid_x1 > grid_x2:
-                temp = grid_x1
-                grid_x1 = grid_x2
-                grid_x2 = temp
+        #     if grid_x1 > grid_x2:
+        #         temp = grid_x1
+        #         grid_x1 = grid_x2
+        #         grid_x2 = temp
 
-            if grid_y1 > grid_y2:
-                temp = grid_y1
-                grid_y1 = grid_y2
-                grid_y2 = temp
+        #     if grid_y1 > grid_y2:
+        #         temp = grid_y1
+        #         grid_y1 = grid_y2
+        #         grid_y2 = temp
 
-            #Building Construction :
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                    if self.model.actualGame.map[xi][yi].getConnectedToRoad() > 0 :
-                        if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
-                            Prefecture(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Prefecture",1)
+        #     #Building Construction :
+        #     for xi in range(grid_x1, grid_x2+1):
+        #         for yi in range(grid_y1, grid_y2+1):
+        #             if self.model.actualGame.map[xi][yi].getConnectedToRoad() > 0 :
+        #                 if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
+        #                     Prefecture(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Prefecture",1)
 
-        #Engineer
-        if self.model.actualGame.controls.engineering_structures.clicked and not self.model.actualGame.controls.engineering_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
+        # #Engineer
+        # if self.model.actualGame.controls.engineering_structures.clicked and not self.model.actualGame.controls.engineering_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
         
-        #Mouse Selection :
-            x, y = self.initialMouseCoordinate
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
+        # #Mouse Selection :
+        #     x, y = self.initialMouseCoordinate
+        #     world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        #     world_y = y - self.model.actualGame.camera.vect.y
 
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x1 = int(cart_x // cell_size)
-            grid_y1 = int(cart_y // cell_size)
+        #     cart_y = (2 * world_y - world_x) / 2
+        #     cart_x = cart_y + world_x
+        #     grid_x1 = int(cart_x // cell_size)
+        #     grid_y1 = int(cart_y // cell_size)
 
-            x, y = event.pos
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
+        #     x, y = event.pos
+        #     world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        #     world_y = y - self.model.actualGame.camera.vect.y
 
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x2 = int(cart_x // cell_size)
-            grid_y2 = int(cart_y // cell_size)
+        #     cart_y = (2 * world_y - world_x) / 2
+        #     cart_x = cart_y + world_x
+        #     grid_x2 = int(cart_x // cell_size)
+        #     grid_y2 = int(cart_y // cell_size)
         
-            if grid_x1 <0:
-                grid_x1 = 0
-            if grid_x2 <0:
-                grid_x2 = 0
-            if grid_y1 <0:
-                grid_y1 = 0
-            if grid_y2 <0:
-                grid_y2 = 0
+        #     if grid_x1 <0:
+        #         grid_x1 = 0
+        #     if grid_x2 <0:
+        #         grid_x2 = 0
+        #     if grid_y1 <0:
+        #         grid_y1 = 0
+        #     if grid_y2 <0:
+        #         grid_y2 = 0
 
-            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
-                grid_x1 = self.model.actualGame.nbr_cell_x-1
-            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
-                grid_x2 = self.model.actualGame.nbr_cell_x-1
-            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
-                grid_y1 = self.model.actualGame.nbr_cell_y-1
-            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
-                grid_y2 = self.model.actualGame.nbr_cell_y-1
+        #     if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+        #         grid_x1 = self.model.actualGame.nbr_cell_x-1
+        #     if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+        #         grid_x2 = self.model.actualGame.nbr_cell_x-1
+        #     if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+        #         grid_y1 = self.model.actualGame.nbr_cell_y-1
+        #     if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+        #         grid_y2 = self.model.actualGame.nbr_cell_y-1
 
-            if grid_x1 > grid_x2:
-                temp = grid_x1
-                grid_x1 = grid_x2
-                grid_x2 = temp
+        #     if grid_x1 > grid_x2:
+        #         temp = grid_x1
+        #         grid_x1 = grid_x2
+        #         grid_x2 = temp
 
-            if grid_y1 > grid_y2:
-                temp = grid_y1
-                grid_y1 = grid_y2
-                grid_y2 = temp
+        #     if grid_y1 > grid_y2:
+        #         temp = grid_y1
+        #         grid_y1 = grid_y2
+        #         grid_y2 = temp
 
-            #Building Construction :
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                    if self.model.actualGame.map[xi][yi].getConnectedToRoad() > 0 :
-                        if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
-                            EnginnerPost(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"EngineerPost",1)
+        #     #Building Construction :
+        #     for xi in range(grid_x1, grid_x2+1):
+        #         for yi in range(grid_y1, grid_y2+1):
+        #             if self.model.actualGame.map[xi][yi].getConnectedToRoad() > 0 :
+        #                 if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
+        #                     EnginnerPost(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"EngineerPost",1)
 
-        #Well
-        if self.model.actualGame.controls.water_related_structures.clicked and not self.model.actualGame.controls.water_related_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
+        # #Well
+        # if self.model.actualGame.controls.water_related_structures.clicked and not self.model.actualGame.controls.water_related_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
         
-        #Mouse Selection :
-            x, y = self.initialMouseCoordinate
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
+        # #Mouse Selection :
+        #     x, y = self.initialMouseCoordinate
+        #     world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        #     world_y = y - self.model.actualGame.camera.vect.y
 
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x1 = int(cart_x // cell_size)
-            grid_y1 = int(cart_y // cell_size)
+        #     cart_y = (2 * world_y - world_x) / 2
+        #     cart_x = cart_y + world_x
+        #     grid_x1 = int(cart_x // cell_size)
+        #     grid_y1 = int(cart_y // cell_size)
 
-            x, y = event.pos
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
+        #     x, y = event.pos
+        #     world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        #     world_y = y - self.model.actualGame.camera.vect.y
 
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x2 = int(cart_x // cell_size)
-            grid_y2 = int(cart_y // cell_size)
+        #     cart_y = (2 * world_y - world_x) / 2
+        #     cart_x = cart_y + world_x
+        #     grid_x2 = int(cart_x // cell_size)
+        #     grid_y2 = int(cart_y // cell_size)
         
-            if grid_x1 <0:
-                grid_x1 = 0
-            if grid_x2 <0:
-                grid_x2 = 0
-            if grid_y1 <0:
-                grid_y1 = 0
-            if grid_y2 <0:
-                grid_y2 = 0
+        #     if grid_x1 <0:
+        #         grid_x1 = 0
+        #     if grid_x2 <0:
+        #         grid_x2 = 0
+        #     if grid_y1 <0:
+        #         grid_y1 = 0
+        #     if grid_y2 <0:
+        #         grid_y2 = 0
 
-            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
-                grid_x1 = self.model.actualGame.nbr_cell_x-1
-            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
-                grid_x2 = self.model.actualGame.nbr_cell_x-1
-            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
-                grid_y1 = self.model.actualGame.nbr_cell_y-1
-            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
-                grid_y2 = self.model.actualGame.nbr_cell_y-1
+        #     if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+        #         grid_x1 = self.model.actualGame.nbr_cell_x-1
+        #     if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+        #         grid_x2 = self.model.actualGame.nbr_cell_x-1
+        #     if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+        #         grid_y1 = self.model.actualGame.nbr_cell_y-1
+        #     if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+        #         grid_y2 = self.model.actualGame.nbr_cell_y-1
 
-            if grid_x1 > grid_x2:
-                temp = grid_x1
-                grid_x1 = grid_x2
-                grid_x2 = temp
+        #     if grid_x1 > grid_x2:
+        #         temp = grid_x1
+        #         grid_x1 = grid_x2
+        #         grid_x2 = temp
 
-            if grid_y1 > grid_y2:
-                temp = grid_y1
-                grid_y1 = grid_y2
-                grid_y2 = temp
+        #     if grid_y1 > grid_y2:
+        #         temp = grid_y1
+        #         grid_y1 = grid_y2
+        #         grid_y2 = temp
 
-            #Building Construction :
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                    #for xcr in range (xi-1,xi+1,1) :
-                        #for ycr in range (yi-1,yi+1,1) :
-                            #if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
-                                if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
-                                    Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
+        #     #Building Construction :
+        #     for xi in range(grid_x1, grid_x2+1):
+        #         for yi in range(grid_y1, grid_y2+1):
+        #             #for xcr in range (xi-1,xi+1,1) :
+        #                 #for ycr in range (yi-1,yi+1,1) :
+        #                     #if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
+        #                         if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
+        #                             Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
+
+    def isMousePosInGrid(self, mousePos):
+        x, y = mousePos
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
+
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+        grid_x1 = int(cart_x // cell_size)
+        grid_y1 = int(cart_y // cell_size)
+
+        if grid_x1 < 0 or grid_y1 <0:
+            return False
+            
+        elif grid_x1 > self.model.actualGame.nbr_cell_x-1 or grid_y1 > self.model.actualGame.nbr_cell_y-1:
+            return False
+        else:
+            return True
 
     def mousePosToGridPos(self, mousePos):
         x, y = mousePos
@@ -515,51 +529,22 @@ class MouseInputHandler:
             grid_x1 = self.model.actualGame.nbr_cell_x-1
         if grid_y1 > self.model.actualGame.nbr_cell_y-1:
             grid_y1 = self.model.actualGame.nbr_cell_y-1
+
         return (grid_x1, grid_y1)
 
-    def handleMouseMouvement(self, event):
+    def handleMouseMouvementWhenClicked(self, event):
         """ Here we are going to manage the movement of the mouse"""
-        #Pelle
-        if self.clicked:
-            if self.model.actualGame.controls.clear_land_button.clicked and not self.model.actualGame.controls.clear_land_button.rect.collidepoint(event.pos) and self.initialMouseCoordinate != None:
-                self.model.actualGame.foreground.initForegroundGrid()
 
-                x, y = self.initialMouseCoordinate
-                world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-                world_y = y - self.model.actualGame.camera.vect.y
+        controlsCurrentState = self.model.actualGame.controls.getCurrentState()
 
-                cart_y = (2 * world_y - world_x) / 2
-                cart_x = cart_y + world_x
-                grid_x1 = int(cart_x // cell_size)
-                grid_y1 = int(cart_y // cell_size)
-
-                x, y = event.pos
-                world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-                world_y = y - self.model.actualGame.camera.vect.y
-
-                cart_y = (2 * world_y - world_x) / 2
-                cart_x = cart_y + world_x
-                grid_x2 = int(cart_x // cell_size)
-                grid_y2 = int(cart_y // cell_size)
+        # clearLand State (Pelle)
+        if controlsCurrentState == 'clearLand':
+            self.model.actualGame.foreground.initForegroundGrid()
+            # and self.initialMouseCoordinate != None
+            if self.clicked:
+                grid_x1, grid_y1 = self.mousePosToGridPos(self.initialMouseCoordinate)
+                grid_x2, grid_y2 = self.mousePosToGridPos(event.pos)
             
-                if grid_x1 <0:
-                    grid_x1 = 0
-                if grid_x2 <0:
-                    grid_x2 = 0
-                if grid_y1 <0:
-                    grid_y1 = 0
-                if grid_y2 <0:
-                    grid_y2 = 0
-
-                if grid_x1 > self.model.actualGame.nbr_cell_x-1:
-                    grid_x1 = self.model.actualGame.nbr_cell_x-1
-                if grid_x2 > self.model.actualGame.nbr_cell_x-1:
-                    grid_x2 = self.model.actualGame.nbr_cell_x-1
-                if grid_y1 > self.model.actualGame.nbr_cell_y-1:
-                    grid_y1 = self.model.actualGame.nbr_cell_y-1
-                if grid_y2 > self.model.actualGame.nbr_cell_y-1:
-                    grid_y2 = self.model.actualGame.nbr_cell_y-1
-
                 if grid_x1 > grid_x2:
                     temp = grid_x1
                     grid_x1 = grid_x2
@@ -572,8 +557,34 @@ class MouseInputHandler:
 
                 for xi in range(grid_x1, grid_x2+1):
                     for yi in range(grid_y1, grid_y2+1):
-                        self.model.actualGame.foreground.addEffect(xi, yi, 'red')
-        else:
+                        self.model.actualGame.foreground.addEffect(xi, yi, 'activeClearLand')
+            
+            elif self.isMousePosInGrid(event.pos):
+                (x, y) = self.mousePosToGridPos(event.pos)
+                self.model.actualGame.foreground.addEffect(x, y, 'defaultClearLand')
+
+        if controlsCurrentState == 'buildHouse':
             self.model.actualGame.foreground.initForegroundGrid()
-            (x, y) = self.mousePosToGridPos(event.pos)
-            self.model.actualGame.foreground.addEffect(x, y, 'default')
+            if self.clicked:
+                grid_x1, grid_y1 = self.mousePosToGridPos(self.initialMouseCoordinate)
+                grid_x2, grid_y2 = self.mousePosToGridPos(event.pos)
+            
+                if grid_x1 > grid_x2:
+                    temp = grid_x1
+                    grid_x1 = grid_x2
+                    grid_x2 = temp
+
+                if grid_y1 > grid_y2:
+                    temp = grid_y1
+                    grid_y1 = grid_y2
+                    grid_y2 = temp
+
+                for xi in range(grid_x1, grid_x2+1):
+                    for yi in range(grid_y1, grid_y2+1):
+                        self.model.actualGame.foreground.addEffect(xi, yi, 'previewHouse')
+            
+            elif self.isMousePosInGrid(event.pos):
+                (x, y) = self.mousePosToGridPos(event.pos)
+                self.model.actualGame.foreground.addEffect(x, y, 'defaultBuildHouse')
+
+            

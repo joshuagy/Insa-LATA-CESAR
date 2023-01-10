@@ -78,7 +78,8 @@ class Plateau():
         self.currentSpeed = 100
 
         # Left menu in game
-        self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.increaseSpeed, self.decreaseSpeed)
+        self.buttonsFunctions = self.getButtonsFunctions()
+        self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.buttonsFunctions)
 
         # Top menu in game
         self.topbar = TopBar(self.screen, self.treasury, self.population)
@@ -302,6 +303,12 @@ class Plateau():
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
     
+    def getButtonsFunctions(self):
+        return {
+            'increaseSpeed': self.increaseSpeed,
+            'decreaseSpeed': self.decreaseSpeed,
+        }
+
     def increaseSpeed(self):
         if self.currentSpeed >= 0 and self.currentSpeed < 100:
             self.currentSpeed += 10 
@@ -309,6 +316,22 @@ class Plateau():
     def decreaseSpeed(self):
         if self.currentSpeed > 0:
             self.currentSpeed -= 10 
+
+    def clearLand(self, grid_x1, grid_x2, grid_y1, grid_y2):
+        for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                        if self.map[xi][yi].sprite not in list_of_undestructible:
+                            self.map[xi][yi].sprite = "land1"
+                            if self.map[xi][yi].road :
+                                self.map[xi][yi].road.delete()
+                                self.treasury = self.treasury - DESTRUCTION_COST
+                            if self.map[xi][yi].structure :
+                                self.map[xi][yi].structure.delete()
+                                self.treasury = self.treasury - DESTRUCTION_COST
+                              
+                            
+        self.collision_matrix = self.create_collision_matrix()
+        self.foreground.initForegroundGrid()
 
     def update(self):
         if self.restart:
@@ -388,9 +411,8 @@ class Plateau():
                                             render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
                 # DRAW PREVIEWED CELLS AND HOVERED CELLS
-                if self.foreground.hasEffect(cell_x, cell_y):
-                    # id_image = self.map[cell_x][cell_y].sprite
-                    effectedImage = self.foreground.getEffectedImage(image.copy(), cell_x, cell_y)
+                if self.foreground.hasEffect(cell_x, cell_y) and image != None:
+                    effectedImage = self.foreground.getEffectedImage(id_image, image.copy(), cell_x, cell_y)
                     self.screen.blit(effectedImage,
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
