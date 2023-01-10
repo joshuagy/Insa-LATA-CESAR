@@ -73,9 +73,16 @@ class Plateau():
         self.cityHousesList = cityHousesList
         self.cityHousingSpotsList = cityHousingSpotsList
         self.burningBuildings = burningBuildings
+        
+        # Variable speed feature
+        self.currentSpeed = 100
 
-        self.controls = Controls(self.screen, self.minimalFont)
+        # Left menu in game
+        self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.increaseSpeed, self.decreaseSpeed)
+
+        # Top menu in game
         self.topbar = TopBar(self.screen, self.treasury, self.population)
+
 
         #Define the position of the button on the full panel button who won't change position after
         # overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
@@ -94,8 +101,6 @@ class Plateau():
         self.restart = False
         global counter
         counter = 1
-
-        self.currentSpeed = 100
 
     def default_map(self):
 
@@ -296,6 +301,14 @@ class Plateau():
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
+    
+    def increaseSpeed(self):
+        if self.currentSpeed >= 0 and self.currentSpeed < 100:
+            self.currentSpeed += 10 
+    
+    def decreaseSpeed(self):
+        if self.currentSpeed > 0:
+            self.currentSpeed -= 10 
 
     def update(self):
         if self.restart:
@@ -337,7 +350,7 @@ class Plateau():
 
     def draw(self):
         self.screen.fill((0, 0, 0))
-        self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
+        #self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
 
         # DRAW CELLS
         for cell_x in range(self.nbr_cell_y):
