@@ -185,19 +185,7 @@ def not_implemented_func():
     """Not implemented function"""
     print("i'm in not_implemented_func")
 
-def display_overlay_selection():
-    """ This function is going to show the differrent ooverlay that we can select"""
-   
-    if fire_overlay.hide: 
-        fire_overlay.hide = False
-        damage_overlay.hide = False
-        entertainment_overlay.hide = False
-        water_overlay.hide = False
-    else:
-        fire_overlay.hide = True
-        damage_overlay.hide = True
-        entertainment_overlay.hide = True
-        water_overlay.hide = True
+
         
 
 #Create buttons
