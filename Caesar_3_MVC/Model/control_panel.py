@@ -5,7 +5,7 @@ from Model.constants import *
 # === CLASSES === 
 class ButtonCtrlPnl():
 
-    def __init__(self, controls, function, state: str,  text: str = None, x : int =0, y : int =0, image_normal=None, image_hovered=None, image_clicked=None, image_locked=None):
+    def __init__(self, controls, function, state: str, text: str = None, x : int =0, y : int =0, image_normal=None, image_hovered=None, image_clicked=None, image_locked=None):
         """Create a button. Set the images to their path or to None if you don't want to have a hovered and clicked version of your button."""
         # list_of_buttons.append(self)
         self.controls = controls
