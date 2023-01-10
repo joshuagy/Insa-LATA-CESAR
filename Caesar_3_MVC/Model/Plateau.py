@@ -77,7 +77,8 @@ class Plateau():
         self.currentSpeed = 100
 
         # Left menu in game
-        self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.increaseSpeed, self.decreaseSpeed)
+        self.buttonsFunctions = self.getButtonsFunctions()
+        self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.buttonsFunctions)
 
         # Top menu in game
         self.topbar = TopBar(self.screen, self.treasury, self.population)
@@ -329,13 +330,41 @@ class Plateau():
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
     
+    def getButtonsFunctions(self):
+        return {
+            'increaseSpeed': self.increaseSpeed,
+            'decreaseSpeed': self.decreaseSpeed,
+        }
+
     def increaseSpeed(self):
-        if self.currentSpeed >= 0 and self.currentSpeed < 100:
-            self.currentSpeed += 10 
+        if self.currentSpeed >= 0 and self.currentSpeed < 500:
+            if self.currentSpeed >= 100:
+                self.currentSpeed += 100
+            else: 
+                self.currentSpeed += 10 
     
     def decreaseSpeed(self):
-        if self.currentSpeed > 0:
-            self.currentSpeed -= 10 
+        if self.currentSpeed > 10:
+            if self.currentSpeed > 100:
+                self.currentSpeed -= 100
+            else:
+                self.currentSpeed -= 10 
+
+    def clearLand(self, grid_x1, grid_x2, grid_y1, grid_y2):
+        for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                        if self.map[xi][yi].sprite not in list_of_undestructible:
+                            self.map[xi][yi].sprite = "land1"
+                            if self.map[xi][yi].road :
+                                self.map[xi][yi].road.delete()
+                                self.treasury = self.treasury - DESTRUCTION_COST
+                            if self.map[xi][yi].structure :
+                                self.map[xi][yi].structure.delete()
+                                self.treasury = self.treasury - DESTRUCTION_COST
+                              
+                            
+        self.collision_matrix = self.create_collision_matrix()
+        self.foreground.initForegroundGrid()
 
     def update(self):
         if self.restart:
@@ -348,12 +377,14 @@ class Plateau():
             self.burningBuildings.clear()
 
         if not self.pause:
+            
             self.camera.update()
             self.controls.update(self.currentSpeed)
             self.topbar.update(self.treasury, self.population)
 
             #Update de la position des walkers
-            for e in self.entities: e.update()
+            currentSpeedFactor = self.currentSpeed/100
+            for e in self.entities: e.update(currentSpeedFactor)
             for hs in self.cityHousingSpotsList: hs.generateImmigrant()
             for bb in self.burningBuildings: bb.update()
             for b in self.structures :
@@ -388,41 +419,43 @@ class Plateau():
         for cell_x in range(self.nbr_cell_y):
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
-                id_image = self.map[cell_x][cell_y].sprite
-
+                id_image = None
+                image = None
                 # DRAW DEFAULT CELLS
                 if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
                     id_image = self.map[cell_x][cell_y].sprite
-
-                    self.screen.blit(self.image[id_image],
+                    image = self.image[id_image]
+                    self.screen.blit(image,
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
+                                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
                 # DRAW ROADS
                 elif self.map[cell_x][cell_y].road:
                     id_image = self.map[cell_x][cell_y].road.sprite
-                    self.screen.blit(self.image_route[id_image],
+                    image = self.image_route[id_image]
+                    self.screen.blit(image,
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image_route[id_image].get_height() - cell_size) + self.camera.vect.y))
+                                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
                 # DRAW STRUCTURES
                 elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
+                    image = self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)]
                     self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)], 
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                         render_pos[1] - (self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
                                         
                 elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
                     id_image = self.map[cell_x][cell_y].structure.desc
-                    self.screen.blit(self.image_structures[id_image], 
+                    image = self.image_structures[id_image]
+                    self.screen.blit(image, 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                                            render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
                 # DRAW PREVIEWED CELLS AND HOVERED CELLS
-                if self.foreground.hasEffect(cell_x, cell_y):
-                    id_image = self.map[cell_x][cell_y].sprite
-                    effectedImage = self.foreground.getEffectedImage(self.image[id_image].copy(), cell_x, cell_y)
+                if self.foreground.hasEffect(cell_x, cell_y) and image != None:
+                    effectedImage = self.foreground.getEffectedImage(id_image, image.copy(), cell_x, cell_y)
                     self.screen.blit(effectedImage,
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
+                                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
                 # DRAW WALKERS
                 for e in self.walkers[cell_x][cell_y]:

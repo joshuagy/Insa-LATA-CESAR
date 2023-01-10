@@ -5,12 +5,14 @@ from Model.constants import *
 # === CLASSES === 
 class ButtonCtrlPnl():
 
-    def __init__(self, controls, function, text : str = None, x : int =0, y : int =0, image_normal=None, image_hovered=None, image_clicked=None, image_locked=None):
+    def __init__(self, controls, function, text: str = None, x : int =0, y : int =0, image_normal=None, image_hovered=None, image_clicked=None, image_locked=None, state: str = 'default'):
         """Create a button. Set the images to their path or to None if you don't want to have a hovered and clicked version of your button."""
         # list_of_buttons.append(self)
         self.controls = controls
         self.func = function
+        self.state = state
         self.text = text
+
         self.textsurface = pygame.font.SysFont('default_font', 20).render(self.text, False, BLACK, WHITE)
 
         self.image_normal =  pygame.image.load(image_normal)
@@ -96,12 +98,15 @@ class ButtonCtrlPnl():
             if self.hovered:
                 if self.clicked:
                     self.clicked = False
+                    self.controls.setCurrentState('default')
                     if self.text == "Select a city overlay report":
                        self.call_func()
+
                 else:
                     for button in self.controls.listOfButtons:
                         button.clicked = False
                     self.clicked = True
+                    self.controls.setCurrentState(self.state)
                     if self.unlocked and callable(self.call_func):
                        self.call_func()
 
@@ -121,9 +126,9 @@ class TextRender:
         self.text_image = self.police.render ( text, 1 , self.colour, bg)
         self.img_scaled = pygame.transform.scale(self.text_image,size)
 
-class ButtonSpeed(ButtonCtrlPnl):
-    def __init__(self, controls, function, text : str = None, x : int =0, y : int =0, image_normal=None, image_hovered=None, image_clicked=None, image_locked=None):
-        super().__init__(controls, function, text, x, y, image_normal, image_hovered, image_clicked, image_locked)
+class ButtonWithImmediatEffect(ButtonCtrlPnl):
+    def __init__(self, controls, function, state: str,  text: str = None, x : int =0, y : int =0, image_normal=None, image_hovered=None, image_clicked=None, image_locked=None):
+        super().__init__(controls, function, state, text, x, y, image_normal, image_hovered, image_clicked, image_locked)
 
     def show_tip(self, *arg):
         pass

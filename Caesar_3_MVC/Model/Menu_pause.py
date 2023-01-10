@@ -30,18 +30,12 @@ class Pausemenu:
 
         self.pause=False
 
-
         self.Continue_rectyinit=self.Continue_rect.y
         self.Replay_rectyinit=self.Replay_rect.y
         self.Savegame_rectyinit=self.Savegame_rect.y
         self.Exit_rectyinit = self.Exit_rect.y
 
         self.passed=[False,False,False,False]
-
-
-
-
-
 
     def draw_pause_menu(self):
         if self.pause:

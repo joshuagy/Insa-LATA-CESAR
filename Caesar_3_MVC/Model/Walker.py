@@ -156,7 +156,7 @@ class Walker:
         self.plateau.walkers[new_tile[0]][new_tile[1]].append(self)
         self.case = self.plateau.map[new_tile[0]][new_tile[1]]
     
-    def update(self):
+    def update(self, currentSpeedFactor):
         pass
 
 
@@ -164,12 +164,12 @@ class Citizen(Walker):
     def __init__(self, case, plateau, name="Plebius Prepus"):
         super().__init__(case, plateau, name)
     
-    def update(self):
+    def update(self, currentSpeedFactor):
         """
         Mise à jour de la prochaine action du walker
         """
         now = pygame.time.get_ticks()
-        self.index_sprite += 0.5
+        self.index_sprite += (0.5 * currentSpeedFactor)
         if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.action][self.direction])):
             self.index_sprite = 0
 
@@ -215,15 +215,15 @@ class Prefet(Walker):
                 if self.plateau.map[i][j].getStructure() and self.plateau.map[i][j].structure not in self.plateau.cityHousingSpotsList:
                     self.plateau.map[i][j].structure.set_fireRisk(0)
 
-    def update(self):
+    def update(self, currentSpeedFactorFactor):
         """
         Mise à jour de la prochaine action du walker
         """
         now = pygame.time.get_ticks()
-        self.index_sprite += 0.5
+        self.index_sprite += (0.5 * currentSpeedFactorFactor)
         if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.action][self.direction])):
             self.index_sprite = 0
-        if now - self.move_timer > 500:
+        if now - self.move_timer > (500 / currentSpeedFactorFactor):
             match(self.action):
                 case 1 : #Ronde
                     #Déplacement
@@ -281,16 +281,16 @@ class Immigrant(Walker):
         self.create_path(target)
         self.chariot = Chariot(self.plateau.map[self.case.x][self.case.y+1], self.plateau, self)
     
-    def update(self):
+    def update(self, currentSpeedFactor):
         """
         Mise à jour de la prochaine action du walker
         """
         now = pygame.time.get_ticks()
-        self.index_sprite += 0.5
+        self.index_sprite += (0.5 * currentSpeedFactor)
         if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.action][self.direction])):
             self.index_sprite = 0
 
-        if now - self.move_timer > 500:
+        if now - self.move_timer > (500 / currentSpeedFactor):
             new_pos = self.path[self.path_index]
             # Mise à jour de la position sur le plateau
             self.path_index += 1
@@ -335,16 +335,16 @@ class Engineer(Walker):
                 if self.plateau.map[i][j].getStructure() and self.plateau.map[i][j].structure not in self.plateau.cityHousingSpotsList:
                     self.plateau.map[i][j].structure.set_collapseRisk(0)
     
-    def update(self):
+    def update(self, currentSpeedFactor):
         """
         Mise à jour de la prochaine action du walker
         """
         now = pygame.time.get_ticks()
-        self.index_sprite += 0.5
+        self.index_sprite += (0.5 * currentSpeedFactor)
         if(self.index_sprite >= len(self.plateau.image_walkers[self.type][self.action][self.direction])):
             self.index_sprite = 0
 
-        if now - self.move_timer > 500:
+        if now - self.move_timer > (500 / currentSpeedFactor):
             if self.ttw > 0:
                 new_pos = self.random_path()
 
