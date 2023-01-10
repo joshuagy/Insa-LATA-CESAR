@@ -37,7 +37,7 @@ class Foreground:
       mask = pygame.mask.from_surface(originalImage)
       effectedImage = mask.to_surface()
       effectedImage.set_colorkey((0, 0, 0))
-      effectedImage.set_alpha(100)
+      effectedImage.set_alpha(65)
       originalImage.blit(effectedImage, (0, 0))
     elif effect == 'defaultBuildHouse':
       mask = pygame.mask.from_surface(originalImage)
