@@ -549,7 +549,7 @@ class MouseInputHandler:
             
             elif self.isMousePosInGrid(event.pos):
                 (x, y) = self.mousePosToGridPos(event.pos)
-                self.model.actualGame.foreground.addEffect(x, y, 'defaultClearLand')
+                self.model.actualGame.foreground.addEffect(x, y, 'activeClearLand')
 
         if controlsCurrentState == 'buildHousing':
             self.model.actualGame.foreground.initForegroundGrid()
@@ -579,7 +579,15 @@ class MouseInputHandler:
 
             elif self.isMousePosInGrid(event.pos):
                 (x, y) = self.mousePosToGridPos(event.pos)
+                for xcr in range (x-2,x+3,1) :
+                    for ycr in range (y-2,y+3,1) :
+                        if 0<=xcr<self.model.actualGame.nbr_cell_x and 0<=ycr<self.model.actualGame.nbr_cell_y:
+                            if not self.model.actualGame.map[x][y].road and not self.model.actualGame.map[x][y].structure and self.model.actualGame.map[x][y].sprite not in list_of_collision and self.model.actualGame.map[x][y].sprite not in list_of_undestructible:
+                                if self.model.actualGame.map[xcr][ycr].road :
+                                    self.model.actualGame.foreground.addEffect(x, y, 'activeBuildHouse')
+                                    return
                 self.model.actualGame.foreground.addEffect(x, y, 'default')
+                            
 
         if controlsCurrentState == 'buildRoads':
             self.model.actualGame.foreground.initForegroundGrid()

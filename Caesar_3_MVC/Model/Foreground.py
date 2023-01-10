@@ -32,16 +32,12 @@ class Foreground:
     if effect == 'activeClearLand':
       effectedImage.fill((200, 0, 0))
       originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
-    elif effect == 'defaultClearLand':
-      if id_image in list_of_undestructible: effectedImage.fill((150, 0, 0))
-      else: effectedImage.fill((0, 219, 0))
-      originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
     elif effect == 'activeBuildHouse':
       originalImage = self.originalImageActiveBuildHouse.copy()
       mask = pygame.mask.from_surface(originalImage)
       effectedImage = mask.to_surface()
       effectedImage.set_colorkey((0, 0, 0))
-      effectedImage.set_alpha(65)
+      effectedImage.set_alpha(40)
       originalImage.blit(effectedImage, (0, 0))
     elif effect == 'activeBuildRoads':
       effectedImage.fill((0, 0, 100))
