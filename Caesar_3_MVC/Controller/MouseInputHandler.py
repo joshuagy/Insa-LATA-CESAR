@@ -419,7 +419,6 @@ class MouseInputHandler:
 
         #Well
         if water_related_structures.clicked and not water_related_structures.rect.collidepoint(event.pos):
-        
         #Mouse Selection :
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
@@ -477,10 +476,8 @@ class MouseInputHandler:
                                     Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
                                     
         #Overlay part
-        if overlays_button.clicked:
-        # Fire
-            if fire_overlay.clicked:
-                print("Fire")
+        if fire_overlay.clicked:
+            pass
 
                                 
 

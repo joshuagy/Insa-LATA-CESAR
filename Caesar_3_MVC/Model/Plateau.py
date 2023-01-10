@@ -56,7 +56,7 @@ class Plateau():
         for x in range(len(self.previewMap)):
             for y in range(len(self.previewMap[0])):
                 self.previewMap[x][y] = None
-
+                
         self.default_road()
 
         #Tableau contenant toutes les cases occupées par les walkers
