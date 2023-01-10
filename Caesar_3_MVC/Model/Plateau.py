@@ -224,16 +224,34 @@ class Plateau():
         sign2 = pygame.image.load("image/C3/land3a_00087.png").convert_alpha()
         sign2 = pygame.transform.scale(sign2, (sign2.get_width() / 2, sign2.get_height() / 2))
 
+
         water1 = pygame.image.load("image/C3/Land1a_00122.png").convert_alpha()
         water1 = pygame.transform.scale(water1, (water1.get_width() / 2, water1.get_height() / 2))
-        water2 = pygame.image.load("image/C3/Land1a_00132.png").convert_alpha()
+        water2 = pygame.image.load("image/Water/wdown.png").convert_alpha()
         water2 = pygame.transform.scale(water2, (water2.get_width() / 2, water2.get_height() / 2))
-        water3 = pygame.image.load("image/C3/Land1a_00141.png").convert_alpha()
+        water3 = pygame.image.load("image/Water/wup.png").convert_alpha()
         water3 = pygame.transform.scale(water3, (water3.get_width() / 2, water3.get_height() / 2))
-        water4 = pygame.image.load("image/C3/Land1a_00146.png").convert_alpha()
+        water4 = pygame.image.load("image/Water/wleft.png").convert_alpha()
         water4 = pygame.transform.scale(water4, (water4.get_width() / 2, water4.get_height() / 2))
-        water5 = pygame.image.load("image/C3/Land1a_00154.png").convert_alpha()
+        water5 = pygame.image.load("image/Water/wright.png").convert_alpha()
         water5 = pygame.transform.scale(water5, (water5.get_width() / 2, water5.get_height() / 2))
+        water6=pygame.image.load("image/Water/wdowncorner.png").convert_alpha()
+        water6 = pygame.transform.scale(water6, (water6.get_width() / 2, water6.get_height() / 2))
+        water7=pygame.image.load("image/Water/wupcorner.png").convert_alpha()
+        water7 = pygame.transform.scale(water7, (water7.get_width() / 2, water7.get_height() / 2))
+        water8 = pygame.image.load("image/Water/wleftcorner.png").convert_alpha()
+        water8 = pygame.transform.scale(water8, (water8.get_width() / 2, water8.get_height() / 2))
+        water9 = pygame.image.load("image/Water/wrightcorner.png").convert_alpha()
+        water9 = pygame.transform.scale(water9, (water9.get_width() / 2, water9.get_height() / 2))
+        water10 = pygame.image.load("image/Water/wdownw.png").convert_alpha()
+        water10 = pygame.transform.scale(water10, (water10.get_width() / 2, water10.get_height() / 2))
+        water11 = pygame.image.load("image/Water/wupw.png").convert_alpha()
+        water11 = pygame.transform.scale(water11, (water11.get_width() / 2, water11.get_height() / 2))
+        water12 = pygame.image.load("image/Water/wleftw.png").convert_alpha()
+        water12 = pygame.transform.scale(water12, (water12.get_width() / 2, water12.get_height() / 2))
+        water13 = pygame.image.load("image/Water/wrightw.png").convert_alpha()
+        water13 = pygame.transform.scale(water13, (water13.get_width() / 2, water13.get_height() / 2))
+
 
         red = pygame.image.load("image/C3/red.png").convert_alpha()
         red = pygame.transform.scale(red, (red.get_width() / 2, red.get_height() / 2)) 
@@ -299,7 +317,7 @@ class Plateau():
         sens = load_image("image/Buildings/Govt_00004.png")
         whfas = load_image("image/Buildings/Farm/Commerce_00012.png")
         whpls = list(load_image(f"image/Buildings/Farm/Plot{i}.png") for i in range(0,5))
-        marks = load_image("image/Buildings/Farm/Commerce_00001.png")
+        marks = load_image("image/Buildings/Commerce_00001.png")
         
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
