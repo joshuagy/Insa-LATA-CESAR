@@ -78,7 +78,11 @@ class Plateau():
         self.cityHousingSpotsList = cityHousingSpotsList
         self.burningBuildings = burningBuildings
 
-        self.controls = Controls(self.screen)
+        self.currentSpeed = 100
+        #self.buttonsFunctions = self.getButtonsFunctions()
+        self.controls = Controls(self.screen, self.font, self.currentSpeed, self.buttonsFunctions)
+
+
         self.topbar = TopBar(self.screen, self.treasury, self.population)
 
         #Define the position of the button on the full panel button who won't change position after
