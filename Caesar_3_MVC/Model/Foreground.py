@@ -12,6 +12,7 @@ class Foreground:
 
     self.overlayGrid = None
     self.initOverlayGrid()
+    self.overlayName = None
 
   def initForegroundGrid(self):
     self.foregroundGrid = [[None for _ in range(self.nbr_cell_x)] for _ in range(self.nbr_cell_y)]
@@ -41,8 +42,23 @@ class Foreground:
   def initOverlayGrid(self):
     self.overlayGrid = [[None for _ in range(self.nbr_cell_x)] for _ in range(self.nbr_cell_y)]
   
-  def addOverlayInfo(self, name, level):
-    pass
+  def setOverlayName(self, name):
+    self.overlayName = name
+  
+  def getOverlayName(self):
+    return self.overlayName
+
+  def addOverlayInfo(self, x, y, level):
+    self.overlayGrid[x][y] = level
+  
+  def getOverlayInfo(self, x, y):
+    return self.overlayGrid[x][y]
+
+  def putRed(self, originalImage, x, y):
+      effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+      effectedImage.fill((200, 0, 0))
+      originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+      return originalImage
 
   def render(self):
     pass

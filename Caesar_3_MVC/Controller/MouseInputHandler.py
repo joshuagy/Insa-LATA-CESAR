@@ -115,6 +115,9 @@ class MouseInputHandler:
         """
         Handles game mouse events
         """
+        self.model.actualGame.foreground.initOverlayGrid()
+        self.model.actualGame.foreground.setOverlayName(None)
+
         #Pelle
         if self.model.actualGame.controls.clear_land_button.clicked and not self.model.actualGame.controls.clear_land_button.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
             x, y = self.initialMouseCoordinate
@@ -494,16 +497,6 @@ class MouseInputHandler:
                                 if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                                     Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
                                     
-        #Overlay part
-        #Fire
-        if self.model.actualGame.controls.overlays_button.clicked:
-            self.model.actualGame.foreground.initOverlayGrid()
-            for x in range(40):
-                for y in range(40):
-                    if isinstance(self.model.map[x][y], Building):
-                        self.model.actualGame.foreground.addOverlayInfo("risk", self.model.map[x][y].get_fireRisk())
-                    
-
     def mousePosToGridPos(self, mousePos):
         x, y = mousePos
         world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
