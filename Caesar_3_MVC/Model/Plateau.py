@@ -310,12 +310,18 @@ class Plateau():
         }
 
     def increaseSpeed(self):
-        if self.currentSpeed >= 0 and self.currentSpeed < 100:
-            self.currentSpeed += 10 
+        if self.currentSpeed >= 0 and self.currentSpeed < 500:
+            if self.currentSpeed >= 100:
+                self.currentSpeed += 100
+            else: 
+                self.currentSpeed += 10 
     
     def decreaseSpeed(self):
-        if self.currentSpeed > 0:
-            self.currentSpeed -= 10 
+        if self.currentSpeed > 10:
+            if self.currentSpeed > 100:
+                self.currentSpeed -= 100
+            else:
+                self.currentSpeed -= 10 
 
     def clearLand(self, grid_x1, grid_x2, grid_y1, grid_y2):
         for xi in range(grid_x1, grid_x2+1):
@@ -343,12 +349,14 @@ class Plateau():
             self.burningBuildings.clear()
 
         if not self.pause:
+            
             self.camera.update()
             self.controls.update(self.currentSpeed)
             self.topbar.update(self.treasury, self.population)
 
             #Update de la position des walkers
-            for e in self.entities: e.update()
+            currentSpeedFactor = self.currentSpeed/100
+            for e in self.entities: e.update(currentSpeedFactor)
             for hs in self.cityHousingSpotsList: hs.generateImmigrant()
             for bb in self.burningBuildings: bb.update()
             for b in self.structures :
