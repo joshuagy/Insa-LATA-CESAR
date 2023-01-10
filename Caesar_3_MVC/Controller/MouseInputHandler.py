@@ -586,4 +586,24 @@ class MouseInputHandler:
                 (x, y) = self.mousePosToGridPos(event.pos)
                 self.model.actualGame.foreground.addEffect(x, y, 'defaultBuildHouse')
 
+        if controlsCurrentState == 'buildRoads':
+            self.model.actualGame.foreground.initForegroundGrid()
+            # and self.initialMouseCoordinate != None
+            if self.clicked:
+                grid_x1, grid_y1 = self.mousePosToGridPos(self.initialMouseCoordinate)
+                grid_x2, grid_y2 = self.mousePosToGridPos(event.pos)
+            
+                if grid_x1 > grid_x2:
+                    temp = grid_x1
+                    grid_x1 = grid_x2
+                    grid_x2 = temp
+
+                if grid_y1 > grid_y2:
+                    temp = grid_y1
+                    grid_y1 = grid_y2
+                    grid_y2 = temp
+
+                for xi in range(grid_x1, grid_x2+1):
+                    for yi in range(grid_y1, grid_y2+1):
+                        self.model.actualGame.foreground.addEffect(xi, yi, 'activeBuildRoads')
             

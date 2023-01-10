@@ -158,7 +158,7 @@ class Controls:
     self.security_structures = ButtonCtrlPnl(self, build_prefecture, "Security Structures", self.screenWidth - 99 - self.originX, 409 - self.originY, "image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png", state='securityStructures')
     listOfButtons.append(self.security_structures)
 
-    self.industrial_structures = ButtonCtrlPnl(self, not_implemented_func, "Industrial Structures", self.screenWidth-49-self.originY,409-self.originY,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png","image/C3/paneling_00158.png")
+    self.industrial_structures = ButtonCtrlPnl(self, not_implemented_func, "Industrial Structures", self.screenWidth-49-self.originX,409-self.originY,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png","image/C3/paneling_00158.png")
     listOfButtons.append(self.industrial_structures)
     
     self.undo_button = ButtonCtrlPnl(self, not_implemented_func, "Undo", self.screenWidth-149-self.originX, 445-self.originY,"image/C3/paneling_00171.png","image/C3/paneling_00172.png","image/C3/paneling_00173.png","image/C3/paneling_00174.png")
@@ -167,7 +167,7 @@ class Controls:
     self.message_view_button = ButtonCtrlPnl(self, not_implemented_func, "Message View", self.screenWidth-99-self.originX,445-self.originY,"image/C3/paneling_00115.png","image/C3/paneling_00116.png","image/C3/paneling_00117.png","image/C3/paneling_00118.png")
     listOfButtons.append(self.message_view_button)
 
-    self.see_recent_troubles_button = ButtonCtrlPnl(self, not_implemented_func, "See recent troubles", self.screenWidth-49-self.originY,445-self.originY,"image/C3/paneling_00119.png","image/C3/paneling_00120.png","image/C3/paneling_00121.png","image/C3/paneling_00122.png")
+    self.see_recent_troubles_button = ButtonCtrlPnl(self, not_implemented_func, "See recent troubles", self.screenWidth-49-self.originX,445-self.originY,"image/C3/paneling_00119.png","image/C3/paneling_00120.png","image/C3/paneling_00121.png","image/C3/paneling_00122.png")
     listOfButtons.append(self.see_recent_troubles_button)
 
     self.variable_speed_up = ButtonWithImmediatEffect(self, self.increaseSpeed, "Game speed up", self.screenWidth - 149 - self.originX, 490 - self.originY, "image/UI/menu/variable_speed/paneling_00247.png","image/UI/menu/variable_speed/paneling_00248.png","image/UI/menu/variable_speed/paneling_00249.png")
