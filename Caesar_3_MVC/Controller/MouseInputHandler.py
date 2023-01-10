@@ -476,7 +476,11 @@ class MouseInputHandler:
                                 if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                                     Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
                                     
-                                    
+        #Overlay part
+        if overlays_button.clicked:
+        # Fire
+            if fire_overlay.clicked:
+                print("Fire")
 
                                 
 
