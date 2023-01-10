@@ -91,7 +91,7 @@ class Controls:
     self.hide_control_panel_button.change_pos(self.screenWidth-self.hide_control_panel_button.dim[0]-4 - self.originX, 24+5 - self.originY)
     listOfButtons.append(self.hide_control_panel_button)
 
-    self.overlays_button = ButtonCtrlPnl(self, not_implemented_func,"Select a city overlay report", 0, 0,"image/C3/paneling_00234.png","image/C3/paneling_00235.png","image/C3/paneling_00236.png")
+    self.overlays_button = ButtonCtrlPnl(self, not_implemented_func,"Select a city overlay report", 0, 0,"image/UI/menu/menu_overlay_button.png","image/UI/menu/menu_overlay_button_clicked.png","image/UI/menu/menu_overlay_button_clicked.png")
     self.overlays_button.change_pos(self.screenWidth-self.overlays_button.dim[0]-self.hide_control_panel_button.dim[0]-10 - self.originX, 27 - self.originY)
     listOfButtons.append(self.overlays_button)
     

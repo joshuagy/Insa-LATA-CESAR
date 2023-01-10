@@ -86,10 +86,10 @@ class Plateau():
 
 
         #Define the position of the button on the full panel button who won't change position after
-        fire_overlay.change_pos(self.width-fire_overlay.dim[0]-hide_control_panel_button.dim[0]-150,27)
-        damage_overlay.change_pos(self.width-damage_overlay.dim[0]-hide_control_panel_button.dim[0]-150,52)
-        entertainment_overlay.change_pos(self.width-entertainment_overlay.dim[0]-hide_control_panel_button.dim[0]-150,77)
-        water_overlay.change_pos(self.width-water_overlay.dim[0]-hide_control_panel_button.dim[0]-150,102)
+        # fire_overlay.change_pos(self.width-fire_overlay.dim[0]-hide_control_panel_button.dim[0]-150,27)
+        # damage_overlay.change_pos(self.width-damage_overlay.dim[0]-hide_control_panel_button.dim[0]-150,52)
+        # entertainment_overlay.change_pos(self.width-entertainment_overlay.dim[0]-hide_control_panel_button.dim[0]-150,77)
+        # water_overlay.change_pos(self.width-water_overlay.dim[0]-hide_control_panel_button.dim[0]-150,102)
         
         # overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
         # hide_control_panel_button.change_pos(self.width-hide_control_panel_button.dim[0]-4,24+5)

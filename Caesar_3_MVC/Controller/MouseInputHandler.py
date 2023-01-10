@@ -495,8 +495,8 @@ class MouseInputHandler:
                                     Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
                                     
         #Overlay part
-        if fire_overlay.clicked:
-            pass
+        # if fire_overlay.clicked:
+        #     pass
 
 
     def mousePosToGridPos(self, mousePos):
