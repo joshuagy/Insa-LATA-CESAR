@@ -108,9 +108,6 @@ class MergedHouse(House) :
             oc.setStructure(None)
         self.plateau.cityHousesList.remove(self)
         self.plateau.structures.remove(self)
-        self.plateau.cityHousesList.remove(self)
-
-
         del self     
 
 class HousingSpot() :

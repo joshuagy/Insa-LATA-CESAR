@@ -26,7 +26,7 @@ class Plateau():
         
         self.screen = screen
         self.clock = clock
-        self.font = pygame.font.SysFont(None, 20)
+        self.minimalFont = pygame.font.SysFont(None, 20)
         self.width, self.height = self.screen.get_size()
         self.camera = Camera(self.width, self.height)
         self.running = True
@@ -80,7 +80,7 @@ class Plateau():
 
         self.currentSpeed = 100
         self.buttonsFunctions = self.getButtonsFunctions()
-        self.controls = Controls(self.screen, self.font, self.currentSpeed, self.buttonsFunctions)
+        self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.buttonsFunctions)
 
 
         self.topbar = TopBar(self.screen, self.treasury, self.population)
@@ -356,8 +356,9 @@ class Plateau():
                                 self.map[xi][yi].road.delete()
                                 self.treasury = self.treasury - DESTRUCTION_COST
                             if self.map[xi][yi].structure :
-                                self.map[xi][yi].structure.delete()
-                                self.treasury = self.treasury - DESTRUCTION_COST
+                                if self.map[xi][yi].structure.desc != "BurningBuilding" :
+                                    self.map[xi][yi].structure.delete()
+                                    self.treasury = self.treasury - DESTRUCTION_COST
                               
                             
         self.collision_matrix = self.create_collision_matrix()
@@ -451,11 +452,11 @@ class Plateau():
 
 
                 # DRAW PREVIEWED CELLS AND HOVERED CELLS
-                if self.foreground.hasEffect(cell_x, cell_y) and image != None:
-                    effectedImage = self.foreground.getEffectedImage(id_image, image.copy(), cell_x, cell_y)
-                    self.screen.blit(effectedImage,
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
+                #if self.foreground.hasEffect(cell_x, cell_y) and image != None:
+                #   effectedImage = self.foreground.getEffectedImage(id_image, image.copy(), cell_x, cell_y)
+                #    self.screen.blit(effectedImage,
+                #                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                #                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
                 # DRAW WALKERS
                 for e in self.walkers[cell_x][cell_y]:
