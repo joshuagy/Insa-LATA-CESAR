@@ -201,14 +201,30 @@ class Controls:
 
     return listOfButtons
 
-  def update(self, currentSpeed):
+  def update(self, currentSpeed) -> None:
+    """ Updates controls.
+
+    Args:
+        currentSpeed (int): currentSpeed
+
+    Returns:
+        None
+    """
+    # Updates all buttons
     for button in self.listOfButtons:
       button.update()
+
+    # Updates l'affichage de la vitesse actuelle du jeu
     if currentSpeed != self.currentSpeed:
       self.currentSpeed = currentSpeed
       self.currentSpeedRender()
 
-  def currentSpeedRender(self) -> pygame.Surface:
+  def currentSpeedRender(self) -> None:
+    """Blits currentSpeed actualisé sur staticSurface.
+
+    Returns:
+        None
+    """
     textSurface = self.font.render(f"{str(self.currentSpeed)}%", 0, (255, 255, 255), (0, 0, 0))
     self.staticSurface.blit(textSurface, (self.screenWidth - 50 - self.originX, 490 - self.originY))
 

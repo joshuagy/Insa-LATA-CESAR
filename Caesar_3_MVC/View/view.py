@@ -57,7 +57,7 @@ class GraphicalView(object):
                 self.renderMenu()
             elif currentstate == STATE_PLAY:
                 self.renderGame()
-            self.clock.tick(120)
+            self.clock.tick(300)
 
 
     def renderIntroScene(self) -> None:
