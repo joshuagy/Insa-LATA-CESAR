@@ -438,7 +438,6 @@ class MouseInputHandler:
 
         #Well
         if self.model.actualGame.controls.water_related_structures.clicked and not self.model.actualGame.controls.water_related_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
-        
         #Mouse Selection :
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
@@ -494,6 +493,11 @@ class MouseInputHandler:
                             #if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
                                 if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                                     Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
+                                    
+        #Overlay part
+        if fire_overlay.clicked:
+            pass
+
 
     def mousePosToGridPos(self, mousePos):
         x, y = mousePos

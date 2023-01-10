@@ -86,6 +86,11 @@ class Plateau():
 
 
         #Define the position of the button on the full panel button who won't change position after
+        fire_overlay.change_pos(self.width-fire_overlay.dim[0]-hide_control_panel_button.dim[0]-150,27)
+        damage_overlay.change_pos(self.width-damage_overlay.dim[0]-hide_control_panel_button.dim[0]-150,52)
+        entertainment_overlay.change_pos(self.width-entertainment_overlay.dim[0]-hide_control_panel_button.dim[0]-150,77)
+        water_overlay.change_pos(self.width-water_overlay.dim[0]-hide_control_panel_button.dim[0]-150,102)
+        
         # overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
         # hide_control_panel_button.change_pos(self.width-hide_control_panel_button.dim[0]-4,24+5)
         # advisors_button.change_pos(self.width-155,179)
@@ -407,6 +412,7 @@ class Plateau():
         # if state_control_panel=="reduced":
             
         #     self.screen.blit(small_gap_menu.img_scaled, (self.width-small_gap_menu.dim[0], 24))
+
             
         #     display_control_panel_button.update()
         #     display_control_panel_button.change_pos(self.width-display_control_panel_button.dim[0]-5,28)
@@ -460,6 +466,7 @@ class Plateau():
         #     industrial_structures.update()
         #     industrial_structures.change_pos(self.width-industrial_structures.dim[0]-1,24+417)
         #     industrial_structures.draw(self.screen)
+
 
     def create_collision_matrix(self):
         collision_matrix = [[1000 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
