@@ -23,7 +23,7 @@ class Plateau():
         
         self.screen = screen
         self.clock = clock
-        self.font = pygame.font.SysFont(None, 20)
+        self.minimalFont = pygame.font.SysFont(None, 20)
         self.width, self.height = self.screen.get_size()
         self.camera = Camera(self.width, self.height)
         self.running = True
@@ -74,9 +74,16 @@ class Plateau():
         self.cityHousesList = cityHousesList
         self.cityHousingSpotsList = cityHousingSpotsList
         self.burningBuildings = burningBuildings
+        
+        # Variable speed feature
+        self.currentSpeed = 100
 
-        self.controls = Controls(self.screen)
+        # Left menu in game
+        self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.increaseSpeed, self.decreaseSpeed)
+
+        # Top menu in game
         self.topbar = TopBar(self.screen, self.treasury, self.population)
+
 
         #Define the position of the button on the full panel button who won't change position after
         # overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
@@ -95,7 +102,6 @@ class Plateau():
         self.restart = False
         global counter
         counter = 1
-
 
     def default_map(self):
 
@@ -296,6 +302,14 @@ class Plateau():
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
+    
+    def increaseSpeed(self):
+        if self.currentSpeed >= 0 and self.currentSpeed < 100:
+            self.currentSpeed += 10 
+    
+    def decreaseSpeed(self):
+        if self.currentSpeed > 0:
+            self.currentSpeed -= 10 
 
     def update(self):
         if self.restart:
@@ -308,7 +322,7 @@ class Plateau():
 
         if not self.pause:
             self.camera.update()
-            self.controls.update()
+            self.controls.update(self.currentSpeed)
             self.topbar.update(self.treasury, self.population)
 
             #Update de la position des walkers
@@ -337,7 +351,7 @@ class Plateau():
 
     def draw(self):
         self.screen.fill((0, 0, 0))
-        self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
+        #self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
 
         # DRAW CELLS
         for cell_x in range(self.nbr_cell_y):
@@ -387,7 +401,7 @@ class Plateau():
         self.topbar.render()
         self.controls.render()
         
-        fpsText = self.font.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
+        fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
         self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
 
         # if state_control_panel=="reduced":

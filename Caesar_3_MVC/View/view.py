@@ -58,9 +58,8 @@ class GraphicalView(object):
             elif currentstate == STATE_PLAY:
                 self.renderGame()
             self.clock.tick(60)
-            print("FPS:", int(self.clock.get_fps()))
 
-    
+
     def renderIntroScene(self) -> None:
         """
         Render the intro scene.

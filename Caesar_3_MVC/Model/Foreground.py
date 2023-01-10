@@ -26,9 +26,13 @@ class Foreground:
     effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
     if self.getEffect(x, y) == 'red':
       effectedImage.fill((200, 0, 0))
+      originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
     elif self.getEffect(x, y) == 'default':
-      effectedImage.fill((150, 150, 150))
-    originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+      mask = pygame.mask.from_surface(originalImage)
+      effectedImage = mask.to_surface()
+      effectedImage.set_colorkey((0, 0, 0))
+      effectedImage.set_alpha(65)
+      originalImage.blit(effectedImage, (0, 0))
     return originalImage
     
   def render(self):

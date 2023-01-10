@@ -17,7 +17,6 @@ class ButtonCtrlPnl():
         self.dim = (self.image_normal.get_rect().size[0]*SCL,self.image_normal.get_rect().size[1]*SCL) #dim[0] is the width of the sprite, dim[1] the height
         self.image_normal = pygame.transform.scale(self.image_normal,self.dim)
         
-        
         if(image_hovered!=None):
             self.image_hovered_exists = True
             self.image_hovered = pygame.image.load(image_hovered)
@@ -116,6 +115,28 @@ class TextRender:
         self.text_image = self.police.render ( text, 1 , self.colour, bg)
         self.img_scaled = pygame.transform.scale(self.text_image,size)
 
+class ButtonSpeed(ButtonCtrlPnl):
+    def __init__(self, controls, function, text : str = None, x : int =0, y : int =0, image_normal=None, image_hovered=None, image_clicked=None, image_locked=None):
+        super().__init__(controls, function, text, x, y, image_normal, image_hovered, image_clicked, image_locked)
+
+    def show_tip(self, *arg):
+        pass
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEMOTION:
+            self.hovered = self.rect.collidepoint(event.pos)                                                                      
+        
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if self.hovered:
+                self.clicked = True
+                if self.unlocked and callable(self.call_func):
+                        self.call_func()
+
+        elif event.type == pygame.MOUSEBUTTONUP:
+            #We consider that the button is in the clicked state until we click again
+            if self.hovered:
+                self.clicked = not self.clicked
+                
 # === VARIABLES === 
 state_control_panel = "full" # "full" or "reduced"
 

@@ -573,7 +573,7 @@ class MouseInputHandler:
                 for xi in range(grid_x1, grid_x2+1):
                     for yi in range(grid_y1, grid_y2+1):
                         self.model.actualGame.foreground.addEffect(xi, yi, 'red')
-        # else:
-        #     self.model.actualGame.foreground.initForegroundGrid()
-        #     (x, y) = self.mousePosToGridPos(event.pos)
-        #     self.model.actualGame.foreground.addEffect(x, y, 'default')
+        else:
+            self.model.actualGame.foreground.initForegroundGrid()
+            (x, y) = self.mousePosToGridPos(event.pos)
+            self.model.actualGame.foreground.addEffect(x, y, 'default')
