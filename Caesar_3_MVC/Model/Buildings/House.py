@@ -1,9 +1,11 @@
 import pygame
 from random import randint
 from Model.Buildings.Building import *
+from Model.Buildings.Building import BurningBuilding
 from Model.Plateau import *
 from Model.Case import *
 from Model.Walker import Immigrant
+from Model.Buildings.Building import DamagedBuilding
 
 class House(Building):
 
@@ -56,7 +58,9 @@ class House(Building):
                 if self.plateau.map[self.case.x][self.case.y-1].structure and self.plateau.map[self.case.x+1][self.case.y].structure and self.plateau.map[self.case.x+1][self.case.y-1].structure :
                     ans = (self.desc == self.plateau.map[self.case.x][self.case.y-1].structure.desc,self.desc == self.plateau.map[self.case.x+1][self.case.y].structure.desc,self.desc == self.plateau.map[self.case.x+1][self.case.y-1].structure.desc)
                     if all(ans) :
-                        MergedHouse(self.case,self.plateau,(2,2),self.desc+"2",[self,self.plateau.map[self.case.x][self.case.y-1].structure,self.plateau.map[self.case.x+1][self.case.y].structure,self.plateau.map[self.case.x+1][self.case.y-1].structure])
+                        fornh = self.nbHab
+                        self.delete()
+                        MergedHouse(self.case,self.plateau,(2,2),self.desc+"2",[self.plateau.map[self.case.x][self.case.y-1].structure,self.plateau.map[self.case.x+1][self.case.y].structure,self.plateau.map[self.case.x+1][self.case.y-1].structure],fornh)
 
 
     def upgrade(self) :
@@ -79,32 +83,35 @@ class House(Building):
             self.nbHab = self.nbHabMax
 
 class MergedHouse(House) :
-    def __init__(self, case, plateau, size, desc, houses) :
+    def __init__(self, case, plateau, size, desc, ohouses, fornh) :
         super().__init__(case, plateau, size, desc)
-        self.nbHab = houses[0].nbHab+houses[1].nbHab+houses[2].nbHab+houses[3].nbHab
+        self.nbHab = fornh+ohouses[0].nbHab+ohouses[1].nbHab+ohouses[2].nbHab
         self.nbHabMax=self.nbHabMax * 4
         self.case.render_pos=[self.case.render_pos[0], self.case.render_pos[1]+10]
         self.secCases=[]
-        for h in houses[1:] :
+        for h in ohouses :
             self.secCases.append(h.case)
-        for h in houses :
             h.delete()
         for c in self.secCases :
-            c.structure = self
-        self.case.structure = self
-        self.plateau.structures.append(self)
+            c.setStructure(self)
+
+    def ignite(self):
+        self.delete()
+        for oc in self.secCases :
+               BurningBuilding(oc, self.plateau,"BurningBuilding")
+        BurningBuilding(self.case,self.plateau,"BurningBuilding")
 
     def delete(self) :
         self.case.render_pos=[self.case.render_pos[0], self.case.render_pos[1]-10]
         self.case.setStructure(None)
         for oc in self.secCases :
             oc.setStructure(None)
-        self.case.setFeature("")
         self.plateau.cityHousesList.remove(self)
         self.plateau.structures.remove(self)
+        self.plateau.cityHousesList.remove(self)
+
+
         del self     
-
-
 
 class HousingSpot() :
 
