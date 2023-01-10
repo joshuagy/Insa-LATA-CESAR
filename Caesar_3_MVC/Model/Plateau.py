@@ -466,12 +466,13 @@ class Plateau():
         self.topbar.render()
         self.controls.render()
         
-        fpsText = self.font.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
+        fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
         self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
 
         # if state_control_panel=="reduced":
             
         #     self.screen.blit(small_gap_menu.img_scaled, (self.width-small_gap_menu.dim[0], 24))
+
             
         #     display_control_panel_button.update()
         #     display_control_panel_button.change_pos(self.width-display_control_panel_button.dim[0]-5,28)
@@ -526,6 +527,7 @@ class Plateau():
         #     industrial_structures.change_pos(self.width-industrial_structures.dim[0]-1,24+417)
         #     industrial_structures.draw(self.screen)
 
+
     def create_collision_matrix(self):
         collision_matrix = [[1000 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
 
@@ -537,6 +539,166 @@ class Plateau():
                 if self.map[x][y].road:
                     collision_matrix[y][x] = 1
         return collision_matrix
+
+    def riviere(self):
+
+        water_list = ['water1', 'water2', 'water3', 'water4', 'water5', 'water6','water7','water8','water9','water10','water11','water12','water13']
+        for x in range(self.nbr_cell_y):
+            for y in range(self.nbr_cell_y):
+
+                if self.map[x][y].sprite in water_list:
+                    d,g,h,b=(None,None,None,None)
+                    if x != 0 and y != 0 and x != 39 and y != 39:
+
+                        g=self.map[x-1][y].sprite
+                        d=self.map[x+1][y].sprite
+                        h=self.map[x][y-1].sprite
+                        b=self.map[x][y+1].sprite
+                    else:
+
+                        if x == 0 and y != 0:
+                            g='water1'
+                            d = self.map[x+1][y].sprite
+                            h = self.map[x][y-1].sprite
+                            b = self.map[x][y+1].sprite
+                        if y == 0 and x != 0:
+
+                            h = 'water1'
+                            g = self.map[x - 1][y].sprite
+                            d = self.map[x + 1][y].sprite
+                            b = self.map[x][y + 1].sprite
+
+
+
+                        if x == 39 and y != 39:
+
+
+                            d = 'water1'
+                            g = self.map[x - 1][y].sprite
+                            h = self.map[x][y - 1].sprite
+                            b = self.map[x][y + 1].sprite
+
+
+
+                        if y == 39 and x != 39:
+                            b = 'water1'
+                            g = self.map[x - 1][y].sprite
+                            d = self.map[x + 1][y].sprite
+                            h = self.map[x][y - 1].sprite
+
+
+
+
+
+
+
+
+                    if g in water_list:
+
+
+                        if b not in water_list and  h  in water_list and d in water_list:
+                            self.map[x][y].sprite='water4'
+                        elif b  in water_list and  h  in water_list and d not in water_list:
+                            self.map[x][y].sprite='water2'
+                        elif b in water_list and  h not in water_list and d in water_list:
+                            self.map[x][y].sprite='water5'
+                        elif b not in water_list and  h in water_list and d not in water_list:
+                            self.map[x][y].sprite='water6'
+                        elif b in water_list and h not in water_list and d not in water_list:
+                            self.map[x][y].sprite = 'water9'
+                        elif h in water_list and  b not in water_list and d not in water_list:
+                            self.map[x][y].sprite = 'water6'
+
+
+
+
+                    elif g not in water_list:
+
+                        if b in water_list and h in water_list and d in water_list:
+                            self.map[x][y].sprite = 'water3'
+                        elif b not in water_list and h in water_list and d in water_list:
+                            self.map[x][y].sprite = 'water8'
+                        elif d in water_list and b in water_list and h not in water_list:
+                            self.map[x][y].sprite = 'water7'
+
+
+
+
+
+        self.riviere2(water_list)
+    def riviere2(self,water_list):
+
+        for x in range(self.nbr_cell_y):
+            for y in range(self.nbr_cell_y):
+
+                if self.map[x][y].sprite in water_list:
+                    d, g, h, b,hg,hd,bg,bd = (None, None, None, None,None,None,None,None)
+                    if x != 0 and y != 0 and x != 39 and y != 39:
+
+                        g = self.map[x-1][y].sprite
+                        d = self.map[x+1][y].sprite
+                        h = self.map[x][y-1].sprite
+                        b = self.map[x][y+1].sprite
+                        hg = self.map[x-1][y-1].sprite
+                        hd = self.map[x+1][y-1].sprite
+                        bg = self.map[x-1][y+1].sprite
+                        bd = self.map[x+1][y+1].sprite
+                    else:
+
+                        if x == 0 and y != 0:
+                            g='water1'
+                            hg='water1'
+                            bg='water1'
+                            d = self.map[x+1][y].sprite
+                            h = self.map[x][y-1].sprite
+                            b = self.map[x][y+1].sprite
+
+                        if y == 0 and x != 0:
+
+                            h = 'water1'
+                            hd='water1'
+                            hg='water1'
+                            g = self.map[x - 1][y].sprite
+                            d = self.map[x + 1][y].sprite
+                            b = self.map[x][y + 1].sprite
+
+
+
+                        if x == 39 and y != 39:
+
+
+                            d = 'water1'
+                            hd='water1'
+                            bd='water1'
+                            g = self.map[x - 1][y].sprite
+                            h = self.map[x][y - 1].sprite
+                            b = self.map[x][y + 1].sprite
+
+
+
+                        if y == 39 and x != 39:
+                            b = 'water1'
+                            bd='water1'
+                            bg='water1'
+                            g = self.map[x - 1][y].sprite
+                            d = self.map[x + 1][y].sprite
+                            h = self.map[x][y - 1].sprite
+
+                    if  g != 'water1' and g in water_list  and b != 'water1' and b in water_list and h == 'water1' and d == 'water1' and bg not in water_list:
+                        self.map[x][y].sprite = 'water12'
+
+
+                    if g == 'water1' and b == 'water1' and h != 'water1' and h in water_list and d != 'water1' and d in water_list and hd not in water_list:
+                        self.map[x][y].sprite = 'water13'
+
+                    if d!='water1' and d in water_list and  b!='water1' and b in water_list and g =='water1' and h =='water1' and bd not in water_list:
+                        self.map[x][y].sprite = 'water10'
+
+                    if g!='water1' and g in water_list and  h!='water1' and h in water_list and d =='water1' and b =='water1' and hg not in water_list:
+                        self.map[x][y].sprite = 'water11'
+
+
+
 
 def load_image(path):
     image = pygame.image.load(path).convert_alpha()
