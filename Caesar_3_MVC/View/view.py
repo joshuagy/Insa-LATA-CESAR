@@ -57,10 +57,9 @@ class GraphicalView(object):
                 self.renderMenu()
             elif currentstate == STATE_PLAY:
                 self.renderGame()
-            self.clock.tick(60)
-            print("FPS:", int(self.clock.get_fps()))
+            self.clock.tick(120)
 
-    
+
     def renderIntroScene(self) -> None:
         """
         Render the intro scene.
@@ -88,7 +87,6 @@ class GraphicalView(object):
         self.model.mini_map.draw_position(self.model.actualGame.screen, self.model.actualGame.camera,self.model.actualGame.map)
         self.model.pause_menu.draw_pause_menu()
         self.model.actualGame.restart = False
-
         pygame.display.flip()
 
     def initialize(self) -> None:
