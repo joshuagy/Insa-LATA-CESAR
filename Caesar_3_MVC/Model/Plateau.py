@@ -326,9 +326,46 @@ class Plateau():
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks }
+ 
+    def getButtonsFunctions(self):
+        return {
+            'increaseSpeed': self.increaseSpeed,
+            'decreaseSpeed': self.decreaseSpeed,
+        }
+
+    def increaseSpeed(self):
+        if self.currentSpeed >= 0 and self.currentSpeed < 500:
+            if self.currentSpeed >= 100:
+                self.currentSpeed += 100
+            else: 
+                self.currentSpeed += 10 
+    
+    def decreaseSpeed(self):
+        if self.currentSpeed > 10:
+            if self.currentSpeed > 100:
+                self.currentSpeed -= 100
+            else:
+                self.currentSpeed -= 10 
+
+    def clearLand(self, grid_x1, grid_x2, grid_y1, grid_y2):
+        for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                        if self.map[xi][yi].sprite not in list_of_undestructible:
+                            self.map[xi][yi].sprite = "land1"
+                            if self.map[xi][yi].road :
+                                self.map[xi][yi].road.delete()
+                                self.treasury = self.treasury - DESTRUCTION_COST
+                            if self.map[xi][yi].structure :
+                                self.map[xi][yi].structure.delete()
+                                self.treasury = self.treasury - DESTRUCTION_COST
+                              
+                            
+        self.collision_matrix = self.create_collision_matrix()
+        self.foreground.initForegroundGrid()
 
     def update(self):
         if self.restart:
+
             self.entities.clear()
             self.listeCase.clear()
             self.structures.clear()
@@ -337,24 +374,27 @@ class Plateau():
             self.burningBuildings.clear()
 
         if not self.pause:
+            
             self.camera.update()
-            self.controls.update()
+            self.controls.update(self.currentSpeed)
             self.topbar.update(self.treasury, self.population)
 
             #Update de la position des walkers
-            for e in self.entities: e.update()
+            currentSpeedFactor = self.currentSpeed/100
+            for e in self.entities: e.update(currentSpeedFactor)
             for hs in self.cityHousingSpotsList: hs.generateImmigrant()
             for bb in self.burningBuildings: bb.update()
             for b in self.structures :
                 if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
                 if isinstance(b,WorkBuilding): b.delay()
+                if isinstance(b,WheatFarm) : b.update()     #Actualise les fermes
                 self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
-                if isinstance(b,WheatFarm) : b.update()     #Mise à jour des fermes
             self.population = 0
             for h in self.cityHousesList:
-                h.udmCheck()                                # Vérifie les upgrades, downgrades et merge d'habitations
-                self.population = self.population + h.nbHab # Recompte de la population
-            
+                h.udmCheck()   # Vérifie les upgrades, downgrades et merge d'habitations
+                self.population = self.population + h.nbHab
+
+
             
     def nearbyRoadsCheck(self, b):     #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
         for xcr in range (b.case.x-2,b.case.x+3,1) :
