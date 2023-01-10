@@ -449,13 +449,13 @@ class Plateau():
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                             render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
 
+
                 # DRAW PREVIEWED CELLS AND HOVERED CELLS
-                if self.foreground.hasEffect(cell_x, cell_y):
-                    id_image = self.map[cell_x][cell_y].sprite
-                    effectedImage = self.foreground.getEffectedImage(self.image[id_image].copy(), cell_x, cell_y)
+                if self.foreground.hasEffect(cell_x, cell_y) and image != None:
+                    effectedImage = self.foreground.getEffectedImage(id_image, image.copy(), cell_x, cell_y)
                     self.screen.blit(effectedImage,
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
+                                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
                 # DRAW WALKERS
                 for e in self.walkers[cell_x][cell_y]:
