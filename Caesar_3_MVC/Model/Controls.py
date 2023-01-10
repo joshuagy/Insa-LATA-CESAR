@@ -96,83 +96,83 @@ class Controls:
   def generateListOfButtons(self):
     listOfButtons = []
 
-    self.hide_control_panel_button = ButtonCtrlPnl(self, display_reduced_ctrl_panel, 'default',"Hide the Control Panel to see a wider playing area", 0, 0,"image/C3/paneling_00097.png","image/C3/paneling_00098.png","image/C3/paneling_00099.png")
+    self.hide_control_panel_button = ButtonCtrlPnl(self, display_reduced_ctrl_panel,"Hide the Control Panel to see a wider playing area", 0, 0,"image/C3/paneling_00097.png","image/C3/paneling_00098.png","image/C3/paneling_00099.png")
     self.hide_control_panel_button.change_pos(self.screenWidth-self.hide_control_panel_button.dim[0]-4 - self.originX, 24+5 - self.originY)
     listOfButtons.append(self.hide_control_panel_button)
 
-    self.overlays_button = ButtonCtrlPnl(self, not_implemented_func, 'default', "Select a city overlay report", 0, 0,"image/C3/paneling_00234.png","image/C3/paneling_00235.png","image/C3/paneling_00236.png")
+    self.overlays_button = ButtonCtrlPnl(self, not_implemented_func, "Select a city overlay report", 0, 0,"image/C3/paneling_00234.png","image/C3/paneling_00235.png","image/C3/paneling_00236.png")
     self.overlays_button.change_pos(self.screenWidth-self.overlays_button.dim[0]-self.hide_control_panel_button.dim[0]-10 - self.originX, 27 - self.originY)
     listOfButtons.append(self.overlays_button)
     
-    self.advisors_button = ButtonCtrlPnl(self, not_implemented_func, 'default',  "Visit your advisors", self.screenWidth - 155 - self.originX, 179 - self.originY,"image/C3/paneling_00079.png","image/C3/paneling_00080.png","image/C3/paneling_00081.png")
+    self.advisors_button = ButtonCtrlPnl(self, not_implemented_func,  "Visit your advisors", self.screenWidth - 155 - self.originX, 179 - self.originY,"image/C3/paneling_00079.png","image/C3/paneling_00080.png","image/C3/paneling_00081.png")
     listOfButtons.append(self.advisors_button)
 
-    self.empire_map_button = ButtonCtrlPnl(self, not_implemented_func, 'default', "Go to the map of the Empire", self.screenWidth - 78 - self.originX ,179 - self.originY, "image/C3/paneling_00082.png","image/C3/paneling_00083.png","image/C3/paneling_00084.png")
+    self.empire_map_button = ButtonCtrlPnl(self, not_implemented_func, "Go to the map of the Empire", self.screenWidth - 78 - self.originX ,179 - self.originY, "image/C3/paneling_00082.png","image/C3/paneling_00083.png","image/C3/paneling_00084.png")
     listOfButtons.append(self.empire_map_button)
 
-    self.assignement_button = ButtonCtrlPnl(self, not_implemented_func, 'default', "Review your assignement",self.screenWidth-155-self.originX,208-self.originY, "image/C3/paneling_00085.png","image/C3/paneling_00086.png","image/C3/paneling_00087.png")
+    self.assignement_button = ButtonCtrlPnl(self, not_implemented_func, "Review your assignement",self.screenWidth-155-self.originX,208-self.originY, "image/C3/paneling_00085.png","image/C3/paneling_00086.png","image/C3/paneling_00087.png")
     listOfButtons.append(self.assignement_button)
 
-    self.compass_button = ButtonCtrlPnl(self, not_implemented_func, 'default', "Re_orient your view to Due North", self.screenWidth-116-self.originX,208-self.originY,"image/C3/paneling_00088.png","image/C3/paneling_00089.png","image/C3/paneling_00090.png")
+    self.compass_button = ButtonCtrlPnl(self, not_implemented_func, "Re_orient your view to Due North", self.screenWidth-116-self.originX,208-self.originY,"image/C3/paneling_00088.png","image/C3/paneling_00089.png","image/C3/paneling_00090.png")
     listOfButtons.append(self.compass_button)
     
-    self.arrow_rotate_counterclockwise = ButtonCtrlPnl(self, not_implemented_func, 'default', "Rotate the map counterclockwise", self.screenWidth-78-self.originX,208-self.originY,"image/C3/paneling_00091.png","image/C3/paneling_00092.png","image/C3/paneling_00093.png")
+    self.arrow_rotate_counterclockwise = ButtonCtrlPnl(self, not_implemented_func, "Rotate the map counterclockwise", self.screenWidth-78-self.originX,208-self.originY,"image/C3/paneling_00091.png","image/C3/paneling_00092.png","image/C3/paneling_00093.png")
     listOfButtons.append(self.arrow_rotate_counterclockwise)
 
-    self.arrow_rotate_clockwise = ButtonCtrlPnl(self, not_implemented_func, 'default', "Rotate the map clockwise", self.screenWidth-39-self.originX,208-self.originY,"image/C3/paneling_00094.png","image/C3/paneling_00095.png","image/C3/paneling_00096.png")
+    self.arrow_rotate_clockwise = ButtonCtrlPnl(self, not_implemented_func, "Rotate the map clockwise", self.screenWidth-39-self.originX,208-self.originY,"image/C3/paneling_00094.png","image/C3/paneling_00095.png","image/C3/paneling_00096.png")
     listOfButtons.append(self.arrow_rotate_clockwise)
     
-    self.clear_land_button = ButtonCtrlPnl(self, clear_land, 'clearLand', "Clear land", self.screenWidth-99 - self.originX, 301 - self.originY, "image/C3/paneling_00131.png", "image/C3/paneling_00132.png","image/C3/paneling_00133.png")
+    self.clear_land_button = ButtonCtrlPnl(self, clear_land, "Clear land", self.screenWidth-99 - self.originX, 301 - self.originY, "image/C3/paneling_00131.png", "image/C3/paneling_00132.png","image/C3/paneling_00133.png", state='clearLand')
     listOfButtons.append(self.clear_land_button)
 
-    self.build_roads_button = ButtonCtrlPnl(self, build_roads, 'default', "Build roads", self.screenWidth - 49 - self.originX ,301 - self.originY,"image/C3/paneling_00135.png","image/C3/paneling_00136.png","image/C3/paneling_00137.png")
+    self.build_roads_button = ButtonCtrlPnl(self, build_roads, "Build roads", self.screenWidth - 49 - self.originX ,301 - self.originY,"image/C3/paneling_00135.png","image/C3/paneling_00136.png","image/C3/paneling_00137.png", state='buildRoads')
     listOfButtons.append(self.build_roads_button)
     
-    self.build_housing_button = ButtonCtrlPnl(self, build_housing, 'buildHouse', "Build housing", self.screenWidth-149 - self.originX, 301 - self.originY,"image/C3/paneling_00123.png","image/C3/paneling_00124.png","image/C3/paneling_00125.png")
+    self.build_housing_button = ButtonCtrlPnl(self, build_housing, "Build housing", self.screenWidth-149 - self.originX, 301 - self.originY,"image/C3/paneling_00123.png","image/C3/paneling_00124.png","image/C3/paneling_00125.png", state='buildHousing')
     listOfButtons.append(self.build_housing_button)
 
-    self.water_related_structures = ButtonCtrlPnl(self, build_water_related_structures, 'default', "Water related structure", self.screenWidth - 149 - self.originX, 337 - self.originY,"image/C3/paneling_00127.png","image/C3/paneling_00128.png","image/C3/paneling_00129.png")
+    self.water_related_structures = ButtonCtrlPnl(self, build_water_related_structures, "Water related structure", self.screenWidth - 149 - self.originX, 337 - self.originY,"image/C3/paneling_00127.png","image/C3/paneling_00128.png","image/C3/paneling_00129.png", state='buildWaterRelatedStructures')
     listOfButtons.append(self.water_related_structures)
 
-    self.health_related_structures= ButtonCtrlPnl(self, not_implemented_func, 'default',  "Health related structures", self.screenWidth-99-self.originX,337-self.originY, "image/C3/paneling_00163.png", "image/C3/paneling_00164.png", "image/C3/paneling_00165.png","image/C3/paneling_00166.png")
+    self.health_related_structures= ButtonCtrlPnl(self, not_implemented_func,  "Health related structures", self.screenWidth-99-self.originX,337-self.originY, "image/C3/paneling_00163.png", "image/C3/paneling_00164.png", "image/C3/paneling_00165.png","image/C3/paneling_00166.png")
     listOfButtons.append(self.health_related_structures)
 
-    self.religious_structures = ButtonCtrlPnl(self, not_implemented_func, 'default', "Religious Structures", 0, 0,"image/C3/paneling_00151.png","image/C3/paneling_00152.png","image/C3/paneling_00153.png","image/C3/paneling_00154.png")
+    self.religious_structures = ButtonCtrlPnl(self, not_implemented_func, "Religious Structures", 0, 0,"image/C3/paneling_00151.png","image/C3/paneling_00152.png","image/C3/paneling_00153.png","image/C3/paneling_00154.png")
     self.religious_structures.change_pos(self.screenWidth - 49 - self.originX, 337 - self.originY)
     listOfButtons.append(self.religious_structures)
 
-    self.education_structures = ButtonCtrlPnl(self, not_implemented_func, 'default', "Education Structures", 0, 0,"image/C3/paneling_00147.png","image/C3/paneling_00148.png","image/C3/paneling_00149.png","image/C3/paneling_00150.png")
+    self.education_structures = ButtonCtrlPnl(self, not_implemented_func, "Education Structures", 0, 0,"image/C3/paneling_00147.png","image/C3/paneling_00148.png","image/C3/paneling_00149.png","image/C3/paneling_00150.png")
     self.education_structures.change_pos(self.screenWidth - 149 - self.originX, 377 - self.originY)
     listOfButtons.append(self.education_structures)
 
-    self.entertainment_structures= ButtonCtrlPnl(self, not_implemented_func, 'default', "Entertainment_structures", self.screenWidth-99-self.originX,373-self.originY,"image/C3/paneling_00143.png","image/C3/paneling_00144.png","image/C3/paneling_00145.png","image/C3/paneling_00146.png")      
+    self.entertainment_structures= ButtonCtrlPnl(self, not_implemented_func, "Entertainment_structures", self.screenWidth-99-self.originX,373-self.originY,"image/C3/paneling_00143.png","image/C3/paneling_00144.png","image/C3/paneling_00145.png","image/C3/paneling_00146.png")      
     listOfButtons.append(self.entertainment_structures)
 
-    self.administration_or_government_structures = ButtonCtrlPnl(self, not_implemented_func, 'default', "Administration or Government Structures", self.screenWidth-49-self.originX,373-self.originY,"image/C3/paneling_00139.png","image/C3/paneling_00140.png","image/C3/paneling_00141.png")
+    self.administration_or_government_structures = ButtonCtrlPnl(self, not_implemented_func, "Administration or Government Structures", self.screenWidth-49-self.originX,373-self.originY,"image/C3/paneling_00139.png","image/C3/paneling_00140.png","image/C3/paneling_00141.png")
     listOfButtons.append(self.administration_or_government_structures)
 
-    self.engineering_structures = ButtonCtrlPnl(self, build_engineer_post, 'default', "Engineering function", self.screenWidth - 149 - self.originX,409 - self.originY,"image/C3/paneling_00167.png","image/C3/paneling_00168.png","image/C3/paneling_00169.png")
+    self.engineering_structures = ButtonCtrlPnl(self, build_engineer_post, "Engineering function", self.screenWidth - 149 - self.originX,409 - self.originY,"image/C3/paneling_00167.png","image/C3/paneling_00168.png","image/C3/paneling_00169.png", state='buildEngineerPost')
     listOfButtons.append(self.engineering_structures)
 
-    self.security_structures = ButtonCtrlPnl(self, build_prefecture, 'default', "Security Structures", self.screenWidth - 99 - self.originX,409 - self.originY,"image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png")
+    self.security_structures = ButtonCtrlPnl(self, build_prefecture, "Security Structures", self.screenWidth - 99 - self.originX,409 - self.originY,"image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png", state='securityStructures')
     listOfButtons.append(self.security_structures)
 
-    self.industrial_structures = ButtonCtrlPnl(self, not_implemented_func, 'default', "Industrial Structures", self.screenWidth-49-self.originY,409-self.originY,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png","image/C3/paneling_00158.png")
+    self.industrial_structures = ButtonCtrlPnl(self, not_implemented_func, "Industrial Structures", self.screenWidth-49-self.originY,409-self.originY,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png","image/C3/paneling_00158.png")
     listOfButtons.append(self.industrial_structures)
     
-    self.undo_button = ButtonCtrlPnl(self, not_implemented_func, 'default', "Undo", self.screenWidth-149-self.originX, 445-self.originY,"image/C3/paneling_00171.png","image/C3/paneling_00172.png","image/C3/paneling_00173.png","image/C3/paneling_00174.png")
+    self.undo_button = ButtonCtrlPnl(self, not_implemented_func, "Undo", self.screenWidth-149-self.originX, 445-self.originY,"image/C3/paneling_00171.png","image/C3/paneling_00172.png","image/C3/paneling_00173.png","image/C3/paneling_00174.png")
     listOfButtons.append(self.undo_button)
     
-    self.message_view_button = ButtonCtrlPnl(self, not_implemented_func, 'default', "Message View", self.screenWidth-99-self.originX,445-self.originY,"image/C3/paneling_00115.png","image/C3/paneling_00116.png","image/C3/paneling_00117.png","image/C3/paneling_00118.png")
+    self.message_view_button = ButtonCtrlPnl(self, not_implemented_func, "Message View", self.screenWidth-99-self.originX,445-self.originY,"image/C3/paneling_00115.png","image/C3/paneling_00116.png","image/C3/paneling_00117.png","image/C3/paneling_00118.png")
     listOfButtons.append(self.message_view_button)
 
-    self.see_recent_troubles_button = ButtonCtrlPnl(self, not_implemented_func, 'default', "See recent troubles", self.screenWidth-49-self.originY,445-self.originY,"image/C3/paneling_00119.png","image/C3/paneling_00120.png","image/C3/paneling_00121.png","image/C3/paneling_00122.png")
+    self.see_recent_troubles_button = ButtonCtrlPnl(self, not_implemented_func, "See recent troubles", self.screenWidth-49-self.originY,445-self.originY,"image/C3/paneling_00119.png","image/C3/paneling_00120.png","image/C3/paneling_00121.png","image/C3/paneling_00122.png")
     listOfButtons.append(self.see_recent_troubles_button)
 
-    self.variable_speed_up = ButtonWithImmediatEffect(self, self.increaseSpeed, 'default', "Game speed up", self.screenWidth - 149 - self.originX, 490 - self.originY, "image/UI/menu/variable_speed/paneling_00247.png","image/UI/menu/variable_speed/paneling_00248.png","image/UI/menu/variable_speed/paneling_00249.png")
+    self.variable_speed_up = ButtonWithImmediatEffect(self, self.increaseSpeed, "Game speed up", self.screenWidth - 149 - self.originX, 490 - self.originY, "image/UI/menu/variable_speed/paneling_00247.png","image/UI/menu/variable_speed/paneling_00248.png","image/UI/menu/variable_speed/paneling_00249.png")
     listOfButtons.append(self.variable_speed_up)
 
-    self.variable_speed_down = ButtonWithImmediatEffect(self, self.decreaseSpeed, 'default', "Game speed down", self.screenWidth + self.variable_speed_up.dim[0] - 145 - self.originX, 490 - self.originY, "image/UI/menu/variable_speed/paneling_00251.png","image/UI/menu/variable_speed/paneling_00252.png","image/UI/menu/variable_speed/paneling_00253.png")
+    self.variable_speed_down = ButtonWithImmediatEffect(self, self.decreaseSpeed, "Game speed down", self.screenWidth + self.variable_speed_up.dim[0] - 145 - self.originX, 490 - self.originY, "image/UI/menu/variable_speed/paneling_00251.png","image/UI/menu/variable_speed/paneling_00252.png","image/UI/menu/variable_speed/paneling_00253.png")
     listOfButtons.append(self.variable_speed_down)
 
     return listOfButtons
