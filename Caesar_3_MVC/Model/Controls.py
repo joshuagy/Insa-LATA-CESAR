@@ -17,6 +17,8 @@ class Controls:
     self.originX = self.screenWidth-big_gap_menu.dim[0]
     self.originY = 24
 
+    self.hiddenButton = []
+
     self.staticSurface = self.generateStaticSurface()
     self.staticSurfacePos = (self.screenWidth-big_gap_menu.dim[0], 24)
     self.listOfButtons = self.generateListOfButtons()
@@ -101,11 +103,32 @@ class Controls:
     self.hide_control_panel_button.change_pos(self.screenWidth-self.hide_control_panel_button.dim[0]-4 - self.originX, 24+5 - self.originY)
     listOfButtons.append(self.hide_control_panel_button)
 
-    self.overlays_button = ButtonCtrlPnl(self, not_implemented_func, "Select a city overlay report", 0, 0,"image/C3/paneling_00234.png","image/C3/paneling_00235.png","image/C3/paneling_00236.png")
+    self.overlays_button = ButtonCtrlPnl(self, self.display_overlay_selection,"Select a city overlay report", 0, 0,"image/UI/menu/menu_overlay_button.png","image/UI/menu/menu_overlay_button_clicked.png","image/UI/menu/menu_overlay_button_clicked.png")
     self.overlays_button.change_pos(self.screenWidth-self.overlays_button.dim[0]-self.hide_control_panel_button.dim[0]-10 - self.originX, 27 - self.originY)
     listOfButtons.append(self.overlays_button)
     
-    self.advisors_button = ButtonCtrlPnl(self, not_implemented_func,  "Visit your advisors", self.screenWidth - 155 - self.originX, 179 - self.originY,"image/C3/paneling_00079.png","image/C3/paneling_00080.png","image/C3/paneling_00081.png")
+    self.fire_overlay = ButtonCtrlPnl(self, not_implemented_func,"Show the risk of the structure to catch fire", 0, 0,"image/UI/menu/menu_fire_button.png","image/UI/menu/menu_fire_button_clicked.png","image/UI/menu/menu_fire_button_clicked.png")
+    self.fire_overlay.change_pos(self.screenWidth-self.fire_overlay.dim[0]-self.hide_control_panel_button.dim[0]-150 ,27 )
+    self.fire_overlay.hide = True
+    self.hiddenButton.append(self.fire_overlay)
+    
+    self.damage_overlay = ButtonCtrlPnl(self, not_implemented_func,"Show the risk of the structure to collapse", 0, 0,"image/UI/menu/menu_damage_button.png","image/UI/menu/menu_damage_button_clicked.png","image/UI/menu/menu_damage_button_clicked.png")
+    self.damage_overlay.change_pos(self.screenWidth-self.damage_overlay.dim[0]-self.hide_control_panel_button.dim[0]-150 ,52 )
+    self.damage_overlay.hide = True
+    self.hiddenButton.append(self.damage_overlay)
+    
+    self.entertainment_overlay = ButtonCtrlPnl(self, not_implemented_func,"Show the level of entertainment of each case", 0, 0,"image/UI/menu/menu_entertainment_button.png","image/UI/menu/menu_entertainment_button_clicked.png","image/UI/menu/menu_entertainment_button_clicked.png")
+    self.entertainment_overlay.change_pos(self.screenWidth-self.entertainment_overlay.dim[0]-self.hide_control_panel_button.dim[0]-150 ,77 )
+    self.entertainment_overlay.hide = True
+    self.hiddenButton.append(self.entertainment_overlay)
+    
+    self.water_overlay = ButtonCtrlPnl(self, not_implemented_func,"Show the water level of each case", 0, 0,"image/UI/menu/menu_water_button.png","image/UI/menu/menu_water_button_clicked.png","image/UI/menu/menu_water_button_clicked.png")
+    self.water_overlay.change_pos(self.screenWidth-self.water_overlay.dim[0]-self.hide_control_panel_button.dim[0]-150 ,102 )
+    self.water_overlay.hide = True
+    self.hiddenButton.append(self.water_overlay)
+    
+    self.advisors_button = ButtonCtrlPnl(self, not_implemented_func, "Visit your advisors", self.screenWidth - 155 - self.originX, 179 - self.originY,"image/C3/paneling_00079.png","image/C3/paneling_00080.png","image/C3/paneling_00081.png")
+
     listOfButtons.append(self.advisors_button)
 
     self.empire_map_button = ButtonCtrlPnl(self, not_implemented_func, "Go to the map of the Empire", self.screenWidth - 78 - self.originX ,179 - self.originY, "image/C3/paneling_00082.png","image/C3/paneling_00083.png","image/C3/paneling_00084.png")
@@ -194,3 +217,19 @@ class Controls:
     for button in self.listOfButtons:
       button.draw(self.staticSurface)
       button.show_tip(self.screen)
+    for button2 in self.hiddenButton:
+      button2.draw(self.screen)
+      button2.show_tip(self.screen)
+  
+  def display_overlay_selection(self):
+    """ This function is going to show the differrent ooverlay that we can select"""
+    if self.fire_overlay.hide: 
+        self.fire_overlay.hide = False
+        self.damage_overlay.hide = False
+        self.entertainment_overlay.hide = False
+        self.water_overlay.hide = False
+    else:
+        self.fire_overlay.hide = True
+        self.damage_overlay.hide = True
+        self.entertainment_overlay.hide = True
+        self.water_overlay.hide = True

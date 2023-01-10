@@ -57,8 +57,9 @@ class GraphicalView(object):
                 self.renderMenu()
             elif currentstate == STATE_PLAY:
                 self.renderGame()
-            self.clock.tick(60)
-    
+            self.clock.tick(120)
+
+
     def renderIntroScene(self) -> None:
         """
         Render the intro scene.
@@ -83,7 +84,7 @@ class GraphicalView(object):
             self.initialize()
         self.model.actualGame.update()
         self.model.actualGame.draw()
-        # self.model.mini_map.draw_position(self.model.actualGame.screen, self.model.actualGame.camera,self.model.actualGame.map,self.model.actualGame.nbr_cell_x,self.model.actualGame.nbr_cell_y,self.model.actualGame.image)
+        self.model.mini_map.draw_position(self.model.actualGame.screen, self.model.actualGame.camera,self.model.actualGame.map)
         self.model.pause_menu.draw_pause_menu()
         self.model.actualGame.restart = False
         pygame.display.flip()
@@ -103,7 +104,7 @@ class GraphicalView(object):
         self.model.introScene = IntroScene(self.screen)
         self.model.menu = Menu(self.screen)
         self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
-        self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), 40 * cell_size * 2, 40 * cell_size + 2 * cell_size)
+        self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), 40 , 40)
         self.model.pause_menu = Pausemenu(self.screen.get_width(), self.screen.get_height(), self.screen)
 
         #Création de walkers

@@ -25,26 +25,14 @@ class MouseInputHandler:
         """
         Receive events posted to the message queue. 
         """
+        self.pause_move_button()
         if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: 
                         self.clicked = True
                         self.initialMouseCoordinate = pygame.mouse.get_pos()
 
-                        if self.model.pause_menu.Exit_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
-                            self.model.pause_menu.exit()
+                        self.pause_menu(event)
 
-                        if self.model.pause_menu.Continue_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
-                            self.model.pause_menu.pause = False
-                            self.model.actualGame.pause = False
-
-                        if self.model.pause_menu.Savegame_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
-                            pass
-
-                        if self.model.pause_menu.Replay_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
-                            self.model.actualGame.restart = True
-                            self.model.actualGame.update()
-                            self.model.pause_menu.pause = False
-                            self.model.actualGame.pause = False
         elif event.type == pygame.MOUSEBUTTONUP:
                 if(self.clicked):
                         # get current state
@@ -105,6 +93,69 @@ class MouseInputHandler:
         """
         feedBack = self.model.menu.handleMouseInput(event)
         self.evManager.Post(feedBack)
+
+    def pause_move_button(self):
+        if self.model.pause_menu.Exit_rect.collidepoint(pygame.mouse.get_pos()) and self.model.pause_menu.pause :
+            self.model.pause_menu.passed[0]=True
+            if self.model.pause_menu.Exit_rect.y == self.model.pause_menu.Exit_rectyinit:
+                self.model.pause_menu.Exit_rect.y = self.model.pause_menu.Exit_rectyinit - 2
+        else:
+            self.model.pause_menu.passed[0] = False
+            self.model.pause_menu.Exit_rect.y = self.model.pause_menu.Exit_rectyinit
+
+
+
+
+        if self.model.pause_menu.Continue_rect.collidepoint(pygame.mouse.get_pos()) and self.model.pause_menu.pause :
+            self.model.pause_menu.passed[1] = True
+            if self.model.pause_menu.Continue_rect.y == self.model.pause_menu.Continue_rectyinit:
+                self.model.pause_menu.Continue_rect.y =self.model.pause_menu.Continue_rectyinit - 2
+        else:
+            self.model.pause_menu.passed[1] = False
+            self.model.pause_menu.Continue_rect.y = self.model.pause_menu.Continue_rectyinit
+
+
+        if self.model.pause_menu.Savegame_rect.collidepoint(pygame.mouse.get_pos()) and self.model.pause_menu.pause :
+            self.model.pause_menu.passed[2] = True
+            if self.model.pause_menu.Savegame_rect.y == self.model.pause_menu.Savegame_rectyinit:
+                self.model.pause_menu.Savegame_rect.y = self.model.pause_menu.Savegame_rectyinit - 2
+        else:
+            self.model.pause_menu.passed[2] = False
+            self.model.pause_menu.Savegame_rect.y = self.model.pause_menu.Savegame_rectyinit
+
+
+        if self.model.pause_menu.Replay_rect.collidepoint(pygame.mouse.get_pos()) and self.model.pause_menu.pause :
+            self.model.pause_menu.passed[3] = True
+            if self.model.pause_menu.Replay_rect.y == self.model.pause_menu.Replay_rectyinit:
+                self.model.pause_menu.Replay_rect.y = self.model.pause_menu.Replay_rectyinit - 2
+        else:
+            self.model.pause_menu.passed[3] = False
+            self.model.pause_menu.Replay_rect.y = self.model.pause_menu.Replay_rectyinit
+
+
+
+
+
+
+
+
+    def pause_menu(self,event):
+        if self.model.pause_menu.Exit_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
+            self.model.pause_menu.exit()
+
+        if self.model.pause_menu.Continue_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
+            self.model.pause_menu.pause = False
+            self.model.actualGame.pause = False
+
+        if self.model.pause_menu.Savegame_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
+            pass
+
+        if self.model.pause_menu.Replay_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
+            self.model.actualGame.restart = True
+            self.model.actualGame.update()
+            self.model.pause_menu.pause = False
+            self.model.actualGame.pause = False
+
 
     def checkEveryButton(self, event):
         """
@@ -431,9 +482,9 @@ class MouseInputHandler:
                         if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                             EnginnerPost(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"EngineerPost",1)
 
+
         # #Well
         elif controlsCurrentState == 'buildWaterRelatedStructures' and not self.model.actualGame.controls.water_related_structures.rect.collidepoint(mousePosRelative):
-        
         #Mouse Selection :
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
@@ -489,6 +540,11 @@ class MouseInputHandler:
                             if self.model.actualGame.map[xcr][ycr].getConnectedToRoad() > 0 :
                                 if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                                     Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
+                                    
+        #Overlay part
+        # if fire_overlay.clicked:
+        #     pass
+
 
     def isMousePosInGrid(self, mousePos):
         x, y = mousePos

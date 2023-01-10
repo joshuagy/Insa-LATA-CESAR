@@ -18,6 +18,8 @@ class ButtonCtrlPnl():
         self.image_normal =  pygame.image.load(image_normal)
         self.dim = (self.image_normal.get_rect().size[0]*SCL,self.image_normal.get_rect().size[1]*SCL) #dim[0] is the width of the sprite, dim[1] the height
         self.image_normal = pygame.transform.scale(self.image_normal,self.dim)
+        self.hide = False
+
         
         if(image_hovered!=None):
             self.image_hovered_exists = True
@@ -65,26 +67,27 @@ class ButtonCtrlPnl():
 
     def update(self):
         """Update the button's image"""
-
-        if self.unlocked==True:
-            if self.image_clicked_exists and self.clicked:
-                self.image = self.image_clicked
-            elif self.image_hovered_exists and self.hovered:
-                self.image = self.image_hovered
+        if self.hide is False:
+            if self.unlocked==True:
+                if self.image_clicked_exists and self.clicked:
+                    self.image = self.image_clicked
+                elif self.image_hovered_exists and self.hovered:
+                    self.image = self.image_hovered
+                else:
+                    self.image = self.image_normal
             else:
-                self.image = self.image_normal
-        else:
-             self.image = self.image_locked
+                self.image = self.image_locked
 
     def show_tip(self, display):
         """Show the tip of the button when hovered"""
-        if self.hovered:
+        if self.hovered and self.hide is False:
             mouse_pos = pygame.mouse.get_pos()
             display.blit(self.textsurface, (mouse_pos[0]-100, mouse_pos[1]+20)) #affiche le message à gauchenet en dessous du curseur
                 
     def draw(self, surface):
         """Draw the button on the surface"""
-        surface.blit(self.image, self.rect)
+        if self.hide is False:
+            surface.blit(self.image, self.rect)
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEMOTION:
@@ -96,6 +99,9 @@ class ButtonCtrlPnl():
                 if self.clicked:
                     self.clicked = False
                     self.controls.setCurrentState('default')
+                    if self.text == "Select a city overlay report":
+                       self.call_func()
+
                 else:
                     for button in self.controls.listOfButtons:
                         button.clicked = False
@@ -103,6 +109,7 @@ class ButtonCtrlPnl():
                     self.controls.setCurrentState(self.state)
                     if self.unlocked and callable(self.call_func):
                        self.call_func()
+
 
 class Sprite:   
     def __init__(self, source):
@@ -184,8 +191,17 @@ def not_implemented_func():
     print("i'm in not_implemented_func")
 
 
+        
 
 #Create buttons
+#fire_overlay = ButtonCtrlPnl(not_implemented_func,"Show the risk of the structure to catch fire", 0, 0,"image/UI/menu/menu_fire_button.png","image/UI/menu/menu_fire_button_clicked.png","image/UI/menu/menu_fire_button_clicked.png")
+#damage_overlay = ButtonCtrlPnl(not_implemented_func,"Show the risk of the structure to collapse", 0, 0,"image/UI/menu/menu_damage_button.png","image/UI/menu/menu_damage_button_clicked.png","image/UI/menu/menu_damage_button_clicked.png")
+#entertainment_overlay = ButtonCtrlPnl(not_implemented_func,"Show the level of entertainment of each case", 0, 0,"image/UI/menu/menu_entertainment_button.png","image/UI/menu/menu_entertainment_button_clicked.png","image/UI/menu/menu_entertainment_button_clicked.png")
+#water_overlay = ButtonCtrlPnl(not_implemented_func,"Show the water level of each case", 0, 0,"image/UI/menu/menu_water_button.png","image/UI/menu/menu_water_button_clicked.png","image/UI/menu/menu_water_button_clicked.png")
+#fire_overlay.hide = True
+#damage_overlay.hide = True
+#entertainment_overlay.hide = True
+#water_overlay.hide = True
 # overlays_button = ButtonCtrlPnl(not_implemented_func,"Select a city overlay report", 0, 0,"image/C3/paneling_00234.png","image/C3/paneling_00235.png","image/C3/paneling_00236.png")
 # hide_control_panel_button = ButtonCtrlPnl(display_reduced_ctrl_panel,"Hide the Control Panel to see a wider playing area", 0, 0,"image/C3/paneling_00097.png","image/C3/paneling_00098.png","image/C3/paneling_00099.png")
 # display_control_panel_button = ButtonCtrlPnl(display_full_ctrl_panel,"Display the Control Panel", 0, 0,"image/C3/paneling_00101.png","image/C3/paneling_00102.png","image/C3/paneling_00103.png") #1238, 28?
@@ -212,6 +228,7 @@ def not_implemented_func():
 # undo_button = ButtonCtrlPnl(not_implemented_func,"Undo", 0, 0,"image/C3/paneling_00171.png","image/C3/paneling_00172.png","image/C3/paneling_00173.png","image/C3/paneling_00174.png")
 # message_view_button = ButtonCtrlPnl(not_implemented_func,"Message View", 0, 0,"image/C3/paneling_00115.png","image/C3/paneling_00116.png","image/C3/paneling_00117.png","image/C3/paneling_00118.png")
 # see_recent_troubles_button = ButtonCtrlPnl(not_implemented_func,"See recent troubles", 0, 0,"image/C3/paneling_00119.png","image/C3/paneling_00120.png","image/C3/paneling_00121.png","image/C3/paneling_00122.png")
+
 
 
 #Create sprites
