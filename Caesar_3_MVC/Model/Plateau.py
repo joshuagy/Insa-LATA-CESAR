@@ -204,13 +204,10 @@ class Plateau():
         return image
 
     def load_cases_images(self):
-
-
         land1 = pygame.image.load("image/C3/Land1a_00116.png").convert_alpha()
         land1 = pygame.transform.scale(land1,(land1.get_width()/2,land1.get_height()/2))
         land2 = pygame.image.load("image/C3/Land1a_00265.png").convert_alpha()
         land2 = pygame.transform.scale(land2, (land2.get_width() / 2, land2.get_height() / 2))
-
 
 
         tree1 = pygame.image.load("image/C3/Land1a_00059.png").convert_alpha()
