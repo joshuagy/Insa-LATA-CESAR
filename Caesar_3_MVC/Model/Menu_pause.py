@@ -29,11 +29,6 @@ class Pausemenu:
         self.Exit_rect.x, self.Exit_rect.y = self.width / 2 - 100, self.height / 2
         self.pause=False
 
-
-
-
-
-
     def draw_pause_menu(self):
         if self.pause:
 
