@@ -27,6 +27,7 @@ class Controls:
     return self.currentState
 
   def setCurrentState(self, newState):
+    print(newState)
     self.currentState = newState
   
   def generateStaticSurface(self) -> pygame.Surface:
@@ -154,7 +155,7 @@ class Controls:
     self.engineering_structures = ButtonCtrlPnl(self, build_engineer_post, "Engineering function", self.screenWidth - 149 - self.originX,409 - self.originY,"image/C3/paneling_00167.png","image/C3/paneling_00168.png","image/C3/paneling_00169.png", state='buildEngineerPost')
     listOfButtons.append(self.engineering_structures)
 
-    self.security_structures = ButtonCtrlPnl(self, build_prefecture, "Security Structures", self.screenWidth - 99 - self.originX,409 - self.originY,"image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png", state='securityStructures')
+    self.security_structures = ButtonCtrlPnl(self, build_prefecture, "Security Structures", self.screenWidth - 99 - self.originX, 409 - self.originY, "image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png", state='securityStructures')
     listOfButtons.append(self.security_structures)
 
     self.industrial_structures = ButtonCtrlPnl(self, not_implemented_func, "Industrial Structures", self.screenWidth-49-self.originY,409-self.originY,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png","image/C3/paneling_00158.png")

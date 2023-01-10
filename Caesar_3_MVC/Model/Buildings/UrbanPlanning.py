@@ -1,7 +1,7 @@
 from Model.Plateau import *
 from Model.Buildings.House import *
 
-class Well:
+class Well(Building):
 
     listWell = []
 

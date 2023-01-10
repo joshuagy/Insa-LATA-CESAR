@@ -125,7 +125,7 @@ class MouseInputHandler:
         mousePosRelative = (event.pos[0] - (self.model.actualGame.width - big_gap_menu.dim[0] - 1758.0) - 1758.0, event.pos[1] -24)
         controlsCurrentState = self.model.actualGame.controls.getCurrentState()
 
-        # Pelle
+        # Pelle 
         if controlsCurrentState == 'clearLand' and not self.model.actualGame.controls.clear_land_button.rect.collidepoint(mousePosRelative):
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
@@ -320,7 +320,6 @@ class MouseInputHandler:
 
         # #Prefecture     
         elif controlsCurrentState == 'securityStructures' and not self.model.actualGame.controls.security_structures.rect.collidepoint(mousePosRelative):
-        
         #Mouse Selection :
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
