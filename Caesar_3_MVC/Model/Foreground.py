@@ -10,6 +10,9 @@ class Foreground:
     self.foregroundGrid = None
     self.initForegroundGrid()
 
+    self.overlayGrid = None
+    self.initOverlayGrid()
+
   def initForegroundGrid(self):
     self.foregroundGrid = [[None for _ in range(self.nbr_cell_x)] for _ in range(self.nbr_cell_y)]
   
@@ -34,6 +37,12 @@ class Foreground:
       effectedImage.set_alpha(65)
       originalImage.blit(effectedImage, (0, 0))
     return originalImage
-    
+
+  def initOverlayGrid(self):
+    self.overlayGrid = [[None for _ in range(self.nbr_cell_x)] for _ in range(self.nbr_cell_y)]
+  
+  def addOverlayInfo(self, name, level):
+    pass
+
   def render(self):
     pass

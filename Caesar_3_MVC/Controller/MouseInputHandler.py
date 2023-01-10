@@ -495,9 +495,14 @@ class MouseInputHandler:
                                     Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
                                     
         #Overlay part
-        # if fire_overlay.clicked:
-        #     pass
-
+        #Fire
+        if self.model.actualGame.controls.overlays_button.clicked:
+            self.model.actualGame.foreground.initOverlayGrid()
+            for x in range(40):
+                for y in range(40):
+                    if isinstance(self.model.map[x][y], Building):
+                        self.model.actualGame.foreground.addOverlayInfo("risk", self.model.map[x][y].get_fireRisk())
+                    
 
     def mousePosToGridPos(self, mousePos):
         x, y = mousePos

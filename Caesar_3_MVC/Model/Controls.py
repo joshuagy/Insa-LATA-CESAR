@@ -193,6 +193,8 @@ class Controls:
   def update(self, currentSpeed):
     for button in self.listOfButtons:
       button.update()
+    for button2 in self.hiddenButton:
+      button2.update()
     if currentSpeed != self.currentSpeed:
       self.currentSpeed = currentSpeed
       self.currentSpeedRender()
