@@ -79,7 +79,7 @@ class Plateau():
         self.burningBuildings = burningBuildings
 
         self.currentSpeed = 100
-        #self.buttonsFunctions = self.getButtonsFunctions()
+        self.buttonsFunctions = self.getButtonsFunctions()
         self.controls = Controls(self.screen, self.font, self.currentSpeed, self.buttonsFunctions)
 
 
