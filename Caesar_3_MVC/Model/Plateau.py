@@ -317,7 +317,7 @@ class Plateau():
         ws = load_image("image/Buildings/Utilitya_00001.png")
         bsts = list(load_image(f"image/Buildings/BurningBuilding/BurningBuildingFrame{i}.png") for i in range(1, 9))
         burnruinss = load_image("image/Buildings/BurningBuilding/Land2a_00187.png")
-        ruinss = load_image("image/Buildings/Land2a_00044.png")
+        ruinss = load_image("image/Buildings/Land2a_00111.png")
         sens = load_image("image/Buildings/Govt_00004.png")
         whfas = load_image("image/Buildings/Farm/Commerce_00012.png")
         whpls = list(load_image(f"image/Buildings/Farm/Plot{i}.png") for i in range(0,5))
@@ -413,25 +413,28 @@ class Plateau():
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
 
-        # DRAW CELLS
+       
+       # DRAW CELLS
+
         for cell_x in range(self.nbr_cell_y):
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
-                id_image = self.map[cell_x][cell_y].sprite
-
+                id_image = None
+                image = None
                 # DRAW DEFAULT CELLS
                 if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
                     id_image = self.map[cell_x][cell_y].sprite
-                    self.screen.blit(self.image[id_image],
+                    image = self.image[id_image]
+                    self.screen.blit(image,
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
+                                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
                 # DRAW ROADS
                 elif self.map[cell_x][cell_y].road:
                     id_image = self.map[cell_x][cell_y].road.sprite
-                    self.screen.blit(self.image_route[id_image],
+                    image = self.image_route[id_image]
+                    self.screen.blit(image,
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image_route[id_image].get_height() - cell_size) + self.camera.vect.y))
-
+                                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
                 # DRAW STRUCTURES
                 elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
                     self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)], 
@@ -452,11 +455,11 @@ class Plateau():
 
 
                 # DRAW PREVIEWED CELLS AND HOVERED CELLS
-                #if self.foreground.hasEffect(cell_x, cell_y) and image != None:
-                #   effectedImage = self.foreground.getEffectedImage(id_image, image.copy(), cell_x, cell_y)
-                #    self.screen.blit(effectedImage,
-                #                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                #                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
+                if self.foreground.hasEffect(cell_x, cell_y) and image != None:
+                    effectedImage = self.foreground.getEffectedImage(id_image, image.copy(), cell_x, cell_y)
+                    self.screen.blit(effectedImage,
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
                 # DRAW WALKERS
                 for e in self.walkers[cell_x][cell_y]:
