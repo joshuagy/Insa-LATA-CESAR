@@ -28,6 +28,6 @@ ROAD_COST = 4
 
 
 list_of_collision = ["tree2", "tree1", "tree3", "water1", "water2", "water3", "water4", "water5", "rock1", "rock2", "rock3"]
-list_of_undestructible = ["water1", "water2", "water3", "water4", "water5", "rock1", "rock2", "rock3", "sign1", "sign2"]
+list_of_undestructible = ["water1", "water2", "water3", "water4", "water5", "rock1", "rock2", "rock3", "sign1", "sign2","water6","water7","water8","water9","water10","water11","water12","water13"]
 list_of_flammable_structures = ["EngineerPost", "SmallTent", "LargeTent"]
 list_of_brittle_structures = ["Prefecture"]
