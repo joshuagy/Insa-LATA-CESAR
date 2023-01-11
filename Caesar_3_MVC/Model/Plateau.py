@@ -276,13 +276,13 @@ class Plateau():
         for e in save.entities:
             match(e["type"]):
                 case "Citizen":
-                    Citizen(self.map[e["x"]][e["y"]], self, e["name"], e["ttw"], e["action"], e["direction"])
+                    Citizen(self.map[e["x"]][e["y"]], self, e["name"], e["ttw"], e["action"], e["direction"], e["path"])
                 case "Prefet":
-                    Prefet(self.map[e["x"]][e["y"]], self,self.map[e["workplace_x"]][e["workplace_y"]].structure, e["name"], e["rest"], e["ttw"], e["action"], e["direction"], self.map[e["target_x"]][e["target_y"]])
+                    Prefet(self.map[e["x"]][e["y"]], self,self.map[e["workplace_x"]][e["workplace_y"]].structure, e["name"], e["rest"], e["ttw"], e["action"], e["direction"], self.map[e["target_x"]][e["target_y"]].structure, e["path"])
                 case "Engineer":
-                    Engineer(self.map[e["x"]][e["y"]], self,self.map[e["workplace_x"]][e["workplace_y"]].structure, e["name"], e["rest"], e["ttw"], e["action"], e["direction"])
+                    Engineer(self.map[e["x"]][e["y"]], self,self.map[e["workplace_x"]][e["workplace_y"]].structure, e["name"], e["rest"], e["ttw"], e["action"], e["direction"], e["path"])
                 case "Immigrant":
-                    Immigrant(self.map[e["x"]][e["y"]], self, self.map[e["target_x"]][e["target_y"]], e["name"], e["ttw"], e["action"], e["direction"])
+                    Immigrant(self.map[e["x"]][e["y"]], self, self.map[e["target_x"]][e["target_y"]], e["name"], e["ttw"], e["action"], e["direction"], e["path"])
         
         #Ville
         self.attractiveness = save.attractiveness

@@ -16,7 +16,7 @@ TO DO LIST
 ttwmax = 30
 
 class Walker:
-    def __init__(self, case, plateau, name = "Plebius Prepus", ttw = ttwmax, action = 1, direction = 1):
+    def __init__(self, case, plateau, name = "Plebius Prepus", ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0):
         """
         case : La case de départ sur laquelle est le Walker
         plateau : Le plateau sur lequel est le Walker
@@ -44,6 +44,8 @@ class Walker:
         
         self.direction = direction # | 1 : North | 2 : East | 3 : South | 4 : West |
         self.ttw = ttw
+        self.path = path
+        self.path_index = path_index
 
         self.move_timer = pygame.time.get_ticks()
 
@@ -160,8 +162,8 @@ class Walker:
 
 
 class Citizen(Walker):
-    def __init__(self, case, plateau, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 1):
-        super().__init__(case, plateau, name, ttw, action, direction)
+    def __init__(self, case, plateau, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0):
+        super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
     
     def update(self, currentSpeedFactor):
         """
@@ -190,8 +192,8 @@ class Citizen(Walker):
             self.move_timer = now"""
 
 class Immigrant(Walker):
-    def __init__(self, case, plateau, target, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 1):
-        super().__init__(case, plateau, name, ttw, action, direction)
+    def __init__(self, case, plateau, target, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0):
+        super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
         self.target = target
         self.create_path(target)
         self.chariot = Chariot(self.plateau.map[self.case.x][self.case.y+1], self.plateau, self)
@@ -229,8 +231,8 @@ class Chariot(Walker):
         self.direction = self.owner.direction
 
 class Engineer(Walker):
-    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1):
-        super().__init__(case, plateau, name, ttw, action, direction)
+    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0):
+        super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
         self.workplace = workplace
         self.rest = rest
         self.workplace.walker = self
@@ -284,8 +286,8 @@ class Engineer(Walker):
             self.move_timer = now
 
 class Prefet(Walker):
-    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None):
-        super().__init__(case, plateau, name, ttw, action, direction)
+    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None, path = [], path_index = 0):
+        super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
         self.workplace = workplace
         self.rest = rest
         self.workplace.walker = self
@@ -360,7 +362,8 @@ class Prefet(Walker):
                     if self.throw_timer < 3:
                         self.throw_timer += 1
                     else :
-                        self.target.off()
+                        if self.target in self.plateau.burningBuildings:
+                            self.target.off()
                         if len(self.plateau.burningBuildings) > 0:
                             self.target = random.choice(self.plateau.burningBuildings)
                             self.create_path(self.target.case)
