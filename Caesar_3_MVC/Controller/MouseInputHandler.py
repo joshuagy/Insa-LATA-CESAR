@@ -477,8 +477,7 @@ class MouseInputHandler:
         #Overlay part
         # if fire_overlay.clicked:
         #     pass
-
-
+        
     def isMousePosInGrid(self, mousePos):
         x, y = mousePos
         world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
@@ -568,14 +567,19 @@ class MouseInputHandler:
                     grid_y2 = temp
                 
                 #Building Construction :
+                
                 for xi in range(grid_x1, grid_x2+1):
-                    for yi in range(grid_y1, grid_y2+1):
+                    for yi in range(grid_y1, grid_y2+1):                
+                            edited = False
                             for xcr in range (xi-2,xi+3,1) :
                                 for ycr in range (yi-2,yi+3,1) :
                                     if 0<=xcr<self.model.actualGame.nbr_cell_x and 0<=ycr<self.model.actualGame.nbr_cell_y:
                                         if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision and self.model.actualGame.map[xi][yi].sprite not in list_of_undestructible:
                                             if self.model.actualGame.map[xcr][ycr].road :
                                                 self.model.actualGame.foreground.addEffect(xi, yi, 'activeBuildHouse')
+                                                edited = True
+                            if not edited:
+                                self.model.actualGame.foreground.addEffect(xi, yi, 'wrong')
 
             elif self.isMousePosInGrid(event.pos):
                 (x, y) = self.mousePosToGridPos(event.pos)
@@ -586,7 +590,7 @@ class MouseInputHandler:
                                 if self.model.actualGame.map[xcr][ycr].road :
                                     self.model.actualGame.foreground.addEffect(x, y, 'activeBuildHouse')
                                     return
-                self.model.actualGame.foreground.addEffect(x, y, 'default')
+                self.model.actualGame.foreground.addEffect(x, y, 'wrong')
                             
 
         if controlsCurrentState == 'buildRoads':
@@ -603,39 +607,38 @@ class MouseInputHandler:
                     pattern += 2
 
                 if self.model.actualGame.map[grid_x1][grid_y1].sprite not in list_of_undestructible and self.model.actualGame.map[grid_x2][grid_y2].sprite not in list_of_undestructible:
-                    print('pattern')
                     match(pattern):
                         case 0:
                             for xi in range(grid_x1, grid_x2+1):
                                 if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None and self.model.actualGame.map[xi][grid_y2].sprite not in list_of_collision:
-                                    self.model.actualGame.foreground.addEffect(xi, grid_y2, 'activeBuildRoads') 
+                                    self.model.actualGame.foreground.addEffect(xi, grid_y2, 'default') 
 
                             for yi in range(grid_y1, grid_y2+1):
                                 if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None and self.model.actualGame.map[grid_x1][yi].sprite not in list_of_collision:
-                                    self.model.actualGame.foreground.addEffect(grid_x1, yi, 'activeBuildRoads') 
+                                    self.model.actualGame.foreground.addEffect(grid_x1, yi, 'default') 
 
                         case 1:
                             for xi in range(grid_x1, grid_x2-1, -1):
                                 if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None and self.model.actualGame.map[xi][grid_y1].sprite not in list_of_collision:
-                                    self.model.actualGame.foreground.addEffect(xi, grid_y1, 'activeBuildRoads') 
+                                    self.model.actualGame.foreground.addEffect(xi, grid_y1, 'default') 
                             for yi in range(grid_y1, grid_y2+1):
                                 if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None and self.model.actualGame.map[grid_x2][yi].sprite not in list_of_collision:
-                                    self.model.actualGame.foreground.addEffect(grid_x2, yi, 'activeBuildRoads')
+                                    self.model.actualGame.foreground.addEffect(grid_x2, yi, 'default')
                         case 2:
                             for xi in range(grid_x1, grid_x2+1):
                                 if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None and self.model.actualGame.map[xi][grid_y1].sprite not in list_of_collision:
-                                    self.model.actualGame.foreground.addEffect(xi, grid_y1, 'activeBuildRoads')
+                                    self.model.actualGame.foreground.addEffect(xi, grid_y1, 'default')
                             for yi in range(grid_y1, grid_y2-1, -1):
                                 if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None and self.model.actualGame.map[grid_x2][yi].sprite not in list_of_collision:
-                                    self.model.actualGame.foreground.addEffect(grid_x2, yi, 'activeBuildRoads')
+                                    self.model.actualGame.foreground.addEffect(grid_x2, yi, 'default')
                         case 3:
                             for xi in range(grid_x1, grid_x2-1, -1):
                                 if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None and self.model.actualGame.map[xi][grid_y2].sprite not in list_of_collision:
-                                    self.model.actualGame.foreground.addEffect(xi, grid_y2, 'activeBuildRoads')
+                                    self.model.actualGame.foreground.addEffect(xi, grid_y2, 'default')
 
                             for yi in range(grid_y1, grid_y2-1, -1):
                                 if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None and self.model.actualGame.map[grid_x1][yi].sprite not in list_of_collision:
-                                    self.model.actualGame.foreground.addEffect(grid_x1, yi, 'activeBuildRoads')
+                                    self.model.actualGame.foreground.addEffect(grid_x1, yi, 'default')
 
                     self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
 

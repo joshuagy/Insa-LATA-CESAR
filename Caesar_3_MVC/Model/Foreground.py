@@ -42,6 +42,9 @@ class Foreground:
     elif effect == 'activeBuildRoads':
       effectedImage.fill((0, 0, 100))
       originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+    elif effect == 'wrong':
+      effectedImage.fill((200, 0, 0))
+      originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
     elif effect == 'default':
       mask = pygame.mask.from_surface(originalImage)
       effectedImage = mask.to_surface()
