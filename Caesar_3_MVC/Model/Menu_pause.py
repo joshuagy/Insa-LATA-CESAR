@@ -27,21 +27,36 @@ class Pausemenu:
         self.Replay_rect.x,self.Replay_rect.y = self.width / 2 - 100, self.height / 2 - 100
         self.Savegame_rect.x, self.Savegame_rect.y = self.width / 2 - 100, self.height / 2 - 50
         self.Exit_rect.x, self.Exit_rect.y = self.width / 2 - 100, self.height / 2
+
         self.pause=False
 
+        self.Continue_rectyinit=self.Continue_rect.y
+        self.Replay_rectyinit=self.Replay_rect.y
+        self.Savegame_rectyinit=self.Savegame_rect.y
+        self.Exit_rectyinit = self.Exit_rect.y
 
-
-
-
+        self.passed=[False,False,False,False]
 
     def draw_pause_menu(self):
         if self.pause:
+            if not self.passed[0]:
+                self.Exit_rect.y = self.Exit_rectyinit
+            if not self.passed[1]:
+                self.Continue_rect.y = self.Continue_rectyinit
+            if not self.passed[2]:
+                self.Savegame_rect.y = self.Savegame_rectyinit
+
+            if not self.passed[3]:
+                self.Replay_rect.y = self.Replay_rectyinit
+
 
             self.screen.blit(self.Pause, self.Pause_rect)
             self.screen.blit(self.Continue, self.Continue_rect)
             self.screen.blit(self.Replay, self.Replay_rect)
             self.screen.blit(self.Savegame, self.Savegame_rect)
             self.screen.blit(self.Exit, self.Exit_rect)
+
+
     def exit(self):
         pygame.quit()
         sys.exit()

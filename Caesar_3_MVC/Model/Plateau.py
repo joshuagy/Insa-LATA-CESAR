@@ -8,8 +8,11 @@ from Model.control_panel import *
 from Model.constants import *
 from Model.Route import Route
 from Model.Buildings.Building import Building
+from Model.Buildings.Building import BurningBuilding
+from Model.Buildings.Building import DamagedBuilding
 from Model.Buildings.House import House
 from Model.Buildings.House import HousingSpot
+from Model.Buildings.RessourceBuilding import *
 from Model.Buildings.WorkBuilding import *
 from Model.Controls import Controls
 from Model.TopBar import TopBar
@@ -74,23 +77,15 @@ class Plateau():
         self.cityHousesList = cityHousesList
         self.cityHousingSpotsList = cityHousingSpotsList
         self.burningBuildings = burningBuildings
-        
-        # Variable speed feature
+
         self.currentSpeed = 100
+        self.buttonsFunctions = self.getButtonsFunctions()
+        self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.buttonsFunctions)
 
-        # Left menu in game
-        self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.increaseSpeed, self.decreaseSpeed)
 
-        # Top menu in game
         self.topbar = TopBar(self.screen, self.treasury, self.population)
 
-
         #Define the position of the button on the full panel button who won't change position after
-        # fire_overlay.change_pos(self.width-fire_overlay.dim[0]-hide_control_panel_button.dim[0]-150,27)
-        # damage_overlay.change_pos(self.width-damage_overlay.dim[0]-hide_control_panel_button.dim[0]-150,52)
-        # entertainment_overlay.change_pos(self.width-entertainment_overlay.dim[0]-hide_control_panel_button.dim[0]-150,77)
-        # water_overlay.change_pos(self.width-water_overlay.dim[0]-hide_control_panel_button.dim[0]-150,102)
-        
         # overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
         # hide_control_panel_button.change_pos(self.width-hide_control_panel_button.dim[0]-4,24+5)
         # advisors_button.change_pos(self.width-155,179)
@@ -108,7 +103,7 @@ class Plateau():
         global counter
         counter = 1
         self.overlayCounter = 0
-
+        self.riviere()
     def default_map(self):
 
         map = []
@@ -233,16 +228,34 @@ class Plateau():
         sign2 = pygame.image.load("image/C3/land3a_00087.png").convert_alpha()
         sign2 = pygame.transform.scale(sign2, (sign2.get_width() / 2, sign2.get_height() / 2))
 
+
         water1 = pygame.image.load("image/C3/Land1a_00122.png").convert_alpha()
         water1 = pygame.transform.scale(water1, (water1.get_width() / 2, water1.get_height() / 2))
-        water2 = pygame.image.load("image/C3/Land1a_00132.png").convert_alpha()
+        water2 = pygame.image.load("image/Water/wdown.png").convert_alpha()
         water2 = pygame.transform.scale(water2, (water2.get_width() / 2, water2.get_height() / 2))
-        water3 = pygame.image.load("image/C3/Land1a_00141.png").convert_alpha()
+        water3 = pygame.image.load("image/Water/wup.png").convert_alpha()
         water3 = pygame.transform.scale(water3, (water3.get_width() / 2, water3.get_height() / 2))
-        water4 = pygame.image.load("image/C3/Land1a_00146.png").convert_alpha()
+        water4 = pygame.image.load("image/Water/wleft.png").convert_alpha()
         water4 = pygame.transform.scale(water4, (water4.get_width() / 2, water4.get_height() / 2))
-        water5 = pygame.image.load("image/C3/Land1a_00154.png").convert_alpha()
+        water5 = pygame.image.load("image/Water/wright.png").convert_alpha()
         water5 = pygame.transform.scale(water5, (water5.get_width() / 2, water5.get_height() / 2))
+        water6=pygame.image.load("image/Water/wdowncorner.png").convert_alpha()
+        water6 = pygame.transform.scale(water6, (water6.get_width() / 2, water6.get_height() / 2))
+        water7=pygame.image.load("image/Water/wupcorner.png").convert_alpha()
+        water7 = pygame.transform.scale(water7, (water7.get_width() / 2, water7.get_height() / 2))
+        water8 = pygame.image.load("image/Water/wleftcorner.png").convert_alpha()
+        water8 = pygame.transform.scale(water8, (water8.get_width() / 2, water8.get_height() / 2))
+        water9 = pygame.image.load("image/Water/wrightcorner.png").convert_alpha()
+        water9 = pygame.transform.scale(water9, (water9.get_width() / 2, water9.get_height() / 2))
+        water10 = pygame.image.load("image/Water/wdownw.png").convert_alpha()
+        water10 = pygame.transform.scale(water10, (water10.get_width() / 2, water10.get_height() / 2))
+        water11 = pygame.image.load("image/Water/wupw.png").convert_alpha()
+        water11 = pygame.transform.scale(water11, (water11.get_width() / 2, water11.get_height() / 2))
+        water12 = pygame.image.load("image/Water/wleftw.png").convert_alpha()
+        water12 = pygame.transform.scale(water12, (water12.get_width() / 2, water12.get_height() / 2))
+        water13 = pygame.image.load("image/Water/wrightw.png").convert_alpha()
+        water13 = pygame.transform.scale(water13, (water13.get_width() / 2, water13.get_height() / 2))
+
 
         red = pygame.image.load("image/C3/red.png").convert_alpha()
         red = pygame.transform.scale(red, (red.get_width() / 2, red.get_height() / 2))
@@ -251,9 +264,9 @@ class Plateau():
         base_overlay = pygame.transform.scale(base_overlay, (base_overlay.get_width() / 2, base_overlay.get_height() / 2))
 
         return {"land1": land1,"land2": land2, "tree1": tree1,"tree2": tree2,
-                "tree3": tree3,"rock1": rock1,"rock2": rock2,"water1":water1,
-                "water2":water2,"water3":water3,"sign1":sign1,"sign2":sign2,
-                "water4":water4,"water5":water5,"rock3":rock3, "red":red, "base_overlay":base_overlay
+                "tree3": tree3,"rock1": rock1,"rock2": rock2,"water1":water1,"water2":water2,"water3":water3,"water4":water4,"water5":water5,"water6":water6,
+                "water7": water7,"water8":water8,"water9":water9,'water10':water10,'water11':water11,'water12':water12,'water13':water13,
+                "sign1":sign1,"sign2":sign2, "rock3":rock3, "red":red, "base_overlay":base_overlay
                 }
     def load_routes_images(self):
         
@@ -307,21 +320,56 @@ class Plateau():
         ws = load_image("image/Buildings/Utilitya_00001.png")
         bsts = list(load_image(f"image/Buildings/BurningBuilding/BurningBuildingFrame{i}.png") for i in range(1, 9))
         burnruinss = load_image("image/Buildings/BurningBuilding/Land2a_00187.png")
-        ruinss = load_image("image/Buildings/Land2a_00044.png")
+        ruinss = load_image("image/Buildings/Land2a_00111.png")
+        sens = load_image("image/Buildings/Govt_00004.png")
+        whfas = load_image("image/Buildings/Farm/Commerce_00012.png")
+        whpls = list(load_image(f"image/Buildings/Farm/Plot{i}.png") for i in range(0,5))
+        marks = load_image("image/Buildings/Commerce_00001.png")
+        
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
-                "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
-    
+                "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks }
+ 
+    def getButtonsFunctions(self):
+        return {
+            'increaseSpeed': self.increaseSpeed,
+            'decreaseSpeed': self.decreaseSpeed,
+        }
+
     def increaseSpeed(self):
-        if self.currentSpeed >= 0 and self.currentSpeed < 100:
-            self.currentSpeed += 10 
+        if self.currentSpeed >= 0 and self.currentSpeed < 500:
+            if self.currentSpeed >= 100:
+                self.currentSpeed += 100
+            else: 
+                self.currentSpeed += 10 
     
     def decreaseSpeed(self):
-        if self.currentSpeed > 0:
-            self.currentSpeed -= 10 
+        if self.currentSpeed > 10:
+            if self.currentSpeed > 100:
+                self.currentSpeed -= 100
+            else:
+                self.currentSpeed -= 10 
+
+    def clearLand(self, grid_x1, grid_x2, grid_y1, grid_y2):
+        for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                        if self.map[xi][yi].sprite not in list_of_undestructible:
+                            self.map[xi][yi].sprite = "land1"
+                            if self.map[xi][yi].road :
+                                self.map[xi][yi].road.delete()
+                                self.treasury = self.treasury - DESTRUCTION_COST
+                            if self.map[xi][yi].structure :
+                                if self.map[xi][yi].structure.desc != "BurningBuilding" :
+                                    self.map[xi][yi].structure.delete()
+                                    self.treasury = self.treasury - DESTRUCTION_COST
+                              
+                            
+        self.collision_matrix = self.create_collision_matrix()
+        self.foreground.initForegroundGrid()
 
     def update(self):
         if self.restart:
+
             self.entities.clear()
             self.listeCase.clear()
             self.structures.clear()
@@ -330,23 +378,26 @@ class Plateau():
             self.burningBuildings.clear()
 
         if not self.pause:
+            
             self.camera.update()
             self.controls.update(self.currentSpeed)
             self.topbar.update(self.treasury, self.population)
 
             #Update de la position des walkers
-            for e in self.entities: e.update()
+            currentSpeedFactor = self.currentSpeed/100
+            for e in self.entities: e.update(currentSpeedFactor)
             for hs in self.cityHousingSpotsList: hs.generateImmigrant()
             for bb in self.burningBuildings: bb.update()
             for b in self.structures :
                 if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
                 if isinstance(b,WorkBuilding): b.delay()
+                if isinstance(b,WheatFarm) : b.update()     #Actualise les fermes
                 self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
             self.population = 0
             for h in self.cityHousesList:
                 h.udmCheck()   # Vérifie les upgrades, downgrades et merge d'habitations
                 self.population = self.population + h.nbHab
-            
+
     def nearbyRoadsCheck(self, b):     #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
         for xcr in range (b.case.x-2,b.case.x+3,1) :
             for ycr in range (b.case.y-2,b.case.y+3,1) :
@@ -358,188 +409,216 @@ class Plateau():
         if isinstance(b,WorkBuilding) and b.active==True :
             b.active = False
 
+
     def draw(self):
-        self.screen.fill((0, 0, 0))
-        #self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
+        if not self.pause:
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
 
-        # DRAW CELLS
-        for cell_x in range(self.nbr_cell_y):
-            for cell_y in range(self.nbr_cell_y):
-                render_pos =  self.map[cell_x][cell_y].render_pos
-                id_image = self.map[cell_x][cell_y].sprite
 
-                # DRAW DEFAULT CELLS
-                if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
-                    id_image = self.map[cell_x][cell_y].sprite
-                    self.screen.blit(self.image[id_image],
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
-                # DRAW ROADS
-                elif self.map[cell_x][cell_y].road:
-                    id_image = self.map[cell_x][cell_y].road.sprite
-                    self.screen.blit(self.image_route[id_image],
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image_route[id_image].get_height() - cell_size) + self.camera.vect.y))
+           # DRAW CELLS
 
-                # DRAW STRUCTURES
-                elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
-                    self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)], 
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
-                                        
-                elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
-                    id_image = self.map[cell_x][cell_y].structure.desc
-                    self.screen.blit(self.image_structures[id_image], 
+            for cell_x in range(self.nbr_cell_y):
+                for cell_y in range(self.nbr_cell_y):
+                    render_pos =  self.map[cell_x][cell_y].render_pos
+                    id_image = None
+                    image = None
+                    # DRAW DEFAULT CELLS
+                    if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
+                        id_image = self.map[cell_x][cell_y].sprite
+                        image = self.image[id_image]
+                        self.screen.blit(image,
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                             render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
-
-                # DRAW PREVIEWED CELLS AND HOVERED CELLS
-                if self.foreground.hasEffect(cell_x, cell_y):
-                    id_image = self.map[cell_x][cell_y].sprite
-                    effectedImage = self.foreground.getEffectedImage(self.image[id_image].copy(), cell_x, cell_y)
-                    self.screen.blit(effectedImage,
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
-                
-                # DRAW WALKERS
-                for e in self.walkers[cell_x][cell_y]:
-                    self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)], 
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
-
-                # DRAW OVERLAY
-                # Overlay part
-                # Fire
-                # Hidding the overlay by default
-                blackText = self.minimalFont.render("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa", 1, (0, 0, 0), (0, 0, 0))
-                self.screen.blit(blackText, (75, self.screen.get_height() - blackText.get_height()))
-                if self.overlayCounter == 30:
-                    if self.controls.overlays_button.clicked:
-                        self.foreground.setOverlayName("fire")
-                        self.foreground.initOverlayGrid()
-                        for x in range(40):
-                            for y in range(40):
-                                temp = self.map[x][y].structure
-                                if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
-                                    self.foreground.addOverlayInfo(x, y, temp.get_fireRisk())
-                    else:
-                        self.foreground.setOverlayName(None)
-
-                    self.overlayCounter = 0
-
-                sprite = "base_overlay"
-                if self.foreground.getOverlayName() == "fire":
-                    fireText = self.minimalFont.render("FIRE Overlay:", 1, (255, 0, 0), (0, 0, 0))
-                    self.screen.blit(fireText, (75, self.screen.get_height() - fireText.get_height()))
-
-                match self.foreground.getOverlayInfo(cell_x, cell_y):
-                    case 0:
-                        effectedImage = self.foreground.putGreen(self.image[sprite].copy())
-                        self.screen.blit(effectedImage,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
                     
-                    case 1:
-                        effectedImage = self.foreground.putGreenYellow(self.image[sprite].copy())
-                        self.screen.blit(effectedImage,
+                    # DRAW ROADS
+                    elif self.map[cell_x][cell_y].road:
+                        id_image = self.map[cell_x][cell_y].road.sprite
+                        image = self.image_route[id_image]
+                        self.screen.blit(image,
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                    
-                    case 2:
-                        effectedImage = self.foreground.putYellow(self.image[sprite].copy())
-                        self.screen.blit(effectedImage,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                    
-                    case 3:
-                        effectedImage = self.foreground.putYellowOrange(self.image[sprite].copy())
-                        self.screen.blit(effectedImage,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                    
-                    case 4:
-                        effectedImage = self.foreground.putOrange(self.image[sprite].copy())
-                        self.screen.blit(effectedImage,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                    
-                    case 5:
-                        effectedImage = self.foreground.putOrangeRed(self.image[sprite].copy())
-                        self.screen.blit(effectedImage,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                                        render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
-                    case 6:
-                        effectedImage = self.foreground.putRed(self.image[sprite].copy())
+                    # DRAW PREVIEWED CELLS AND HOVERED CELLS
+                    if self.foreground.hasEffect(cell_x, cell_y):
+                        id_image = self.map[cell_x][cell_y].sprite
+                        effectedImage = self.foreground.getEffectedImage(self.image[id_image].copy(), cell_x, cell_y)
                         self.screen.blit(effectedImage,
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                
+                                        render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
         
-        self.overlayCounter += 1    
-        self.topbar.render()
-        self.controls.render()
-        
-        fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
-        self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
+                    # DRAW STRUCTURES
+                    elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
+                        image = self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)]
+                        self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)],
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
 
-        # if state_control_panel=="reduced":
-            
-        #     self.screen.blit(small_gap_menu.img_scaled, (self.width-small_gap_menu.dim[0], 24))
+                    elif isinstance(self.map[cell_x][cell_y].structure, WheatPlot):
+                        self.screen.blit(self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level].get_height() - cell_size) + self.camera.vect.y))
 
-            
-        #     display_control_panel_button.update()
-        #     display_control_panel_button.change_pos(self.width-display_control_panel_button.dim[0]-5,28)
-        #     display_control_panel_button.draw(self.screen)
+                    elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
+                        id_image = self.map[cell_x][cell_y].structure.desc
+                        image = self.image_structures[id_image]
+                        self.screen.blit(image,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                                render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
-        #     build_housing_button.update()
-        #     build_housing_button.change_pos(self.width-build_housing_button.dim[0]-1,24+32)
-        #     build_housing_button.draw(self.screen)
+                    # DRAW PREVIEWED CELLS AND HOVERED CELLS
+                    if self.foreground.hasEffect(cell_x, cell_y) and image != None:
+                        effectedImage = self.foreground.getEffectedImage(id_image, image.copy(), cell_x, cell_y)
+                        self.screen.blit(effectedImage,
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                        render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
-        #     clear_land_button.update()
-        #     clear_land_button.change_pos(self.width-clear_land_button.dim[0]-1,24+67)
-        #     clear_land_button.draw(self.screen)
+                    # DRAW WALKERS
+                    for e in self.walkers[cell_x][cell_y]:
+                        self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)],
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                             render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
 
-        #     build_roads_button.update()
-        #     build_roads_button.change_pos(self.width-build_roads_button.dim[0]-1,24+102)
-        #     build_roads_button.draw(self.screen)
-            
 
-        #     water_related_structures.update()
-        #     water_related_structures.change_pos(self.width-water_related_structures.dim[0]-1,24+137)
-        #     water_related_structures.draw(self.screen)
-           
-        #     health_related_structures.update()
-        #     health_related_structures.change_pos(self.width-health_related_structures.dim[0]-1,24+172)
-        #     health_related_structures.draw(self.screen)
-           
-        #     religious_structures.update()
-        #     religious_structures.change_pos(self.width-religious_structures.dim[0]-1,24+207)
-        #     religious_structures.draw(self.screen)
+                    # DRAW OVERLAY
+                    # Overlay part
+                    # Fire
+                    # Hidding the overlay by default
+                    blackText = self.minimalFont.render("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa", 1, (0, 0, 0), (0, 0, 0))
+                    self.screen.blit(blackText, (75, self.screen.get_height() - blackText.get_height()))
+                    if self.overlayCounter == 30:
+                        if self.controls.overlays_button.clicked:
+                            self.foreground.setOverlayName("fire")
+                            self.foreground.initOverlayGrid()
+                            for x in range(40):
+                                for y in range(40):
+                                    temp = self.map[x][y].structure
+                                    if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
+                                        self.foreground.addOverlayInfo(x, y, temp.get_fireRisk())
+                        else:
+                            self.foreground.setOverlayName(None)
+
+                        self.overlayCounter = 0
+
+                    sprite = "base_overlay"
+                    if self.foreground.getOverlayName() == "fire":
+                        fireText = self.minimalFont.render("FIRE Overlay:", 1, (255, 0, 0), (0, 0, 0))
+                        self.screen.blit(fireText, (75, self.screen.get_height() - fireText.get_height()))
+
+                    match self.foreground.getOverlayInfo(cell_x, cell_y):
+                        case 0:
+                            effectedImage = self.foreground.putGreen(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 1:
+                            effectedImage = self.foreground.putGreenYellow(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 2:
+                            effectedImage = self.foreground.putYellow(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 3:
+                            effectedImage = self.foreground.putYellowOrange(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 4:
+                            effectedImage = self.foreground.putOrange(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 5:
+                            effectedImage = self.foreground.putOrangeRed(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+
+                        case 6:
+                            effectedImage = self.foreground.putRed(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                    
             
-        #     education_structures.update()
-        #     education_structures.change_pos(self.width-education_structures.dim[0]-1,24+242)
-        #     education_structures.draw(self.screen)
+            self.overlayCounter += 1    
+            self.topbar.render()
+            self.controls.render()
             
-        #     entertainment_structures.update()
-        #     entertainment_structures.change_pos(self.width-entertainment_structures.dim[0]-1,24+277)
-        #     entertainment_structures.draw(self.screen)
-            
-        #     administration_or_government_structures.update()
-        #     administration_or_government_structures.change_pos(self.width-administration_or_government_structures.dim[0]-1,24+312)
-        #     administration_or_government_structures.draw(self.screen)
-            
-        #     engineering_structures.update()
-        #     engineering_structures.change_pos(self.width-engineering_structures.dim[0]-1,24+347)
-        #     engineering_structures.draw(self.screen)
-            
-        #     security_structures.update()
-        #     security_structures.change_pos(self.width-security_structures.dim[0]-1,24+382)
-        #     security_structures.draw(self.screen)
-            
-        #     industrial_structures.update()
-        #     industrial_structures.change_pos(self.width-industrial_structures.dim[0]-1,24+417)
-        #     industrial_structures.draw(self.screen)
+            fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
+            self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
+                    
+            self.topbar.render()
+            self.controls.render()
+
+            fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
+            self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
+
+            # if state_control_panel=="reduced":
+
+            #     self.screen.blit(small_gap_menu.img_scaled, (self.width-small_gap_menu.dim[0], 24))
+
+
+            #     display_control_panel_button.update()
+            #     display_control_panel_button.change_pos(self.width-display_control_panel_button.dim[0]-5,28)
+            #     display_control_panel_button.draw(self.screen)
+
+            #     build_housing_button.update()
+            #     build_housing_button.change_pos(self.width-build_housing_button.dim[0]-1,24+32)
+            #     build_housing_button.draw(self.screen)
+
+            #     clear_land_button.update()
+            #     clear_land_button.change_pos(self.width-clear_land_button.dim[0]-1,24+67)
+            #     clear_land_button.draw(self.screen)
+
+            #     build_roads_button.update()
+            #     build_roads_button.change_pos(self.width-build_roads_button.dim[0]-1,24+102)
+            #     build_roads_button.draw(self.screen)
+
+
+            #     water_related_structures.update()
+            #     water_related_structures.change_pos(self.width-water_related_structures.dim[0]-1,24+137)
+            #     water_related_structures.draw(self.screen)
+
+            #     health_related_structures.update()
+            #     health_related_structures.change_pos(self.width-health_related_structures.dim[0]-1,24+172)
+            #     health_related_structures.draw(self.screen)
+
+            #     religious_structures.update()
+            #     religious_structures.change_pos(self.width-religious_structures.dim[0]-1,24+207)
+            #     religious_structures.draw(self.screen)
+
+            #     education_structures.update()
+            #     education_structures.change_pos(self.width-education_structures.dim[0]-1,24+242)
+            #     education_structures.draw(self.screen)
+
+            #     entertainment_structures.update()
+            #     entertainment_structures.change_pos(self.width-entertainment_structures.dim[0]-1,24+277)
+            #     entertainment_structures.draw(self.screen)
+
+            #     administration_or_government_structures.update()
+            #     administration_or_government_structures.change_pos(self.width-administration_or_government_structures.dim[0]-1,24+312)
+            #     administration_or_government_structures.draw(self.screen)
+
+            #     engineering_structures.update()
+            #     engineering_structures.change_pos(self.width-engineering_structures.dim[0]-1,24+347)
+            #     engineering_structures.draw(self.screen)
+
+            #     security_structures.update()
+            #     security_structures.change_pos(self.width-security_structures.dim[0]-1,24+382)
+            #     security_structures.draw(self.screen)
+
+            #     industrial_structures.update()
+            #     industrial_structures.change_pos(self.width-industrial_structures.dim[0]-1,24+417)
+            #     industrial_structures.draw(self.screen)
 
 
     def create_collision_matrix(self):
@@ -553,6 +632,164 @@ class Plateau():
                 if self.map[x][y].road:
                     collision_matrix[y][x] = 1
         return collision_matrix
+
+    def riviere(self):
+
+        water_list = ['water1', 'water2', 'water3', 'water4', 'water5', 'water6','water7','water8','water9','water10','water11','water12','water13']
+        for x in range(self.nbr_cell_y):
+            for y in range(self.nbr_cell_y):
+
+                if self.map[x][y].sprite in water_list:
+                    d,g,h,b=(None,None,None,None)
+                    if x != 0 and y != 0 and x != 39 and y != 39:
+
+                        g=self.map[x-1][y].sprite
+                        d=self.map[x+1][y].sprite
+                        h=self.map[x][y-1].sprite
+                        b=self.map[x][y+1].sprite
+                    else:
+
+                        if x == 0 and y != 0:
+                            g='water1'
+                            d = self.map[x+1][y].sprite
+                            h = self.map[x][y-1].sprite
+                            b = self.map[x][y+1].sprite
+                        if y == 0 and x != 0:
+
+                            h = 'water1'
+                            g = self.map[x - 1][y].sprite
+                            d = self.map[x + 1][y].sprite
+                            b = self.map[x][y + 1].sprite
+
+
+
+                        if x == 39 and y != 39:
+
+
+                            d = 'water1'
+                            g = self.map[x - 1][y].sprite
+                            h = self.map[x][y - 1].sprite
+                            b = self.map[x][y + 1].sprite
+
+
+
+                        if y == 39 and x != 39:
+                            b = 'water1'
+                            g = self.map[x - 1][y].sprite
+                            d = self.map[x + 1][y].sprite
+                            h = self.map[x][y - 1].sprite
+
+
+
+
+
+
+
+
+                    if g in water_list:
+
+
+                        if b not in water_list and  h  in water_list and d in water_list:
+                            self.map[x][y].sprite='water4'
+                        elif b  in water_list and  h  in water_list and d not in water_list:
+                            self.map[x][y].sprite='water2'
+                        elif b in water_list and  h not in water_list and d in water_list:
+                            self.map[x][y].sprite='water5'
+                        elif b not in water_list and  h in water_list and d not in water_list:
+                            self.map[x][y].sprite='water6'
+                        elif b in water_list and h not in water_list and d not in water_list:
+                            self.map[x][y].sprite = 'water9'
+                        elif h in water_list and  b not in water_list and d not in water_list:
+                            self.map[x][y].sprite = 'water6'
+
+
+
+
+                    elif g not in water_list:
+
+                        if b in water_list and h in water_list and d in water_list:
+                            self.map[x][y].sprite = 'water3'
+                        elif b not in water_list and h in water_list and d in water_list:
+                            self.map[x][y].sprite = 'water8'
+                        elif d in water_list and b in water_list and h not in water_list:
+                            self.map[x][y].sprite = 'water7'
+
+
+
+
+
+        self.riviere2(water_list)
+    def riviere2(self,water_list):
+
+        for x in range(self.nbr_cell_y):
+            for y in range(self.nbr_cell_y):
+
+                if self.map[x][y].sprite in water_list:
+                    d, g, h, b,hg,hd,bg,bd = (None, None, None, None,None,None,None,None)
+                    if x != 0 and y != 0 and x != 39 and y != 39:
+
+                        g = self.map[x-1][y].sprite
+                        d = self.map[x+1][y].sprite
+                        h = self.map[x][y-1].sprite
+                        b = self.map[x][y+1].sprite
+                        hg = self.map[x-1][y-1].sprite
+                        hd = self.map[x+1][y-1].sprite
+                        bg = self.map[x-1][y+1].sprite
+                        bd = self.map[x+1][y+1].sprite
+                    else:
+
+                        if x == 0 and y != 0:
+                            g='water1'
+                            hg='water1'
+                            bg='water1'
+                            d = self.map[x+1][y].sprite
+                            h = self.map[x][y-1].sprite
+                            b = self.map[x][y+1].sprite
+
+                        if y == 0 and x != 0:
+
+                            h = 'water1'
+                            hd='water1'
+                            hg='water1'
+                            g = self.map[x - 1][y].sprite
+                            d = self.map[x + 1][y].sprite
+                            b = self.map[x][y + 1].sprite
+
+
+
+                        if x == 39 and y != 39:
+
+
+                            d = 'water1'
+                            hd='water1'
+                            bd='water1'
+                            g = self.map[x - 1][y].sprite
+                            h = self.map[x][y - 1].sprite
+                            b = self.map[x][y + 1].sprite
+
+
+
+                        if y == 39 and x != 39:
+                            b = 'water1'
+                            bd='water1'
+                            bg='water1'
+                            g = self.map[x - 1][y].sprite
+                            d = self.map[x + 1][y].sprite
+                            h = self.map[x][y - 1].sprite
+
+                    if  g != 'water1' and g in water_list  and b != 'water1' and b in water_list and h == 'water1' and d == 'water1' and bg not in water_list:
+                        self.map[x][y].sprite = 'water12'
+
+
+                    if g == 'water1' and b == 'water1' and h != 'water1' and h in water_list and d != 'water1' and d in water_list and hd not in water_list:
+                        self.map[x][y].sprite = 'water13'
+
+                    if d!='water1' and d in water_list and  b!='water1' and b in water_list and g =='water1' and h =='water1' and bd not in water_list:
+                        self.map[x][y].sprite = 'water10'
+
+                    if g!='water1' and g in water_list and  h!='water1' and h in water_list and d =='water1' and b =='water1' and hg not in water_list:
+                        self.map[x][y].sprite = 'water11'
+
 
 def load_image(path):
     image = pygame.image.load(path).convert_alpha()

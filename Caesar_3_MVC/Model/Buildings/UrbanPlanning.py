@@ -1,7 +1,7 @@
 from Model.Plateau import *
 from Model.Buildings.House import *
 
-class Well:
+class Well(Building):
 
     listWell = []
 
@@ -31,7 +31,23 @@ class Well:
                     for cw in Well.listWell :
                         if abs(cw.case.x-xi)<=2 and abs(cw.case.y-yi)<=2 :
                             self.plateau.map[xi][yi].waterAccess=1
+        del self
+        
+class Senate(Building) :
+    def __init__(self, case, plateau, size, desc) :
+        super().__init__(case, plateau, size, desc)
+        self.allCases = []
+        self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]+60]
+        for xi in range(self.case.x, self.case.x+5, 1) :
+            for yi in range(self.case.y, self.case.y-5, -1 ) :
+                self.allCases.append(self.plateau.map[xi][yi])
+                self.plateau.map[xi][yi].setStructure(self)
 
 
+    def delete(self) :
+        self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]-60]
+        self.plateau.structures.remove(self)
+        for oc in self.allCases :
+            oc.setStructure(None)
         del self
         
