@@ -48,7 +48,7 @@ class Sauvegarde() :
         self.entities = []
         for e in actualGame.entities :
             if e.type != "Chariot":
-                newdict = {"type" : e.type, "x" : e.case.x, "y" : e.case.y, "name" : e.name, "ttw" : e.ttw, "action" : e.action, "direction" : e.direction}
+                newdict = {"type" : e.type, "x" : e.case.x, "y" : e.case.y, "name" : e.name, "ttw" : e.ttw, "action" : e.action, "direction" : e.direction, "path" : e.path}
                 if newdict["type"] == "Prefet" or newdict["type"] == "Engineer":
                     newdict |= {"rest" : e.rest, "workplace_x" : e.workplace.case.x, "workplace_y" : e.workplace.case.y}
                     if newdict["type"] == "Prefet":
