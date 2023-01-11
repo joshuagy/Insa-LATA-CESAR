@@ -176,7 +176,8 @@ class MouseInputHandler:
         """
         Handles game mouse events
         """
-
+        self.model.actualGame.foreground.initOverlayGrid()
+        self.model.actualGame.foreground.setOverlayName(None)
         mousePosRelative = (event.pos[0] - (self.model.actualGame.width - big_gap_menu.dim[0] - 1758.0) - 1758.0, event.pos[1] -24)
         controlsCurrentState = self.model.actualGame.controls.getCurrentState()
 

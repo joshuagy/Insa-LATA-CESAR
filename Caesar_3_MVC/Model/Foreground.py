@@ -11,6 +11,10 @@ class Foreground:
     self.foregroundGrid = None
     self.initForegroundGrid()
 
+    self.overlayGrid = None
+    self.initOverlayGrid()
+    self.overlayName = None
+
     self.originalImageActiveBuildHouse = pygame.image.load('image/Buildings/Housng1a_00045.png').convert_alpha()
     self.originalImageActiveBuildHouse = pygame.transform.scale(self.originalImageActiveBuildHouse, (self.originalImageActiveBuildHouse.get_width() / 2, self.originalImageActiveBuildHouse.get_height() / 2))
 
@@ -52,6 +56,63 @@ class Foreground:
       effectedImage.set_alpha(65)
       originalImage.blit(effectedImage, (0, 0))
     return originalImage
-    
+
+  def initOverlayGrid(self):
+    self.overlayGrid = [[None for _ in range(self.nbr_cell_x)] for _ in range(self.nbr_cell_y)]
+  
+  def setOverlayName(self, name):
+    self.overlayName = name
+  
+  def getOverlayName(self):
+    return self.overlayName
+
+  def addOverlayInfo(self, x, y, level):
+    self.overlayGrid[x][y] = level
+  
+  def getOverlayInfo(self, x, y):
+    return self.overlayGrid[x][y]
+
+  def putRed(self, originalImage):
+      effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+      effectedImage.fill((200, 0, 0))
+      originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+      return originalImage
+
+  def putGreenYellow(self, originalImage):
+      effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+      effectedImage.fill((130, 185, 46))
+      originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+      return originalImage
+
+  def putYellow(self, originalImage):
+        effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+        effectedImage.fill((255, 255, 0))
+        originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+        return originalImage
+
+  def putYellowOrange(self, originalImage):
+        effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+        effectedImage.fill((255, 183, 0))
+        originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+        return originalImage
+
+  def putOrange(self, originalImage):
+        effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+        effectedImage.fill((255, 130, 0))
+        originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+        return originalImage
+  
+  def putOrangeRed(self, originalImage):
+      effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+      effectedImage.fill((255, 94, 0))
+      originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+      return originalImage
+
+  def putGreen(self, originalImage):
+    effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+    effectedImage.fill((0, 200, 0))
+    originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+    return originalImage
+
   def render(self):
     pass

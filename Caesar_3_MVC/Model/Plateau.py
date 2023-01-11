@@ -102,9 +102,8 @@ class Plateau():
         self.restart = False
         global counter
         counter = 1
+        self.overlayCounter = 0
         self.riviere()
-
-
     def default_map(self):
 
         map = []
@@ -259,13 +258,15 @@ class Plateau():
 
 
         red = pygame.image.load("image/C3/red.png").convert_alpha()
-        red = pygame.transform.scale(red, (red.get_width() / 2, red.get_height() / 2)) 
+        red = pygame.transform.scale(red, (red.get_width() / 2, red.get_height() / 2))
+
+        base_overlay = pygame.image.load("image/C3/Land2a_00004.png").convert_alpha()
+        base_overlay = pygame.transform.scale(base_overlay, (base_overlay.get_width() / 2, base_overlay.get_height() / 2))
 
         return {"land1": land1,"land2": land2, "tree1": tree1,"tree2": tree2,
                 "tree3": tree3,"rock1": rock1,"rock2": rock2,"water1":water1,"water2":water2,"water3":water3,"water4":water4,"water5":water5,"water6":water6,
                 "water7": water7,"water8":water8,"water9":water9,'water10':water10,'water11':water11,'water12':water12,'water13':water13,
-                "sign1":sign1,"sign2":sign2,
-               "rock3":rock3, "red":red
+                "sign1":sign1,"sign2":sign2, "rock3":rock3, "red":red, "base_overlay":base_overlay
                 }
     def load_routes_images(self):
         
@@ -428,7 +429,8 @@ class Plateau():
                         image = self.image[id_image]
                         self.screen.blit(image,
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
+                                            render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                    
                     # DRAW ROADS
                     elif self.map[cell_x][cell_y].road:
                         id_image = self.map[cell_x][cell_y].road.sprite
@@ -437,6 +439,14 @@ class Plateau():
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                         render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
+                    # DRAW PREVIEWED CELLS AND HOVERED CELLS
+                    if self.foreground.hasEffect(cell_x, cell_y):
+                        id_image = self.map[cell_x][cell_y].sprite
+                        effectedImage = self.foreground.getEffectedImage(self.image[id_image].copy(), cell_x, cell_y)
+                        self.screen.blit(effectedImage,
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                        render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
+        
                     # DRAW STRUCTURES
                     elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
                         image = self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)]
@@ -469,6 +479,83 @@ class Plateau():
                                             (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                              render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
 
+
+                    # DRAW OVERLAY
+                    # Overlay part
+                    # Fire
+                    # Hidding the overlay by default
+                    blackText = self.minimalFont.render("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa", 1, (0, 0, 0), (0, 0, 0))
+                    self.screen.blit(blackText, (75, self.screen.get_height() - blackText.get_height()))
+                    if self.overlayCounter == 30:
+                        if self.controls.overlays_button.clicked:
+                            self.foreground.setOverlayName("fire")
+                            self.foreground.initOverlayGrid()
+                            for x in range(40):
+                                for y in range(40):
+                                    temp = self.map[x][y].structure
+                                    if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
+                                        self.foreground.addOverlayInfo(x, y, temp.get_fireRisk())
+                        else:
+                            self.foreground.setOverlayName(None)
+
+                        self.overlayCounter = 0
+
+                    sprite = "base_overlay"
+                    if self.foreground.getOverlayName() == "fire":
+                        fireText = self.minimalFont.render("FIRE Overlay:", 1, (255, 0, 0), (0, 0, 0))
+                        self.screen.blit(fireText, (75, self.screen.get_height() - fireText.get_height()))
+
+                    match self.foreground.getOverlayInfo(cell_x, cell_y):
+                        case 0:
+                            effectedImage = self.foreground.putGreen(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 1:
+                            effectedImage = self.foreground.putGreenYellow(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 2:
+                            effectedImage = self.foreground.putYellow(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 3:
+                            effectedImage = self.foreground.putYellowOrange(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 4:
+                            effectedImage = self.foreground.putOrange(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 5:
+                            effectedImage = self.foreground.putOrangeRed(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+
+                        case 6:
+                            effectedImage = self.foreground.putRed(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                    
+            
+            self.overlayCounter += 1    
+            self.topbar.render()
+            self.controls.render()
+            
+            fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
+            self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
+                    
             self.topbar.render()
             self.controls.render()
 
