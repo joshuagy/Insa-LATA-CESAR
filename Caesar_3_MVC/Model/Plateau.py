@@ -102,6 +102,7 @@ class Plateau():
         self.restart = False
         global counter
         counter = 1
+        self.riviere()
 
 
     def default_map(self):
@@ -261,9 +262,10 @@ class Plateau():
         red = pygame.transform.scale(red, (red.get_width() / 2, red.get_height() / 2)) 
 
         return {"land1": land1,"land2": land2, "tree1": tree1,"tree2": tree2,
-                "tree3": tree3,"rock1": rock1,"rock2": rock2,"water1":water1,
-                "water2":water2,"water3":water3,"sign1":sign1,"sign2":sign2,
-                "water4":water4,"water5":water5,"rock3":rock3, "red":red
+                "tree3": tree3,"rock1": rock1,"rock2": rock2,"water1":water1,"water2":water2,"water3":water3,"water4":water4,"water5":water5,"water6":water6,
+                "water7": water7,"water8":water8,"water9":water9,'water10':water10,'water11':water11,'water12':water12,'water13':water13,
+                "sign1":sign1,"sign2":sign2,
+               "rock3":rock3, "red":red
                 }
     def load_routes_images(self):
         
@@ -410,126 +412,128 @@ class Plateau():
 
 
     def draw(self):
-        self.screen.fill((0, 0, 0))
-        self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
-
-       
-       # DRAW CELLS
-
-        for cell_x in range(self.nbr_cell_y):
-            for cell_y in range(self.nbr_cell_y):
-                render_pos =  self.map[cell_x][cell_y].render_pos
-                id_image = None
-                image = None
-                # DRAW DEFAULT CELLS
-                if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
-                    id_image = self.map[cell_x][cell_y].sprite
-                    image = self.image[id_image]
-                    self.screen.blit(image,
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
-                # DRAW ROADS
-                elif self.map[cell_x][cell_y].road:
-                    id_image = self.map[cell_x][cell_y].road.sprite
-                    image = self.image_route[id_image]
-                    self.screen.blit(image,
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
-                # DRAW STRUCTURES
-                elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
-                    self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)], 
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
-
-                elif isinstance(self.map[cell_x][cell_y].structure, WheatPlot):
-                    self.screen.blit(self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level], 
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level].get_height() - cell_size) + self.camera.vect.y))
+        if not self.pause:
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
 
 
-                elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
-                    id_image = self.map[cell_x][cell_y].structure.desc
-                    self.screen.blit(self.image_structures[id_image], 
+           # DRAW CELLS
+
+            for cell_x in range(self.nbr_cell_y):
+                for cell_y in range(self.nbr_cell_y):
+                    render_pos =  self.map[cell_x][cell_y].render_pos
+                    id_image = None
+                    image = None
+                    # DRAW DEFAULT CELLS
+                    if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
+                        id_image = self.map[cell_x][cell_y].sprite
+                        image = self.image[id_image]
+                        self.screen.blit(image,
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
-
-
-                # DRAW PREVIEWED CELLS AND HOVERED CELLS
-                if self.foreground.hasEffect(cell_x, cell_y) and image != None:
-                    effectedImage = self.foreground.getEffectedImage(id_image, image.copy(), cell_x, cell_y)
-                    self.screen.blit(effectedImage,
-                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
-
-                # DRAW WALKERS
-                for e in self.walkers[cell_x][cell_y]:
-                    self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)], 
+                                        render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
+                    # DRAW ROADS
+                    elif self.map[cell_x][cell_y].road:
+                        id_image = self.map[cell_x][cell_y].road.sprite
+                        image = self.image_route[id_image]
+                        self.screen.blit(image,
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                         render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
+                                        render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
-        self.topbar.render()
-        self.controls.render()
-        
-        fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
-        self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
+                    # DRAW STRUCTURES
+                    elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
+                        image = self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)]
+                        self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)],
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
 
-        # if state_control_panel=="reduced":
-            
-        #     self.screen.blit(small_gap_menu.img_scaled, (self.width-small_gap_menu.dim[0], 24))
+                    elif isinstance(self.map[cell_x][cell_y].structure, WheatPlot):
+                        self.screen.blit(self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level].get_height() - cell_size) + self.camera.vect.y))
 
-            
-        #     display_control_panel_button.update()
-        #     display_control_panel_button.change_pos(self.width-display_control_panel_button.dim[0]-5,28)
-        #     display_control_panel_button.draw(self.screen)
+                    elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
+                        id_image = self.map[cell_x][cell_y].structure.desc
+                        image = self.image_structures[id_image]
+                        self.screen.blit(image,
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                                render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
-        #     build_housing_button.update()
-        #     build_housing_button.change_pos(self.width-build_housing_button.dim[0]-1,24+32)
-        #     build_housing_button.draw(self.screen)
+                    # DRAW PREVIEWED CELLS AND HOVERED CELLS
+                    if self.foreground.hasEffect(cell_x, cell_y) and image != None:
+                        effectedImage = self.foreground.getEffectedImage(id_image, image.copy(), cell_x, cell_y)
+                        self.screen.blit(effectedImage,
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                        render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
-        #     clear_land_button.update()
-        #     clear_land_button.change_pos(self.width-clear_land_button.dim[0]-1,24+67)
-        #     clear_land_button.draw(self.screen)
+                    # DRAW WALKERS
+                    for e in self.walkers[cell_x][cell_y]:
+                        self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)],
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                             render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
 
-        #     build_roads_button.update()
-        #     build_roads_button.change_pos(self.width-build_roads_button.dim[0]-1,24+102)
-        #     build_roads_button.draw(self.screen)
-            
+            self.topbar.render()
+            self.controls.render()
 
-        #     water_related_structures.update()
-        #     water_related_structures.change_pos(self.width-water_related_structures.dim[0]-1,24+137)
-        #     water_related_structures.draw(self.screen)
-           
-        #     health_related_structures.update()
-        #     health_related_structures.change_pos(self.width-health_related_structures.dim[0]-1,24+172)
-        #     health_related_structures.draw(self.screen)
-           
-        #     religious_structures.update()
-        #     religious_structures.change_pos(self.width-religious_structures.dim[0]-1,24+207)
-        #     religious_structures.draw(self.screen)
-            
-        #     education_structures.update()
-        #     education_structures.change_pos(self.width-education_structures.dim[0]-1,24+242)
-        #     education_structures.draw(self.screen)
-            
-        #     entertainment_structures.update()
-        #     entertainment_structures.change_pos(self.width-entertainment_structures.dim[0]-1,24+277)
-        #     entertainment_structures.draw(self.screen)
-            
-        #     administration_or_government_structures.update()
-        #     administration_or_government_structures.change_pos(self.width-administration_or_government_structures.dim[0]-1,24+312)
-        #     administration_or_government_structures.draw(self.screen)
-            
-        #     engineering_structures.update()
-        #     engineering_structures.change_pos(self.width-engineering_structures.dim[0]-1,24+347)
-        #     engineering_structures.draw(self.screen)
-            
-        #     security_structures.update()
-        #     security_structures.change_pos(self.width-security_structures.dim[0]-1,24+382)
-        #     security_structures.draw(self.screen)
-            
-        #     industrial_structures.update()
-        #     industrial_structures.change_pos(self.width-industrial_structures.dim[0]-1,24+417)
-        #     industrial_structures.draw(self.screen)
+            fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
+            self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
+
+            # if state_control_panel=="reduced":
+
+            #     self.screen.blit(small_gap_menu.img_scaled, (self.width-small_gap_menu.dim[0], 24))
+
+
+            #     display_control_panel_button.update()
+            #     display_control_panel_button.change_pos(self.width-display_control_panel_button.dim[0]-5,28)
+            #     display_control_panel_button.draw(self.screen)
+
+            #     build_housing_button.update()
+            #     build_housing_button.change_pos(self.width-build_housing_button.dim[0]-1,24+32)
+            #     build_housing_button.draw(self.screen)
+
+            #     clear_land_button.update()
+            #     clear_land_button.change_pos(self.width-clear_land_button.dim[0]-1,24+67)
+            #     clear_land_button.draw(self.screen)
+
+            #     build_roads_button.update()
+            #     build_roads_button.change_pos(self.width-build_roads_button.dim[0]-1,24+102)
+            #     build_roads_button.draw(self.screen)
+
+
+            #     water_related_structures.update()
+            #     water_related_structures.change_pos(self.width-water_related_structures.dim[0]-1,24+137)
+            #     water_related_structures.draw(self.screen)
+
+            #     health_related_structures.update()
+            #     health_related_structures.change_pos(self.width-health_related_structures.dim[0]-1,24+172)
+            #     health_related_structures.draw(self.screen)
+
+            #     religious_structures.update()
+            #     religious_structures.change_pos(self.width-religious_structures.dim[0]-1,24+207)
+            #     religious_structures.draw(self.screen)
+
+            #     education_structures.update()
+            #     education_structures.change_pos(self.width-education_structures.dim[0]-1,24+242)
+            #     education_structures.draw(self.screen)
+
+            #     entertainment_structures.update()
+            #     entertainment_structures.change_pos(self.width-entertainment_structures.dim[0]-1,24+277)
+            #     entertainment_structures.draw(self.screen)
+
+            #     administration_or_government_structures.update()
+            #     administration_or_government_structures.change_pos(self.width-administration_or_government_structures.dim[0]-1,24+312)
+            #     administration_or_government_structures.draw(self.screen)
+
+            #     engineering_structures.update()
+            #     engineering_structures.change_pos(self.width-engineering_structures.dim[0]-1,24+347)
+            #     engineering_structures.draw(self.screen)
+
+            #     security_structures.update()
+            #     security_structures.change_pos(self.width-security_structures.dim[0]-1,24+382)
+            #     security_structures.draw(self.screen)
+
+            #     industrial_structures.update()
+            #     industrial_structures.change_pos(self.width-industrial_structures.dim[0]-1,24+417)
+            #     industrial_structures.draw(self.screen)
 
 
     def create_collision_matrix(self):
