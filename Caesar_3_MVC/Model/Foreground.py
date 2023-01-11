@@ -54,11 +54,47 @@ class Foreground:
   def getOverlayInfo(self, x, y):
     return self.overlayGrid[x][y]
 
-  def putRed(self, originalImage, x, y):
+  def putRed(self, originalImage):
       effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
       effectedImage.fill((200, 0, 0))
       originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
       return originalImage
+
+  def putGreenYellow(self, originalImage):
+      effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+      effectedImage.fill((130, 185, 46))
+      originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+      return originalImage
+
+  def putYellow(self, originalImage):
+        effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+        effectedImage.fill((255, 255, 0))
+        originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+        return originalImage
+
+  def putYellowOrange(self, originalImage):
+        effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+        effectedImage.fill((255, 183, 0))
+        originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+        return originalImage
+
+  def putOrange(self, originalImage):
+        effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+        effectedImage.fill((255, 130, 0))
+        originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+        return originalImage
+  
+  def putOrangeRed(self, originalImage):
+      effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+      effectedImage.fill((255, 94, 0))
+      originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+      return originalImage
+
+  def putGreen(self, originalImage):
+    effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+    effectedImage.fill((0, 200, 0))
+    originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+    return originalImage
 
   def render(self):
     pass
