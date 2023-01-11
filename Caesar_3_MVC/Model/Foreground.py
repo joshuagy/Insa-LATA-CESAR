@@ -11,6 +11,9 @@ class Foreground:
     self.foregroundGrid = None
     self.initForegroundGrid()
 
+    self.originalImageActiveBuildHouse = pygame.image.load('image/Buildings/Housng1a_00045.png').convert_alpha()
+    self.originalImageActiveBuildHouse = pygame.transform.scale(self.originalImageActiveBuildHouse, (self.originalImageActiveBuildHouse.get_width() / 2, self.originalImageActiveBuildHouse.get_height() / 2))
+
   def initForegroundGrid(self):
     self.foregroundGrid = [[None for _ in range(self.nbr_cell_x)] for _ in range(self.nbr_cell_y)]
   
@@ -29,11 +32,17 @@ class Foreground:
     if effect == 'activeClearLand':
       effectedImage.fill((200, 0, 0))
       originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
-    elif effect == 'defaultClearLand':
-      if id_image in list_of_undestructible: effectedImage.fill((150, 0, 0))
-      else: effectedImage.fill((0, 230, 0))
-      originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+    elif effect == 'activeBuildHouse':
+      originalImage = self.originalImageActiveBuildHouse.copy()
+      mask = pygame.mask.from_surface(originalImage)
+      effectedImage = mask.to_surface()
+      effectedImage.set_colorkey((0, 0, 0))
+      effectedImage.set_alpha(40)
+      originalImage.blit(effectedImage, (0, 0))
     elif effect == 'activeBuildRoads':
+      effectedImage.fill((0, 0, 100))
+      originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+    elif effect == 'wrong':
       effectedImage.fill((200, 0, 0))
       originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
     elif effect == 'default':

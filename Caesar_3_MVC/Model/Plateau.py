@@ -397,8 +397,6 @@ class Plateau():
                 h.udmCheck()   # Vérifie les upgrades, downgrades et merge d'habitations
                 self.population = self.population + h.nbHab
 
-
-            
     def nearbyRoadsCheck(self, b):     #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
         for xcr in range (b.case.x-2,b.case.x+3,1) :
             for ycr in range (b.case.y-2,b.case.y+3,1) :
@@ -704,8 +702,6 @@ class Plateau():
 
                     if g!='water1' and g in water_list and  h!='water1' and h in water_list and d =='water1' and b =='water1' and hg not in water_list:
                         self.map[x][y].sprite = 'water11'
-
-
 
 
 def load_image(path):
