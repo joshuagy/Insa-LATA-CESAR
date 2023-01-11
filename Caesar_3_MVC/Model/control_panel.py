@@ -51,6 +51,21 @@ class ButtonCtrlPnl():
         self.hovered = False
         self.clicked = False
 
+    def change_image(self, path):
+        """ Change the actual sprite of the button"""
+        self.image_normal =  pygame.image.load(path)
+        self.dim = (self.image_normal.get_rect().size[0]*SCL,self.image_normal.get_rect().size[1]*SCL) #dim[0] is the width of the sprite, dim[1] the height
+        self.image_normal = pygame.transform.scale(self.image_normal,self.dim)
+        self.hide = False
+
+        self.image_hovered_exists = False
+        self.image_clicked_exists = False
+        self.unlocked=True
+               
+        self.image = self.image_normal
+        self.rect = self.image.get_rect()
+        self.update()
+
     def unlock(self):
         """Unlock the functionality of the button"""
         self.unlocked=True
