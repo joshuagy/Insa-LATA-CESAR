@@ -1,6 +1,7 @@
 from types import NoneType
 from Model.constants import *
 from random import *
+from Model.Buildings.House import *
 
 class Building():
     def __init__(self, case, plateau, size, desc):

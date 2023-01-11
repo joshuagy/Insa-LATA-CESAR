@@ -8,8 +8,11 @@ from Model.control_panel import *
 from Model.constants import *
 from Model.Route import Route
 from Model.Buildings.Building import Building
+from Model.Buildings.Building import BurningBuilding
+from Model.Buildings.Building import DamagedBuilding
 from Model.Buildings.House import House
 from Model.Buildings.House import HousingSpot
+from Model.Buildings.RessourceBuilding import *
 from Model.Buildings.WorkBuilding import *
 from Model.Controls import Controls
 from Model.TopBar import TopBar
@@ -55,7 +58,9 @@ class Plateau():
         self.population = 0
 
         self.map = self.default_map()
+
         self.foreground = Foreground(self.screen, self.nbr_cell_x, self.nbr_cell_y)
+
         self.default_road()
 
         #Tableau contenant toutes les cases occupées par les walkers
@@ -72,24 +77,15 @@ class Plateau():
         self.cityHousesList = cityHousesList
         self.cityHousingSpotsList = cityHousingSpotsList
         self.burningBuildings = burningBuildings
-        
-        # Variable speed feature
-        self.currentSpeed = 100
 
-        # Left menu in game
+        self.currentSpeed = 100
         self.buttonsFunctions = self.getButtonsFunctions()
         self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.buttonsFunctions)
 
-        # Top menu in game
+
         self.topbar = TopBar(self.screen, self.treasury, self.population)
 
-
         #Define the position of the button on the full panel button who won't change position after
-        # fire_overlay.change_pos(self.width-fire_overlay.dim[0]-hide_control_panel_button.dim[0]-150,27)
-        # damage_overlay.change_pos(self.width-damage_overlay.dim[0]-hide_control_panel_button.dim[0]-150,52)
-        # entertainment_overlay.change_pos(self.width-entertainment_overlay.dim[0]-hide_control_panel_button.dim[0]-150,77)
-        # water_overlay.change_pos(self.width-water_overlay.dim[0]-hide_control_panel_button.dim[0]-150,102)
-        
         # overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
         # hide_control_panel_button.change_pos(self.width-hide_control_panel_button.dim[0]-4,24+5)
         # advisors_button.change_pos(self.width-155,179)
@@ -107,8 +103,6 @@ class Plateau():
         global counter
         counter = 1
         self.riviere()
-
-
 
 
     def default_map(self):
@@ -181,13 +175,13 @@ class Plateau():
             elif (counter>=14 and counter<=19) or(counter>=55 and counter<=60)or(counter>=96 and counter<=101)or(counter>=137 and counter<=142)or(counter>=178 and counter<=183)or(counter>=219 and counter<=224)or(counter>=260 and counter<=265)or(counter>=301 and counter<=306)or(counter>=342 and counter<=347)or(counter>=383 and counter<=388)or(counter>=424 and counter<=429)or(counter>=465 and counter<=480)or(counter>=506 and counter<=520)or(counter>=547 and counter<=560)or(counter>=588 and counter<=600)or(counter>=629 and counter<=640)or(counter<=1573 and counter>=1569)or(counter<=1533 and counter>=1529)or(counter<=1493 and counter>=1489)or(counter<=1453 and counter>=1449)or(counter<=1413 and counter>=1409)or(counter<=1373 and counter>=1369)or(counter<=1333 and counter>=1329)or(counter<=1293 and counter>=1281)or(counter<=1253 and counter>=1241)or(counter<=1213 and counter>=1201)or(counter<=1173 and counter>=1161):
                 image = "water1"
             elif (counter==20) or (counter==61)or(counter==102)or(counter==143)or(counter==184)or(counter==225)or(counter==266)or(counter==307)or(counter==348)or(counter==389)or(counter>=430 and counter<=440 )or(counter<=1133 and counter>=1121):
-                image="water1"
+                image="water2"
             elif (counter>=669 and counter<=680)or counter==628 or counter==587 or counter==546 or counter==505 or counter==464 or counter==423 or counter==382 or counter==341 or counter==300 or counter==259 or counter==218 or counter==177 or counter==136 or counter==95 or counter==54 or counter==13 or(counter<=1328 and counter>=1321):
-                image = "water1"
+                image = "water3"
             elif (counter==1574)or(counter==1534)or(counter==1494)or(counter==1454)or(counter==1414)or(counter==1374)or(counter==1334)or(counter==1294)or(counter==1254)or(counter==1214)or(counter==1174)or(counter==1134):
-                image="water1"
+                image="water4"
             elif (counter==1568)or(counter==1528)or(counter==1488)or(counter==1448)or(counter==1408)or(counter==1368):
-                image="water1"
+                image="water5"
             elif (counter==1590)or(counter==1549)or(counter==1508)or(counter==1467)or(counter==1426)or(counter==1385)or(counter==1384)or(counter==1343)or(counter==1302) or (counter==1298)or (counter==1600)or (counter==1337)or (counter==1376)or (counter==1415)or (counter==1455)or (counter==1495)or (counter==1535)or (counter==1575)or (counter in range(1575,1591)):
                 image = "rock1"
             elif (counter==1262) or (counter==1520):
@@ -204,10 +198,13 @@ class Plateau():
         return image
 
     def load_cases_images(self):
+
+
         land1 = pygame.image.load("image/C3/Land1a_00116.png").convert_alpha()
         land1 = pygame.transform.scale(land1,(land1.get_width()/2,land1.get_height()/2))
         land2 = pygame.image.load("image/C3/Land1a_00265.png").convert_alpha()
         land2 = pygame.transform.scale(land2, (land2.get_width() / 2, land2.get_height() / 2))
+
 
 
         tree1 = pygame.image.load("image/C3/Land1a_00059.png").convert_alpha()
@@ -231,6 +228,7 @@ class Plateau():
         sign1 = pygame.transform.scale(sign1, (sign1.get_width() / 2, sign1.get_height() / 2))
         sign2 = pygame.image.load("image/C3/land3a_00087.png").convert_alpha()
         sign2 = pygame.transform.scale(sign2, (sign2.get_width() / 2, sign2.get_height() / 2))
+
 
         water1 = pygame.image.load("image/C3/Land1a_00122.png").convert_alpha()
         water1 = pygame.transform.scale(water1, (water1.get_width() / 2, water1.get_height() / 2))
@@ -258,7 +256,6 @@ class Plateau():
         water12 = pygame.transform.scale(water12, (water12.get_width() / 2, water12.get_height() / 2))
         water13 = pygame.image.load("image/Water/wrightw.png").convert_alpha()
         water13 = pygame.transform.scale(water13, (water13.get_width() / 2, water13.get_height() / 2))
-
 
 
         red = pygame.image.load("image/C3/red.png").convert_alpha()
@@ -322,11 +319,16 @@ class Plateau():
         ws = load_image("image/Buildings/Utilitya_00001.png")
         bsts = list(load_image(f"image/Buildings/BurningBuilding/BurningBuildingFrame{i}.png") for i in range(1, 9))
         burnruinss = load_image("image/Buildings/BurningBuilding/Land2a_00187.png")
-        ruinss = load_image("image/Buildings/Land2a_00044.png")
+        ruinss = load_image("image/Buildings/Land2a_00111.png")
+        sens = load_image("image/Buildings/Govt_00004.png")
+        whfas = load_image("image/Buildings/Farm/Commerce_00012.png")
+        whpls = list(load_image(f"image/Buildings/Farm/Plot{i}.png") for i in range(0,5))
+        marks = load_image("image/Buildings/Commerce_00001.png")
+        
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
-                "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss}
-    
+                "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks }
+ 
     def getButtonsFunctions(self):
         return {
             'increaseSpeed': self.increaseSpeed,
@@ -356,8 +358,9 @@ class Plateau():
                                 self.map[xi][yi].road.delete()
                                 self.treasury = self.treasury - DESTRUCTION_COST
                             if self.map[xi][yi].structure :
-                                self.map[xi][yi].structure.delete()
-                                self.treasury = self.treasury - DESTRUCTION_COST
+                                if self.map[xi][yi].structure.desc != "BurningBuilding" :
+                                    self.map[xi][yi].structure.delete()
+                                    self.treasury = self.treasury - DESTRUCTION_COST
                               
                             
         self.collision_matrix = self.create_collision_matrix()
@@ -387,6 +390,7 @@ class Plateau():
             for b in self.structures :
                 if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
                 if isinstance(b,WorkBuilding): b.delay()
+                if isinstance(b,WheatFarm) : b.update()     #Actualise les fermes
                 self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
             self.population = 0
             for h in self.cityHousesList:
@@ -405,6 +409,7 @@ class Plateau():
             b.delete()
         if isinstance(b,WorkBuilding) and b.active==True :
             b.active = False
+
 
     def draw(self):
         if not self.pause:
@@ -440,6 +445,11 @@ class Plateau():
                         self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)],
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                             render_pos[1] - (self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
+
+                    elif isinstance(self.map[cell_x][cell_y].structure, WheatPlot):
+                        self.screen.blit(self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level].get_height() - cell_size) + self.camera.vect.y))
 
                     elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
                         id_image = self.map[cell_x][cell_y].structure.desc

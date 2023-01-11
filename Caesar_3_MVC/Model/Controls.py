@@ -181,7 +181,7 @@ class Controls:
     self.security_structures = ButtonCtrlPnl(self, build_prefecture, "Security Structures", self.screenWidth - 99 - self.originX, 409 - self.originY, "image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png", state='securityStructures')
     listOfButtons.append(self.security_structures)
 
-    self.industrial_structures = ButtonCtrlPnl(self, not_implemented_func, "Industrial Structures", self.screenWidth-49-self.originX,409-self.originY,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png","image/C3/paneling_00158.png")
+    self.industrial_structures = ButtonCtrlPnl(self, not_implemented_func, "Industrial Structures", self.screenWidth-49-self.originX,409-self.originY,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png")
     listOfButtons.append(self.industrial_structures)
     
     self.undo_button = ButtonCtrlPnl(self, not_implemented_func, "Undo", self.screenWidth-149-self.originX, 445-self.originY,"image/C3/paneling_00171.png","image/C3/paneling_00172.png","image/C3/paneling_00173.png","image/C3/paneling_00174.png")
