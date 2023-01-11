@@ -1,4 +1,4 @@
-from Model.Buildings.Building import *
+from Model.Buildings.Building import Building
 from Model.Walker import *
 from Model.Case import *
 
@@ -19,7 +19,8 @@ class WorkBuilding(Building):
     def delete(self):
         self.case.setStructure(None)
         self.case.setFeature("")
-        self.walker.delete()
+        if self.walker :
+            self.walker.delete()
         self.plateau.structures.remove(self)
         del self
     
