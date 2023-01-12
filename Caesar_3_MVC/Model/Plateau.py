@@ -428,8 +428,8 @@ class Plateau():
                         id_image = self.map[cell_x][cell_y].sprite
                         image = self.image[id_image]
                         self.screen.blit(image,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                    render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
                     
                     # DRAW ROADS
                     elif self.map[cell_x][cell_y].road:
@@ -438,33 +438,21 @@ class Plateau():
                         self.screen.blit(image,
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                         render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
-
-                    # DRAW PREVIEWED CELLS AND HOVERED CELLS
-                    if self.foreground.hasEffect(cell_x, cell_y):
-                        id_image = self.map[cell_x][cell_y].sprite
-                        effectedImage = self.foreground.getEffectedImage(self.image[id_image].copy(), cell_x, cell_y)
-                        self.screen.blit(effectedImage,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[id_image].get_height() - cell_size) + self.camera.vect.y))
         
                     # DRAW STRUCTURES
                     elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
-                        image = self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)]
-                        self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)],
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
-
+                        self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)], 
+                                    (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                        render_pos[1] - (self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
                     elif isinstance(self.map[cell_x][cell_y].structure, WheatPlot):
                         self.screen.blit(self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                             render_pos[1] - (self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level].get_height() - cell_size) + self.camera.vect.y))
-
                     elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
                         id_image = self.map[cell_x][cell_y].structure.desc
-                        image = self.image_structures[id_image]
-                        self.screen.blit(image,
+                        self.screen.blit(self.image_structures[id_image], 
                                             (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                                render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
+                                                render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
 
                     # DRAW PREVIEWED CELLS AND HOVERED CELLS
                     if self.foreground.hasEffect(cell_x, cell_y) and image != None:
@@ -623,7 +611,6 @@ class Plateau():
 
     def create_collision_matrix(self):
         collision_matrix = [[1000 for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
-
         #La suite sera pour quand on aura un système de collision
         for x in range(self.nbr_cell_x):
             for y in range(self.nbr_cell_y):
@@ -634,61 +621,38 @@ class Plateau():
         return collision_matrix
 
     def riviere(self):
-
         water_list = ['water1', 'water2', 'water3', 'water4', 'water5', 'water6','water7','water8','water9','water10','water11','water12','water13']
         for x in range(self.nbr_cell_y):
             for y in range(self.nbr_cell_y):
-
                 if self.map[x][y].sprite in water_list:
                     d,g,h,b=(None,None,None,None)
                     if x != 0 and y != 0 and x != 39 and y != 39:
-
                         g=self.map[x-1][y].sprite
                         d=self.map[x+1][y].sprite
                         h=self.map[x][y-1].sprite
                         b=self.map[x][y+1].sprite
                     else:
-
                         if x == 0 and y != 0:
                             g='water1'
                             d = self.map[x+1][y].sprite
                             h = self.map[x][y-1].sprite
                             b = self.map[x][y+1].sprite
                         if y == 0 and x != 0:
-
                             h = 'water1'
                             g = self.map[x - 1][y].sprite
                             d = self.map[x + 1][y].sprite
                             b = self.map[x][y + 1].sprite
-
-
-
                         if x == 39 and y != 39:
-
-
                             d = 'water1'
                             g = self.map[x - 1][y].sprite
                             h = self.map[x][y - 1].sprite
                             b = self.map[x][y + 1].sprite
-
-
-
                         if y == 39 and x != 39:
                             b = 'water1'
                             g = self.map[x - 1][y].sprite
                             d = self.map[x + 1][y].sprite
                             h = self.map[x][y - 1].sprite
-
-
-
-
-
-
-
-
                     if g in water_list:
-
-
                         if b not in water_list and  h  in water_list and d in water_list:
                             self.map[x][y].sprite='water4'
                         elif b  in water_list and  h  in water_list and d not in water_list:
@@ -701,23 +665,13 @@ class Plateau():
                             self.map[x][y].sprite = 'water9'
                         elif h in water_list and  b not in water_list and d not in water_list:
                             self.map[x][y].sprite = 'water6'
-
-
-
-
                     elif g not in water_list:
-
                         if b in water_list and h in water_list and d in water_list:
                             self.map[x][y].sprite = 'water3'
                         elif b not in water_list and h in water_list and d in water_list:
                             self.map[x][y].sprite = 'water8'
                         elif d in water_list and b in water_list and h not in water_list:
                             self.map[x][y].sprite = 'water7'
-
-
-
-
-
         self.riviere2(water_list)
     def riviere2(self,water_list):
 
