@@ -472,8 +472,6 @@ class Plateau():
                     # Overlay part
                     # Fire
                     # Hidding the overlay by default
-                    blackText = self.minimalFont.render("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa", 1, (0, 0, 0), (0, 0, 0))
-                    self.screen.blit(blackText, (75, self.screen.get_height() - blackText.get_height()))
                     if self.overlayCounter == 30:
                         if self.controls.overlays_button.clicked:
                             self.foreground.setOverlayName("fire")
@@ -489,9 +487,12 @@ class Plateau():
                         self.overlayCounter = 0
 
                     sprite = "base_overlay"
-                    if self.foreground.getOverlayName() == "fire":
-                        fireText = self.minimalFont.render("FIRE Overlay:", 1, (255, 0, 0), (0, 0, 0))
-                        self.screen.blit(fireText, (75, self.screen.get_height() - fireText.get_height()))
+                    # if self.foreground.getOverlayName() == "fire":
+                    #     fireText = self.minimalFont.render("FIRE Overlay:", 1, (255, 0, 0), (0, 0, 0))
+                    #     self.screen.blit(fireText, (75, self.screen.get_height() - fireText.get_height()))
+                    # else:
+                    #     blackText = self.minimalFont.render("AAAAAAAAAAAAAA", 1, (0, 0, 0), (0, 0, 0))
+                    #     self.screen.blit(blackText, (75, self.screen.get_height() - blackText.get_height()))
 
                     match self.foreground.getOverlayInfo(cell_x, cell_y):
                         case 0:
