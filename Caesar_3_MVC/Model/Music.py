@@ -1,3 +1,4 @@
+"""
 import pygame
 from Model.constants import *
 
@@ -26,3 +27,4 @@ class Music:
     if self.currentState != state:
       self.currentState = state
       self.loadMusic()
+"""

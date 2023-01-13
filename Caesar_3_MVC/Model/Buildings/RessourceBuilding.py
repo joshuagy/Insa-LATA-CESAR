@@ -21,12 +21,13 @@ class WheatFarm(Building) :
         for sc in self.secCases :
             sc.setStructure(self)
         #Création des parcelles de blé et ajout dans la liste :
+        
         self.plots.append(WheatPlot(self.plateau.map[self.case.x][self.case.y+1],self.plateau,(1,1),"WheatPlot",self))
         self.plots.append(WheatPlot(self.plateau.map[self.case.x+1][self.case.y+1],self.plateau,(1,1),"WheatPlot",self))
         self.plots.append(WheatPlot(self.plateau.map[self.case.x+2][self.case.y+1],self.plateau,(1,1),"WheatPlot",self))
         self.plots.append(WheatPlot(self.plateau.map[self.case.x+2][self.case.y],self.plateau,(1,1),"WheatPlot",self))
         self.plots.append(WheatPlot(self.plateau.map[self.case.x+2][self.case.y-1],self.plateau,(1,1),"WheatPlot",self))
-    
+       
     def update(self) : 
 
         #Affiche un message et annule toute mise à jour si le bâtiment n'est pas connecté à la route :
@@ -40,6 +41,7 @@ class WheatFarm(Building) :
             return
         
         #Fait augmnter la quantité de blé qui pousse si la ferme est productive :
+        self.growingQuant=self.growingQuant+1
         #Je vais me renseigner pour le fonctionnement
 
         #Set the sprites of the plots
@@ -107,7 +109,32 @@ class Market(Building) :
             sc.setStructure(self)
 
     def delete(self) :
-        self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]]
+        #self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]]
+        self.case.setStructure(None)
+        self.plateau.structures.remove(self)
+        for sc in self.secCases :
+            sc.setStructure(None)
+        del self 
+
+
+class Granary(Building) :
+    def __init__(self, case, plateau, size, desc):
+        super().__init__(case, plateau, size, desc)
+        self.storedWheat = 0
+        self.levelB = 3
+        self.levelV = 6
+        self.secCases = [self.plateau.map[self.case.x][self.case.y-1],self.plateau.map[self.case.x+1][self.case.y],self.plateau.map[self.case.x+1][self.case.y-1]]
+        for sc in self.secCases :
+            sc.setStructure(self)
+
+
+    def update(self) :      #Visual Update only. Use bring() to add wheat
+        self.levelB = self.storedWheat//25
+        self.levelV = self.storedWheat//14
+
+
+    def delete(self) :
+        #self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]]
         self.case.setStructure(None)
         self.plateau.structures.remove(self)
         for sc in self.secCases :

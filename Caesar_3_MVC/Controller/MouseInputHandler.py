@@ -471,7 +471,8 @@ class MouseInputHandler:
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
                     if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
-                        Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
+                        #Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
+                        Granary(self.model.actualGame.map[xi][yi],self.model.actualGame,(2,2),"Granary")
 
         #Senate
         if self.model.actualGame.controls.administration_or_government_structures.clicked and not self.model.actualGame.controls.administration_or_government_structures.rect.collidepoint(event.pos):

@@ -325,10 +325,15 @@ class Plateau():
         whfas = load_image("image/Buildings/Farm/Commerce_00012.png")
         whpls = list(load_image(f"image/Buildings/Farm/Plot{i}.png") for i in range(0,5))
         marks = load_image("image/Buildings/Commerce_00001.png")
+        granatops = load_image("image/Buildings/Granary/Gtop.png")
+        granabases = load_image("image/Buildings/Granary/Gbase.png")
+        granabs = list(load_image(f"image/Buildings/Granary/b{i}.png")for i in range(0,4))
+        granals = list(load_image(f"image/Buildings/Granary/l{i}.png")for i in range(0,7))
         
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
-                "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks }
+                "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks, "GranaryTop" : granatops,
+                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals }
  
     def getButtonsFunctions(self):
         return {
@@ -448,6 +453,26 @@ class Plateau():
                         self.screen.blit(self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                             render_pos[1] - (self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level].get_height() - cell_size) + self.camera.vect.y))
+                    
+                    elif isinstance(self.map[cell_x][cell_y].structure, Granary):
+                        if self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
+                            self.screen.blit(self.image_structures["GranaryBase"], 
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                                render_pos[1] - (self.image_structures["GranaryBase"].get_height() - cell_size) + self.camera.vect.y))
+                            self.screen.blit(self.image_structures["GranaryTop"], 
+                                                (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                                render_pos[1] - (self.image_structures["GranaryTop"].get_height() - cell_size) + self.camera.vect.y))
+                            self.screen.blit(self.image_structures["GranaryRoom"][self.map[cell_x][cell_y].structure.levelB], 
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                                render_pos[1] - (self.image_structures["GranaryRoom"][self.map[cell_x][cell_y].structure.levelB].get_height() - cell_size) + self.camera.vect.y))
+                            self.screen.blit(self.image_structures["GranaryLev"][self.map[cell_x][cell_y].structure.levelV], 
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                                render_pos[1] - (self.image_structures["GranaryLev"][self.map[cell_x][cell_y].structure.levelV].get_height() - cell_size) + self.camera.vect.y))
+                            self.screen.blit(self.image_structures["GranaryLev"][self.map[cell_x][cell_y].structure.levelV], 
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                                render_pos[1] - (self.image_structures["GranaryLev"][self.map[cell_x][cell_y].structure.levelV].get_height() - cell_size) + self.camera.vect.y))
+
+
                     elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
                         id_image = self.map[cell_x][cell_y].structure.desc
                         self.screen.blit(self.image_structures[id_image], 
