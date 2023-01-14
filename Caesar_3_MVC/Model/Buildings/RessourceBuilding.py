@@ -15,18 +15,19 @@ class WheatFarm(Building) :
         self.growingQuantMax = 100
         self.productivity = 0
         self.nbEmpl = 0
-        self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]+15]
+        self.case.render_pos = [self.case.render_pos[0]-35, self.case.render_pos[1]+5]
         self.plots = []
-        self.secCases = [self.plateau.map[self.case.x][self.case.y-1],self.plateau.map[self.case.x+1][self.case.y],self.plateau.map[self.case.x+1][self.case.y-1]]
+        self.secCases = [self.plateau.map[self.case.x][self.case.y-1],self.plateau.map[self.case.x-1][self.case.y],self.plateau.map[self.case.x-1][self.case.y-1]]
         for sc in self.secCases :
             sc.setStructure(self)
         #Création des parcelles de blé et ajout dans la liste :
-        
+        self.plots.append(WheatPlot(self.plateau.map[self.case.x-1][self.case.y+1],self.plateau,(1,1),"WheatPlot",self))
         self.plots.append(WheatPlot(self.plateau.map[self.case.x][self.case.y+1],self.plateau,(1,1),"WheatPlot",self))
         self.plots.append(WheatPlot(self.plateau.map[self.case.x+1][self.case.y+1],self.plateau,(1,1),"WheatPlot",self))
-        self.plots.append(WheatPlot(self.plateau.map[self.case.x+2][self.case.y+1],self.plateau,(1,1),"WheatPlot",self))
-        self.plots.append(WheatPlot(self.plateau.map[self.case.x+2][self.case.y],self.plateau,(1,1),"WheatPlot",self))
-        self.plots.append(WheatPlot(self.plateau.map[self.case.x+2][self.case.y-1],self.plateau,(1,1),"WheatPlot",self))
+        self.plots.append(WheatPlot(self.plateau.map[self.case.x+1][self.case.y],self.plateau,(1,1),"WheatPlot",self))
+        self.plots.append(WheatPlot(self.plateau.map[self.case.x+1][self.case.y-1],self.plateau,(1,1),"WheatPlot",self))
+
+
        
     def update(self) : 
 
@@ -75,7 +76,7 @@ class WheatFarm(Building) :
         
 
     def delete(self) :
-        self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]-15]
+        self.case.render_pos = [self.case.render_pos[0]+35, self.case.render_pos[1]-5]
         self.case.setStructure(None)
         self.plateau.structures.remove(self)
         for sc in self.secCases :
@@ -121,16 +122,23 @@ class Granary(Building) :
     def __init__(self, case, plateau, size, desc):
         super().__init__(case, plateau, size, desc)
         self.storedWheat = 0
-        self.levelB = 3
-        self.levelV = 6
-        self.secCases = [self.plateau.map[self.case.x][self.case.y-1],self.plateau.map[self.case.x+1][self.case.y],self.plateau.map[self.case.x+1][self.case.y-1]]
+        self.storedWheatMax = 2900
+        self.levelB = 0
+        self.levelV = 0
+        self.secCases = []
+        for xar in range(self.case.x, self.case.x-3, -1) :
+            for yar in range(self.case.y, self.case.y-3, -1) :
+                if self.plateau.map[xar][yar] != self.case :
+                    self.secCases.append(self.plateau.map[xar][yar])
+
+
         for sc in self.secCases :
             sc.setStructure(self)
 
 
-    def update(self) :      #Visual Update only. Use bring() to add wheat
-        self.levelB = self.storedWheat//25
-        self.levelV = self.storedWheat//14
+    def update(self) :
+        self.levelB = self.storedWheat//725     #Max divisé par 4
+        self.levelV = self.storedWheat//414      #Max divisé par 7
 
 
     def delete(self) :
