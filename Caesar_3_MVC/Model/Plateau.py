@@ -48,6 +48,7 @@ class Plateau():
         self.image_route = self.load_routes_images()
         self.image_walkers = self.load_walkers_images()
         self.image_structures = self.load_structures_images()
+        self.road_warning_rectangle =load_image("image/UI/menu/roadWarning.png")
 
         self.zoom__=Zoom(self.image)
 
@@ -57,6 +58,7 @@ class Plateau():
         self.treasury = START_TREASURY + self.nbr_cell_y * ROAD_COST    #Remboursement auto des routes par défaut
         #Population
         self.population = 0
+        self.roadWarning = False #Affiche un avertissement quand un bâtiment qui a besoin de la route est déconnecté
 
         self.map = self.default_map()
 
@@ -396,6 +398,7 @@ class Plateau():
             for e in self.entities: e.update(currentSpeedFactor)
             for hs in self.cityHousingSpotsList: hs.generateImmigrant()
             for bb in self.burningBuildings: bb.update()
+            self.roadWarning=False
             for b in self.structures :
                 if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
                 if isinstance(b,WorkBuilding): b.delay()
@@ -412,6 +415,7 @@ class Plateau():
                     if 0<=xcr<self.nbr_cell_x and 0<=ycr<self.nbr_cell_y:
                         if self.map[xcr][ycr].road :
                             return
+        
         if isinstance(b,HousingSpot) or isinstance(b,House) :
             b.delete()
         if isinstance(b,WorkBuilding) and b.active==True :
@@ -587,6 +591,7 @@ class Plateau():
                     
             self.topbar.render()
             self.controls.render()
+            if self.roadWarning : self.screen.blit(self.road_warning_rectangle,(500,30))
 
             fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
             self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))

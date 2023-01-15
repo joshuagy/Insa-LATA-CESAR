@@ -29,6 +29,10 @@ class WheatFarm(Building) :
         self.plots.append(WheatPlot(self.plateau.map[self.case.x+1][self.case.y+1],self.plateau,(1,1),"WheatPlot",self))
         self.plots.append(WheatPlot(self.plateau.map[self.case.x+1][self.case.y],self.plateau,(1,1),"WheatPlot",self))
         self.plots.append(WheatPlot(self.plateau.map[self.case.x+1][self.case.y-1],self.plateau,(1,1),"WheatPlot",self))
+        self.allCases = [self.case]
+        for sc in self.secCases : self.allCases.append(sc)
+        for p in self.plots : self.allCases.append(p.case)
+
 
 
        
@@ -36,34 +40,39 @@ class WheatFarm(Building) :
 
         #Affiche un message et annule toute mise à jour si le bâtiment n'est pas connecté à la route :
 
-        #Récolte le blé si les champs sont pleins :
-        if self.growingQuant>=100 :
-            self.storedQuant=self.storedQuant+10
-            self.growingQuant=0
-            for p in self.plots :
-                p.level = 0
-            for surroundingGranaries in self.plateau.structures :
-                if isinstance(surroundingGranaries, Granary) :
-                    if (abs(self.case.x-surroundingGranaries.case.x) < 15) and (abs(self.case.y-surroundingGranaries.case.y) < 15) :
-                        surroundingGranaries.storedWheat = surroundingGranaries.storedWheat + 30
-            return
-        
-        #Fait augmnter la quantité de blé qui pousse si la ferme est productive :
-        #if random.randint(0,10)==10 :
-        self.growingQuant=self.growingQuant+1
-        #Je vais me renseigner pour le fonctionnement
+        for ac in self.allCases :
+            if ac.connectedToRoad > 0:
 
-        #Set the sprites of the plots
-        if self.growingQuant > 4 :
-            for p in self.plots :   #Remet toutes les parcelles à 0 pour refaire le calcul
-                p.level = 0
-            rep = 0                 #Répartition qui parcours les parcelles en donnant 5 blé à chaque jusqu'à épuisement 
-            i = 0
-            while rep < self.growingQuant :
-                if self.plots[i].level < 4 :
-                    self.plots[i].level = self.plots[i].level+1
-                    i=i+1 if i<4 else 0
-                    rep = rep+5
+                #Récolte le blé si les champs sont pleins :
+                if self.growingQuant>=100 :
+                    self.storedQuant=self.storedQuant+10
+                    self.growingQuant=0
+                    for p in self.plots :
+                        p.level = 0
+                    for surroundingGranaries in self.plateau.structures :
+                        if isinstance(surroundingGranaries, Granary) :
+                            if (abs(self.case.x-surroundingGranaries.case.x) < 15) and (abs(self.case.y-surroundingGranaries.case.y) < 15) :
+                                surroundingGranaries.storedWheat = surroundingGranaries.storedWheat + 30
+                    return
+
+                #Fait augmnter la quantité de blé qui pousse si la ferme est productive :
+                #if random.randint(0,10)==10 :
+                self.growingQuant=self.growingQuant+1
+                #Je vais me renseigner pour le fonctionnement
+
+                #Set the sprites of the plots
+                if self.growingQuant > 4 :
+                    for p in self.plots :   #Remet toutes les parcelles à 0 pour refaire le calcul
+                        p.level = 0
+                    rep = 0                 #Répartition qui parcours les parcelles en donnant 5 blé à chaque jusqu'à épuisement 
+                    i = 0
+                    while rep < self.growingQuant :
+                        if self.plots[i].level < 4 :
+                            self.plots[i].level = self.plots[i].level+1
+                            i=i+1 if i<4 else 0
+                            rep = rep+5
+                return
+        self.plateau.roadWarning = True
 
     def ignite(self):
         self.delete()
@@ -121,12 +130,16 @@ class Market(Building) :
             sc.setStructure(self)
 
     def update(self) :
-        if self.storedWheat > 100 :
-            for surroundingHouses in self.plateau.structures :
-                if isinstance(surroundingHouses, House) :
-                    if (abs(self.case.x-surroundingHouses.case.x) < 15) and (abs(self.case.y-surroundingHouses.case.y) < 15) :
-                        surroundingHouses.wheat = surroundingHouses.wheat + 1
-                        self.storedWheat = self.storedWheat - 1
+        for ac in self.secCases :
+            if ac.connectedToRoad>0 or self.case.connectedToRoad>0 :
+                if self.storedWheat > 100 :
+                    for surroundingHouses in self.plateau.structures :
+                        if isinstance(surroundingHouses, House) :
+                            if (abs(self.case.x-surroundingHouses.case.x) < 15) and (abs(self.case.y-surroundingHouses.case.y) < 15) :
+                                surroundingHouses.wheat = surroundingHouses.wheat + 1
+                                self.storedWheat = self.storedWheat - 1
+                return      
+        self.plateau.roadWarning = True      
         
     def ignite(self):
         self.delete()
@@ -141,7 +154,7 @@ class Market(Building) :
         DamagedBuilding(self.case,self.plateau,"Ruins")
 
     def delete(self) :
-        #self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]]
+        self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]-20]
         self.case.setStructure(None)
         self.plateau.structures.remove(self)
         for sc in self.secCases :
@@ -174,12 +187,17 @@ class Granary(Building) :
         self.levelB = self.storedWheat//725     #Max divisé par 4
         self.levelV = self.storedWheat//414      #Max divisé par 7
 
-        if self.storedWheat > 100 :
-            for surroundingMarkets in self.plateau.structures :
-                if isinstance(surroundingMarkets, Market) :
-                    if (abs(self.case.x-surroundingMarkets.case.x) < 15) and (abs(self.case.y-surroundingMarkets.case.y) < 15) :
-                        surroundingMarkets.storedWheat = surroundingMarkets.storedWheat + 30
-                        self.storedWheat = self.storedWheat - 30
+        for ac in self.secCases :
+            if ac.connectedToRoad>0 or self.case.connectedToRoad>0 :
+                if self.storedWheat > 100 :
+                    for surroundingMarkets in self.plateau.structures :
+                        if isinstance(surroundingMarkets, Market) :
+                            if (abs(self.case.x-surroundingMarkets.case.x) < 15) and (abs(self.case.y-surroundingMarkets.case.y) < 15) :
+                                surroundingMarkets.storedWheat = surroundingMarkets.storedWheat + 30
+                                self.storedWheat = self.storedWheat - 30
+                return
+        self.plateau.roadWarning = True
+
         
     def ignite(self):
         self.delete()

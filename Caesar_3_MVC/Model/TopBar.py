@@ -63,6 +63,7 @@ class TopBar:
       self.populationBlocWithDynamicText = self.populationBloc.copy()
       self.populationBlocWithDynamicText.blit(TextRender(str(self.population), (60-self.get_snss_population(), 20)).img_scaled, (680 - self.populationBlocPos[0], 2.5))
 
+
   def render(self):
     self.staticSurface.blit(self.treasuryBlocWithDynamicText, self.treasuryBlocPos)
     self.staticSurface.blit(self.populationBlocWithDynamicText, self.populationBlocPos)
