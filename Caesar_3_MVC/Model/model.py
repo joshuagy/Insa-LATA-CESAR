@@ -20,8 +20,8 @@ class GameEngine(object):
 		self.running = False
 		self.state = StateMachine()
 
-		#self.music = Music()
-		#self.music.play()
+		self.music = Music()
+		self.music.play()
 
 		self.introScene = None
 		self.menu = None
@@ -44,7 +44,7 @@ class GameEngine(object):
 				else:
 						# push a new state on the stack
 						self.state.push(event.state)
-						#self.music.changeMusic(event.state)
+						self.music.changeMusic(event.state)
         
 	def run(self):
 		"""
