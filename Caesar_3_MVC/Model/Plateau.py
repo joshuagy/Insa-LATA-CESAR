@@ -15,6 +15,7 @@ from Model.Buildings.House import HousingSpot
 from Model.Buildings.RessourceBuilding import *
 from Model.Buildings.WorkBuilding import *
 from Model.Controls import Controls
+from Model.control_panel import TextRender
 from Model.TopBar import TopBar
 from Model.Foreground import Foreground
 from random import *
@@ -315,6 +316,7 @@ class Plateau():
         st2s = load_image("image/Buildings/Housng1a_00005.png")
         lt1s = load_image("image/Buildings/Housng1a_00004.png")
         lt2s = load_image("image/Buildings/Housng1a_00006.png")
+        sss = load_image("image/Buildings/Housng1a_00011.png")
         ps = load_image("image/Buildings/Security_00001.png")
         eps = load_image("image/Buildings/transport_00056.png")
         ws = load_image("image/Buildings/Utilitya_00001.png")
@@ -329,11 +331,12 @@ class Plateau():
         granabases = load_image("image/Buildings/Granary/Gbase.png")
         granabs = list(load_image(f"image/Buildings/Granary/b{i}.png")for i in range(0,4))
         granals = list(load_image(f"image/Buildings/Granary/l{i}.png")for i in range(0,7))
+        tems = load_image("image/Buildings/Security_00053.png")
         
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks, "GranaryTop" : granatops,
-                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals }
+                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : tems, "SmallShack" : sss }
  
     def getButtonsFunctions(self):
         return {
@@ -472,11 +475,23 @@ class Plateau():
                             self.screen.blit(self.image_structures["GranaryLev"][self.map[cell_x][cell_y].structure.levelV], 
                                             (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x +25,
                                                 render_pos[1] - (self.image_structures["GranaryLev"][self.map[cell_x][cell_y].structure.levelV].get_height() - cell_size) + self.camera.vect.y))
+
+                            storedQuantTxt = TextRender(str(self.map[cell_x][cell_y].structure.storedWheat),(20,20),(0,0,0)).img_scaled
+                            self.screen.blit(storedQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                                render_pos[1] - (self.image_structures["GranaryTop"].get_height() - cell_size) + self.camera.vect.y))
                                       
                     elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
                         id_image = self.map[cell_x][cell_y].structure.desc
                         self.screen.blit(self.image_structures[id_image], 
                                             (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                                render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                        if isinstance(self.map[cell_x][cell_y].structure, House) :
+                            nbHabTxt = TextRender(str(self.map[cell_x][cell_y].structure.nbHab),(20,20),(0,0,0)).img_scaled
+                            self.screen.blit(nbHabTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                                render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                        if isinstance(self.map[cell_x][cell_y].structure, WheatFarm) :
+                            grQuantTxt = TextRender(str(self.map[cell_x][cell_y].structure.growingQuant),(20,20),(0,0,0)).img_scaled
+                            self.screen.blit(grQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                                 render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
 
                     # DRAW PREVIEWED CELLS AND HOVERED CELLS

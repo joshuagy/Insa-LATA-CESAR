@@ -4,6 +4,8 @@ from Model.Buildings.Building import BurningBuilding
 from Model.Walker import *
 from Model.Case import *
 from Model.Buildings.Building import Building
+from Model.Buildings.House import House
+import random
 
 class WheatFarm(Building) :
     def __init__(self, case, plateau, size, desc):
@@ -39,6 +41,10 @@ class WheatFarm(Building) :
             self.growingQuant=0
             for p in self.plots :
                 p.level = 0
+            for surroundingGranaries in self.plateau.structures :
+                if isinstance(surroundingGranaries, Granary) :
+                    if (abs(self.case.x-surroundingGranaries.case.x) < 15) and (abs(self.case.y-surroundingGranaries.case.y) < 15) :
+                        surroundingGranaries.storedWheat = surroundingGranaries.storedWheat + 30
             return
         
         #Fait augmnter la quantité de blé qui pousse si la ferme est productive :
@@ -105,6 +111,7 @@ class Market(Building) :
     def __init__(self, case, plateau, size, desc):
         super().__init__(case, plateau, size, desc)
         self.storedWheat = 0
+        self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]+20]
         self.secCases = [self.plateau.map[self.case.x][self.case.y-1],self.plateau.map[self.case.x+1][self.case.y],self.plateau.map[self.case.x+1][self.case.y-1]]
         for sc in self.secCases :
             sc.setStructure(self)
@@ -139,6 +146,14 @@ class Granary(Building) :
     def update(self) :
         self.levelB = self.storedWheat//725     #Max divisé par 4
         self.levelV = self.storedWheat//414      #Max divisé par 7
+
+        if self.storedWheat > 100 :
+            self.storedWheat = self.storedWheat - 100
+            for surroundingHouses in self.plateau.structures :
+                if isinstance(surroundingHouses, House) :
+                    if (abs(self.case.x-surroundingHouses.case.x) < 15) and (abs(self.case.y-surroundingHouses.case.y) < 15) :
+                        surroundingHouses.wheat = surroundingHouses.wheat + 1
+        
 
 
     def delete(self) :

@@ -17,6 +17,7 @@ class Case():
         self.structure = structure
         self.connectedToRoad = connectedToRoad
         self.waterAccess = 0
+        self.religiousAccess = 0
 
     def setFeature(self,newFeature):
         self.feature=newFeature

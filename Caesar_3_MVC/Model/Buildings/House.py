@@ -12,9 +12,10 @@ class House(Building):
     def __init__(self, case, plateau, size, desc):
         super().__init__(case, plateau, size, desc)
         self.entertainLvl = 0
+        self.wheat = 0
+        self.wheatMax = 10
         self.nbHab = 1
         self.nbHabMax = 5
-        self.religiousAccess = 0
         self.plateau.cityHousesList.append(self)
 
     
@@ -52,6 +53,16 @@ class House(Building):
                 self.upgrade()
             if (self.desc == "LargeTent" or self.desc =="LargeTent2") and self.case.waterAccess<1 : #Il faudra ajouter plus tard la condition de désirabilité
                 self.downgrade()
+            if (self.desc == "LargeTent2") and self.case.religiousAccess>0 :
+                self.upgrade()
+            if (self.desc == "SmallShack") and (self.case.religiousAccess <1 or self.case.waterAccess<1) :
+                self.downgrade()
+
+
+            #Augmentation du nombre d'habitant en fonction du blé disponible
+            if self.wheat == self.wheatMax and self.nbHab < self.nbHabMax:
+                self.wheat = 0
+                self.nbHab = self.nbHab +1
 
             #Merge 4 1*1 en un 2*2 :
             if (self.desc == "SmallTent" or self.desc =="LargeTent") :
@@ -70,6 +81,9 @@ class House(Building):
         if self.desc=="SmallTent2" : 
             self.desc="LargeTent2"
             self.set_nbHabmax(28)
+        if self.desc=="LargeTent2" : 
+            self.desc="SmallShack"
+            self.set_nbHabmax(36)
 
     def downgrade(self) :
         if self.desc == "LargeTent":
@@ -78,6 +92,10 @@ class House(Building):
         if self.desc=="LargeTent2" : 
             self.desc="SmallTent2"
             self.set_nbHabmax(20)
+        if self.desc =="SmallShack" :
+            self.desc = "LargeTent2"
+            self.set_nbHabmax(28)
+
         #Ramène le nombre d'habitants au maximum de la nouvelle taille
         if self.nbHab > self.nbHabMax :
             self.nbHab = self.nbHabMax
