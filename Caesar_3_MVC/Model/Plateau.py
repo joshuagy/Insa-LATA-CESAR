@@ -480,23 +480,23 @@ class Plateau():
                                             (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x +25,
                                                 render_pos[1] - (self.image_structures["GranaryLev"][self.map[cell_x][cell_y].structure.levelV].get_height() - cell_size) + self.camera.vect.y))
 
-                            storedQuantTxt = TextRender(str(self.map[cell_x][cell_y].structure.storedWheat),(20,20),(0,0,0)).img_scaled
-                            self.screen.blit(storedQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                                render_pos[1] - (self.image_structures["GranaryTop"].get_height() - cell_size) + self.camera.vect.y))
+                            #storedQuantTxt = TextRender(str(self.map[cell_x][cell_y].structure.storedWheat),(20,20),(0,0,0)).img_scaled
+                            #self.screen.blit(storedQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                            #                    render_pos[1] - (self.image_structures["GranaryTop"].get_height() - cell_size) + self.camera.vect.y))
                                       
                     elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
                         id_image = self.map[cell_x][cell_y].structure.desc
                         self.screen.blit(self.image_structures[id_image], 
                                             (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                                 render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
-                        if isinstance(self.map[cell_x][cell_y].structure, House) :
-                            nbHabTxt = TextRender(str(self.map[cell_x][cell_y].structure.nbHab),(20,20),(0,0,0)).img_scaled
-                            self.screen.blit(nbHabTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                                render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
-                        if isinstance(self.map[cell_x][cell_y].structure, WheatFarm) :
-                            grQuantTxt = TextRender(str(self.map[cell_x][cell_y].structure.growingQuant),(20,20),(0,0,0)).img_scaled
-                            self.screen.blit(grQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                                render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                        #if isinstance(self.map[cell_x][cell_y].structure, House) :
+                        #    nbHabTxt = TextRender(str(self.map[cell_x][cell_y].structure.nbHab),(20,20),(0,0,0)).img_scaled
+                        #    self.screen.blit(nbHabTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                        #                        render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                        #if isinstance(self.map[cell_x][cell_y].structure, WheatFarm) :
+                        #    grQuantTxt = TextRender(str(self.map[cell_x][cell_y].structure.growingQuant),(20,20),(0,0,0)).img_scaled
+                        #    self.screen.blit(grQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                        #                        render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
 
                     # DRAW PREVIEWED CELLS AND HOVERED CELLS
                     if self.foreground.hasEffect(cell_x, cell_y) and image != None:
