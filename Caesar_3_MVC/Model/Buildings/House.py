@@ -34,11 +34,11 @@ class House(Building):
     def set_nbHab(self, newnbHab):
         self.nbHab = newnbHab
 
-    def get_nbHabmax(self):
-        return self.nbHabmax
+    def get_nbHabMax(self):
+        return self.nbHabMax
     
-    def set_nbHabmax(self, newnbHabmax):
-        self.nbHabmax = newnbHabmax
+    def set_nbHabMax(self, newnbHabmax):
+        self.nbHabMax = newnbHabmax
 
     def delete(self) :
         self.case.setStructure(None)
@@ -60,7 +60,7 @@ class House(Building):
 
 
             #Augmentation du nombre d'habitant en fonction du blé disponible
-            if self.wheat == self.wheatMax and self.nbHab < self.nbHabMax:
+            if self.wheat >= self.wheatMax and self.nbHab < self.nbHabMax:
                 self.wheat = 0
                 self.nbHab = self.nbHab +1
 
@@ -77,24 +77,24 @@ class House(Building):
     def upgrade(self) :
         if self.desc=="SmallTent" : 
             self.desc="LargeTent"
-            self.set_nbHabmax(20)
+            self.set_nbHabMax(7)
         if self.desc=="SmallTent2" : 
             self.desc="LargeTent2"
-            self.set_nbHabmax(28)
+            self.set_nbHabMax(28)
         if self.desc=="LargeTent2" : 
             self.desc="SmallShack"
-            self.set_nbHabmax(36)
+            self.set_nbHabMax(36)
 
     def downgrade(self) :
         if self.desc == "LargeTent":
             self.desc = "SmallTent"
-            self.set_nbHabmax(5)
+            self.set_nbHabMax(5)
         if self.desc=="LargeTent2" : 
             self.desc="SmallTent2"
-            self.set_nbHabmax(20)
+            self.set_nbHabMax(20)
         if self.desc =="SmallShack" :
             self.desc = "LargeTent2"
-            self.set_nbHabmax(28)
+            self.set_nbHabMax(28)
 
         #Ramène le nombre d'habitants au maximum de la nouvelle taille
         if self.nbHab > self.nbHabMax :

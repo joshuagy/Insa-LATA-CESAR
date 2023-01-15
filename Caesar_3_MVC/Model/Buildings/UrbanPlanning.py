@@ -38,6 +38,7 @@ class Senate(Building) :
     def __init__(self, case, plateau, size, desc) :
         super().__init__(case, plateau, size, desc)
         self.secCases = []
+        self.plateau.treasury = self.plateau.treasury - SENATE_COST
         self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]+60]
         for xi in range(self.case.x, self.case.x+5, 1) :
             for yi in range(self.case.y, self.case.y-5, -1 ) :
@@ -60,6 +61,7 @@ class Temple(Building) :
 
     def __init__(self, case, plateau, size, desc) :
         super().__init__(case, plateau, size, desc)
+        self.plateau.treasury = self.plateau.treasury - TEMPLE_COST
         self.secCases = []
         self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]+20]
         for xi in range(self.case.x, self.case.x+2, 1) :

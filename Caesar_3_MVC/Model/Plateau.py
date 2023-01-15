@@ -399,7 +399,7 @@ class Plateau():
             for b in self.structures :
                 if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
                 if isinstance(b,WorkBuilding): b.delay()
-                if isinstance(b,WheatFarm) or isinstance(b,Granary) : b.update()     #Actualise les fermes et greniers
+                if isinstance(b,WheatFarm) or isinstance(b,Granary) or isinstance(b,Market ) : b.update()     #Actualize Food Chain Buildings
                 self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
             self.population = 0
             for h in self.cityHousesList:

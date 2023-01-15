@@ -587,11 +587,11 @@ class MouseInputHandler:
             #Vérifier que toutes les cases sont disponibles :
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
-                    for xccl in range(xi, xi+3, 1) :
+                    for xccl in range(xi-1, xi+2, 1) :
                         for yccl in range(yi-1, yi+2, 1 ) :
                             if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
                                 return
-            WheatFarm(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"WheatFarm")
+            WheatFarm(self.model.actualGame.map[xi][yi],self.model.actualGame,(2,2),"WheatFarm")
 
 #Granary
         if self.model.actualGame.controls.message_view_button.clicked and not self.model.actualGame.controls.message_view_button.rect.collidepoint(event.pos):
@@ -644,8 +644,8 @@ class MouseInputHandler:
             #Vérifier que toutes les cases sont disponibles :
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
-                    for xccl in range(xi, xi+3, 1) :
-                        for yccl in range(yi, yi-3, 1 ) :
+                    for xccl in range(xi, xi-3, -1) :
+                        for yccl in range(yi, yi-3, -1 ) :
                             if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
                                 return
             Granary(self.model.actualGame.map[xi][yi],self.model.actualGame,(3,3),"Granary")

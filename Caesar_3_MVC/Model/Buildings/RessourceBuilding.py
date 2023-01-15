@@ -17,6 +17,7 @@ class WheatFarm(Building) :
         self.growingQuantMax = 100
         self.productivity = 0
         self.nbEmpl = 0
+        self.plateau.treasury = self.plateau.treasury - WHEATFARM_COST
         self.case.render_pos = [self.case.render_pos[0]-35, self.case.render_pos[1]+5]
         self.plots = []
         self.secCases = [self.plateau.map[self.case.x][self.case.y-1],self.plateau.map[self.case.x-1][self.case.y],self.plateau.map[self.case.x-1][self.case.y-1]]
@@ -48,6 +49,7 @@ class WheatFarm(Building) :
             return
         
         #Fait augmnter la quantité de blé qui pousse si la ferme est productive :
+        #if random.randint(0,10)==10 :
         self.growingQuant=self.growingQuant+1
         #Je vais me renseigner pour le fonctionnement
 
@@ -111,10 +113,32 @@ class Market(Building) :
     def __init__(self, case, plateau, size, desc):
         super().__init__(case, plateau, size, desc)
         self.storedWheat = 0
+        self.storedWheatMax = 300
+        self.plateau.treasury = self.plateau.treasury - MARKET_COST
         self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]+20]
         self.secCases = [self.plateau.map[self.case.x][self.case.y-1],self.plateau.map[self.case.x+1][self.case.y],self.plateau.map[self.case.x+1][self.case.y-1]]
         for sc in self.secCases :
             sc.setStructure(self)
+
+    def update(self) :
+        if self.storedWheat > 100 :
+            for surroundingHouses in self.plateau.structures :
+                if isinstance(surroundingHouses, House) :
+                    if (abs(self.case.x-surroundingHouses.case.x) < 15) and (abs(self.case.y-surroundingHouses.case.y) < 15) :
+                        surroundingHouses.wheat = surroundingHouses.wheat + 1
+                        self.storedWheat = self.storedWheat - 1
+        
+    def ignite(self):
+        self.delete()
+        for oc in self.secCases :
+               BurningBuilding(oc, self.plateau,"BurningBuilding")
+        BurningBuilding(self.case,self.plateau,"BurningBuilding")
+
+    def collapse(self):
+        self.delete()
+        for oc in self.secCases :
+            DamagedBuilding(oc, self.plateau,"Ruins")
+        DamagedBuilding(self.case,self.plateau,"Ruins")
 
     def delete(self) :
         #self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]]
@@ -132,7 +156,10 @@ class Granary(Building) :
         self.storedWheatMax = 2900
         self.levelB = 0
         self.levelV = 0
+        self.plateau.treasury = self.plateau.treasury - GRANARY_COST
         self.secCases = []
+        for sc in self.secCases :
+            sc.setStructure(self)
         for xar in range(self.case.x, self.case.x-3, -1) :
             for yar in range(self.case.y, self.case.y-3, -1) :
                 if self.plateau.map[xar][yar] != self.case :
@@ -148,16 +175,25 @@ class Granary(Building) :
         self.levelV = self.storedWheat//414      #Max divisé par 7
 
         if self.storedWheat > 100 :
-            self.storedWheat = self.storedWheat - 100
-            for surroundingHouses in self.plateau.structures :
-                if isinstance(surroundingHouses, House) :
-                    if (abs(self.case.x-surroundingHouses.case.x) < 15) and (abs(self.case.y-surroundingHouses.case.y) < 15) :
-                        surroundingHouses.wheat = surroundingHouses.wheat + 1
+            for surroundingMarkets in self.plateau.structures :
+                if isinstance(surroundingMarkets, Market) :
+                    if (abs(self.case.x-surroundingMarkets.case.x) < 15) and (abs(self.case.y-surroundingMarkets.case.y) < 15) :
+                        surroundingMarkets.storedWheat = surroundingMarkets.storedWheat + 30
+                        self.storedWheat = self.storedWheat - 30
         
+    def ignite(self):
+        self.delete()
+        for oc in self.secCases :
+               BurningBuilding(oc, self.plateau,"BurningBuilding")
+        BurningBuilding(self.case,self.plateau,"BurningBuilding")
 
+    def collapse(self):
+        self.delete()
+        for oc in self.secCases :
+            DamagedBuilding(oc, self.plateau,"Ruins")
+        DamagedBuilding(self.case,self.plateau,"Ruins")
 
     def delete(self) :
-        #self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]]
         self.case.setStructure(None)
         self.plateau.structures.remove(self)
         for sc in self.secCases :
