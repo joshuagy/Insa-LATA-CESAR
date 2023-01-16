@@ -19,6 +19,7 @@ class Controls:
 
     self.hiddenButton = []
 
+
     self.staticSurface = self.generateStaticSurface()
     self.staticSurfacePos = (self.screenWidth-big_gap_menu.dim[0], 24)
     self.listOfButtons = self.generateListOfButtons()
@@ -29,6 +30,8 @@ class Controls:
     return self.currentState
 
   def setCurrentState(self, newState):
+    #if self.currentState == 'industrialStructures' :
+    #  self.end_industrial_structures_selection()
     print(newState)
     self.currentState = newState
   
@@ -161,7 +164,7 @@ class Controls:
     self.health_related_structures= ButtonCtrlPnl(self, not_implemented_func,  "Health related structures", self.screenWidth-99-self.originX,337-self.originY, "image/C3/paneling_00163.png", "image/C3/paneling_00164.png", "image/C3/paneling_00165.png","image/C3/paneling_00166.png")
     listOfButtons.append(self.health_related_structures)
 
-    self.religious_structures = ButtonCtrlPnl(self, not_implemented_func, "Religious Structures", 0, 0,"image/C3/paneling_00151.png","image/C3/paneling_00152.png","image/C3/paneling_00153.png","image/C3/paneling_00154.png")
+    self.religious_structures = ButtonCtrlPnl(self, not_implemented_func, "Religious Structures", 0, 0,"image/C3/paneling_00151.png","image/C3/paneling_00152.png","image/C3/paneling_00153.png")
     self.religious_structures.change_pos(self.screenWidth - 49 - self.originX, 337 - self.originY)
     listOfButtons.append(self.religious_structures)
 
@@ -181,16 +184,22 @@ class Controls:
     self.security_structures = ButtonCtrlPnl(self, build_prefecture, "Security Structures", self.screenWidth - 99 - self.originX, 409 - self.originY, "image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png", state='securityStructures')
     listOfButtons.append(self.security_structures)
 
-    self.industrial_structures = ButtonCtrlPnl(self, not_implemented_func, "Industrial Structures", self.screenWidth-49-self.originX,409-self.originY,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png")
+    self.industrial_structures = ButtonCtrlPnl(self, not_implemented_func, "Wheat Farm", self.screenWidth-49-self.originX,409-self.originY,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png", state = 'industrialStructures')
     listOfButtons.append(self.industrial_structures)
-    
+
     self.undo_button = ButtonCtrlPnl(self, not_implemented_func, "Undo", self.screenWidth-149-self.originX, 445-self.originY,"image/C3/paneling_00171.png","image/C3/paneling_00172.png","image/C3/paneling_00173.png","image/C3/paneling_00174.png")
     listOfButtons.append(self.undo_button)
     
-    self.message_view_button = ButtonCtrlPnl(self, not_implemented_func, "Message View", self.screenWidth-99-self.originX,445-self.originY,"image/C3/paneling_00115.png","image/C3/paneling_00116.png","image/C3/paneling_00117.png","image/C3/paneling_00118.png")
+#    self.message_view_button = ButtonCtrlPnl(self, not_implemented_func, "Message View", self.screenWidth-99-self.originX,445-self.originY,"image/C3/paneling_00115.png","image/C3/paneling_00116.png","image/C3/paneling_00117.png","image/C3/paneling_00118.png")
+#    listOfButtons.append(self.message_view_button)
+
+    self.message_view_button = ButtonCtrlPnl(self, not_implemented_func, "Granary", self.screenWidth-99-self.originX,445-self.originY,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png")
     listOfButtons.append(self.message_view_button)
 
-    self.see_recent_troubles_button = ButtonCtrlPnl(self, not_implemented_func, "See recent troubles", self.screenWidth-49-self.originX,445-self.originY,"image/C3/paneling_00119.png","image/C3/paneling_00120.png","image/C3/paneling_00121.png","image/C3/paneling_00122.png")
+#    self.see_recent_troubles_button = ButtonCtrlPnl(self, not_implemented_func, "See recent troubles", self.screenWidth-49-self.originX,445-self.originY,"image/C3/paneling_00119.png","image/C3/paneling_00120.png","image/C3/paneling_00121.png","image/C3/paneling_00122.png")
+#    listOfButtons.append(self.see_recent_troubles_button)
+
+    self.see_recent_troubles_button = ButtonCtrlPnl(self, not_implemented_func, "Market", self.screenWidth-49-self.originX,445-self.originY,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png")
     listOfButtons.append(self.see_recent_troubles_button)
 
     self.variable_speed_up = ButtonWithImmediatEffect(self, self.increaseSpeed, "Game speed up", self.screenWidth - 149 - self.originX, 490 - self.originY, "image/UI/menu/variable_speed/paneling_00247.png","image/UI/menu/variable_speed/paneling_00248.png","image/UI/menu/variable_speed/paneling_00249.png")
@@ -241,7 +250,7 @@ class Controls:
       button2.show_tip(self.screen)
   
   def display_overlay_selection(self):
-    """ This function is going to show the differrent ooverlay that we can select"""
+   """ This function is going to show the differrent overlays that we can select"""
     # Not working for the moment
     # liste_overlay = ["image/UI/menu/menu_overlay_button.png", "image/UI/menu/menu_fire_overlay.png"]
     # liste_text = ["Select a city overlay report", "Show the risk of the structure to catch fire"]
@@ -255,4 +264,23 @@ class Controls:
     #       self.overlays_button.change_image(liste_overlay[0])
     #       self.overlays_button.text = liste_text[0]
     #       return None
-    pass
+  pass
+  """
+  def display_industrial_structures_selection(self):
+    #This function is going to show the differrent industrial structures that we can select
+    #     liste_image = ["image/UI/menu/menu_wheat_button.png", "image/UI/menu/menu_granary_button.png","image/UI/menu/menu_market_button.png"]
+    liste_text = ["Build a Wheat Farm to produce food", "Build a Granary to store food", "Build a Market to give your citizens access to food"]
+
+    self.build_wheatFarm_button = ButtonCtrlPnl(self, not_implemented_func, liste_text[0], self.screenWidth - 160 - self.originX, 530 - self.originY, liste_image[0])
+    self.listOfButtons.append(self.build_wheatFarm_button)
+    self.build_granary_button = ButtonCtrlPnl(self, not_implemented_func, liste_text[1], self.screenWidth - 160 - self.originX, 550 - self.originY, liste_image[1])
+    self.listOfButtons.append(self.build_granary_button)
+    self.build_market_button = ButtonCtrlPnl(self, not_implemented_func, liste_text[2], self.screenWidth - 160 - self.originX, 570 - self.originY, liste_image[2])
+    self.listOfButtons.append(self.build_market_button)
+
+  def end_industrial_structures_selection(self) :
+    for ftd in [self.build_market_button, self.build_wheatFarm_button, self.build_granary_button] :
+      if ftd in self.listOfButtons :
+        self.listOfButtons.remove(ftd)
+  """
+    

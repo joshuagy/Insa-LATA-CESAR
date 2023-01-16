@@ -15,6 +15,7 @@ from Model.Buildings.House import HousingSpot
 from Model.Buildings.RessourceBuilding import *
 from Model.Buildings.WorkBuilding import *
 from Model.Controls import Controls
+from Model.control_panel import TextRender
 from Model.TopBar import TopBar
 from Model.Foreground import Foreground
 from random import *
@@ -47,6 +48,7 @@ class Plateau():
         self.image_route = self.load_routes_images()
         self.image_walkers = self.load_walkers_images()
         self.image_structures = self.load_structures_images()
+        self.road_warning_rectangle =load_image("image/UI/menu/roadWarning.png")
 
         self.zoom__=Zoom(self.image)
 
@@ -56,6 +58,7 @@ class Plateau():
         self.treasury = START_TREASURY + self.nbr_cell_y * ROAD_COST    #Remboursement auto des routes par défaut
         #Population
         self.population = 0
+        self.roadWarning = False #Affiche un avertissement quand un bâtiment qui a besoin de la route est déconnecté
 
         self.map = self.default_map()
 
@@ -315,6 +318,7 @@ class Plateau():
         st2s = load_image("image/Buildings/Housng1a_00005.png")
         lt1s = load_image("image/Buildings/Housng1a_00004.png")
         lt2s = load_image("image/Buildings/Housng1a_00006.png")
+        sss = load_image("image/Buildings/Housng1a_00011.png")
         ps = load_image("image/Buildings/Security_00001.png")
         eps = load_image("image/Buildings/transport_00056.png")
         ws = load_image("image/Buildings/Utilitya_00001.png")
@@ -325,10 +329,16 @@ class Plateau():
         whfas = load_image("image/Buildings/Farm/Commerce_00012.png")
         whpls = list(load_image(f"image/Buildings/Farm/Plot{i}.png") for i in range(0,5))
         marks = load_image("image/Buildings/Commerce_00001.png")
+        granatops = load_image("image/Buildings/Granary/Gtop.png")
+        granabases = load_image("image/Buildings/Granary/Gbase.png")
+        granabs = list(load_image(f"image/Buildings/Granary/b{i}.png")for i in range(0,4))
+        granals = list(load_image(f"image/Buildings/Granary/l{i}.png")for i in range(0,7))
+        tems = load_image("image/Buildings/Security_00053.png")
         
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
-                "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks }
+                "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks, "GranaryTop" : granatops,
+                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : tems, "SmallShack" : sss }
  
     def getButtonsFunctions(self):
         return {
@@ -388,10 +398,11 @@ class Plateau():
             for e in self.entities: e.update(currentSpeedFactor)
             for hs in self.cityHousingSpotsList: hs.generateImmigrant()
             for bb in self.burningBuildings: bb.update()
+            self.roadWarning=False
             for b in self.structures :
                 if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
                 if isinstance(b,WorkBuilding): b.delay()
-                if isinstance(b,WheatFarm) : b.update()     #Actualise les fermes
+                if isinstance(b,WheatFarm) or isinstance(b,Granary) or isinstance(b,Market ) : b.update()     #Actualize Food Chain Buildings
                 self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
             self.population = 0
             for h in self.cityHousesList:
@@ -404,6 +415,7 @@ class Plateau():
                     if 0<=xcr<self.nbr_cell_x and 0<=ycr<self.nbr_cell_y:
                         if self.map[xcr][ycr].road :
                             return
+        
         if isinstance(b,HousingSpot) or isinstance(b,House) :
             b.delete()
         if isinstance(b,WorkBuilding) and b.active==True :
@@ -448,11 +460,43 @@ class Plateau():
                         self.screen.blit(self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                             render_pos[1] - (self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level].get_height() - cell_size) + self.camera.vect.y))
+                    
+                    elif isinstance(self.map[cell_x][cell_y].structure, Granary):
+                        if self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
+                            self.screen.blit(self.image_structures["GranaryBase"], 
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x -55 ,    #-55
+                                                render_pos[1] - (self.image_structures["GranaryBase"].get_height() - cell_size) + self.camera.vect.y)) #+50
+                        
+                            self.screen.blit(self.image_structures["GranaryTop"], 
+                                                (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x - 25, #-5
+                                                render_pos[1] - (self.image_structures["GranaryTop"].get_height() - cell_size) + self.camera.vect.y-10)) #+35
+                            """    
+                                for gl in range(0,self.map[cell_x][cell_y].structure.levelB) :
+                                    self.screen.blit(self.image_structures["GranaryRoom"][gl], 
+                                                (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                                    render_pos[1] - (self.image_structures["GranaryRoom"][gl].get_height() - cell_size) + self.camera.vect.y))
+                            """
+                            self.screen.blit(self.image_structures["GranaryLev"][self.map[cell_x][cell_y].structure.levelV], 
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x +25,
+                                                render_pos[1] - (self.image_structures["GranaryLev"][self.map[cell_x][cell_y].structure.levelV].get_height() - cell_size) + self.camera.vect.y))
+
+                            #storedQuantTxt = TextRender(str(self.map[cell_x][cell_y].structure.storedWheat),(20,20),(0,0,0)).img_scaled
+                            #self.screen.blit(storedQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                            #                    render_pos[1] - (self.image_structures["GranaryTop"].get_height() - cell_size) + self.camera.vect.y))
+                                      
                     elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
                         id_image = self.map[cell_x][cell_y].structure.desc
                         self.screen.blit(self.image_structures[id_image], 
                                             (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                                 render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                        #if isinstance(self.map[cell_x][cell_y].structure, House) :
+                        #    nbHabTxt = TextRender(str(self.map[cell_x][cell_y].structure.nbHab),(20,20),(0,0,0)).img_scaled
+                        #    self.screen.blit(nbHabTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                        #                        render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                        #if isinstance(self.map[cell_x][cell_y].structure, WheatFarm) :
+                        #    grQuantTxt = TextRender(str(self.map[cell_x][cell_y].structure.growingQuant),(20,20),(0,0,0)).img_scaled
+                        #    self.screen.blit(grQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                        #                        render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
 
                     # DRAW PREVIEWED CELLS AND HOVERED CELLS
                     if self.foreground.hasEffect(cell_x, cell_y) and image != None:
@@ -547,6 +591,7 @@ class Plateau():
                     
             self.topbar.render()
             self.controls.render()
+            if self.roadWarning : self.screen.blit(self.road_warning_rectangle,(500,30))
 
             fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
             self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))

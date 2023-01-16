@@ -37,6 +37,7 @@ class MouseInputHandler:
                 if currentstate == STATE_PLAY:
                     self.handleMouseButtonDownEventStatePlay(event)
 
+
         elif event.type == pygame.MOUSEBUTTONUP:
                 if(self.clicked):
                         self.finalClickCoordinate = pygame.mouse.get_pos()
@@ -105,8 +106,6 @@ class MouseInputHandler:
         else:
             self.model.pause_menu.passed[0] = False
             self.model.pause_menu.Exit_rect.y = self.model.pause_menu.Exit_rectyinit
-
-
 
 
         if self.model.pause_menu.Continue_rect.collidepoint(pygame.mouse.get_pos()) and self.model.pause_menu.pause :
@@ -180,6 +179,8 @@ class MouseInputHandler:
         self.model.actualGame.foreground.setOverlayName(None)
         mousePosRelative = (event.pos[0] - (self.model.actualGame.width - big_gap_menu.dim[0] - 1758.0) - 1758.0, event.pos[1] -24)
         controlsCurrentState = self.model.actualGame.controls.getCurrentState()
+
+
 
         # Pelle 
         if controlsCurrentState == 'clearLand' and not self.model.actualGame.controls.clear_land_button.rect.collidepoint(mousePosRelative):
@@ -471,7 +472,7 @@ class MouseInputHandler:
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
                     if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
-                        Well(self.model.actualGame.map[xi][yi],self.model.actualGame,"Well")
+                        Well(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Well")
 
         #Senate
         if self.model.actualGame.controls.administration_or_government_structures.clicked and not self.model.actualGame.controls.administration_or_government_structures.rect.collidepoint(event.pos):
@@ -534,6 +535,7 @@ class MouseInputHandler:
                                 return
             Senate(self.model.actualGame.map[xi][yi],self.model.actualGame,(5,5),"Senate")
 
+
         #Farm
         if self.model.actualGame.controls.industrial_structures.clicked and not self.model.actualGame.controls.industrial_structures.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
@@ -585,13 +587,183 @@ class MouseInputHandler:
             #Vérifier que toutes les cases sont disponibles :
             for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
-                    for xccl in range(xi, xi+3, 1) :
+                    for xccl in range(xi-1, xi+2, 1) :
                         for yccl in range(yi-1, yi+2, 1 ) :
                             if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
                                 return
-            WheatFarm(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"WheatFarm")
+            WheatFarm(self.model.actualGame.map[xi][yi],self.model.actualGame,(2,2),"WheatFarm")
+
+#Granary
+        if self.model.actualGame.controls.message_view_button.clicked and not self.model.actualGame.controls.message_view_button.rect.collidepoint(event.pos):
+            x, y = self.initialMouseCoordinate
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x1 = int(cart_x // cell_size)
+            grid_y1 = int(cart_y // cell_size)
+
+            x, y = event.pos
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x2 = int(cart_x // cell_size)
+            grid_y2 = int(cart_y // cell_size)
+        
+            if grid_x1 <0:
+                grid_x1 = 0
+            if grid_x2 <0:
+                grid_x2 = 0
+            if grid_y1 <0:
+                grid_y1 = 0
+            if grid_y2 <0:
+                grid_y2 = 0
+
+            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+                grid_x1 = self.model.actualGame.nbr_cell_x-1
+            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+                grid_x2 = self.model.actualGame.nbr_cell_x-1
+            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+                grid_y1 = self.model.actualGame.nbr_cell_y-1
+            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+                grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+            if grid_x1 > grid_x2:
+                temp = grid_x1
+                grid_x1 = grid_x2
+                grid_x2 = temp
+
+            if grid_y1 > grid_y2:
+                temp = grid_y1
+                grid_y1 = grid_y2
+                grid_y2 = temp
+            
+            #Vérifier que toutes les cases sont disponibles :
+            for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                    for xccl in range(xi, xi-3, -1) :
+                        for yccl in range(yi, yi-3, -1 ) :
+                            if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
+                                return
+            Granary(self.model.actualGame.map[xi][yi],self.model.actualGame,(3,3),"Granary")
+
+#Market
+        if self.model.actualGame.controls.see_recent_troubles_button.clicked and not self.model.actualGame.controls.see_recent_troubles_button.rect.collidepoint(event.pos):
+            x, y = self.initialMouseCoordinate
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x1 = int(cart_x // cell_size)
+            grid_y1 = int(cart_y // cell_size)
+
+            x, y = event.pos
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x2 = int(cart_x // cell_size)
+            grid_y2 = int(cart_y // cell_size)
+        
+            if grid_x1 <0:
+                grid_x1 = 0
+            if grid_x2 <0:
+                grid_x2 = 0
+            if grid_y1 <0:
+                grid_y1 = 0
+            if grid_y2 <0:
+                grid_y2 = 0
+
+            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+                grid_x1 = self.model.actualGame.nbr_cell_x-1
+            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+                grid_x2 = self.model.actualGame.nbr_cell_x-1
+            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+                grid_y1 = self.model.actualGame.nbr_cell_y-1
+            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+                grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+            if grid_x1 > grid_x2:
+                temp = grid_x1
+                grid_x1 = grid_x2
+                grid_x2 = temp
+
+            if grid_y1 > grid_y2:
+                temp = grid_y1
+                grid_y1 = grid_y2
+                grid_y2 = temp
+            
+            #Vérifier que toutes les cases sont disponibles :
+            for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                    for xccl in range(xi, xi+2, 1) :
+                        for yccl in range(yi, yi-2, -1 ) :
+                            if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
+                                return
+            Market(self.model.actualGame.map[xi][yi],self.model.actualGame,(2,2),"Market")
  
                                     
+        if self.model.actualGame.controls.religious_structures.clicked and not self.model.actualGame.controls.religious_structures.rect.collidepoint(event.pos):
+            x, y = self.initialMouseCoordinate
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x1 = int(cart_x // cell_size)
+            grid_y1 = int(cart_y // cell_size)
+
+            x, y = event.pos
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x2 = int(cart_x // cell_size)
+            grid_y2 = int(cart_y // cell_size)
+        
+            if grid_x1 <0:
+                grid_x1 = 0
+            if grid_x2 <0:
+                grid_x2 = 0
+            if grid_y1 <0:
+                grid_y1 = 0
+            if grid_y2 <0:
+                grid_y2 = 0
+
+            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+                grid_x1 = self.model.actualGame.nbr_cell_x-1
+            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+                grid_x2 = self.model.actualGame.nbr_cell_x-1
+            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+                grid_y1 = self.model.actualGame.nbr_cell_y-1
+            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+                grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+            if grid_x1 > grid_x2:
+                temp = grid_x1
+                grid_x1 = grid_x2
+                grid_x2 = temp
+
+            if grid_y1 > grid_y2:
+                temp = grid_y1
+                grid_y1 = grid_y2
+                grid_y2 = temp
+            
+            #Vérifier que toutes les cases sont disponibles :
+            for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                    for xccl in range(xi, xi+2, 1) :
+                        for yccl in range(yi, yi-2, -1 ) :
+                            if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
+                                return
+            Temple(self.model.actualGame.map[xi][yi],self.model.actualGame,(2,2),"Temple")
+
         #Overlay part
         # if fire_overlay.clicked:
         #     pass
