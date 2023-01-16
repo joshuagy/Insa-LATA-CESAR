@@ -16,6 +16,7 @@ STATE_HELP = 3
 STATE_QUIT = 4
 STATE_PLAY = 5
 
+
 # ARGENT :
 START_TREASURY = 5000 # Argent au début du jeu
 # Coût des différentes structures :
