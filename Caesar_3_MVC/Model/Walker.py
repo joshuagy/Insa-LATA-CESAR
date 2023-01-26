@@ -3,15 +3,6 @@ from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
-"""
-TO DO LIST
-- Déplacement fluide
-- Dab (important)
-- Spawn à un bâtiment
-- Différentes actions
-- Sous classes
-"""
-
 ttwmax = 30
 
 class Walker:
