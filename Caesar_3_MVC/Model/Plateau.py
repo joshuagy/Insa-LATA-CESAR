@@ -7,13 +7,11 @@ from Model.Walker import *
 from Model.control_panel import *
 from Model.constants import *
 from Model.Route import Route
-from Model.Buildings.Building import Building
-from Model.Buildings.Building import BurningBuilding
-from Model.Buildings.Building import DamagedBuilding
+from Model.Buildings.Building import *
 from Model.Buildings.House import House
 from Model.Buildings.House import HousingSpot
 from Model.Buildings.House import MergedHouse
-from Model.Buildings.UrbanPlanning import Well
+from Model.Buildings.UrbanPlanning import *
 from Model.Buildings.RessourceBuilding import *
 from Model.Buildings.WorkBuilding import *
 from Model.Controls import Controls
@@ -272,6 +270,12 @@ class Plateau():
                     BurningBuilding(self.map[s["x"]][s["y"]], self, s["type"], s["fireRisk"], s["collapseRisk"], s["timeBurning"])
                 case "Ruins" | "BurnedRuins":
                     DamagedBuilding(self.map[s["x"]][s["y"]], self, s["type"], s["fireRisk"], s["collapseRisk"])
+                case "Senate" :
+                    Senate(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
+                case "WheatFarm" :
+                    WheatFarm(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
+                case "Market" :
+                    Market(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
         
         #Walker
         #Immigrant
@@ -583,12 +587,12 @@ class Plateau():
             currentSpeedFactor = self.currentSpeed/100
             for e in self.entities: e.update(currentSpeedFactor)
             for hs in self.cityHousingSpotsList: hs.generateImmigrant()
-            for bb in self.burningBuildings: bb.update()
+            for bb in self.burningBuildings: bb.update(currentSpeedFactor)
             self.roadWarning=False
             for b in self.structures :
-                if isinstance(b,Building) : b.riskCheck()   # Vérifie et incrémente les risques d'incendies et d'effondrement
+                if isinstance(b,Building) : b.riskCheck(self.currentSpeed)   # Vérifie et incrémente les risques d'incendies et d'effondrement
                 if isinstance(b,WorkBuilding): b.delay()
-                if isinstance(b,WheatFarm) or isinstance(b,Granary) or isinstance(b,Market ) : b.update()     #Actualize Food Chain Buildings
+                if isinstance(b,WheatFarm) or isinstance(b,Granary) or isinstance(b,Market ) : b.update(self.currentSpeed)     #Actualize Food Chain Buildings
                 self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
             self.population = 0
             for h in self.cityHousesList:
