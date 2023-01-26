@@ -14,6 +14,7 @@ class Building():
         self.plateau.structures.append(self)
         self.fireRisk = fireRisk
         self.collapseRisk= collapseRisk
+        self.riskTimer = 0
         self.cost = 0
     
     def delete(self):
@@ -69,19 +70,23 @@ class Building():
     def getCase(self):
         return self.case
 
-    def riskCheck(self) :
-        #CollapseRisk :
-        if self.desc in list_of_brittle_structures :
-            if randint(0, 200) == 0:
-                self.set_collapseRisk(self.get_collapseRisk()+1)
-                if(self.get_collapseRisk() > 6):
-                    self.collapse()
-        #FireRisk :
-        if self.desc in list_of_flammable_structures :
-            if randint(0, 200) == 0:
-                self.set_fireRisk(self.get_fireRisk()+1)
-                if(self.get_fireRisk() > 6):
-                    self.ignite()
+    def riskCheck(self, currentSpeedFactor) :
+        self.riskTimer += 1
+        if self.riskTimer > (500 / currentSpeedFactor):
+            #CollapseRisk :
+            if self.desc in list_of_brittle_structures :
+                if randint(0, 100) == 0:
+                    self.set_collapseRisk(self.get_collapseRisk()+1)
+                    if(self.get_collapseRisk() > 6):
+                        self.collapse()
+            #FireRisk :
+            if self.desc in list_of_flammable_structures :
+                if randint(0, 100) == 0:
+                    self.set_fireRisk(self.get_fireRisk()+1)
+                    if(self.get_fireRisk() > 6):
+                        self.ignite()
+            
+            self.riskTimer = 0
 
     def collapse(self):
         self.delete()
@@ -101,6 +106,7 @@ class DamagedBuilding(Building) :
         self.case.setStructure(self)
         self.fireRisk = fireRisk 
         self.collapseRisk = collapseRisk
+        self.riskTimer = 0
 
     def delete(self):
         self.plateau.structures.remove(self)
@@ -121,6 +127,7 @@ class BurningBuilding(Building) :
         self.fireRisk = fireRisk 
         self.collapseRisk = collapseRisk
         self.index_sprite = 0
+        self.riskTimer = 0
     
     def delete(self):
         self.plateau.structures.remove(self)
@@ -132,8 +139,8 @@ class BurningBuilding(Building) :
         self.delete()
         DamagedBuilding(self.case,self.plateau,"BurnedRuins")
 
-    def update(self):
-        self.index_sprite += 0.5
+    def update(self, currentSpeedFactor):
+        self.index_sprite += (0.1 * currentSpeedFactor)
         if(self.index_sprite >= len(self.plateau.image_structures["BurningBuilding"])):
             self.index_sprite = 0
         # Chance qu'un incendie s'éteigne de lui-même (Pour l'instant 0,5% par tick après 1000 ticks)

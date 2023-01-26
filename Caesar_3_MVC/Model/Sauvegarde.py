@@ -25,24 +25,26 @@ class Sauvegarde() :
         #Sauvegarde des structures
         self.structures = []
         for s in actualGame.structures :
-            newdict = {"type" : s.desc, "x" : s.case.x, "y" : s.case.y}
-            if newdict["type"] != "HousingSpot":
-                newdict |= {"size" : s.size, "fireRisk" : s.fireRisk, "collapseRisk" : s.collapseRisk}
-                if newdict["type"] == "BurningBuilding":
-                    newdict |= {"timeBurning" : s.timeBurning}
-                elif newdict["type"] == "SmallTent" or newdict["type"] == "LargeTent":
-                    newdict |= {"entertainLvl" : s.entertainLvl, "nbHab" : s.nbHab, "nbHabMax" : s.nbHabMax,
-                                "religiousAccess" : s.religiousAccess}
-                elif newdict["type"] == "SmallTent2" or newdict["type"] == "LargeTent2":
-                    newdict|= {"case1_x" : s.secCases[0].x, "case1_y" : s.secCases[0].y,
-                                "case2_x" : s.secCases[1].x, "case2_y" : s.secCases[1].y,
-                                "case3_x" : s.secCases[2].x, "case3_y" : s.secCases[2].y,
-                                "nbHab" : s.nbHab}      
-                elif newdict["type"] == "Prefecture" or newdict["type"] == "EngineerPost":
-                    newdict |= {"active" : s.active}
-            else:
-                newdict |= {"nb_immigrant" : s.nb_immigrant}
-            self.structures.append(newdict)
+            if s.desc != "WheatPlot":
+                newdict = {"type" : s.desc, "x" : s.case.x, "y" : s.case.y}
+                if newdict["type"] != "HousingSpot":
+                    newdict |= {"size" : s.size, "fireRisk" : s.fireRisk, "collapseRisk" : s.collapseRisk}
+                    if newdict["type"] == "BurningBuilding":
+                        newdict |= {"timeBurning" : s.timeBurning}
+                    elif newdict["type"] == "SmallTent" or newdict["type"] == "LargeTent":
+                        newdict |= {"entertainLvl" : s.entertainLvl, "nbHab" : s.nbHab, "nbHabMax" : s.nbHabMax,
+                                    "religiousAccess" : s.religiousAccess}
+                    elif newdict["type"] == "SmallTent2" or newdict["type"] == "LargeTent2":
+                        newdict|= {"case1_x" : s.secCases[0].x, "case1_y" : s.secCases[0].y,
+                                    "case2_x" : s.secCases[1].x, "case2_y" : s.secCases[1].y,
+                                    "case3_x" : s.secCases[2].x, "case3_y" : s.secCases[2].y,
+                                    "nbHab" : s.nbHab}      
+                    elif newdict["type"] == "Prefecture" or newdict["type"] == "EngineerPost":
+                        newdict |= {"active" : s.active}
+                else:
+                    newdict |= {"nb_immigrant" : s.nb_immigrant}
+                self.structures.append(newdict)
+        #self.structures.append(s)
         
         #Sauvegarde des entités
         self.entities = []
@@ -60,6 +62,7 @@ class Sauvegarde() :
                     newdict |= {"target_x" : e.target.x, "target_y" : e.target.y}
 
                 self.entities.append(newdict)
+            #self.entities.append(e)
                 
 
 def save_object(obj : Sauvegarde, filename : str):
