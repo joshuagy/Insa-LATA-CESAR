@@ -18,6 +18,7 @@ from Model.Controls import Controls
 from Model.control_panel import TextRender
 from Model.TopBar import TopBar
 from Model.Foreground import Foreground
+from Model.EmpireDate import EmpireDate
 from random import *
 
 counter=1
@@ -58,6 +59,7 @@ class Plateau():
         self.treasury = START_TREASURY + self.nbr_cell_y * ROAD_COST    #Remboursement auto des routes par défaut
         #Population
         self.population = 0
+        self.empireDate = EmpireDate(self)
         self.roadWarning = False #Affiche un avertissement quand un bâtiment qui a besoin de la route est déconnecté
 
         self.map = self.default_map()
@@ -86,7 +88,7 @@ class Plateau():
         self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.buttonsFunctions)
 
 
-        self.topbar = TopBar(self.screen, self.treasury, self.population)
+        self.topbar = TopBar(self.screen, self.treasury, self.population, self.empireDate)
 
         #Define the position of the button on the full panel button who won't change position after
         # overlays_button.change_pos(self.width-overlays_button.dim[0]-hide_control_panel_button.dim[0]-10,27)
@@ -391,7 +393,7 @@ class Plateau():
             
             self.camera.update()
             self.controls.update(self.currentSpeed)
-            self.topbar.update(self.treasury, self.population)
+            self.topbar.update(self.treasury, self.population, self.empireDate)
 
             #Update de la position des walkers
             currentSpeedFactor = self.currentSpeed/100
@@ -408,6 +410,7 @@ class Plateau():
             for h in self.cityHousesList:
                 h.udmCheck()   # Vérifie les upgrades, downgrades et merge d'habitations
                 self.population = self.population + h.nbHab
+            self.empireDate.update()
 
     def nearbyRoadsCheck(self, b):     #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
         for xcr in range (b.case.x-2,b.case.x+3,1) :
@@ -420,6 +423,7 @@ class Plateau():
             b.delete()
         if isinstance(b,WorkBuilding) and b.active==True :
             b.active = False
+
 
 
     def draw(self):
