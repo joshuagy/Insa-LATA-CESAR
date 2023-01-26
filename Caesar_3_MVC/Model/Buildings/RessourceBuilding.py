@@ -39,23 +39,22 @@ class WheatFarm(Building) :
        
     def update(self, currentSpeedFactor) : 
         self.growingTimer += 1
+        for ac in self.allCases :
+            if ac.connectedToRoad > 0:
+
+                #Récolte le blé si les champs sont pleins :
+                if self.growingQuant>=100 :
+                    self.storedQuant=self.storedQuant+10
+                    self.growingQuant=0
+                    for p in self.plots :
+                        p.level = 0
+                for surroundingGranaries in self.plateau.structures :
+                    if isinstance(surroundingGranaries, Granary) :
+                        if (abs(self.case.x-surroundingGranaries.case.x) < 15) and (abs(self.case.y-surroundingGranaries.case.y) < 15) :
+                            surroundingGranaries.storedWheat = surroundingGranaries.storedWheat + 30
+                    return
         if self.growingTimer > (500 / currentSpeedFactor):
             #Affiche un message et annule toute mise à jour si le bâtiment n'est pas connecté à la route :
-
-            for ac in self.allCases :
-                if ac.connectedToRoad > 0:
-
-                    #Récolte le blé si les champs sont pleins :
-                    if self.growingQuant>=100 :
-                        self.storedQuant=self.storedQuant+10
-                        self.growingQuant=0
-                        for p in self.plots :
-                            p.level = 0
-                    for surroundingGranaries in self.plateau.structures :
-                        if isinstance(surroundingGranaries, Granary) :
-                            if (abs(self.case.x-surroundingGranaries.case.x) < 15) and (abs(self.case.y-surroundingGranaries.case.y) < 15) :
-                                surroundingGranaries.storedWheat = surroundingGranaries.storedWheat + 30
-                        return
     
                     #Fait augmnter la quantité de blé qui pousse si la ferme est productive :
                 #if random.randint(0,10)==10 :
@@ -131,7 +130,7 @@ class Market(Building) :
         for sc in self.secCases :
             sc.setStructure(self)
 
-    def update(self) :
+    def update(self, currentSpeedFactor) :
         for ac in self.secCases :
             if ac.connectedToRoad>0 or self.case.connectedToRoad>0 :
                 if self.storedWheat > 100 :
@@ -185,7 +184,7 @@ class Granary(Building) :
             sc.setStructure(self)
 
 
-    def update(self) :
+    def update(self, currentSpeedFactor) :
         self.levelB = self.storedWheat//725     #Max divisé par 4
         self.levelV = self.storedWheat//414      #Max divisé par 7
 

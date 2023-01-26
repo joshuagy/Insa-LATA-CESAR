@@ -276,6 +276,11 @@ class Plateau():
                     WheatFarm(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
                 case "Market" :
                     Market(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
+                case "Granary" :
+                    Granary(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
+                case "Market" :
+                    Market(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
+
         
         #Walker
         #Immigrant
