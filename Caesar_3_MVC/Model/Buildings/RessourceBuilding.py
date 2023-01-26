@@ -15,6 +15,7 @@ class WheatFarm(Building) :
         self.storedQuantMax = 100
         self.growingQuant = 0
         self.growingQuantMax = 100
+        self.growingTimer = 0
         self.productivity = 0
         self.nbEmpl = 0
         self.plateau.treasury = self.plateau.treasury - WHEATFARM_COST
@@ -36,10 +37,8 @@ class WheatFarm(Building) :
 
 
        
-    def update(self) : 
-
-        #Affiche un message et annule toute mise à jour si le bâtiment n'est pas connecté à la route :
-
+    def update(self, currentSpeedFactor) : 
+        self.growingTimer += 1
         for ac in self.allCases :
             if ac.connectedToRoad > 0:
 
@@ -49,17 +48,18 @@ class WheatFarm(Building) :
                     self.growingQuant=0
                     for p in self.plots :
                         p.level = 0
-                    for surroundingGranaries in self.plateau.structures :
-                        if isinstance(surroundingGranaries, Granary) :
-                            if (abs(self.case.x-surroundingGranaries.case.x) < 15) and (abs(self.case.y-surroundingGranaries.case.y) < 15) :
-                                surroundingGranaries.storedWheat = surroundingGranaries.storedWheat + 30
+                for surroundingGranaries in self.plateau.structures :
+                    if isinstance(surroundingGranaries, Granary) :
+                        if (abs(self.case.x-surroundingGranaries.case.x) < 15) and (abs(self.case.y-surroundingGranaries.case.y) < 15) :
+                            surroundingGranaries.storedWheat = surroundingGranaries.storedWheat + 30
                     return
-
-                #Fait augmnter la quantité de blé qui pousse si la ferme est productive :
+        if self.growingTimer > (500 / currentSpeedFactor):
+            #Affiche un message et annule toute mise à jour si le bâtiment n'est pas connecté à la route :
+    
+                    #Fait augmnter la quantité de blé qui pousse si la ferme est productive :
                 #if random.randint(0,10)==10 :
                 self.growingQuant=self.growingQuant+1
                 #Je vais me renseigner pour le fonctionnement
-
                 #Set the sprites of the plots
                 if self.growingQuant > 4 :
                     for p in self.plots :   #Remet toutes les parcelles à 0 pour refaire le calcul
@@ -71,6 +71,7 @@ class WheatFarm(Building) :
                             self.plots[i].level = self.plots[i].level+1
                             i=i+1 if i<4 else 0
                             rep = rep+5
+                self.growingTimer = 0
                 return
         self.plateau.roadWarning = True
 
@@ -129,7 +130,7 @@ class Market(Building) :
         for sc in self.secCases :
             sc.setStructure(self)
 
-    def update(self) :
+    def update(self, currentSpeedFactor) :
         for ac in self.secCases :
             if ac.connectedToRoad>0 or self.case.connectedToRoad>0 :
                 if self.storedWheat > 100 :
@@ -183,7 +184,7 @@ class Granary(Building) :
             sc.setStructure(self)
 
 
-    def update(self) :
+    def update(self, currentSpeedFactor) :
         self.levelB = self.storedWheat//725     #Max divisé par 4
         self.levelV = self.storedWheat//414      #Max divisé par 7
 
