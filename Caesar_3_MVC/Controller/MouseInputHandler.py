@@ -33,6 +33,7 @@ class MouseInputHandler:
                 self.clicked = True
                 self.initialMouseCoordinate = pygame.mouse.get_pos()
                 self.pause_menu(event)
+                self.topbar(event)
                 
                 if currentstate == STATE_PLAY:
                     self.handleMouseButtonDownEventStatePlay(event)
@@ -143,13 +144,36 @@ class MouseInputHandler:
             self.model.actualGame.pause = False
 
         if self.model.pause_menu.Savegame_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
-            pass
+            self.model.actualGame.save_game("test.pickle")
 
         if self.model.pause_menu.Replay_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
             self.model.actualGame.restart = True
             self.model.actualGame.update()
             self.model.pause_menu.pause = False
             self.model.actualGame.pause = False
+
+    def topbar(self, event):
+
+        if self.model.actualGame.topbar.File_rect.collidepoint(event.pos) and not self.model.actualGame.topbar.File_bol:
+            self.model.actualGame.topbar.File_bol = True
+            self.model.actualGame.draw_menu_File
+
+        elif self.model.actualGame.topbar.File_menu_Eg_rect.collidepoint(
+                event.pos) and self.model.actualGame.topbar.File_bol:
+            self.model.pause_menu.exit()
+
+        elif self.model.actualGame.topbar.File_menu_Sg_rect.collidepoint(
+                event.pos) and self.model.actualGame.topbar.File_bol:
+            self.model.actualGame.save_game("test.pickle")
+
+        elif self.model.actualGame.topbar.File_menu_Rm_rect.collidepoint(
+                event.pos) and self.model.actualGame.topbar.File_bol:
+            self.model.actualGame.restart = True
+            self.model.actualGame.update()
+
+
+        else:
+            self.model.actualGame.topbar.File_bol = False
 
 
     def checkEveryButton(self, event):

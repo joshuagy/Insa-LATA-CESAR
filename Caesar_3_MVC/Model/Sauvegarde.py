@@ -69,7 +69,7 @@ def save_object(obj : Sauvegarde, filename : str):
     """Save an object in a file
     Return Success if saving works
     Return Fail if saving failed"""
-    full_path = os.path.join("Model\\Save_Folder", filename)
+    full_path = os.path.join("Model/Save_Folder", filename)
     try:
         with open(full_path, "wb+") as f:
             pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
@@ -85,7 +85,7 @@ def load_object(filename:str):
     Return the object if it can be loaded
     Return "error" if the object cannot be loaded
     """
-    full_path = os.path.join("Model\\Save_Folder", filename)
+    full_path = os.path.join("Model/Save_Folder", filename)
     try:
         with open(full_path, "rb") as f:
             return pickle.load(f)
