@@ -580,7 +580,7 @@ class MouseInputHandler:
                                 return
             WheatFarm(self.model.actualGame.map[xi][yi],self.model.actualGame,(2,2),"WheatFarm")
             self.model.actualGame.soundMixer.playEffect('buildEffect')
-#Granary
+        #Granary
         if self.model.actualGame.controls.message_view_button.clicked and not self.model.actualGame.controls.message_view_button.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
@@ -637,7 +637,7 @@ class MouseInputHandler:
                                 return
             Granary(self.model.actualGame.map[xi][yi],self.model.actualGame,(3,3),"Granary")
             self.model.actualGame.soundMixer.playEffect('buildEffect')
-#Market
+        #Market
         if self.model.actualGame.controls.see_recent_troubles_button.clicked and not self.model.actualGame.controls.see_recent_troubles_button.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
             world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
@@ -757,6 +757,78 @@ class MouseInputHandler:
         #Overlay part
         # if fire_overlay.clicked:
         #     pass
+
+
+        #Creative Mode
+        if controlsCurrentState == 'land' or controlsCurrentState == 'tree' or controlsCurrentState == 'rock' or controlsCurrentState == 'water':
+            x, y = self.initialMouseCoordinate
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x1 = int(cart_x // cell_size)
+            grid_y1 = int(cart_y // cell_size)
+
+            x, y = event.pos
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x2 = int(cart_x // cell_size)
+            grid_y2 = int(cart_y // cell_size)
+        
+            if grid_x1 <0:
+                grid_x1 = 0
+            if grid_x2 <0:
+                grid_x2 = 0
+            if grid_y1 <0:
+                grid_y1 = 0
+            if grid_y2 <0:
+                grid_y2 = 0
+
+            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+                grid_x1 = self.model.actualGame.nbr_cell_x-1
+            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+                grid_x2 = self.model.actualGame.nbr_cell_x-1
+            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+                grid_y1 = self.model.actualGame.nbr_cell_y-1
+            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+                grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+            if grid_x1 > grid_x2:
+                temp = grid_x1
+                grid_x1 = grid_x2
+                grid_x2 = temp
+
+            if grid_y1 > grid_y2:
+                temp = grid_y1
+                grid_y1 = grid_y2
+                              
+                grid_y2 = temp
+            
+            for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                        if controlsCurrentState == 'land' :
+                            self.model.actualGame.map[xi][yi].sprite = "land"
+                            self.model.actualGame.map[xi][yi].indexSprite = randint(0, 57)
+                        elif controlsCurrentState == 'tree' :
+                            self.model.actualGame.map[xi][yi].sprite = "tree"
+                            self.model.actualGame.map[xi][yi].indexSprite = randint(0, 31)
+                        elif controlsCurrentState == 'rock' :
+                            self.model.actualGame.map[xi][yi].sprite = "rock"
+                            self.model.actualGame.map[xi][yi].indexSprite = randint(0, 7)
+                        elif controlsCurrentState == 'water' :
+                            self.model.actualGame.map[xi][yi].sprite = "water"
+                            self.model.actualGame.map[xi][yi].indexSprite = 1
+
+                        if self.model.actualGame.map[xi][yi].road :
+                            self.model.actualGame.map[xi][yi].road.delete()
+                        if self.model.actualGame.map[xi][yi].structure :
+                            self.model.actualGame.map[xi][yi].structure.delete()
+            
+            self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
         
     def isMousePosInGrid(self, mousePos):
         x, y = mousePos

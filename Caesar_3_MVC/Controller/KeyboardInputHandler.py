@@ -69,3 +69,20 @@ class KeyboardInputHandler:
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_v:
 				self.model.actualGame.load_savefile("test.pickle")
+		
+		#Creative mode
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_KP0:
+				self.model.actualGame.controls.setCurrentState("land")
+
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_KP1:
+				self.model.actualGame.controls.setCurrentState("tree")
+		
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_KP2:
+				self.model.actualGame.controls.setCurrentState("rock")
+		
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_KP3:
+				self.model.actualGame.controls.setCurrentState("water")
