@@ -1,4 +1,5 @@
 import pygame
+import os
 from EventManager.allEvent import *
 from Model.constants import *
 
@@ -97,10 +98,14 @@ class LoadScene:
     self.posX = (self.screen.get_width()/2) - (self.image.get_width()/2)
     self.posY = (self.screen.get_height()/2) - (self.image.get_height()/2)
 
-    self.currentSaveLoaded = "save1"
+    self.currentSaveLoaded = ""
     self.font = pygame.font.SysFont(None, 24)
 
     self.SaveSelector = None
+
+    # get all files in folder Save_Folder
+    self.saveFiles = [f for f in os.listdir("./Model/Save_Folder") if os.path.isfile(os.path.join("./Model/Save_Folder", f))]
+    
     self.initializeItems()
 
     self.surface.blit(self.image, (self.posX, self.posY))
@@ -139,7 +144,7 @@ class LoadScene:
     currrentSaveSelector.fill((255, 255, 255))
     currrentSaveSelectorPos = (self.image.get_width()/2 - currrentSaveSelector.get_width()/2, 50)
 
-    for idx, saveName in enumerate(["save1", "save2", "save3"]):
+    for idx, saveName in self.saveFiles:
       item = pygame.Surface((300, 20))
       item.fill((0, 0, 0))
       itemPos = (5, 5 + 30*idx)
