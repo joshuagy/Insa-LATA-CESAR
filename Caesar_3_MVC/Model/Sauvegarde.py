@@ -15,7 +15,7 @@ class Sauvegarde() :
             self.map.append([])
             for cell_y in range(actualGame.nbr_cell_y):
                 case_ = actualGame.map[cell_x][cell_y]
-                newdict = {"x" : case_.x, "y" : case_.y, "sprite" : case_.sprite, "feature" : case_.feature}
+                newdict = {"x" : case_.x, "y" : case_.y, "sprite" : case_.sprite, "indexSprite" : case_.indexSprite, "feature" : case_.feature}
                 if case_.road:
                     newdict |= {"road" : 1}
                 else:

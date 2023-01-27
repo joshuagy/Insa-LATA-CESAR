@@ -1,13 +1,13 @@
 from Model.constants import *
 
 class Case():
-    def __init__(self, x, y, rectangle_cell, isometric_cell, render_pos, connectedToRoad=0, feature=None, sprite=None, road = None, structure = None):
+    def __init__(self, x, y, rectangle_cell, isometric_cell, render_pos, connectedToRoad=0, feature=None, sprite=None, indexSprite = -1, road = None, structure = None):
         self.x = x
         self.y = y
         self.rectangle_cell = rectangle_cell
         self.isometric_cell = isometric_cell
         self.render_pos = render_pos
-        self.setSprite(sprite)
+        self.setSprite(sprite, indexSprite)
         self.feature = feature
         self.road = road
         self.structure = structure
@@ -30,8 +30,9 @@ class Case():
         return self.connectedToRoad
     def changeConnectedToRoad(self, number):
         self.connectedToRoad=self.connectedToRoad+number
-    def setSprite(self, newSprite):
+    def setSprite(self, newSprite, indexSprite):
         self.sprite = newSprite
+        self.indexSprite = int(indexSprite)
         if (self.sprite in list_of_undestructible ):
             self.collision = 1
         else:

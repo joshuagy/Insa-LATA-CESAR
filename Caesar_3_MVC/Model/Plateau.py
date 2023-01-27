@@ -64,11 +64,10 @@ class Plateau():
         self.empireDate = EmpireDate(self)
         self.roadWarning = False #Affiche un avertissement quand un bâtiment qui a besoin de la route est déconnecté
 
-        self.map = self.default_map()
+        self.load_savefile("DefaultMap.pickle")
 
         self.foreground = Foreground(self.screen, self.nbr_cell_x, self.nbr_cell_y)
 
-        self.default_road()
 
         #Tableau contenant toutes les cases occupées par les walkers
         self.walkers = [[[] for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
@@ -110,8 +109,7 @@ class Plateau():
         self.restart = False
         global counter
         counter = 1
-        self.overlayCounter = 0
-        self.riviere()           
+        self.overlayCounter = 0         
 
     def save_game(self, filename):
         save = Sauvegarde(self)
@@ -151,12 +149,12 @@ class Plateau():
         for cell_x in range(self.nbr_cell_x):
             self.map.append([])
             for cell_y in range(self.nbr_cell_y):
-                cells_to_map = self.cells_to_map(save.map[cell_x][cell_y]["x"], save.map[cell_x][cell_y]["y"], save.map[cell_x][cell_y]["sprite"])
+                cells_to_map = self.cells_to_map(save.map[cell_x][cell_y]["x"], save.map[cell_x][cell_y]["y"], save.map[cell_x][cell_y]["sprite"], save.map[cell_x][cell_y]["indexSprite"])
                 self.map[cell_x].append(cells_to_map)
                 cells_to_map.feature = save.map[cell_x][cell_y]["feature"]
                 #Surface cell
                 render_pos = cells_to_map.render_pos
-                self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
+                self.surface_cells.blit(self.image["land"][1], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
         #Routes
         for cell_x in range(self.nbr_cell_x):
             for cell_y in range(self.nbr_cell_y):
@@ -208,28 +206,8 @@ class Plateau():
         self.attractiveness = save.attractiveness
         self.treasury = save.treasury
         self.population = save.population
-
-
-    def default_map(self):
-
-        map = []
-
-        for cell_x in range(self.nbr_cell_x):
-            map.append([])
-            for cell_y in range(self.nbr_cell_y):
-                sprite = self.choose_image()
-                cells_to_map = self.cells_to_map(cell_x, cell_y, sprite)
-                map[cell_x].append(cells_to_map)
-                render_pos = cells_to_map.render_pos
-                self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
-        return map
-
-    def default_road(self):
-        for j in range(19, 20):
-            for i in range(self.nbr_cell_y):
-                Route(self.map[j][i], self)
         
-    def cells_to_map(self, cell_x, cell_y, sprite):
+    def cells_to_map(self, cell_x, cell_y, sprite, indexSprite):
 
         rectangle_cell = [
             (cell_x * cell_size , cell_y * cell_size ),
@@ -240,7 +218,7 @@ class Plateau():
 
         isometric_cell = [self.cartesian_to_isometric(x, y) for x, y in rectangle_cell]
 
-        nouvelle_case = Case(cell_x, cell_y, rectangle_cell, isometric_cell, [min([x for x, y in isometric_cell]), min([y for x, y in isometric_cell])], sprite = sprite)
+        nouvelle_case = Case(cell_x, cell_y, rectangle_cell, isometric_cell, [min([x for x, y in isometric_cell]), min([y for x, y in isometric_cell])], sprite = sprite, indexSprite=indexSprite)
         return nouvelle_case
         
     def cartesian_to_isometric(self, x, y):
@@ -259,106 +237,17 @@ class Plateau():
 
     def set_self_num(self):
         self.num=1
-    def choose_image(self):
-        image=""
-        global counter
-        if counter<=1600:
-
-            if (counter>=1 and counter<=10) or(counter>=41 and counter<=50)or(counter>=201 and counter<=207)or (counter>=281 and counter<=286)or(counter>=361 and counter<=364)or (counter>=441 and counter<=443)or (counter>=481 and counter<=483)or (counter>=561 and counter<=562)or (counter>=641 and counter<=642) or (counter in range(21,41,1))or (counter in range(103,121,1))or (counter in range(185,201,1))or (counter in range(267,281,1))or (counter in range(349,361,1))or (counter==1200)or (counter in range(1155,1161,1))or (counter in range(1115,1121))or (counter in range(1075,1081))or (counter==1040):
-                image = "tree2"
-            elif (counter>=121 and counter<=129)or(counter>=161 and counter<=168)or(counter>=81 and counter<=89) or (counter>=241 and counter<=246)or(counter>=321 and counter<=324) or (counter>=401 and counter<=404)or (counter>=521 and counter<=522)or (counter>=601 and counter<=602)or (counter in range(62,81,1))or (counter in range(144,161,1))or (counter in range(226,241,1))or (counter in range(308,321,1))or (counter in range(390,401,1))or (counter==1440)or (counter in range(1395,1401,1))or (counter in range(1355,1361,1))or (counter in range(1315,1321,1))or (counter in range(1276,1281,1))or (counter==1240):
-                image = "tree1"
-            elif (counter >= 761 and counter<=800):
-                image = "land1" # route
-            elif (counter == 721):
-                image = "sign2"
-            elif (counter == 760):
-                image = "sign1"
-            elif (counter>=14 and counter<=19) or(counter>=55 and counter<=60)or(counter>=96 and counter<=101)or(counter>=137 and counter<=142)or(counter>=178 and counter<=183)or(counter>=219 and counter<=224)or(counter>=260 and counter<=265)or(counter>=301 and counter<=306)or(counter>=342 and counter<=347)or(counter>=383 and counter<=388)or(counter>=424 and counter<=429)or(counter>=465 and counter<=480)or(counter>=506 and counter<=520)or(counter>=547 and counter<=560)or(counter>=588 and counter<=600)or(counter>=629 and counter<=640)or(counter<=1573 and counter>=1569)or(counter<=1533 and counter>=1529)or(counter<=1493 and counter>=1489)or(counter<=1453 and counter>=1449)or(counter<=1413 and counter>=1409)or(counter<=1373 and counter>=1369)or(counter<=1333 and counter>=1329)or(counter<=1293 and counter>=1281)or(counter<=1253 and counter>=1241)or(counter<=1213 and counter>=1201)or(counter<=1173 and counter>=1161):
-                image = "water1"
-            elif (counter==20) or (counter==61)or(counter==102)or(counter==143)or(counter==184)or(counter==225)or(counter==266)or(counter==307)or(counter==348)or(counter==389)or(counter>=430 and counter<=440 )or(counter<=1133 and counter>=1121):
-                image="water2"
-            elif (counter>=669 and counter<=680)or counter==628 or counter==587 or counter==546 or counter==505 or counter==464 or counter==423 or counter==382 or counter==341 or counter==300 or counter==259 or counter==218 or counter==177 or counter==136 or counter==95 or counter==54 or counter==13 or(counter<=1328 and counter>=1321):
-                image = "water3"
-            elif (counter==1574)or(counter==1534)or(counter==1494)or(counter==1454)or(counter==1414)or(counter==1374)or(counter==1334)or(counter==1294)or(counter==1254)or(counter==1214)or(counter==1174)or(counter==1134):
-                image="water4"
-            elif (counter==1568)or(counter==1528)or(counter==1488)or(counter==1448)or(counter==1408)or(counter==1368):
-                image="water5"
-            elif (counter==1590)or(counter==1549)or(counter==1508)or(counter==1467)or(counter==1426)or(counter==1385)or(counter==1384)or(counter==1343)or(counter==1302) or (counter==1298)or (counter==1600)or (counter==1337)or (counter==1376)or (counter==1415)or (counter==1455)or (counter==1495)or (counter==1535)or (counter==1575)or (counter in range(1575,1591)):
-                image = "rock1"
-            elif (counter==1262) or (counter==1520):
-                image="rock2"
-            elif (counter in range(681,721,1))or(counter in range(722,760,1)) or(counter in range(681+40*3,720+40*4+1,1)):
-                image="tree3"
-            elif counter in range(720+40*4,1600,20):
-                image="rock3"
-            elif counter in range(1,680,20):
-                image="rock3"
-            else:
-                image="land1"
-            counter+=1
-        return image
-
     def load_cases_images(self):
 
+        land = list(load_image(f"image/Case/Lands/Land{i}.png") for i in range(58))
 
-        land1 = pygame.image.load("image/C3/Land1a_00116.png").convert_alpha()
-        land1 = pygame.transform.scale(land1,(land1.get_width()/2,land1.get_height()/2))
-        land2 = pygame.image.load("image/C3/Land1a_00265.png").convert_alpha()
-        land2 = pygame.transform.scale(land2, (land2.get_width() / 2, land2.get_height() / 2))
+        tree = list(load_image(f"image/Case/Trees/Tree{i}.png") for i in range(32))
 
+        rock = list(load_image(f"image/Case/Rocks/Rock{i}.png") for i in range(14))
 
+        sign = list(load_image(f"image/Case/Signs/Land3a_000{i}.png") for i in range(87, 89))
 
-        tree1 = pygame.image.load("image/C3/Land1a_00059.png").convert_alpha()
-        tree1 = pygame.transform.scale(tree1,(tree1.get_width()/2,tree1.get_height()/2))
-        tree2 = pygame.image.load("image/C3/Land1a_00061.png").convert_alpha()
-        tree2 = pygame.transform.scale(tree2, (tree2.get_width() / 2, tree2.get_height() / 2))
-        tree3 = pygame.image.load("image/C3/Land1a_00039.png").convert_alpha()
-        tree3 = pygame.transform.scale(tree3, (tree3.get_width() / 2, tree3.get_height() / 2))
-
-
-
-        rock1 = pygame.image.load("image/C3/Land1a_00292.png").convert_alpha()
-        rock1 = pygame.transform.scale(rock1, (rock1.get_width() / 2, rock1.get_height() / 2))
-        rock2 = pygame.image.load("image/C3/land3a_00084.png").convert_alpha()
-        rock2 = pygame.transform.scale(rock2, (rock2.get_width() / 2, rock2.get_height() / 2))
-        rock3 = pygame.image.load("image/C3/Land1a_00223.png").convert_alpha()
-        rock3 = pygame.transform.scale(rock3, (rock3.get_width() / 2, rock3.get_height() / 2))
-
-
-        sign1 = pygame.image.load("image/C3/land3a_00089.png").convert_alpha()
-        sign1 = pygame.transform.scale(sign1, (sign1.get_width() / 2, sign1.get_height() / 2))
-        sign2 = pygame.image.load("image/C3/land3a_00087.png").convert_alpha()
-        sign2 = pygame.transform.scale(sign2, (sign2.get_width() / 2, sign2.get_height() / 2))
-
-
-        water1 = pygame.image.load("image/C3/Land1a_00122.png").convert_alpha()
-        water1 = pygame.transform.scale(water1, (water1.get_width() / 2, water1.get_height() / 2))
-        water2 = pygame.image.load("image/Water/wdown.png").convert_alpha()
-        water2 = pygame.transform.scale(water2, (water2.get_width() / 2, water2.get_height() / 2))
-        water3 = pygame.image.load("image/Water/wup.png").convert_alpha()
-        water3 = pygame.transform.scale(water3, (water3.get_width() / 2, water3.get_height() / 2))
-        water4 = pygame.image.load("image/Water/wleft.png").convert_alpha()
-        water4 = pygame.transform.scale(water4, (water4.get_width() / 2, water4.get_height() / 2))
-        water5 = pygame.image.load("image/Water/wright.png").convert_alpha()
-        water5 = pygame.transform.scale(water5, (water5.get_width() / 2, water5.get_height() / 2))
-        water6=pygame.image.load("image/Water/wdowncorner.png").convert_alpha()
-        water6 = pygame.transform.scale(water6, (water6.get_width() / 2, water6.get_height() / 2))
-        water7=pygame.image.load("image/Water/wupcorner.png").convert_alpha()
-        water7 = pygame.transform.scale(water7, (water7.get_width() / 2, water7.get_height() / 2))
-        water8 = pygame.image.load("image/Water/wleftcorner.png").convert_alpha()
-        water8 = pygame.transform.scale(water8, (water8.get_width() / 2, water8.get_height() / 2))
-        water9 = pygame.image.load("image/Water/wrightcorner.png").convert_alpha()
-        water9 = pygame.transform.scale(water9, (water9.get_width() / 2, water9.get_height() / 2))
-        water10 = pygame.image.load("image/Water/wdownw.png").convert_alpha()
-        water10 = pygame.transform.scale(water10, (water10.get_width() / 2, water10.get_height() / 2))
-        water11 = pygame.image.load("image/Water/wupw.png").convert_alpha()
-        water11 = pygame.transform.scale(water11, (water11.get_width() / 2, water11.get_height() / 2))
-        water12 = pygame.image.load("image/Water/wleftw.png").convert_alpha()
-        water12 = pygame.transform.scale(water12, (water12.get_width() / 2, water12.get_height() / 2))
-        water13 = pygame.image.load("image/Water/wrightw.png").convert_alpha()
-        water13 = pygame.transform.scale(water13, (water13.get_width() / 2, water13.get_height() / 2))
-
+        water = list(load_image(f"image/Case/Water/Water{i}.png") for i in range(37))
 
         red = pygame.image.load("image/C3/red.png").convert_alpha()
         red = pygame.transform.scale(red, (red.get_width() / 2, red.get_height() / 2))
@@ -366,11 +255,7 @@ class Plateau():
         base_overlay = pygame.image.load("image/C3/Land2a_00004.png").convert_alpha()
         base_overlay = pygame.transform.scale(base_overlay, (base_overlay.get_width() / 2, base_overlay.get_height() / 2))
 
-        return {"land1": land1,"land2": land2, "tree1": tree1,"tree2": tree2,
-                "tree3": tree3,"rock1": rock1,"rock2": rock2,"water1":water1,"water2":water2,"water3":water3,"water4":water4,"water5":water5,"water6":water6,
-                "water7": water7,"water8":water8,"water9":water9,'water10':water10,'water11':water11,'water12':water12,'water13':water13,
-                "sign1":sign1,"sign2":sign2, "rock3":rock3, "red":red, "base_overlay":base_overlay
-                }
+        return {"land" : land, "tree" : tree, "rock": rock, "water":water, "sign":sign, "red":red, "base_overlay":base_overlay}
     def load_routes_images(self):
         
         west = load_image("image/Routes/Land2a_00104.png")
@@ -467,7 +352,9 @@ class Plateau():
         for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
                         if self.map[xi][yi].sprite not in list_of_undestructible:
-                            self.map[xi][yi].sprite = "land1"
+                            if self.map[xi][yi].sprite != "land":
+                                self.map[xi][yi].sprite = "land"
+                                self.map[xi][yi].indexSprite = randint(0, 57)
                             if self.map[xi][yi].road :
                                 self.map[xi][yi].road.delete()
                                 self.treasury = self.treasury - DESTRUCTION_COST
@@ -542,7 +429,8 @@ class Plateau():
                     # DRAW DEFAULT CELLS
                     if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
                         id_image = self.map[cell_x][cell_y].sprite
-                        image = self.image[id_image]
+                        index_image = self.map[cell_x][cell_y].indexSprite
+                        image = self.image[id_image][index_image]
                         self.screen.blit(image,
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
@@ -770,135 +658,7 @@ class Plateau():
                     collision_matrix[y][x] = 1
         return collision_matrix
 
-    def riviere(self):
-        water_list = ['water1', 'water2', 'water3', 'water4', 'water5', 'water6','water7','water8','water9','water10','water11','water12','water13']
-        for x in range(self.nbr_cell_y):
-            for y in range(self.nbr_cell_y):
-                if self.map[x][y].sprite in water_list:
-                    d,g,h,b=(None,None,None,None)
-                    if x != 0 and y != 0 and x != 39 and y != 39:
-                        g=self.map[x-1][y].sprite
-                        d=self.map[x+1][y].sprite
-                        h=self.map[x][y-1].sprite
-                        b=self.map[x][y+1].sprite
-                    else:
-                        if x == 0 and y != 0:
-                            g='water1'
-                            d = self.map[x+1][y].sprite
-                            h = self.map[x][y-1].sprite
-                            b = self.map[x][y+1].sprite
-                        if y == 0 and x != 0:
-                            h = 'water1'
-                            g = self.map[x - 1][y].sprite
-                            d = self.map[x + 1][y].sprite
-                            b = self.map[x][y + 1].sprite
-                        if x == 39 and y != 39:
-                            d = 'water1'
-                            g = self.map[x - 1][y].sprite
-                            h = self.map[x][y - 1].sprite
-                            b = self.map[x][y + 1].sprite
-                        if y == 39 and x != 39:
-                            b = 'water1'
-                            g = self.map[x - 1][y].sprite
-                            d = self.map[x + 1][y].sprite
-                            h = self.map[x][y - 1].sprite
-                    if g in water_list:
-                        if b not in water_list and  h  in water_list and d in water_list:
-                            self.map[x][y].sprite='water4'
-                        elif b  in water_list and  h  in water_list and d not in water_list:
-                            self.map[x][y].sprite='water2'
-                        elif b in water_list and  h not in water_list and d in water_list:
-                            self.map[x][y].sprite='water5'
-                        elif b not in water_list and  h in water_list and d not in water_list:
-                            self.map[x][y].sprite='water6'
-                        elif b in water_list and h not in water_list and d not in water_list:
-                            self.map[x][y].sprite = 'water9'
-                        elif h in water_list and  b not in water_list and d not in water_list:
-                            self.map[x][y].sprite = 'water6'
-                    elif g not in water_list:
-                        if b in water_list and h in water_list and d in water_list:
-                            self.map[x][y].sprite = 'water3'
-                        elif b not in water_list and h in water_list and d in water_list:
-                            self.map[x][y].sprite = 'water8'
-                        elif d in water_list and b in water_list and h not in water_list:
-                            self.map[x][y].sprite = 'water7'
-        self.riviere2(water_list)
-    def riviere2(self,water_list):
 
-        for x in range(self.nbr_cell_y):
-            for y in range(self.nbr_cell_y):
-
-                if self.map[x][y].sprite in water_list:
-                    d, g, h, b,hg,hd,bg,bd = (None, None, None, None,None,None,None,None)
-                    if x != 0 and y != 0 and x != 39 and y != 39:
-
-                        g = self.map[x-1][y].sprite
-                        d = self.map[x+1][y].sprite
-                        h = self.map[x][y-1].sprite
-                        b = self.map[x][y+1].sprite
-                        hg = self.map[x-1][y-1].sprite
-                        hd = self.map[x+1][y-1].sprite
-                        bg = self.map[x-1][y+1].sprite
-                        bd = self.map[x+1][y+1].sprite
-                    else:
-
-                        if x == 0 and y != 0:
-                            g='water1'
-                            hg='water1'
-                            bg='water1'
-                            d = self.map[x+1][y].sprite
-                            h = self.map[x][y-1].sprite
-                            b = self.map[x][y+1].sprite
-
-                        if y == 0 and x != 0:
-
-                            h = 'water1'
-                            hd='water1'
-                            hg='water1'
-                            g = self.map[x - 1][y].sprite
-                            d = self.map[x + 1][y].sprite
-                            b = self.map[x][y + 1].sprite
-
-
-
-                        if x == 39 and y != 39:
-
-
-                            d = 'water1'
-                            hd='water1'
-                            bd='water1'
-                            g = self.map[x - 1][y].sprite
-                            h = self.map[x][y - 1].sprite
-                            b = self.map[x][y + 1].sprite
-
-
-
-                        if y == 39 and x != 39:
-                            b = 'water1'
-                            bd='water1'
-                            bg='water1'
-                            g = self.map[x - 1][y].sprite
-                            d = self.map[x + 1][y].sprite
-                            h = self.map[x][y - 1].sprite
-
-                    if  g != 'water1' and g in water_list  and b != 'water1' and b in water_list and h == 'water1' and d == 'water1' and bg not in water_list:
-                        self.map[x][y].sprite = 'water12'
-
-
-                    if g == 'water1' and b == 'water1' and h != 'water1' and h in water_list and d != 'water1' and d in water_list and hd not in water_list:
-                        self.map[x][y].sprite = 'water13'
-
-                    if d!='water1' and d in water_list and  b!='water1' and b in water_list and g =='water1' and h =='water1' and bd not in water_list:
-                        self.map[x][y].sprite = 'water10'
-
-                    if g!='water1' and g in water_list and  h!='water1' and h in water_list and d =='water1' and b =='water1' and hg not in water_list:
-                        self.map[x][y].sprite = 'water11'
-
-    def draw_menu_File(self):
-        if self.topbar.File_bol:
-            self.screen.blit(self.topbar.File_menu_Rm, self.topbar.File_menu_Rm_rect)
-            self.screen.blit(self.topbar.File_menu_Sg, self.topbar.File_menu_Sg_rect)
-            self.screen.blit(self.topbar.File_menu_Eg, self.topbar.File_menu_Eg_rect)
 def load_image(path):
     image = pygame.image.load(path).convert_alpha()
     return pygame.transform.scale(image, (image.get_width() / 2, image.get_height() / 2))
