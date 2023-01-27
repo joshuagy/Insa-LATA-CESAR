@@ -188,12 +188,7 @@ class MouseInputHandler:
             button.handle_event(event)
 
     def handleMouseButtonDownEventStatePlay(self, event):
-        mousePosRelative = (event.pos[0] - (self.model.actualGame.width - big_gap_menu.dim[0] - 1758.0) - 1758.0, event.pos[1] -24)
-        controlsCurrentState = self.model.actualGame.controls.getCurrentState()
-        if controlsCurrentState == 'buildHousing' and not self.model.actualGame.controls.build_housing_button.rect.collidepoint(mousePosRelative):
-            self.model.actualGame.foreground.initForegroundGrid()
-            x, y = self.mousePosToGridPos(event.pos)
-            self.model.actualGame.foreground.addEffect(x, y, 'defaultBuildHouse')
+        pass
 
     def handleMouseButtonUpEventStatePlay(self, event):
         """
@@ -201,48 +196,17 @@ class MouseInputHandler:
         """
         self.model.actualGame.foreground.initOverlayGrid()
         self.model.actualGame.foreground.setOverlayName(None)
+
         mousePosRelative = (event.pos[0] - (self.model.actualGame.width - big_gap_menu.dim[0] - 1758.0) - 1758.0, event.pos[1] -24)
         controlsCurrentState = self.model.actualGame.controls.getCurrentState()
-
-
-
+        
+        if self.model.actualGame.controls.mouseInStaticSurface(event.pos):
+            return
+            
         # Pelle 
         if controlsCurrentState == 'clearLand' and not self.model.actualGame.controls.clear_land_button.rect.collidepoint(mousePosRelative):
-            x, y = self.initialMouseCoordinate
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x1 = int(cart_x // cell_size)
-            grid_y1 = int(cart_y // cell_size)
-
-            x, y = event.pos
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x2 = int(cart_x // cell_size)
-            grid_y2 = int(cart_y // cell_size)
-        
-            if grid_x1 <0:
-                grid_x1 = 0
-            if grid_x2 <0:
-                grid_x2 = 0
-            if grid_y1 <0:
-                grid_y1 = 0
-            if grid_y2 <0:
-                grid_y2 = 0
-
-            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
-                grid_x1 = self.model.actualGame.nbr_cell_x-1
-            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
-                grid_x2 = self.model.actualGame.nbr_cell_x-1
-            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
-                grid_y1 = self.model.actualGame.nbr_cell_y-1
-            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
-                grid_y2 = self.model.actualGame.nbr_cell_y-1
+            grid_x1, grid_y1 = self.mousePosToGridPos(self.initialMouseCoordinate)
+            grid_x2, grid_y2 = self.mousePosToGridPos(event.pos)
 
             if grid_x1 > grid_x2:
                 temp = grid_x1
@@ -256,7 +220,7 @@ class MouseInputHandler:
                 grid_y2 = temp
             
             self.model.actualGame.clearLand(grid_x1, grid_x2, grid_y1, grid_y2)
-            
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
         # Routes
         elif controlsCurrentState == 'buildRoads' and not self.model.actualGame.controls.build_roads_button.rect.collidepoint(mousePosRelative):
             grid_x1, grid_y1 = self.mousePosToGridPos(self.initialMouseCoordinate)
@@ -300,9 +264,10 @@ class MouseInputHandler:
                         for yi in range(grid_y1, grid_y2-1, -1):
                             if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None and self.model.actualGame.map[grid_x1][yi].sprite not in list_of_collision:
                                 Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
-
+                
                 self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
-            
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
+
         # #Buildings
         # #HousingSpot
         elif controlsCurrentState == 'buildHousing' and not self.model.actualGame.controls.build_housing_button.rect.collidepoint(mousePosRelative):
@@ -327,8 +292,7 @@ class MouseInputHandler:
                                         if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision and self.model.actualGame.map[xi][yi].sprite not in list_of_undestructible:
                                             if self.model.actualGame.map[xcr][ycr].road :
                                                 HousingSpot(self.model.actualGame.map[xi][yi], self.model.actualGame)
-                                
-    
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
         # #Prefecture     
         elif controlsCurrentState == 'securityStructures' and not self.model.actualGame.controls.security_structures.rect.collidepoint(mousePosRelative):
         #Mouse Selection :
@@ -384,7 +348,7 @@ class MouseInputHandler:
                     if self.model.actualGame.map[xi][yi].getConnectedToRoad() > 0 :
                         if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                             Prefecture(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Prefecture",1)
-
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
         # #Engineer
         elif controlsCurrentState == 'buildEngineerPost' and not self.model.actualGame.controls.engineering_structures.rect.collidepoint(mousePosRelative):
         
@@ -441,7 +405,7 @@ class MouseInputHandler:
                     if self.model.actualGame.map[xi][yi].getConnectedToRoad() > 0 :
                         if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                             EnginnerPost(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"EngineerPost",1)
-
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Well
         if self.model.actualGame.controls.water_related_structures.clicked and not self.model.actualGame.controls.water_related_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
         
@@ -497,7 +461,7 @@ class MouseInputHandler:
                 for yi in range(grid_y1, grid_y2+1):
                     if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
                         Well(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Well")
-
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Senate
         if self.model.actualGame.controls.administration_or_government_structures.clicked and not self.model.actualGame.controls.administration_or_government_structures.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
@@ -558,8 +522,7 @@ class MouseInputHandler:
                             if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
                                 return
             Senate(self.model.actualGame.map[xi][yi],self.model.actualGame,(5,5),"Senate")
-
-
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Farm
         if self.model.actualGame.controls.industrial_structures.clicked and not self.model.actualGame.controls.industrial_structures.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
@@ -616,7 +579,7 @@ class MouseInputHandler:
                             if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
                                 return
             WheatFarm(self.model.actualGame.map[xi][yi],self.model.actualGame,(2,2),"WheatFarm")
-
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
 #Granary
         if self.model.actualGame.controls.message_view_button.clicked and not self.model.actualGame.controls.message_view_button.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
@@ -673,7 +636,7 @@ class MouseInputHandler:
                             if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
                                 return
             Granary(self.model.actualGame.map[xi][yi],self.model.actualGame,(3,3),"Granary")
-
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
 #Market
         if self.model.actualGame.controls.see_recent_troubles_button.clicked and not self.model.actualGame.controls.see_recent_troubles_button.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
@@ -730,7 +693,7 @@ class MouseInputHandler:
                             if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
                                 return
             Market(self.model.actualGame.map[xi][yi],self.model.actualGame,(2,2),"Market")
- 
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
                                     
         if self.model.actualGame.controls.religious_structures.clicked and not self.model.actualGame.controls.religious_structures.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
@@ -787,6 +750,9 @@ class MouseInputHandler:
                             if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
                                 return
             Temple(self.model.actualGame.map[xi][yi],self.model.actualGame,(2,2),"Temple")
+
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
+            
 
         #Overlay part
         # if fire_overlay.clicked:

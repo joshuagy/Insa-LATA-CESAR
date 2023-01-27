@@ -1,12 +1,14 @@
 from Model.control_panel import *
 
 class Controls:
-  def __init__(self, screen, font, currentSpeed, buttonsFunctions):
+  def __init__(self, screen, font, currentSpeed, buttonsFunctions, soundMixer):
     self.screen = screen
     self.font = font
     self.currentSpeed = currentSpeed
 
     self.currentState = 'default'
+
+    self.soundMixer = soundMixer
 
     # buttons' functions
     self.increaseSpeed = buttonsFunctions['increaseSpeed']
@@ -21,10 +23,14 @@ class Controls:
 
 
     self.staticSurface = self.generateStaticSurface()
+
     self.staticSurfacePos = (self.screenWidth-big_gap_menu.dim[0], 24)
     self.listOfButtons = self.generateListOfButtons()
 
     self.currentSpeedRender()
+
+  def mouseInStaticSurface(self, mousePos):
+    return self.staticSurface.get_rect().collidepoint((mousePos[0] - self.originX, mousePos[1] - self.originY))
 
   def getCurrentState(self):
     return self.currentState

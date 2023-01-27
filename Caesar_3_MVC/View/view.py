@@ -104,8 +104,8 @@ class GraphicalView(object):
         self.smallfont = pygame.font.Font(None, 40)
         self.isinitialized = True
         self.model.introScene = IntroScene(self.screen)
-        self.model.menu = Menu(self.screen)
-        self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1])
+        self.model.menu = Menu(self.screen, self.model.soundMixer)
+        self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1], self.model.soundMixer)
         self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), 40 , 40)
         self.model.pause_menu = Pausemenu(self.screen.get_width(), self.screen.get_height(), self.screen)
 
