@@ -658,6 +658,11 @@ class Plateau():
                     collision_matrix[y][x] = 1
         return collision_matrix
 
+    def draw_menu_File(self):
+        if self.topbar.File_bol:
+            self.screen.blit(self.topbar.File_menu_Rm, self.topbar.File_menu_Rm_rect)
+            self.screen.blit(self.topbar.File_menu_Sg, self.topbar.File_menu_Sg_rect)
+            self.screen.blit(self.topbar.File_menu_Eg, self.topbar.File_menu_Eg_rect)
 
 def load_image(path):
     image = pygame.image.load(path).convert_alpha()
