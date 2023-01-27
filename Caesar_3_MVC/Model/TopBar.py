@@ -1,3 +1,4 @@
+import pygame.image
 from Model.control_panel import *
 
 class TopBar:
@@ -9,6 +10,14 @@ class TopBar:
     self.treasury = treasury
     self.population = population
 
+
+
+    def checkEveryButton(self, event):
+        """
+            Check if a button has been pressed
+        """
+
+        #Handle the buttons of the c
     self.treasuryBloc = bloc_top_menu.img_scaled.copy()
     self.treasuryBlocPos = (480, 0)
     self.treasuryBloc.blit(TextRender("Dn",(25,20)).img_scaled,(490 - self.treasuryBlocPos[0], 2.5))
@@ -20,7 +29,40 @@ class TopBar:
     self.populationBloc.blit(TextRender("Pop",(30,20)).img_scaled,(637 - self.populationBlocPos[0], 2.5))
     self.populationBlocWithDynamicText = self.populationBloc.copy()
     self.populationBlocWithDynamicText.blit(TextRender(str(self.population), (60-self.get_snss_population(), 20)).img_scaled, (680 - self.populationBlocPos[0], 2.5))
-    
+
+    self.File = pygame.image.load("image/Menutop/File.png")
+    self.File = pygame.transform.scale(self.File,(self.File.get_width()*0.9,self.File.get_height()*0.7))
+    self.Options = pygame.image.load("image/Menutop/Options.png")
+    self.Options = pygame.transform.scale(self.Options,(self.Options.get_width()*0.9,self.Options.get_height()*0.7))
+    self.Help = pygame.image.load("image/Menutop/Help.png")
+    self.Help=pygame.transform.scale(self.Help,(self.Help.get_width()*0.9,self.Help.get_height()*0.7))
+    self.Advisors = pygame.image.load("image/Menutop/Advisors.png")
+    self.Advisors=pygame.transform.scale(self.Advisors,(self.Advisors.get_width()*0.9,self.Advisors.get_height()*0.7))
+
+    self.File_rect=self.File.get_rect()
+    self.Options_rect=self.Options.get_rect()
+    self.Options_rect.x=self.File_rect.x+self.File_rect.width
+    self.Help_rect=self.Help.get_rect()
+    self.Help_rect.x=self.Options_rect.x+self.Options_rect.width
+    self.Advisors_rect=self.Advisors.get_rect()
+    self.Advisors_rect.x=self.Help_rect.x+self.Help_rect.width
+
+    self.File_menu_Rm = pygame.image.load("image/Menutop/Rm.png")
+    self.File_menu_Sg = pygame.image.load("image/Menutop/Sg.png")
+    self.File_menu_Eg = pygame.image.load("image/Menutop/Eg.png")
+    self.File_menu_Rm = pygame.transform.scale(self.File_menu_Rm,(self.File.get_width()*1.5,self.File.get_height()*1.5))
+    self.File_menu_Sg = pygame.transform.scale(self.File_menu_Sg, (self.File.get_width()*1.5, self.File.get_height()*1.5))
+    self.File_menu_Eg = pygame.transform.scale(self.File_menu_Eg, (self.File.get_width()*1.5, self.File.get_height()*1.5))
+
+    self.File_menu_Rm_rect=self.File_menu_Rm.get_rect()
+    self.File_menu_Rm_rect.y+=self.File.get_height()
+    self.File_menu_Rm_rect.x-=0.1
+    self.File_menu_Sg_rect=self.File_menu_Sg.get_rect()
+    self.File_menu_Sg_rect.y=self.File_menu_Rm_rect.y+self.File_menu_Rm.get_height()
+    self.File_menu_Eg_rect=self.File_menu_Eg.get_rect()
+    self.File_menu_Eg_rect.y=self.File_menu_Sg_rect.y+self.File_menu_Sg.get_height()
+
+    self.File_bol=False
   def generateStaticSurface(self):
     staticSurface = pygame.Surface((self.screenWidth, int(pnl_4.dim[1])+1))
     top_menu_axis_x = 0
@@ -66,4 +108,8 @@ class TopBar:
   def render(self):
     self.staticSurface.blit(self.treasuryBlocWithDynamicText, self.treasuryBlocPos)
     self.staticSurface.blit(self.populationBlocWithDynamicText, self.populationBlocPos)
+    self.staticSurface.blit(self.File,self.File_rect)
+    self.staticSurface.blit(self.Options, self.Options_rect)
+    self.staticSurface.blit(self.Help,self.Help_rect)
+    self.staticSurface.blit(self.Advisors,self.Advisors_rect)
     self.screen.blit(self.staticSurface, (0, 0))

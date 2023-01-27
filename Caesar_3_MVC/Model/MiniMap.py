@@ -44,6 +44,8 @@ class MiniMap:
 
     def draw_mini_map(self,create_map):
         self.image = Image.new('RGB', (self.longueur, self.largeur))
+        water_list = ['water1', 'water2', 'water3', 'water4', 'water5', 'water6', 'water7', 'water8', 'water9',
+                      'water10', 'water11', 'water12', 'water13']
 
         for cell_x in range(self.longueur):
             for cell_y in range(self.largeur):
@@ -58,7 +60,7 @@ class MiniMap:
                     elif id_image in ('rock1', 'rock2'):
                         rouge, vert, bleu = (127, 127, 127)
                         self.image.putpixel((cell_x, cell_y), (rouge, vert, bleu))
-                    elif id_image in ('water1', 'water2', 'water3', 'water4', 'water5'):
+                    elif id_image in (water_list):
                         rouge, vert, bleu = (63, 72, 204)
                         self.image.putpixel((cell_x, cell_y), (rouge, vert, bleu))
                     elif id_image in ('sign1', 'sign2'):

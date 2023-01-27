@@ -82,6 +82,7 @@ class Plateau():
 
         # Top menu in game
         self.topbar = TopBar(self.screen, self.treasury, self.population)
+        self.topbarbol=False
 
 
         #Define the position of the button on the full panel button who won't change position after
@@ -407,8 +408,11 @@ class Plateau():
             b.active = False
 
     def draw(self):
+
         if not self.pause:
+
             self.screen.fill((0, 0, 0))
+
             self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
 
 
@@ -695,7 +699,11 @@ class Plateau():
                     if g!='water1' and g in water_list and  h!='water1' and h in water_list and d =='water1' and b =='water1' and hg not in water_list:
                         self.map[x][y].sprite = 'water11'
 
-
+    def draw_menu_File(self):
+        if self.topbar.File_bol:
+            self.screen.blit(self.topbar.File_menu_Rm, self.topbar.File_menu_Rm_rect)
+            self.screen.blit(self.topbar.File_menu_Sg, self.topbar.File_menu_Sg_rect)
+            self.screen.blit(self.topbar.File_menu_Eg, self.topbar.File_menu_Eg_rect)
 
 
 def load_image(path):
