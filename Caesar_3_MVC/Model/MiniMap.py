@@ -44,26 +44,24 @@ class MiniMap:
 
     def draw_mini_map(self,create_map):
         self.image = Image.new('RGB', (self.longueur, self.largeur))
-        water_list = ['water1', 'water2', 'water3', 'water4', 'water5', 'water6', 'water7', 'water8', 'water9',
-                      'water10', 'water11', 'water12', 'water13']
 
         for cell_x in range(self.longueur):
             for cell_y in range(self.largeur):
                 if not create_map[cell_x][cell_y].road and not create_map[cell_x][cell_y].structure:
                     id_image = create_map[cell_x][cell_y].sprite
-                    if id_image == 'land1':
+                    if id_image == 'land':
                         rouge, vert, bleu = (34, 177, 76)
                         self.image.putpixel((cell_x, cell_y), (rouge, vert, bleu))
-                    elif id_image in ('tree1', 'tree2', 'tree3'):
+                    elif id_image == "tree":
                         rouge, vert, bleu = (128, 255, 0)
                         self.image.putpixel((cell_x, cell_y), (rouge, vert, bleu))
-                    elif id_image in ('rock1', 'rock2'):
+                    elif id_image == "rock":
                         rouge, vert, bleu = (127, 127, 127)
                         self.image.putpixel((cell_x, cell_y), (rouge, vert, bleu))
-                    elif id_image in water_list:
+                    elif id_image == "water":
                         rouge, vert, bleu = (63, 72, 204)
                         self.image.putpixel((cell_x, cell_y), (rouge, vert, bleu))
-                    elif id_image in ('sign1', 'sign2'):
+                    elif id_image == "sign":
                         rouge, vert, bleu = (127, 127, 127)
                         self.image.putpixel((cell_x, cell_y), (rouge, vert, bleu))
 
