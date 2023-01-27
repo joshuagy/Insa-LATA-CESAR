@@ -1,6 +1,7 @@
 from EventManager.allEvent import *
 from Model.constants import *
 from Model.Music import *
+from Model.SoundMixer import *
 
 class GameEngine(object):
 	"""
@@ -20,8 +21,10 @@ class GameEngine(object):
 		self.running = False
 		self.state = StateMachine()
 
-		self.music = Music()
-		self.music.play()
+		self.musicMixer = Music()
+		self.musicMixer.play()
+
+		self.soundMixer = SoundMixer()
 
 		self.introScene = None
 		self.menu = None
@@ -44,7 +47,7 @@ class GameEngine(object):
 				else:
 						# push a new state on the stack
 						self.state.push(event.state)
-						self.music.changeMusic(event.state)
+						self.musicMixer.changeMusic(event.state)
         
 	def run(self):
 		"""

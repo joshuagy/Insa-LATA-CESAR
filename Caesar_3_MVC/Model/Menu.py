@@ -3,14 +3,17 @@ from EventManager.allEvent import *
 from Model.constants import *
 
 class Menu:
-  def __init__(self, screen):
+  def __init__(self, screen, soundMixer):
     self.screen = screen
     self.image = pygame.image.load("./image/UI/menu/menu_background.png").convert_alpha()
     self.surface = pygame.transform.scale(self.image, self.screen.get_size())
     self.items = []
+
+    self.soundMixer = soundMixer
+
     self.initializeItems()
 
-    self.quitScene = QuitScene(self.screen, self.surface.copy())
+    self.quitScene = QuitScene(self.screen, self.surface.copy(), self.soundMixer)
     self.isQuitState = False
 
     self.loadScene = LoadScene(self.screen, self.surface.copy())
@@ -58,14 +61,16 @@ class Menu:
     else:
       for item in self.items:
         if item.rect.collidepoint(event.pos):
-          print(item.feedback, isinstance(item.feedback, QuitEvent))
           if isinstance(item.feedback, QuitEvent):
+            self.soundMixer.playEffect('clickEffect')
             self.isQuitState = True
             return TickEvent()
           elif isinstance(item.feedback, LoadEvent):
+            self.soundMixer.playEffect('clickEffect')
             self.isLoadState = True
             return TickEvent()
           else:
+            self.soundMixer.playEffect('clickEffect')
             return item.feedback
 
     return self.defaultFeedback
@@ -160,9 +165,10 @@ class LoadScene:
     self.screen.blit(self.surface, (0, 0))
 
 class QuitScene:
-  def __init__(self, screen, background_surface):
+  def __init__(self, screen, background_surface, soundMixer):
     self.screen = screen
     self.surface = background_surface
+    self.soundMixer = soundMixer
     self.image = pygame.image.load("./image/UI/quit/quitScene_background.png").convert_alpha()
     self.posX = (self.screen.get_width()/2) - (self.image.get_width()/2)
     self.posY = (self.screen.get_height()/2) - (self.image.get_height()/2)
@@ -185,8 +191,12 @@ class QuitScene:
 
   def handleMouseInput(self, event) -> Event:
     mousePosRelative = self.getMousePosRelative(event.pos)
-    if self.okButtonRect.collidepoint(mousePosRelative): return 1
-    elif  self.cancelButtonRect.collidepoint(mousePosRelative): return 2
+    if self.okButtonRect.collidepoint(mousePosRelative):
+      self.soundMixer.playEffect('clickEffect')
+      return 1
+    elif  self.cancelButtonRect.collidepoint(mousePosRelative): 
+      self.soundMixer.playEffect('clickEffect')
+      return 2
     else: return 0
 
   def render(self, currentMousePos):

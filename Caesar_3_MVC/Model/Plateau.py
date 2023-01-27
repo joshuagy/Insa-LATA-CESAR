@@ -25,11 +25,12 @@ from random import *
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
+    def __init__(self, screen, clock, name, heigth, width, soundMixer, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
         
         self.screen = screen
         self.clock = clock
         self.minimalFont = pygame.font.SysFont(None, 20)
+        self.soundMixer = soundMixer
         self.width, self.height = self.screen.get_size()
         self.camera = Camera(self.width, self.height)
         self.running = True
@@ -86,7 +87,7 @@ class Plateau():
 
         self.currentSpeed = 100
         self.buttonsFunctions = self.getButtonsFunctions()
-        self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.buttonsFunctions)
+        self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.buttonsFunctions, self.soundMixer)
 
 
         self.topbar = TopBar(self.screen, self.treasury, self.population, self.empireDate)
@@ -207,7 +208,6 @@ class Plateau():
         self.attractiveness = save.attractiveness
         self.treasury = save.treasury
         self.population = save.population
-
 
 
     def default_map(self):
@@ -452,6 +452,8 @@ class Plateau():
                 self.currentSpeed += 100
             else: 
                 self.currentSpeed += 10 
+
+        self.soundMixer.playEffect("clickEffect")
     
     def decreaseSpeed(self):
         if self.currentSpeed > 10:
@@ -459,6 +461,7 @@ class Plateau():
                 self.currentSpeed -= 100
             else:
                 self.currentSpeed -= 10 
+        self.soundMixer.playEffect("clickEffect")
 
     def clearLand(self, grid_x1, grid_x2, grid_y1, grid_y2):
         for xi in range(grid_x1, grid_x2+1):
@@ -472,8 +475,7 @@ class Plateau():
                                 if self.map[xi][yi].structure.desc != "BurningBuilding" :
                                     self.map[xi][yi].structure.delete()
                                     self.treasury = self.treasury - DESTRUCTION_COST
-                              
-                            
+                                   
         self.collision_matrix = self.create_collision_matrix()
         self.foreground.initForegroundGrid()
 
