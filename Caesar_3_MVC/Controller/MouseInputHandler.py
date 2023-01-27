@@ -144,7 +144,7 @@ class MouseInputHandler:
             self.model.actualGame.pause = False
 
         if self.model.pause_menu.Savegame_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
-            pass
+            self.model.actualGame.save_game("test.pickle")
 
         if self.model.pause_menu.Replay_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
             self.model.actualGame.restart = True
@@ -164,7 +164,7 @@ class MouseInputHandler:
 
         elif self.model.actualGame.topbar.File_menu_Sg_rect.collidepoint(
                 event.pos) and self.model.actualGame.topbar.File_bol:
-            pass
+            self.model.actualGame.save_game("test.pickle")
 
         elif self.model.actualGame.topbar.File_menu_Rm_rect.collidepoint(
                 event.pos) and self.model.actualGame.topbar.File_bol:
