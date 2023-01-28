@@ -1,6 +1,5 @@
 import pygame
 import os
-import shutil
 from EventManager.allEvent import *
 from Model.constants import *
 
@@ -10,12 +9,6 @@ class Menu:
     self.image = pygame.image.load("./image/UI/menu/menu_background.png").convert_alpha()
     self.surface = pygame.transform.scale(self.image, self.screen.get_size())
     self.items = []
-
-    # create file save_to_load if doesn't exist
-    if not os.path.exists("./Model/Save_Folder/save_to_load.pickle"):
-      open("./Model/Save_Folder/save_to_load.pickle", "w")
-
-    shutil.copyfile("./Model/Save_Folder/DefaultMap.pickle", "./Model/Save_Folder/save_to_load.pickle")
 
     self.soundMixer = soundMixer
 
@@ -29,6 +22,7 @@ class Menu:
 
     self.defaultFeedback = TickEvent() # do nothing
 
+    # default mouse position
     self.currentMousePos = (0, 0)
 
   def initializeItems(self):
@@ -57,15 +51,16 @@ class Menu:
           return TickEvent()
     elif self.isLoadState:
       loadSceneFeedBack = self.loadScene.handleMouseInput(event)
-      match loadSceneFeedBack:
-        case 1:
+      if isinstance(loadSceneFeedBack, TickEvent):
+        self.isLoadState = False
+        self.soundMixer.playEffect('clickEffect')
+        return loadSceneFeedBack
+      elif isinstance(loadSceneFeedBack, LoadSave):
+          self.soundMixer.playEffect('clickEffect')
           self.isLoadState = False
-          return StateChangeEvent(STATE_PLAY)
-        case 2:
-          self.isLoadState = False
-          return TickEvent()
-        case _:
-          return TickEvent()
+          return loadSceneFeedBack
+      else:
+       return TickEvent()
     else:
       for item in self.items:
         if item.rect.collidepoint(event.pos):
@@ -121,6 +116,8 @@ class LoadScene:
 
     self.getSaveItems()
 
+    self.feedback = LoadSave("DefaultMap.pickle")
+
     self.okButton = pygame.image.load("./image/UI/quit/okButton.png")
     okButtonPos = ((self.surface.get_width()/2) - 2*self.okButton.get_width(), (self.surface.get_height() - self.okButton.get_height())-10)
     self.okButtonRect = pygame.Rect(okButtonPos,  self.okButton.get_size())
@@ -168,13 +165,14 @@ class LoadScene:
         break
     if self.okButtonRect.collidepoint(mousePosRelative): 
       self.soundMixer.playEffect('clickEffect')
-      with open("./Model/Save_Folder/save_to_load.pickle", "w") as f, open("./Model/Save_Folder/"+self.currentSaveLoaded, "r") as f2:
-        print("copy de ", self.currentSaveLoaded, " vers save_to_load.pickle")
-        shutil.copyfile("./Model/Save_Folder/"+self.currentSaveLoaded, "./Model/Save_Folder/save_to_load.pickle")
-      return 1
+      # with open("./Model/Save_Folder/save_to_load.pickle", "w") as f, open("./Model/Save_Folder/"+self.currentSaveLoaded, "r") as f2:
+      #   print("copy de ", self.currentSaveLoaded, " vers save_to_load.pickle")
+      #   shutil.copyfile("./Model/Save_Folder/"+self.currentSaveLoaded, "./Model/Save_Folder/save_to_load.pickle")
+      self.feedback = LoadSave(self.currentSaveLoaded)
+      return self.feedback
     elif  self.cancelButtonRect.collidepoint(mousePosRelative):
        self.soundMixer.playEffect('clickEffect')
-       return 2
+       return TickEvent()
     else: return 0
 
   def render(self):

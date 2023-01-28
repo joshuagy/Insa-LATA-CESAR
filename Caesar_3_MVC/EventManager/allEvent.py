@@ -1,5 +1,11 @@
 from EventManager.Event import Event
 
+
+class LoadSave(Event):
+    def __init__ (self, saveName):
+        self.saveName = saveName
+        self.name = "Exit event"
+
 class ExitEvent(Event):
     """
     Exit event.
