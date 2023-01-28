@@ -37,3 +37,22 @@ class Case():
             self.collision = 1
         else:
             self.collision = 0 
+
+    def getDesirability(self, plateau) :
+        alreadyCheckedBuilding = []
+        alreadyCheckedCase = [self]
+        desTotal = 0
+        for ray in range(1,6) :
+            for xi in range(self.x-ray, self.x+ray) :
+                for yi in range(self.y-ray,self.y+ray) :
+                    if 0<xi<plateau.nbr_cell_x and 0<yi<plateau.nbr_cell_y :
+                        if plateau.map[xi][yi] not in alreadyCheckedCase :
+                            if plateau.map[xi][yi].structure :
+                                if plateau.map[xi][yi].structure not in alreadyCheckedBuilding :
+                                    if plateau.map[xi][yi].structure.desc in desirabilityDict :
+                                        desTotal = desTotal + desirabilityDict[plateau.map[xi][yi].structure.desc][ray-1]
+                                        alreadyCheckedBuilding.append(plateau.map[xi][yi].structure)
+        return desTotal
+
+
+

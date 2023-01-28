@@ -37,3 +37,26 @@ list_of_collision = ["tree", "water", "rock", "sign"]
 list_of_undestructible = ["water", "rock", "sign"]
 list_of_flammable_structures = ["EngineerPost", "SmallTent", "LargeTent", "SmallTent2", "LargeTent2", "WheatFarm", "Market", "Granary"]
 list_of_brittle_structures = ["Prefecture", "WheatFarm", "Market", "Granary"]
+
+#DESIRABILITY
+#Housing :
+smalltentd = [-3,-2,-1,0,0,0]
+largetentd = [-3,-2,-1,0,0,0]
+smallshackd = [-2,-1,0,0,0,0]
+largeshackd = [-2, -1, 0,0,0]
+#Security :
+prefectured = [-2,-1,0,0,0]
+#Administrative :
+senated = [8,8,7,7,6,6]
+#Religion :
+templed = [4,4,3,3,2,2]
+#Water :
+welld =[-1,0,0,0,0]
+#Engineering :
+enginpostd = [0,0,0,0,0]
+
+
+
+desirabilityDict = {"SmallTent" : smalltentd, "LargeTent" : largetentd, "SmallShack" : smallshackd, "Senate" : senated,
+"LargeShack" : largeshackd, "Prefecture" : prefectured, "SmallTemple" : templed, "Well" : welld, "EngineerPost" : enginpostd,
+}

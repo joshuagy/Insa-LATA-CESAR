@@ -25,7 +25,7 @@ from random import *
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, soundMixer, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
+    def __init__(self, screen, clock, name, heigth, width, soundMixer,nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
         
         self.screen = screen
         self.clock = clock
@@ -304,6 +304,7 @@ class Plateau():
         lt1s = load_image("image/Buildings/Housng1a_00004.png")
         lt2s = load_image("image/Buildings/Housng1a_00006.png")
         sss = load_image("image/Buildings/Housng1a_00011.png")
+        lss = load_image("image/Buildings/Housng1a_00017.png")
         ps = load_image("image/Buildings/Security_00001.png")
         eps = load_image("image/Buildings/transport_00056.png")
         ws = load_image("image/Buildings/Utilitya_00001.png")
@@ -319,11 +320,12 @@ class Plateau():
         granabs = list(load_image(f"image/Buildings/Granary/b{i}.png")for i in range(0,4))
         granals = list(load_image(f"image/Buildings/Granary/l{i}.png")for i in range(0,7))
         tems = load_image("image/Buildings/Security_00053.png")
+
         
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks, "GranaryTop" : granatops,
-                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : tems, "SmallShack" : sss }
+                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : tems, "SmallShack" : sss, "LargeShack" : lss }
  
     def getButtonsFunctions(self):
         return {
@@ -482,8 +484,8 @@ class Plateau():
                                             (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                                 render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
                         #if isinstance(self.map[cell_x][cell_y].structure, House) :
-                        #    nbHabTxt = TextRender(str(self.map[cell_x][cell_y].structure.nbHab),(20,20),(0,0,0)).img_scaled
-                        #    self.screen.blit(nbHabTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                        #    wheatTxt = TextRender(str(self.map[cell_x][cell_y].structure.wheat),(20,20),(0,0,0)).img_scaled
+                        #    self.screen.blit(wheatTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                         #                        render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
                         #if isinstance(self.map[cell_x][cell_y].structure, WheatFarm) :
                         #    grQuantTxt = TextRender(str(self.map[cell_x][cell_y].structure.growingQuant),(20,20),(0,0,0)).img_scaled

@@ -52,11 +52,15 @@ class House(Building):
             #Upgrade et Down grade triés par type de maison :
             if (self.desc == "SmallTent" or self.desc =="SmallTent2") and self.case.waterAccess>0 : #Il faudra ajouter plus tard la condition de désirabilité
                 self.upgrade()
-            if (self.desc == "LargeTent" or self.desc =="LargeTent2") and self.case.waterAccess<1 : #Il faudra ajouter plus tard la condition de désirabilité
+            if (self.desc == "LargeTent" or self.desc =="LargeTent2") and (self.case.waterAccess<1 or self.case.getDesirability(self.plateau) < -12): #Il faudra ajouter plus tard la condition de désirabilité
                 self.downgrade()
-            if (self.desc == "LargeTent2") and self.case.religiousAccess>0 :
+            if (self.desc == "LargeTent2") and self.wheat>0 and self.case.getDesirability(self.plateau)>-5 and self.case.waterAccess>0 :
                 self.upgrade()
-            if (self.desc == "SmallShack") and (self.case.religiousAccess <1 or self.case.waterAccess<1) :
+            if (self.desc == "SmallShack") and (self.case.waterAccess<1 or self.case.getDesirability(self.plateau)<-7 or self.wheat<1) :
+                self.downgrade()
+            if (self.desc == "SmallShack") and self.case.religiousAccess>0 and self.case.waterAccess>0 and self.wheat>0 and self.case.getDesirability(self.plateau)>0 :
+                self.upgrade()
+            if self.desc == "LargeShack" and (self.case.religiousAccess<1 or self.case.waterAccess<1 or self.wheat==0 or self.case.getDesirability(self.plateau)<-2) :
                 self.downgrade()
 
 
@@ -90,6 +94,9 @@ class House(Building):
         if self.desc=="LargeTent2" : 
             self.desc="SmallShack"
             self.set_nbHabMax(36)
+        if self.desc == "SmallShack" :
+            self.desc = "LargeShack"
+            self.set_nbHabMax(44)
 
     def downgrade(self) :
         if self.desc == "LargeTent":
@@ -101,6 +108,9 @@ class House(Building):
         if self.desc =="SmallShack" :
             self.desc = "LargeTent2"
             self.set_nbHabMax(28)
+        if self.desc == "LargeShack" :
+            self.desc = "SmallShack"
+            self.set_nbHabMax(36)
 
         #Ramène le nombre d'habitants au maximum de la nouvelle taille
         if self.nbHab > self.nbHabMax :
