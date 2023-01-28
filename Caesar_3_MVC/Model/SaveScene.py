@@ -8,10 +8,8 @@ class SaveScene:
       self.soundMixer = soundMixer
 
       self.model = model
-      
       self.image = pygame.image.load("./image/UI/menu/saveInterface.png").convert_alpha()
       self.defaultSurface = pygame.transform.scale(self.image, (400, 400))
-
       self.surface = self.defaultSurface.copy()
 
       self.pos = (self.screen.get_width()/2 - self.surface.get_width()/2, self.screen.get_height()/2 - self.surface.get_height()/2)
@@ -27,10 +25,6 @@ class SaveScene:
       self.cancelButtonRect = pygame.Rect(self.cancelButtonPos, self.cancelButton.get_size())
 
       self.userInput = ""
-
-      self.inputRect = pygame.Rect((10, 40), (self.surface.get_width() - 20, 32))
-      self.inputRectBorder = pygame.Rect((5, 35), (self.surface.get_width() - 10, 42))
-
       self.textError = ""
 
     def getMousePosRelative(self, event):
@@ -42,7 +36,6 @@ class SaveScene:
         self.soundMixer.playEffect("clickEffect")
         if self.userInput != "":
           self.model.actualGame.save_game(self.userInput)
-          print("change state")
           return StateChangeEvent(STATE_PLAY)
         else :
           self.textError = "Invalid name !"
@@ -72,9 +65,9 @@ class SaveScene:
     def render(self):
       self.screen.blit(self.defaultSurface, (self.posX, self.posY))
       self.surface = self.defaultSurface.copy()
-
       f = pygame.font.Font(None, 20)
-      self.surface.blit(f.render(self.userInput, True, (0, 0, 0)), (25, 60))
+
+      self.surface.blit(self.font.render(self.userInput, True, (0, 0, 0)), (25, 60))
 
       self.surface.blit(f.render(self.textError, True, (255, 0, 0)), (10, 85))
 
