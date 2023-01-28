@@ -25,12 +25,11 @@ class MiniMap:
 
 
         self.draw_mini_map(create_map)
-        img=pygame.image.load("mini_map.png").convert_alpha()
+        img = pygame.image.load("mini_map.png").convert_alpha()
         img = pygame.transform.smoothscale(img,(75,75))
         img = pygame.transform.rotate(img, -45).convert_alpha()
 
-
-        screen.blit(img,(self.width*0.93,self.height*0.058))
+        screen.blit(img,(self.width-img.get_size()[0]-27,60))
 
         self.mini_screen_rect = pg.Rect(- camera.vect[0] * MiniMap.scale+self.width*0.94,
                                         - camera.vect[1] * MiniMap.scale+0.08*self.height,
