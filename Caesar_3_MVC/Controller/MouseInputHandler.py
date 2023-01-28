@@ -97,6 +97,8 @@ class MouseInputHandler:
         Handles menu mouse events.
         """
         feedBack = self.model.menu.handleMouseInput(event)
+        if isinstance(feedBack, StateChangeEvent):
+           self.model.actualGame.load_savefile("save_to_load.pickle")
         self.evManager.Post(feedBack)
 
     def pause_move_button(self):
