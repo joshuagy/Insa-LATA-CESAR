@@ -18,9 +18,6 @@ class MiniMap:
         self.image = Image.new('RGB', (self.longueur, self.largeur))
 
 
-
-
-
     def draw_position(self, screen, camera,create_map):
 
 
@@ -31,11 +28,29 @@ class MiniMap:
 
         screen.blit(img,(self.width-img.get_size()[0]-27,60))
 
+        # #Tentative échouée d'afficher le rectangle jaune là où est la map
+        # self.mini_screen_rect = pg.Rect(self.width-img.get_size()[0]-17,
+        #                         - camera.vect[1] * MiniMap.scale+75,
+        #                         self.mini_screen_width/12, self.mini_screen_height/10)
+        # if(not (
+        #     #right x limit
+        #     (self.width-img.get_size()[0]-17)>self.width-26
+        #     #left x limit
+        #     or ((self.width-img.get_size()[0]-17)<self.width-26-img.get_size()[0]
+        #     #bottom y limit
+        #     or( - camera.vect[1] * MiniMap.scale+75)<60+img.get_size()[1] )
+        #     #top y limit
+        #     or ( - camera.vect[1] * MiniMap.scale+75)>60 ) 
+        #     ):
+        #     pg.draw.rect(screen, (255, 255, 0), self.mini_screen_rect, 1)
+        
+        #Du coup là ça affiche le rectangle jaune là ou était la map quand elle était pas aux bonnes coordonnées, donc ça devrait continuer de fonctionner sur certains écrans
         self.mini_screen_rect = pg.Rect(- camera.vect[0] * MiniMap.scale+self.width*0.94,
                                         - camera.vect[1] * MiniMap.scale+0.08*self.height,
                                         self.mini_screen_width/12, self.mini_screen_height/10)
         if(not ((- camera.vect[0] * MiniMap.scale+self.width*0.94)>self.width*0.98 or ((- camera.vect[0] * MiniMap.scale+self.width*0.94)<self.width*0.92or( - camera.vect[1] * MiniMap.scale+0.08*self.height)<self.height*0.05 ) or ( - camera.vect[1] * MiniMap.scale+0.08*self.height)>self.height*0.147 ) ):
             pg.draw.rect(screen, (255, 255, 0), self.mini_screen_rect, 1)
+
 
 
 
@@ -77,9 +92,6 @@ class MiniMap:
                         self.image.putpixel((cell_x, cell_y), (rouge, vert, bleu))
 
         self.image.save("mini_map.png")
-
-
-
 
 
 
