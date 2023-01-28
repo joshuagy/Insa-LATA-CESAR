@@ -99,15 +99,18 @@ class LoadScene:
     self.screen = screen
     self.surface = background_surface
     self.soundMixer = soundMixer
-    self.surface = pygame.Surface((400, 400))
-    self.surface.fill((0, 0, 0))
+
+    self.image = pygame.image.load("./image/UI/menu/loadInterface.png").convert_alpha()
+    self.defaultSurface = pygame.transform.scale(self.image, (400, 400))
+
+    self.surface = self.defaultSurface.copy()
+
     self.posX = (self.screen.get_width()/2) - (self.surface.get_width()/2)
     self.posY = (self.screen.get_height()/2) - (self.surface.get_height()/2)
 
     self.font = pygame.font.SysFont(None, 24)
 
     self.saveFileNames = [f for f in os.listdir("./Model/Save_Folder") if os.path.isfile(os.path.join("./Model/Save_Folder", f))]
-    self.saveFileNames.remove("save_to_load.pickle")
     self.saveFileNames.remove("DefaultMap.pickle")
     
     if len(self.saveFileNames) == 0:
@@ -122,29 +125,25 @@ class LoadScene:
     self.feedback = LoadSave("DefaultMap.pickle")
 
     self.okButton = pygame.image.load("./image/UI/quit/okButton.png")
-    okButtonPos = ((self.surface.get_width()/2) - 2*self.okButton.get_width(), (self.surface.get_height() - self.okButton.get_height())-10)
-    self.okButtonRect = pygame.Rect(okButtonPos,  self.okButton.get_size())
+    self.okButtonPos = ((self.surface.get_width()/2) + self.okButton.get_width(), (self.surface.get_height() - self.okButton.get_height())-20)
+    self.okButtonRect = pygame.Rect(self.okButtonPos,  self.okButton.get_size())
 
     self.cancelButton = pygame.image.load("./image/UI/quit/cancelButton.png")
-    cancelButtonPos = ((self.surface.get_width()/2) + self.cancelButton.get_width(), (self.surface.get_height() - self.cancelButton.get_height())-10)
-    self.cancelButtonRect = pygame.Rect(cancelButtonPos, self.cancelButton.get_size())
+    self.cancelButtonPos = ((self.surface.get_width()/2) + 3*self.cancelButton.get_width(), (self.surface.get_height() - self.cancelButton.get_height())-20)
+    self.cancelButtonRect = pygame.Rect(self.cancelButtonPos, self.cancelButton.get_size())
 
-    self.surface.blit(self.okButton, okButtonPos)
-    self.surface.blit(self.cancelButton, cancelButtonPos)
-  
+   
   def currentSaveSelectedSurface(self):
-    currentSaveSelected = pygame.Surface((380, 30))
-    currentSaveSelected.fill((255, 255, 255))
-    currentSaveSelectedPos = (self.surface.get_width()/2 - currentSaveSelected.get_width()/2, 10)
+    currentSaveSelected = pygame.Surface((380, 30)).convert_alpha()
+    currentSaveSelectedPos = (self.surface.get_width()/2 - currentSaveSelected.get_width()/2, 50)
     currentSaveSelectedText = self.font.render(self.currentSaveLoaded, 0, (0, 0, 0))
     currentSaveSelectedTextPos = (currentSaveSelectedPos[0]+5, currentSaveSelected.get_height()/2 - currentSaveSelectedText.get_height()/2)
     currentSaveSelected.blit(currentSaveSelectedText, currentSaveSelectedTextPos)
     return (currentSaveSelected, currentSaveSelectedPos)
   
   def saveSelectorSurface(self):
-    saveSelector = pygame.Surface((380, 200))
-    saveSelector.fill((255, 255, 255))
-    saveSelectorPos = (self.surface.get_width()/2 - saveSelector.get_width()/2, 50)
+    saveSelector = pygame.Surface((380, 200)).convert_alpha()
+    saveSelectorPos = (self.surface.get_width()/2 - saveSelector.get_width()/2, 70)
     return (saveSelector, saveSelectorPos)
 
   def getSaveItems(self): 
@@ -179,15 +178,21 @@ class LoadScene:
     else: return 0
 
   def render(self):
+    self.screen.blit(self.defaultSurface, (self.posX, self.posY))
+    self.surface = self.defaultSurface.copy()
+
+    b = self.saveSelectorSurface()   
+    self.surface.blit(b[0], b[1])
+
     a = self.currentSaveSelectedSurface()
     self.surface.blit(a[0], a[1])
 
-    b = self.saveSelectorSurface()
-    self.surface.blit(b[0], b[1])
-    
     for item in self.saveItems:
       item.render(self.surface)
 
+    self.surface.blit(self.okButton, self.okButtonPos)
+    self.surface.blit(self.cancelButton, self.cancelButtonPos)
+  
     self.screen.blit(self.surface, (self.posX, self.posY))
 
 class ItemLoadScene:
@@ -201,7 +206,7 @@ class ItemLoadScene:
 
     self.textRect = self.text.get_rect()
 
-    self.textRect.center = ((self.textRect.width/2) + 20, (self.textRect.height/2) + (55 + 30*idx))
+    self.textRect.center = ((self.textRect.width/2) + 20, (self.textRect.height/2) + (100 + 30*idx))
 
   def render(self, surface_to_blit):
     if self.selected:
