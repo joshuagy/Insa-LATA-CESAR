@@ -1,5 +1,6 @@
 import pygame
 import os
+import shutil
 from EventManager.allEvent import *
 from Model.constants import *
 
@@ -10,6 +11,12 @@ class Menu:
     self.surface = pygame.transform.scale(self.image, self.screen.get_size())
     self.items = []
 
+    # create file save_to_load if doesn't exist
+    if not os.path.exists("./Model/Save_Folder/save_to_load.pickle"):
+      open("./Model/Save_Folder/save_to_load.pickle", "w")
+
+    shutil.copyfile("./Model/Save_Folder/DefaultMap.pickle", "./Model/Save_Folder/save_to_load.pickle")
+
     self.soundMixer = soundMixer
 
     self.initializeItems()
@@ -17,7 +24,7 @@ class Menu:
     self.quitScene = QuitScene(self.screen, self.surface.copy(), self.soundMixer)
     self.isQuitState = False
 
-    self.loadScene = LoadScene(self.screen, self.surface.copy())
+    self.loadScene = LoadScene(self.screen, self.surface.copy(), self.soundMixer)
     self.isLoadState = False
 
     self.defaultFeedback = TickEvent() # do nothing
@@ -53,7 +60,7 @@ class Menu:
       match loadSceneFeedBack:
         case 1:
           self.isLoadState = False
-          return TickEvent()
+          return StateChangeEvent(STATE_PLAY)
         case 2:
           self.isLoadState = False
           return TickEvent()
@@ -90,84 +97,116 @@ class Menu:
 
 
 class LoadScene:
-  def __init__(self, screen, background_surface):
+  def __init__(self, screen, background_surface, soundMixer):
     self.screen = screen
     self.surface = background_surface
-    self.image = pygame.Surface((400, 400))
-    self.image.fill((0, 0, 0))
-    self.posX = (self.screen.get_width()/2) - (self.image.get_width()/2)
-    self.posY = (self.screen.get_height()/2) - (self.image.get_height()/2)
+    self.soundMixer = soundMixer
+    self.surface = pygame.Surface((400, 400))
+    self.surface.fill((0, 0, 0))
+    self.posX = (self.screen.get_width()/2) - (self.surface.get_width()/2)
+    self.posY = (self.screen.get_height()/2) - (self.surface.get_height()/2)
 
-    self.currentSaveLoaded = ""
     self.font = pygame.font.SysFont(None, 24)
 
-    self.SaveSelector = None
-
-    # get all files in folder Save_Folder
-    self.saveFiles = [f for f in os.listdir("./Model/Save_Folder") if os.path.isfile(os.path.join("./Model/Save_Folder", f))]
+    self.saveFileNames = [f for f in os.listdir("./Model/Save_Folder") if os.path.isfile(os.path.join("./Model/Save_Folder", f))]
+    self.saveFileNames.remove("save_to_load.pickle")
+    self.saveFileNames.remove("DefaultMap.pickle")
     
-    self.initializeItems()
+    if len(self.saveFileNames) == 0:
+      self.currentSaveLoaded = "No save file found"
+    else:
+      self.currentSaveLoaded = self.saveFileNames[0]
 
-    self.surface.blit(self.image, (self.posX, self.posY))
-  
-  def initializeItems(self) -> None:
-    # Item 1
-    currentSaveLoaded = pygame.Surface((380, 30))
-    currentSaveLoaded.fill((255, 255, 255))
-    currentSaveLoadedPos = (self.image.get_width()/2 - currentSaveLoaded.get_width()/2, 10)
-    
-    currentSaveLoadedText = self.font.render(self.currentSaveLoaded, 0, (0, 0, 0))
-    currentSaveLoadedTextPos = (currentSaveLoadedPos[0]+5, currentSaveLoaded.get_height()/2 - currentSaveLoadedText.get_height()/2)
-    currentSaveLoaded.blit(currentSaveLoadedText, currentSaveLoadedTextPos)
+    self.saveItems = []
 
-    # Item 4 
-    self.saveSelector = self.getCurrentSaveSelector()  
+    self.getSaveItems()
 
-    # Item 2
     self.okButton = pygame.image.load("./image/UI/quit/okButton.png")
-    okButtonPos = ((self.image.get_width()/2) - 2*self.okButton.get_width(), (self.image.get_height() - self.okButton.get_height())-10)
+    okButtonPos = ((self.surface.get_width()/2) - 2*self.okButton.get_width(), (self.surface.get_height() - self.okButton.get_height())-10)
     self.okButtonRect = pygame.Rect(okButtonPos,  self.okButton.get_size())
 
-    # Item 3
     self.cancelButton = pygame.image.load("./image/UI/quit/cancelButton.png")
-    cancelButtonPos = ((self.image.get_width()/2) + self.cancelButton.get_width(), (self.image.get_height() - self.cancelButton.get_height())-10)
+    cancelButtonPos = ((self.surface.get_width()/2) + self.cancelButton.get_width(), (self.surface.get_height() - self.cancelButton.get_height())-10)
     self.cancelButtonRect = pygame.Rect(cancelButtonPos, self.cancelButton.get_size())
 
-    # Blit all items
-    self.image.blit(self.okButton, okButtonPos)
-    self.image.blit(self.cancelButton, cancelButtonPos)
-    self.image.blit(currentSaveLoaded, currentSaveLoadedPos)
-    self.image.blit(self.saveSelector[0], self.saveSelector[1])
+    self.surface.blit(self.okButton, okButtonPos)
+    self.surface.blit(self.cancelButton, cancelButtonPos)
+  
+  def currentSaveSelectedSurface(self):
+    currentSaveSelected = pygame.Surface((380, 30))
+    currentSaveSelected.fill((255, 255, 255))
+    currentSaveSelectedPos = (self.surface.get_width()/2 - currentSaveSelected.get_width()/2, 10)
+    currentSaveSelectedText = self.font.render(self.currentSaveLoaded, 0, (0, 0, 0))
+    currentSaveSelectedTextPos = (currentSaveSelectedPos[0]+5, currentSaveSelected.get_height()/2 - currentSaveSelectedText.get_height()/2)
+    currentSaveSelected.blit(currentSaveSelectedText, currentSaveSelectedTextPos)
+    return (currentSaveSelected, currentSaveSelectedPos)
+  
+  def saveSelectorSurface(self):
+    saveSelector = pygame.Surface((380, 200))
+    saveSelector.fill((255, 255, 255))
+    saveSelectorPos = (self.surface.get_width()/2 - saveSelector.get_width()/2, 50)
+    return (saveSelector, saveSelectorPos)
 
-  def getCurrentSaveSelector(self): 
-    currrentSaveSelector = pygame.Surface((380, 200))
-    currrentSaveSelector.fill((255, 255, 255))
-    currrentSaveSelectorPos = (self.image.get_width()/2 - currrentSaveSelector.get_width()/2, 50)
-
-    for idx, saveName in self.saveFiles:
-      item = pygame.Surface((300, 20))
-      item.fill((0, 0, 0))
-      itemPos = (5, 5 + 30*idx)
-
-      itemText = self.font.render(saveName, 1, (255, 255, 255))
-      itemTextPos = (itemPos[0]+5, currrentSaveSelector.get_height()/2 - itemText.get_height()/2)
-      item.blit(itemText, itemTextPos)
-
-      currrentSaveSelector.blit(item, itemPos)
-
-    return (currrentSaveSelector, currrentSaveSelectorPos)
+  def getSaveItems(self): 
+    for idx, saveName in enumerate(self.saveFileNames):
+      item = ItemLoadScene(saveName, idx, self.font)
+      self.saveItems.append(item)
 
   def getMousePosRelative(self, event):
     return (event.pos[0] - self.posX, event.pos[1] - self.posY)
     
   def handleMouseInput(self, event) -> Event:
     mousePosRelative = self.getMousePosRelative(event)
-    if self.okButtonRect.collidepoint(mousePosRelative): return 1
-    elif  self.cancelButtonRect.collidepoint(mousePosRelative): return 2
+    for item in self.saveItems:
+      if item.textRect.collidepoint(mousePosRelative):
+        item.selected = True
+        self.currentSaveLoaded = item.saveName
+        self.soundMixer.playEffect('clickEffect')
+        for a in self.saveItems:
+          if a.saveName != item.saveName:
+            a.selected = False
+        break
+    if self.okButtonRect.collidepoint(mousePosRelative): 
+      self.soundMixer.playEffect('clickEffect')
+      with open("./Model/Save_Folder/save_to_load.pickle", "w") as f, open("./Model/Save_Folder/"+self.currentSaveLoaded, "r") as f2:
+        print("copy de ", self.currentSaveLoaded, " vers save_to_load.pickle")
+        shutil.copyfile("./Model/Save_Folder/"+self.currentSaveLoaded, "./Model/Save_Folder/save_to_load.pickle")
+      return 1
+    elif  self.cancelButtonRect.collidepoint(mousePosRelative):
+       self.soundMixer.playEffect('clickEffect')
+       return 2
     else: return 0
 
   def render(self):
-    self.screen.blit(self.surface, (0, 0))
+    a = self.currentSaveSelectedSurface()
+    self.surface.blit(a[0], a[1])
+
+    b = self.saveSelectorSurface()
+    self.surface.blit(b[0], b[1])
+    
+    for item in self.saveItems:
+      item.render(self.surface)
+
+    self.screen.blit(self.surface, (self.posX, self.posY))
+
+class ItemLoadScene:
+  def __init__(self, saveName, idx, font):
+    self.saveName = saveName
+    self.font = font
+    self.selected = False
+
+    self.text = self.font.render(saveName, 1, (255, 255, 255), (0, 0, 0))
+    self.selectedText = self.font.render(saveName, 1, (255, 0, 0), (0, 0, 0))
+
+    self.textRect = self.text.get_rect()
+
+    self.textRect.center = ((self.textRect.width/2) + 20, (self.textRect.height/2) + (55 + 30*idx))
+
+  def render(self, surface_to_blit):
+    if self.selected:
+      surface_to_blit.blit(self.selectedText, self.textRect)
+    else:
+      surface_to_blit.blit(self.text, self.textRect)
 
 class QuitScene:
   def __init__(self, screen, background_surface, soundMixer):
