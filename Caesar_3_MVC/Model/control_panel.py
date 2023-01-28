@@ -13,7 +13,7 @@ class ButtonCtrlPnl():
         self.state = state
         self.text = text
 
-        self.soundMixer = self.controls.soundMixer
+        #self.soundMixer = self.controls.soundMixer
 
         self.textsurface = pygame.font.SysFont('default_font', 20).render(self.text, False, BLACK, WHITE)
 
@@ -123,7 +123,7 @@ class ButtonCtrlPnl():
                     for button in self.controls.listOfButtons:
                         button.clicked = False
                     self.clicked = True
-                    self.soundMixer.playEffect('clickEffect')
+                    #self.soundMixer.playEffect('clickEffect')
                     self.controls.setCurrentState(self.state)
                     if self.unlocked and callable(self.call_func):
                        self.call_func()
@@ -146,7 +146,7 @@ class TextRender:
 
 class ButtonWithImmediatEffect(ButtonCtrlPnl):
     def __init__(self, controls, function, state: str,  text: str = None, x : int =0, y : int =0, image_normal=None, image_hovered=None, image_clicked=None, image_locked=None):
-        self.soundMixer = controls.soundMixer
+        #self.soundMixer = controls.soundMixer
         super().__init__(controls, function, state, text, x, y, image_normal, image_hovered, image_clicked, image_locked)
 
     def show_tip(self, *arg):
@@ -159,7 +159,7 @@ class ButtonWithImmediatEffect(ButtonCtrlPnl):
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if self.hovered:
                 self.clicked = True
-                self.soundMixer.playEffect('clickEffect')
+                #self.soundMixer.playEffect('clickEffect')
                 if self.unlocked and callable(self.call_func):
                         self.call_func()
 

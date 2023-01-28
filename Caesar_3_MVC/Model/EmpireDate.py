@@ -12,7 +12,7 @@ class EmpireDate :
 
     def update(self) :
         self.cmpt = self.cmpt + 1
-        if self.cmpt >= 30000 :
+        if self.cmpt >= 1500 :
             self.cmpt = 0
             if self.month == 11 :
                 self.month = 0

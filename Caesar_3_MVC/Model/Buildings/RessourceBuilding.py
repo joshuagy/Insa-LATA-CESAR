@@ -41,37 +41,35 @@ class WheatFarm(Building) :
         self.growingTimer += 1
         for ac in self.allCases :
             if ac.connectedToRoad > 0:
-
+                
                 #Récolte le blé si les champs sont pleins :
-                if self.growingQuant>=100 :
+                if self.growingQuant>=self.growingQuantMax :
                     self.storedQuant=self.storedQuant+10
                     self.growingQuant=0
                     for p in self.plots :
                         p.level = 0
-                for surroundingGranaries in self.plateau.structures :
-                    if isinstance(surroundingGranaries, Granary) :
-                        if (abs(self.case.x-surroundingGranaries.case.x) < 15) and (abs(self.case.y-surroundingGranaries.case.y) < 15) :
-                            surroundingGranaries.storedWheat = surroundingGranaries.storedWheat + 30
+                    for surroundingGranaries in self.plateau.structures :
+                        if isinstance(surroundingGranaries, Granary) :
+                            if (abs(self.case.x-surroundingGranaries.case.x) < 15) and (abs(self.case.y-surroundingGranaries.case.y) < 15) :
+                                surroundingGranaries.storedWheat = surroundingGranaries.storedWheat + 30
                     return
-        if self.growingTimer > (500 / currentSpeedFactor):
-            #Affiche un message et annule toute mise à jour si le bâtiment n'est pas connecté à la route :
-    
-                    #Fait augmnter la quantité de blé qui pousse si la ferme est productive :
-                #if random.randint(0,10)==10 :
-                self.growingQuant=self.growingQuant+1
-                #Je vais me renseigner pour le fonctionnement
+
+                #Fait augmnter la quantité de blé qui pousse :
+                if self.growingTimer > (500 / currentSpeedFactor):
+                    self.growingQuant+=1
+                    self.growingTimer = 0
+
                 #Set the sprites of the plots
                 if self.growingQuant > 4 :
                     for p in self.plots :   #Remet toutes les parcelles à 0 pour refaire le calcul
                         p.level = 0
-                    rep = 0                 #Répartition qui parcours les parcelles en donnant 5 blé à chaque jusqu'à épuisement 
-                    i = 0
+                        rep = 0             #Répartition qui parcours les parcelles en donnant 5 blé à chaque jusqu'à épuisement
+                        i=0                                             
                     while rep < self.growingQuant :
                         if self.plots[i].level < 4 :
                             self.plots[i].level = self.plots[i].level+1
                             i=i+1 if i<4 else 0
                             rep = rep+5
-                self.growingTimer = 0
                 return
         self.plateau.roadWarning = True
 
