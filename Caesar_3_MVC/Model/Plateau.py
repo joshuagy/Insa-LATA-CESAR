@@ -423,35 +423,35 @@ class Plateau():
         self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
 
         # UPDATE RISK VALUE
-            # DRAW OVERLAY
-            # Overlay part
-            # Fire
-            # Hidding the overlay by default
-            if self.overlayCounter == 30:
-                if self.foreground.getOverlayName() == "fire":
-                    self.foreground.initOverlayGrid()
-                    for x in range(40):
-                        for y in range(40):
-                            temp = self.map[x][y].structure
-                            if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
-                                self.foreground.addOverlayInfo(x, y, temp.get_fireRisk())
-                    self.controls.overlays_button.change_image("image/UI/menu/menu_fire_overlay.png")       
+        # DRAW OVERLAY
+        # Overlay part
+        # Fire
+        # Hidding the overlay by default
+        if self.overlayCounter == 30:
+            if self.foreground.getOverlayName() == "fire":
+                self.foreground.initOverlayGrid()
+                for x in range(40):
+                    for y in range(40):
+                        temp = self.map[x][y].structure
+                        if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
+                            self.foreground.addOverlayInfo(x, y, temp.get_fireRisk())
+                self.controls.overlays_button.change_image("image/UI/menu/menu_fire_overlay.png")       
 
-                elif self.foreground.getOverlayName() == "destruct":
-                    self.foreground.initOverlayGrid()
-                    for x in range(40):
-                        for y in range(40):
-                            temp = self.map[x][y].structure
-                            if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
-                                self.foreground.addOverlayInfo(x, y, temp.get_collapseRisk())
-                    self.controls.overlays_button.change_image("image/UI/menu/menu_collapse_overlay.png")       
-                
-                elif self.foreground.getOverlayName() == None:
-                    self.controls.overlays_button.change_image("image/UI/menu/menu_overlay_button.png")       
+            elif self.foreground.getOverlayName() == "destruct":
+                self.foreground.initOverlayGrid()
+                for x in range(40):
+                    for y in range(40):
+                        temp = self.map[x][y].structure
+                        if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
+                            self.foreground.addOverlayInfo(x, y, temp.get_collapseRisk())
+                self.controls.overlays_button.change_image("image/UI/menu/menu_collapse_overlay.png")       
+            
+            elif self.foreground.getOverlayName() == None:
+                self.controls.overlays_button.change_image("image/UI/menu/menu_overlay_button.png")       
 
-                self.overlayCounter = 0
+            self.overlayCounter = 0
 
-            sprite = "base_overlay"
+        sprite = "base_overlay"
 
         # DRAW CELLS
 
@@ -536,7 +536,7 @@ class Plateau():
                 for e in self.walkers[cell_x][cell_y]:
                     self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)],
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y)
+                                            render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
                 
         
         self.overlayCounter += 1    
