@@ -422,6 +422,36 @@ class Plateau():
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
 
+        # UPDATE RISK VALUE
+            # DRAW OVERLAY
+            # Overlay part
+            # Fire
+            # Hidding the overlay by default
+            if self.overlayCounter == 30:
+                if self.foreground.getOverlayName() == "fire":
+                    self.foreground.initOverlayGrid()
+                    for x in range(40):
+                        for y in range(40):
+                            temp = self.map[x][y].structure
+                            if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
+                                self.foreground.addOverlayInfo(x, y, temp.get_fireRisk())
+                    self.controls.overlays_button.change_image("image/UI/menu/menu_fire_overlay.png")       
+
+                elif self.foreground.getOverlayName() == "destruct":
+                    self.foreground.initOverlayGrid()
+                    for x in range(40):
+                        for y in range(40):
+                            temp = self.map[x][y].structure
+                            if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
+                                self.foreground.addOverlayInfo(x, y, temp.get_collapseRisk())
+                    self.controls.overlays_button.change_image("image/UI/menu/menu_collapse_overlay.png")       
+                
+                elif self.foreground.getOverlayName() == None:
+                    self.controls.overlays_button.change_image("image/UI/menu/menu_overlay_button.png")       
+
+                self.overlayCounter = 0
+
+            sprite = "base_overlay"
 
         # DRAW CELLS
 
@@ -506,77 +536,7 @@ class Plateau():
                 for e in self.walkers[cell_x][cell_y]:
                     self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)],
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
-
-
-                # DRAW OVERLAY
-                # Overlay part
-                # Fire
-                # Hidding the overlay by default
-                if self.overlayCounter == 30:
-                    if self.controls.overlays_button.clicked:
-                        self.foreground.setOverlayName("fire")
-                        self.foreground.initOverlayGrid()
-                        for x in range(40):
-                            for y in range(40):
-                                temp = self.map[x][y].structure
-                                if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
-                                    self.foreground.addOverlayInfo(x, y, temp.get_fireRisk())
-                    else:
-                        self.foreground.setOverlayName(None)
-
-                    self.overlayCounter = 0
-
-                sprite = "base_overlay"
-                # if self.foreground.getOverlayName() == "fire":
-                #     fireText = self.minimalFont.render("FIRE Overlay:", 1, (255, 0, 0), (0, 0, 0))
-                #     self.screen.blit(fireText, (75, self.screen.get_height() - fireText.get_height()))
-                # else:
-                #     blackText = self.minimalFont.render("AAAAAAAAAAAAAA", 1, (0, 0, 0), (0, 0, 0))
-                #     self.screen.blit(blackText, (75, self.screen.get_height() - blackText.get_height()))
-
-                match self.foreground.getOverlayInfo(cell_x, cell_y):
-                    case 0:
-                        effectedImage = self.foreground.putGreen(self.image[sprite].copy())
-                        self.screen.blit(effectedImage,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                    
-                    case 1:
-                        effectedImage = self.foreground.putGreenYellow(self.image[sprite].copy())
-                        self.screen.blit(effectedImage,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                    
-                    case 2:
-                        effectedImage = self.foreground.putYellow(self.image[sprite].copy())
-                        self.screen.blit(effectedImage,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                    
-                    case 3:
-                        effectedImage = self.foreground.putYellowOrange(self.image[sprite].copy())
-                        self.screen.blit(effectedImage,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                    
-                    case 4:
-                        effectedImage = self.foreground.putOrange(self.image[sprite].copy())
-                        self.screen.blit(effectedImage,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                    
-                    case 5:
-                        effectedImage = self.foreground.putOrangeRed(self.image[sprite].copy())
-                        self.screen.blit(effectedImage,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-
-                    case 6:
-                        effectedImage = self.foreground.putRed(self.image[sprite].copy())
-                        self.screen.blit(effectedImage,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                                            render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y)
                 
         
         self.overlayCounter += 1    
