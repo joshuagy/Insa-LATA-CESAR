@@ -5,15 +5,15 @@
 - [x] GUI framework of your choice : Pygame
 - [x] Graphical representation of the map
 - [x] Sprite Upscale x2
-- [ ] Save and load. Pause.
-- [ ] Faithful Caesar III mechanics and sprites.
-- [ ] Real-Time Aspects.
-- [ ] Walker visualisation
+- [x] Save and load. Pause.
+- [x] Faithful Caesar III mechanics and sprites.
+- [x] Real-Time Aspects.
+- [x] Walker visualisation
 
 
 ## Recommended features
 
-- [ ] Variable Speed
+- [x] Variable Speed
 - [ ] Trading (Have neighbouring cities with which to trade specific goods)
 - [ ] Administration (Implement some degree of global control over your city to adjust tax levels, industry
 priorities, visualise service coverage and so on)
