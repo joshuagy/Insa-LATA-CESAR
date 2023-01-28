@@ -105,8 +105,9 @@ class MouseInputHandler:
         """
         feedBack = self.model.menu.handleMouseInput(event)
         if isinstance(feedBack, LoadSave):
-           self.model.actualGame.load_savefile(feedBack.saveName)
-           self.evManager.Post(StateChangeEvent(STATE_PLAY))
+            self.model.saveScene.userInput = feedBack.saveName.split('.')[0]
+            self.model.actualGame.load_savefile(feedBack.saveName)
+            self.evManager.Post(StateChangeEvent(STATE_PLAY))
         else:
             self.evManager.Post(feedBack)
 

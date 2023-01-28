@@ -15,7 +15,7 @@ class SaveScene:
       self.pos = (self.screen.get_width()/2 - self.surface.get_width()/2, self.screen.get_height()/2 - self.surface.get_height()/2)
       self.posX = self.pos[0]
       self.posY = self.pos[1]
-      
+
       self.okButton = pygame.image.load("./image/UI/quit/okButton.png")
       self.okButtonPos = ((self.surface.get_width()/2) - 2*self.okButton.get_width(), (self.surface.get_height() - self.okButton.get_height())-10)
       self.okButtonRect = pygame.Rect(self.okButtonPos,  self.okButton.get_size())
@@ -25,6 +25,7 @@ class SaveScene:
       self.cancelButtonRect = pygame.Rect(self.cancelButtonPos, self.cancelButton.get_size())
 
       self.userInput = ""
+
       self.inputRect = pygame.Rect((10, 40), (self.surface.get_width() - 20, 32))
       self.inputRectBorder = pygame.Rect((5, 35), (self.surface.get_width() - 10, 42))
 
@@ -37,9 +38,12 @@ class SaveScene:
       pos = self.getMousePosRelative(event)
       if self.okButtonRect.collidepoint(pos):
         self.soundMixer.playEffect("clickEffect")
-        self.model.actualGame.save_game(self.userInput)
-        print('saved!')
-        return StateChangeEvent(STATE_PLAY)
+        if self.userInput != "":
+          self.model.actualGame.save_game(self.userInput)
+          return StateChangeEvent(STATE_PLAY)
+        else :
+          self.textError = "Invalid name !"
+          return TickEvent()
       elif self.cancelButtonRect.collidepoint(pos):
         self.soundMixer.playEffect("clickEffect")
         return StateChangeEvent(STATE_PLAY)
@@ -61,8 +65,9 @@ class SaveScene:
         else:
           self.textError = "Text too long !"
       return TickEvent()
-
+      
     def render(self):
+
       self.surface.fill((255, 255, 255))
       f = pygame.font.Font(None, 20)
       self.surface.blit(f.render("Save Name: ", True, (0, 0, 0)), (10, 10))
