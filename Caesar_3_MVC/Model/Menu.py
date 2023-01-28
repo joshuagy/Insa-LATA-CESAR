@@ -111,6 +111,8 @@ class LoadScene:
     self.font = pygame.font.SysFont(None, 24)
 
     self.saveFileNames = [f for f in os.listdir("./Model/Save_Folder") if os.path.isfile(os.path.join("./Model/Save_Folder", f))]
+    if ".DS_Store" in self.saveFileNames:
+      self.saveFileNames.remove(".DS_Store")
     self.saveFileNames.remove("DefaultMap.pickle")
     
     if len(self.saveFileNames) == 0:
