@@ -110,6 +110,11 @@ class MouseInputHandler:
             self.model.saveScene.userInput = feedBack.saveName.split('.')[0]
             self.model.actualGame.load_savefile(feedBack.saveName)
             self.evManager.Post(StateChangeEvent(STATE_PLAY))
+        elif isinstance(feedBack, StateChangeEvent):
+            if feedBack.state == STATE_PLAY:
+                self.model.saveScene.userInput = ""
+                self.model.actualGame.load_savefile("DefaultMap.pickle")
+            self.evManager.Post(feedBack)
         else:
             self.evManager.Post(feedBack)
 
@@ -151,7 +156,9 @@ class MouseInputHandler:
 
     def pause_menu(self,event):
         if self.model.pause_menu.Exit_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
-            self.model.pause_menu.exit()
+            self.model.pause_menu.pause = False
+            self.model.actualGame.pause = False  
+            self.evManager.Post(StateChangeEvent(STATE_MENU))
 
         if self.model.pause_menu.Continue_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
             self.model.pause_menu.pause = False
@@ -172,13 +179,14 @@ class MouseInputHandler:
             self.model.actualGame.topbar.File_bol = True
             self.model.actualGame.draw_menu_File
 
-        elif self.model.actualGame.topbar.File_menu_Eg_rect.collidepoint(
-                event.pos) and self.model.actualGame.topbar.File_bol:
-            self.model.pause_menu.exit()
+        elif self.model.actualGame.topbar.File_menu_Eg_rect.collidepoint(event.pos) and self.model.actualGame.topbar.File_bol:
+            self.model.pause_menu.pause = False
+            self.model.actualGame.pause = False
+            self.m
+            self.evManager.Post(StateChangeEvent(STATE_MENU))
 
-        elif self.model.actualGame.topbar.File_menu_Sg_rect.collidepoint(
-                event.pos) and self.model.actualGame.topbar.File_bol:
-            self.model.actualGame.save_game("test.pickle")
+        elif self.model.actualGame.topbar.File_menu_Sg_rect.collidepoint(event.pos) and self.model.actualGame.topbar.File_bol:
+            self.evManager.Post(StateChangeEvent(STATE_SAVE_SCENE))
 
         elif self.model.actualGame.topbar.File_menu_Rm_rect.collidepoint(
                 event.pos) and self.model.actualGame.topbar.File_bol:
