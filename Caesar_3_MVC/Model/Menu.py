@@ -25,6 +25,9 @@ class Menu:
     # default mouse position
     self.currentMousePos = (0, 0)
 
+    self.logo = pygame.image.load("./image/UI/menu/logoMenu.png").convert_alpha()
+    self.surface.blit(self.logo, (self.surface.get_width()/2 - self.logo.get_width()/2, 200))
+
   def initializeItems(self):
     startButton = MenuButton(self.surface, "./image/UI/menu/menu_start_button.png", 0, StateChangeEvent(STATE_PLAY))
     loadSaveButton = MenuButton(self.surface, "./image/UI/menu/menu_load_save_button.png", 1, LoadEvent())
@@ -267,7 +270,7 @@ class MenuButton:
     filter.fill((180, 180, 180))
     self.hoveredSurface.blit(filter, (0,0), special_flags = pygame.BLEND_RGBA_MULT)
 
-    self.pos = (self.surface_to_blit.get_width()/2 - self.surface.get_width()/2, 300+idx_item*40)
+    self.pos = (self.surface_to_blit.get_width()/2 - self.surface.get_width()/2, 400+idx_item*40)
     self.rect = pygame.Rect(self.pos, self.surface.get_size())
 
     self.feedback = feedback
