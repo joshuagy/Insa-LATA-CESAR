@@ -112,6 +112,9 @@ class Plateau():
         self.overlayCounter = 0         
 
     def save_game(self, filename):
+        if filename.split(".")[-1] != "pickle":
+            filename += ".pickle"
+            
         save = Sauvegarde(self)
         save_object(save, filename)
         print("save !")

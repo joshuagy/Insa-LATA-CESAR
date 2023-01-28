@@ -2,7 +2,7 @@ import pygame
 from Model.constants import *
 from Model.control_panel import *
 from EventManager.Event import Event
-from EventManager.allEvent import StateChangeEvent, TickEvent, QuitEvent
+from EventManager.allEvent import StateChangeEvent, LoadSave
 from Model.Plateau import Plateau, cell_size
 from Model.Route import Route
 from Model.Buildings.Building import *
@@ -49,6 +49,8 @@ class MouseInputHandler:
                                 self.handleMouseEventsStateMenu(event)
                         if currentstate == STATE_PLAY:
                                 self.handleMouseButtonUpEventStatePlay(event)
+                        if currentstate == STATE_SAVE_SCENE:
+                                self.handleMouseEventsStateSaveScene(event)
                 if event.button == 1:
                         self.clicked = False
                         self.initialMouseCoordinate = None
@@ -85,6 +87,11 @@ class MouseInputHandler:
     def handleHoverEventMenu(self, mousePos):
         self.model.menu.handleHoverEvent(mousePos)
 
+    def handleMouseEventsStateSaveScene(self, event):
+        feedBack = self.model.saveScene.handleMouseInput(event)
+        print(feedBack)
+        self.evManager.Post(feedBack)
+
     def handleMouseEventsStateIntroScene(self, event):
         """
         Handles intro scene mouse events.
@@ -97,9 +104,11 @@ class MouseInputHandler:
         Handles menu mouse events.
         """
         feedBack = self.model.menu.handleMouseInput(event)
-        if isinstance(feedBack, StateChangeEvent):
-           self.model.actualGame.load_savefile("save_to_load.pickle")
-        self.evManager.Post(feedBack)
+        if isinstance(feedBack, LoadSave):
+           self.model.actualGame.load_savefile(feedBack.saveName)
+           self.evManager.Post(StateChangeEvent(STATE_PLAY))
+        else:
+            self.evManager.Post(feedBack)
 
     def pause_move_button(self):
         if self.model.pause_menu.Exit_rect.collidepoint(pygame.mouse.get_pos()) and self.model.pause_menu.pause :
@@ -146,7 +155,7 @@ class MouseInputHandler:
             self.model.actualGame.pause = False
 
         if self.model.pause_menu.Savegame_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
-            self.model.actualGame.save_game("test.pickle")
+           self.evManager.Post(StateChangeEvent(STATE_SAVE_SCENE))
 
         if self.model.pause_menu.Replay_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
             self.model.actualGame.restart = True
