@@ -32,7 +32,7 @@ class MouseInputHandler:
         if event.type == pygame.MOUSEBUTTONDOWN:
                 self.clicked = True
                 self.initialMouseCoordinate = pygame.mouse.get_pos()
-                self.pause_menu(event)
+                
                 self.topbar(event)
                 
                 if currentstate == STATE_PLAY:
@@ -45,11 +45,13 @@ class MouseInputHandler:
                         
                         if currentstate == STATE_INTRO_SCENE:
                                 self.handleMouseEventsStateIntroScene(event)
-                        if currentstate == STATE_MENU:
+                        elif currentstate == STATE_MENU:
                                 self.handleMouseEventsStateMenu(event)
-                        if currentstate == STATE_PLAY:
+                        elif currentstate == STATE_PLAY and self.model.pause_menu.pause:
+                                self.pause_menu(event)
+                        elif currentstate == STATE_PLAY:
                                 self.handleMouseButtonUpEventStatePlay(event)
-                        if currentstate == STATE_SAVE_SCENE:
+                        elif currentstate == STATE_SAVE_SCENE:
                                 self.handleMouseEventsStateSaveScene(event)
                 if event.button == 1:
                         self.clicked = False
