@@ -67,7 +67,6 @@ class ButtonCtrlPnl():
         self.unlocked=True
                
         self.image = self.image_normal
-        self.rect = self.image.get_rect()
         self.update()
 
     def unlock(self):
