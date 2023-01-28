@@ -7,12 +7,18 @@ from Model.Walker import *
 from Model.control_panel import *
 from Model.constants import *
 from Model.Route import Route
-from Model.Buildings.Building import *
+from Model.Buildings.Building import BurningBuilding
+from Model.Buildings.Building import DamagedBuilding
 from Model.Buildings.House import House
 from Model.Buildings.House import HousingSpot
 from Model.Buildings.House import MergedHouse
-from Model.Buildings.UrbanPlanning import *
-from Model.Buildings.RessourceBuilding import *
+from Model.Buildings.UrbanPlanning import Well
+from Model.Buildings.UrbanPlanning import Senate
+from Model.Buildings.RessourceBuilding import WheatFarm
+from Model.Buildings.RessourceBuilding import WheatPlot
+from Model.Buildings.RessourceBuilding import Granary
+from Model.Buildings.RessourceBuilding import Market
+
 from Model.Buildings.WorkBuilding import *
 from Model.Controls import Controls
 from Model.control_panel import TextRender
@@ -298,7 +304,16 @@ class Plateau():
         #====== Engineer ======#
         engineer = {1 : create_liste_sprites_walker("Engineer", "Walk", 12)}
 
-        return {"Citizen" : citizen, "Prefet" : prefet, "Immigrant" : immigrant, "Chariot" : chariot, "Engineer" : engineer}
+        #====== CartPusher ======#
+        cartPusher = {1 : create_liste_sprites_walker("CartPusher", "Walk", 12)}
+
+        #====== Cart ======#
+        cart = {1 : create_liste_sprites_walker("Cart", "Empty", 1), 2 : create_liste_sprites_walker("Cart", "Full", 1)}
+
+        #====== MarketTrader ======#
+        marketTrader = {1 : create_liste_sprites_walker("MarketTrader", "Walk", 12)}
+
+        return {"Citizen" : citizen, "Prefet" : prefet, "Immigrant" : immigrant, "Chariot" : chariot, "Engineer" : engineer, "CartPusher" : cartPusher, "Cart" : cart, "MarketTrader" : marketTrader}
     def load_structures_images(self):
 
         hss = load_image("image/Buildings/Housng1a_00045.png")

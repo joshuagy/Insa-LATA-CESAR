@@ -34,12 +34,14 @@ class WheatFarm(Building) :
         for sc in self.secCases : self.allCases.append(sc)
         for p in self.plots : self.allCases.append(p.case)
 
+        self.walker = None
+
 
 
        
     def update(self, currentSpeedFactor) : 
         self.growingTimer += 1
-        for ac in self.allCases :
+        """for ac in self.allCases :
             if ac.connectedToRoad > 0:
                 
                 #Récolte le blé si les champs sont pleins :
@@ -130,7 +132,7 @@ class Market(Building) :
 
     def update(self, currentSpeedFactor) :
         for ac in self.secCases :
-            if ac.connectedToRoad>0 or self.case.connectedToRoad>0 :
+            if ac.connectedToRoad > 0 or self.case.connectedToRoad > 0:
                 if self.storedWheat > 100 :
                     for surroundingHouses in self.plateau.structures :
                         if isinstance(surroundingHouses, House) :
@@ -183,11 +185,11 @@ class Granary(Building) :
 
 
     def update(self, currentSpeedFactor) :
-        self.levelB = self.storedWheat//725     #Max divisé par 4
-        self.levelV = self.storedWheat//414      #Max divisé par 7
+        self.levelB = self.storedWheat//967     #Max divisé par 3 !!! Pas 4 pitié
+        self.levelV = self.storedWheat//500      #Max divisé par 6 !!! Pas 7 pitié
 
         for ac in self.secCases :
-            if ac.connectedToRoad>0 or self.case.connectedToRoad>0 :
+            if ac.connectedToRoad > 0 or self.case.connectedToRoad > 0 :
                 if self.storedWheat > 100 :
                     for surroundingMarkets in self.plateau.structures :
                         if isinstance(surroundingMarkets, Market) :

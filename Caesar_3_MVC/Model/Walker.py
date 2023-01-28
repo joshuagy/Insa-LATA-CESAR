@@ -359,3 +359,97 @@ class Prefet(Walker):
                             self.ttw = 0
                             self.set_action(1)
             self.move_timer = 0
+    
+
+class CartPusher(Walker):
+    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None, path = [], path_index = 0):
+        super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
+        self.workplace = workplace
+        self.rest = rest
+        self.workplace.walker = self
+        self.findGranary()
+        self.cart = Cart(self.plateau.map[self.case.x][self.case.y], self.plateau, self)
+        self.mode = 0
+
+    
+    def delete(self):
+        super().delete()
+        self.workplace.walker = None
+        self.cart.delete()
+    
+    def findGranary(self):
+        self.path_index = 0
+        self.path = []
+        self.granary = None
+        for s in self.plateau.structures :
+            if s.desc == "Granary":
+                x = s.case.x
+                y = s.case.y
+
+                grid = Grid(matrix=self.plateau.collision_matrix)
+
+                start = grid.node(self.case.x, self.case.y)
+                end = grid.node(x, y)
+                if start == end :
+                    newPath = [(x, y)]
+                else :
+
+                    finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
+                    newPath, runs = finder.find_path(start, end, grid)
+                if len(newPath) > len(self.path):
+                    self.path = newPath.copy()
+                    self.granary = s.case
+    
+    def update(self, currentSpeedFactor):
+        self.move_timer += 1
+        if self.mode != 1 and self.granary:
+            self.animate_sprite(currentSpeedFactor)
+        if self.move_timer > (50 / currentSpeedFactor):
+            #Aller vers un grenier
+            if self.mode == 0 :
+                if self.granary:
+                    new_pos = self.path[self.path_index]
+                    # Mise à jour de la position sur le plateau
+                    self.path_index += 1
+                    # On supprime le walker si la destination a été atteint
+                    if self.path_index >= len(self.path) - 1:
+                        self.mode = 1
+                    self.change_tile((self.cart.case.x, self.cart.case.y))
+                    self.cart.change_tile(new_pos)
+                else :
+                    self.findGranary()
+
+            #Livrer les ressources
+            elif self.mode == 1:
+                if self.granary.structure == "Granary":
+                    if self.granary.structure.storedWheat < self.granary.structure.storedWheatMax:
+                        self.granary.structure.storedWheat += 100
+                        if self.granary.structure.storedWheat > self.granary.structure.storedWheatMax:
+                            self.granary.structure.storedWheat += self.granary.structure.storedWheatMax
+                        self.mode = 2
+                        self.cart.action = 1
+                        self.create_path((self.workplace.case.x, self.workplace.case.y))
+                else :
+                    self.mode = 2
+            #Rentre à la ferme
+            elif self.mode == 2:
+                new_pos = self.path[self.path_index]
+                # Mise à jour de la position sur le plateau
+                self.path_index += 1
+                # On supprime le walker si la destination a été atteint
+                if self.path_index >= len(self.path) - 1:
+                    self.rest = 1
+                self.change_tile((self.cart.case.x, self.cart.case.y))
+                self.cart.change_tile(new_pos)
+                if self.rest:
+                    self.delete()
+            self.move_timer = 0
+                
+
+
+class Cart(Walker):
+    def __init__(self, case, plateau, owner, name=""):
+        super().__init__(case, plateau, name)
+        self.owner = owner
+        self.direction = self.owner.direction
+        self.action = 2
