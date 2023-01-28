@@ -424,17 +424,26 @@ class Plateau():
             # Fire
             # Hidding the overlay by default
             if self.overlayCounter == 30:
-                if self.controls.overlays_button.clicked:
-                    self.controls.overlays_button.change_image("image/UI/menu/menu_fire_overlay.png")       
-                    self.foreground.setOverlayName("fire")
+                if self.foreground.getOverlayName() == "fire":
                     self.foreground.initOverlayGrid()
                     for x in range(40):
                         for y in range(40):
                             temp = self.map[x][y].structure
                             if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
                                 self.foreground.addOverlayInfo(x, y, temp.get_fireRisk())
-                else:
-                    self.foreground.setOverlayName(None)
+                    self.controls.overlays_button.change_image("image/UI/menu/menu_fire_overlay.png")       
+
+                elif self.foreground.getOverlayName() == "destruct":
+                    self.foreground.initOverlayGrid()
+                    for x in range(40):
+                        for y in range(40):
+                            temp = self.map[x][y].structure
+                            if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
+                                self.foreground.addOverlayInfo(x, y, temp.get_collapseRisk())
+                    self.controls.overlays_button.change_image("image/UI/menu/menu_collapse_overlay.png")       
+                
+                elif self.foreground.getOverlayName() == None:
+                    self.controls.overlays_button.change_image("image/UI/menu/menu_overlay_button.png")       
 
                 self.overlayCounter = 0
 

@@ -195,13 +195,24 @@ class MouseInputHandler:
         Handles game mouse events
         """
         self.model.actualGame.foreground.initOverlayGrid()
-        self.model.actualGame.foreground.setOverlayName(None)
 
         mousePosRelative = (event.pos[0] - (self.model.actualGame.width - big_gap_menu.dim[0] - 1758.0) - 1758.0, event.pos[1] -24)
         controlsCurrentState = self.model.actualGame.controls.getCurrentState()
         
+       
+        if self.model.actualGame.controls.overlays_button.rect.collidepoint(mousePosRelative):
+            if self.model.actualGame.foreground.getOverlayName() == "fire":
+                self.model.actualGame.foreground.setOverlayName("destruct")
+
+            elif self.model.actualGame.foreground.getOverlayName() == "destruct":
+                self.model.actualGame.foreground.setOverlayName(None)
+            
+            elif self.model.actualGame.foreground.getOverlayName() == None:
+                self.model.actualGame.foreground.setOverlayName("fire")
+
         if self.model.actualGame.controls.mouseInStaticSurface(event.pos):
             return
+        
             
         # Pelle 
         if controlsCurrentState == 'clearLand' and not self.model.actualGame.controls.clear_land_button.rect.collidepoint(mousePosRelative):
