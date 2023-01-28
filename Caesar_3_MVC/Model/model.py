@@ -29,8 +29,7 @@ class GameEngine(object):
 		self.introScene = None
 		self.menu = None
 		self.actualGame = None
-     
-
+	
 	def notify(self, event):
 		"""
 		Called by an event in the message queue. 
