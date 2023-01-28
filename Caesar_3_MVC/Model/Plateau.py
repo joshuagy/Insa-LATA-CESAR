@@ -114,7 +114,7 @@ class Plateau():
     def save_game(self, filename):
         if filename.split(".")[-1] != "pickle":
             filename += ".pickle"
-
+        print("saving game... in " + filename)
         save = Sauvegarde(self)
         save_object(save, filename)
         print("save !")
