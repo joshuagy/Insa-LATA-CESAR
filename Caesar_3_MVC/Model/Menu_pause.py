@@ -49,13 +49,11 @@ class Pausemenu:
             if not self.passed[3]:
                 self.Replay_rect.y = self.Replay_rectyinit
 
-
             self.screen.blit(self.Pause, self.Pause_rect)
             self.screen.blit(self.Continue, self.Continue_rect)
             self.screen.blit(self.Replay, self.Replay_rect)
             self.screen.blit(self.Savegame, self.Savegame_rect)
             self.screen.blit(self.Exit, self.Exit_rect)
-
 
     def exit(self):
         pygame.quit()

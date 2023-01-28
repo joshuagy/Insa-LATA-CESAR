@@ -1,14 +1,14 @@
 from Model.control_panel import *
 
 class Controls:
-  def __init__(self, screen, font, currentSpeed, buttonsFunctions):#, soundMixer):
+  def __init__(self, screen, font, currentSpeed, buttonsFunctions, soundMixer):
     self.screen = screen
     self.font = font
     self.currentSpeed = currentSpeed
 
     self.currentState = 'default'
 
-    #self.soundMixer = soundMixer
+    self.soundMixer = soundMixer
 
     # buttons' functions
     self.increaseSpeed = buttonsFunctions['increaseSpeed']

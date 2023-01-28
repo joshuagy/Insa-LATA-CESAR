@@ -112,6 +112,9 @@ class Plateau():
         self.overlayCounter = 0         
 
     def save_game(self, filename):
+        if filename.split(".")[-1] != "pickle":
+            filename += ".pickle"
+        print("saving game... in " + filename)
         save = Sauvegarde(self)
         save_object(save, filename)
         print("save !")
@@ -416,237 +419,237 @@ class Plateau():
 
 
     def draw(self):
-        if not self.pause:
-            self.screen.fill((0, 0, 0))
-            self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
+        self.screen.fill((0, 0, 0))
+        self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
 
 
-           # DRAW CELLS
+        # DRAW CELLS
 
-            for cell_x in range(self.nbr_cell_y):
-                for cell_y in range(self.nbr_cell_y):
-                    render_pos =  self.map[cell_x][cell_y].render_pos
-                    id_image = None
-                    image = None
-                    # DRAW DEFAULT CELLS
-                    if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
-                        id_image = self.map[cell_x][cell_y].sprite
-                        index_image = self.map[cell_x][cell_y].indexSprite
-                        image = self.image[id_image][index_image]
-                        self.screen.blit(image,
+        for cell_x in range(self.nbr_cell_y):
+            for cell_y in range(self.nbr_cell_y):
+                render_pos =  self.map[cell_x][cell_y].render_pos
+                id_image = None
+                image = None
+                # DRAW DEFAULT CELLS
+                if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
+                    id_image = self.map[cell_x][cell_y].sprite
+                    index_image = self.map[cell_x][cell_y].indexSprite
+                    image = self.image[id_image][index_image]
+                    self.screen.blit(image,
+                                (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
+                
+                # DRAW ROADS
+                elif self.map[cell_x][cell_y].road:
+                    id_image = self.map[cell_x][cell_y].road.sprite
+                    image = self.image_route[id_image]
+                    self.screen.blit(image,
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
-                    
-                    # DRAW ROADS
-                    elif self.map[cell_x][cell_y].road:
-                        id_image = self.map[cell_x][cell_y].road.sprite
-                        image = self.image_route[id_image]
-                        self.screen.blit(image,
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
-        
-                    # DRAW STRUCTURES
-                    elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
-                        self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)], 
+    
+                # DRAW STRUCTURES
+                elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
+                    self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)], 
+                                (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                    render_pos[1] - (self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
+                elif isinstance(self.map[cell_x][cell_y].structure, WheatPlot):
+                    self.screen.blit(self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level], 
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
-                    elif isinstance(self.map[cell_x][cell_y].structure, WheatPlot):
-                        self.screen.blit(self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level], 
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level].get_height() - cell_size) + self.camera.vect.y))
+                                        render_pos[1] - (self.image_structures["WheatPlot"][self.map[cell_x][cell_y].structure.level].get_height() - cell_size) + self.camera.vect.y))
+                
+                elif isinstance(self.map[cell_x][cell_y].structure, Granary):
+                    if self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
+                        self.screen.blit(self.image_structures["GranaryBase"], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x -55 ,    #-55
+                                            render_pos[1] - (self.image_structures["GranaryBase"].get_height() - cell_size) + self.camera.vect.y)) #+50
                     
-                    elif isinstance(self.map[cell_x][cell_y].structure, Granary):
-                        if self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
-                            self.screen.blit(self.image_structures["GranaryBase"], 
-                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x -55 ,    #-55
-                                                render_pos[1] - (self.image_structures["GranaryBase"].get_height() - cell_size) + self.camera.vect.y)) #+50
-                        
-                            self.screen.blit(self.image_structures["GranaryTop"], 
-                                                (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x - 25, #-5
-                                                render_pos[1] - (self.image_structures["GranaryTop"].get_height() - cell_size) + self.camera.vect.y-10)) #+35
-                            """    
-                                for gl in range(0,self.map[cell_x][cell_y].structure.levelB) :
-                                    self.screen.blit(self.image_structures["GranaryRoom"][gl], 
-                                                (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                                    render_pos[1] - (self.image_structures["GranaryRoom"][gl].get_height() - cell_size) + self.camera.vect.y))
-                            """
-                            self.screen.blit(self.image_structures["GranaryLev"][self.map[cell_x][cell_y].structure.levelV], 
-                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x +25,
-                                                render_pos[1] - (self.image_structures["GranaryLev"][self.map[cell_x][cell_y].structure.levelV].get_height() - cell_size) + self.camera.vect.y))
-
-                            #storedQuantTxt = TextRender(str(self.map[cell_x][cell_y].structure.storedWheat),(20,20),(0,0,0)).img_scaled
-                            #self.screen.blit(storedQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                            #                    render_pos[1] - (self.image_structures["GranaryTop"].get_height() - cell_size) + self.camera.vect.y))
-                                      
-                    elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
-                        id_image = self.map[cell_x][cell_y].structure.desc
-                        self.screen.blit(self.image_structures[id_image], 
+                        self.screen.blit(self.image_structures["GranaryTop"], 
+                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x - 25, #-5
+                                            render_pos[1] - (self.image_structures["GranaryTop"].get_height() - cell_size) + self.camera.vect.y-10)) #+35
+                        """    
+                            for gl in range(0,self.map[cell_x][cell_y].structure.levelB) :
+                                self.screen.blit(self.image_structures["GranaryRoom"][gl], 
                                             (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                                render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
-                        #if isinstance(self.map[cell_x][cell_y].structure, House) :
-                        #    wheatTxt = TextRender(str(self.map[cell_x][cell_y].structure.wheat),(20,20),(0,0,0)).img_scaled
-                        #    self.screen.blit(wheatTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                        #                        render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
-                        #if isinstance(self.map[cell_x][cell_y].structure, WheatFarm) :
-                        #    grQuantTxt = TextRender(str(self.map[cell_x][cell_y].structure.growingQuant),(20,20),(0,0,0)).img_scaled
-                        #    self.screen.blit(grQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                        #                        render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                                                render_pos[1] - (self.image_structures["GranaryRoom"][gl].get_height() - cell_size) + self.camera.vect.y))
+                        """
+                        self.screen.blit(self.image_structures["GranaryLev"][self.map[cell_x][cell_y].structure.levelV], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x +25,
+                                            render_pos[1] - (self.image_structures["GranaryLev"][self.map[cell_x][cell_y].structure.levelV].get_height() - cell_size) + self.camera.vect.y))
 
-                    # DRAW PREVIEWED CELLS AND HOVERED CELLS
+                        #storedQuantTxt = TextRender(str(self.map[cell_x][cell_y].structure.storedWheat),(20,20),(0,0,0)).img_scaled
+                        #self.screen.blit(storedQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                        #                    render_pos[1] - (self.image_structures["GranaryTop"].get_height() - cell_size) + self.camera.vect.y))
+                                    
+                elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
+                    id_image = self.map[cell_x][cell_y].structure.desc
+                    self.screen.blit(self.image_structures[id_image], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                    #if isinstance(self.map[cell_x][cell_y].structure, House) :
+                    #    nbHabTxt = TextRender(str(self.map[cell_x][cell_y].structure.nbHab),(20,20),(0,0,0)).img_scaled
+                    #    self.screen.blit(nbHabTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                    #                        render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                    #if isinstance(self.map[cell_x][cell_y].structure, WheatFarm) :
+                    #    grQuantTxt = TextRender(str(self.map[cell_x][cell_y].structure.growingQuant),(20,20),(0,0,0)).img_scaled
+                    #    self.screen.blit(grQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                    #                        render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+
+                # DRAW PREVIEWED CELLS AND HOVERED CELLS
+                if not self.pause: 
                     if self.foreground.hasEffect(cell_x, cell_y) and image != None:
                         effectedImage = self.foreground.getEffectedImage(id_image, image.copy(), cell_x, cell_y)
                         self.screen.blit(effectedImage,
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                         render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
 
-                    # DRAW WALKERS
-                    for e in self.walkers[cell_x][cell_y]:
-                        self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)],
-                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                             render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
+                # DRAW WALKERS
+                for e in self.walkers[cell_x][cell_y]:
+                    self.screen.blit(self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)],
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image_walkers[e.type][e.action][e.direction][int(e.index_sprite)].get_height() - cell_size) + self.camera.vect.y))
 
 
-                    # DRAW OVERLAY
-                    # Overlay part
-                    # Fire
-                    # Hidding the overlay by default
-                    if self.overlayCounter == 30:
-                        if self.controls.overlays_button.clicked:
-                            self.foreground.setOverlayName("fire")
-                            self.foreground.initOverlayGrid()
-                            for x in range(40):
-                                for y in range(40):
-                                    temp = self.map[x][y].structure
-                                    if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
-                                        self.foreground.addOverlayInfo(x, y, temp.get_fireRisk())
-                        else:
-                            self.foreground.setOverlayName(None)
+                # DRAW OVERLAY
+                # Overlay part
+                # Fire
+                # Hidding the overlay by default
+                if self.overlayCounter == 30:
+                    if self.controls.overlays_button.clicked:
+                        self.foreground.setOverlayName("fire")
+                        self.foreground.initOverlayGrid()
+                        for x in range(40):
+                            for y in range(40):
+                                temp = self.map[x][y].structure
+                                if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
+                                    self.foreground.addOverlayInfo(x, y, temp.get_fireRisk())
+                    else:
+                        self.foreground.setOverlayName(None)
 
-                        self.overlayCounter = 0
+                    self.overlayCounter = 0
 
-                    sprite = "base_overlay"
-                    # if self.foreground.getOverlayName() == "fire":
-                    #     fireText = self.minimalFont.render("FIRE Overlay:", 1, (255, 0, 0), (0, 0, 0))
-                    #     self.screen.blit(fireText, (75, self.screen.get_height() - fireText.get_height()))
-                    # else:
-                    #     blackText = self.minimalFont.render("AAAAAAAAAAAAAA", 1, (0, 0, 0), (0, 0, 0))
-                    #     self.screen.blit(blackText, (75, self.screen.get_height() - blackText.get_height()))
+                sprite = "base_overlay"
+                # if self.foreground.getOverlayName() == "fire":
+                #     fireText = self.minimalFont.render("FIRE Overlay:", 1, (255, 0, 0), (0, 0, 0))
+                #     self.screen.blit(fireText, (75, self.screen.get_height() - fireText.get_height()))
+                # else:
+                #     blackText = self.minimalFont.render("AAAAAAAAAAAAAA", 1, (0, 0, 0), (0, 0, 0))
+                #     self.screen.blit(blackText, (75, self.screen.get_height() - blackText.get_height()))
 
-                    match self.foreground.getOverlayInfo(cell_x, cell_y):
-                        case 0:
-                            effectedImage = self.foreground.putGreen(self.image[sprite].copy())
-                            self.screen.blit(effectedImage,
-                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                        
-                        case 1:
-                            effectedImage = self.foreground.putGreenYellow(self.image[sprite].copy())
-                            self.screen.blit(effectedImage,
-                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                        
-                        case 2:
-                            effectedImage = self.foreground.putYellow(self.image[sprite].copy())
-                            self.screen.blit(effectedImage,
-                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                        
-                        case 3:
-                            effectedImage = self.foreground.putYellowOrange(self.image[sprite].copy())
-                            self.screen.blit(effectedImage,
-                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                        
-                        case 4:
-                            effectedImage = self.foreground.putOrange(self.image[sprite].copy())
-                            self.screen.blit(effectedImage,
-                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-                        
-                        case 5:
-                            effectedImage = self.foreground.putOrangeRed(self.image[sprite].copy())
-                            self.screen.blit(effectedImage,
-                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
-
-                        case 6:
-                            effectedImage = self.foreground.putRed(self.image[sprite].copy())
-                            self.screen.blit(effectedImage,
-                                            (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                match self.foreground.getOverlayInfo(cell_x, cell_y):
+                    case 0:
+                        effectedImage = self.foreground.putGreen(self.image[sprite].copy())
+                        self.screen.blit(effectedImage,
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
                     
-            
-            self.overlayCounter += 1    
-            self.topbar.render()
-            self.controls.render()
-            
-            fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
-            self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
+                    case 1:
+                        effectedImage = self.foreground.putGreenYellow(self.image[sprite].copy())
+                        self.screen.blit(effectedImage,
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
                     
-            self.topbar.render()
-            self.controls.render()
-            if self.roadWarning : self.screen.blit(self.road_warning_rectangle,(500,30))
+                    case 2:
+                        effectedImage = self.foreground.putYellow(self.image[sprite].copy())
+                        self.screen.blit(effectedImage,
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                    
+                    case 3:
+                        effectedImage = self.foreground.putYellowOrange(self.image[sprite].copy())
+                        self.screen.blit(effectedImage,
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                    
+                    case 4:
+                        effectedImage = self.foreground.putOrange(self.image[sprite].copy())
+                        self.screen.blit(effectedImage,
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                    
+                    case 5:
+                        effectedImage = self.foreground.putOrangeRed(self.image[sprite].copy())
+                        self.screen.blit(effectedImage,
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
 
-            fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
-            self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
+                    case 6:
+                        effectedImage = self.foreground.putRed(self.image[sprite].copy())
+                        self.screen.blit(effectedImage,
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                        render_pos[1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                
+        
+        self.overlayCounter += 1    
+        self.topbar.render()
+        self.controls.render()
+        
+        fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
+        self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
+                
+        self.topbar.render()
+        self.controls.render()
+        if self.roadWarning : self.screen.blit(self.road_warning_rectangle,(500,30))
 
-            # if state_control_panel=="reduced":
+        fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
+        self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
 
-            #     self.screen.blit(small_gap_menu.img_scaled, (self.width-small_gap_menu.dim[0], 24))
+        # if state_control_panel=="reduced":
 
-
-            #     display_control_panel_button.update()
-            #     display_control_panel_button.change_pos(self.width-display_control_panel_button.dim[0]-5,28)
-            #     display_control_panel_button.draw(self.screen)
-
-            #     build_housing_button.update()
-            #     build_housing_button.change_pos(self.width-build_housing_button.dim[0]-1,24+32)
-            #     build_housing_button.draw(self.screen)
-
-            #     clear_land_button.update()
-            #     clear_land_button.change_pos(self.width-clear_land_button.dim[0]-1,24+67)
-            #     clear_land_button.draw(self.screen)
-
-            #     build_roads_button.update()
-            #     build_roads_button.change_pos(self.width-build_roads_button.dim[0]-1,24+102)
-            #     build_roads_button.draw(self.screen)
+        #     self.screen.blit(small_gap_menu.img_scaled, (self.width-small_gap_menu.dim[0], 24))
 
 
-            #     water_related_structures.update()
-            #     water_related_structures.change_pos(self.width-water_related_structures.dim[0]-1,24+137)
-            #     water_related_structures.draw(self.screen)
+        #     display_control_panel_button.update()
+        #     display_control_panel_button.change_pos(self.width-display_control_panel_button.dim[0]-5,28)
+        #     display_control_panel_button.draw(self.screen)
 
-            #     health_related_structures.update()
-            #     health_related_structures.change_pos(self.width-health_related_structures.dim[0]-1,24+172)
-            #     health_related_structures.draw(self.screen)
+        #     build_housing_button.update()
+        #     build_housing_button.change_pos(self.width-build_housing_button.dim[0]-1,24+32)
+        #     build_housing_button.draw(self.screen)
 
-            #     religious_structures.update()
-            #     religious_structures.change_pos(self.width-religious_structures.dim[0]-1,24+207)
-            #     religious_structures.draw(self.screen)
+        #     clear_land_button.update()
+        #     clear_land_button.change_pos(self.width-clear_land_button.dim[0]-1,24+67)
+        #     clear_land_button.draw(self.screen)
 
-            #     education_structures.update()
-            #     education_structures.change_pos(self.width-education_structures.dim[0]-1,24+242)
-            #     education_structures.draw(self.screen)
+        #     build_roads_button.update()
+        #     build_roads_button.change_pos(self.width-build_roads_button.dim[0]-1,24+102)
+        #     build_roads_button.draw(self.screen)
 
-            #     entertainment_structures.update()
-            #     entertainment_structures.change_pos(self.width-entertainment_structures.dim[0]-1,24+277)
-            #     entertainment_structures.draw(self.screen)
 
-            #     administration_or_government_structures.update()
-            #     administration_or_government_structures.change_pos(self.width-administration_or_government_structures.dim[0]-1,24+312)
-            #     administration_or_government_structures.draw(self.screen)
+        #     water_related_structures.update()
+        #     water_related_structures.change_pos(self.width-water_related_structures.dim[0]-1,24+137)
+        #     water_related_structures.draw(self.screen)
 
-            #     engineering_structures.update()
-            #     engineering_structures.change_pos(self.width-engineering_structures.dim[0]-1,24+347)
-            #     engineering_structures.draw(self.screen)
+        #     health_related_structures.update()
+        #     health_related_structures.change_pos(self.width-health_related_structures.dim[0]-1,24+172)
+        #     health_related_structures.draw(self.screen)
 
-            #     security_structures.update()
-            #     security_structures.change_pos(self.width-security_structures.dim[0]-1,24+382)
-            #     security_structures.draw(self.screen)
+        #     religious_structures.update()
+        #     religious_structures.change_pos(self.width-religious_structures.dim[0]-1,24+207)
+        #     religious_structures.draw(self.screen)
 
-            #     industrial_structures.update()
-            #     industrial_structures.change_pos(self.width-industrial_structures.dim[0]-1,24+417)
-            #     industrial_structures.draw(self.screen)
+        #     education_structures.update()
+        #     education_structures.change_pos(self.width-education_structures.dim[0]-1,24+242)
+        #     education_structures.draw(self.screen)
+
+        #     entertainment_structures.update()
+        #     entertainment_structures.change_pos(self.width-entertainment_structures.dim[0]-1,24+277)
+        #     entertainment_structures.draw(self.screen)
+
+        #     administration_or_government_structures.update()
+        #     administration_or_government_structures.change_pos(self.width-administration_or_government_structures.dim[0]-1,24+312)
+        #     administration_or_government_structures.draw(self.screen)
+
+        #     engineering_structures.update()
+        #     engineering_structures.change_pos(self.width-engineering_structures.dim[0]-1,24+347)
+        #     engineering_structures.draw(self.screen)
+
+        #     security_structures.update()
+        #     security_structures.change_pos(self.width-security_structures.dim[0]-1,24+382)
+        #     security_structures.draw(self.screen)
+
+        #     industrial_structures.update()
+        #     industrial_structures.change_pos(self.width-industrial_structures.dim[0]-1,24+417)
+        #     industrial_structures.draw(self.screen)
 
 
     def create_collision_matrix(self):

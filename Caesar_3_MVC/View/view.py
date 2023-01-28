@@ -8,6 +8,7 @@ from EventManager.allEvent import *
 from Model.constants import *
 from Model.MiniMap import MiniMap
 from Model.Menu_pause import *
+from Model.SaveScene import *
 
 
 class GraphicalView(object):
@@ -57,8 +58,17 @@ class GraphicalView(object):
                 self.renderMenu()
             elif currentstate == STATE_PLAY:
                 self.renderGame()
+            elif currentstate == STATE_SAVE_SCENE:
+                self.renderSaveScene()
             self.clock.tick(300)
 
+
+    def renderSaveScene(self) -> None:
+        """
+        Render the save scene.
+        """
+        self.model.saveScene.render()
+        pygame.display.flip()
 
     def renderIntroScene(self) -> None:
         """
@@ -108,6 +118,7 @@ class GraphicalView(object):
         self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1], self.model.soundMixer)
         self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), 40 , 40)
         self.model.pause_menu = Pausemenu(self.screen.get_width(), self.screen.get_height(), self.screen)
+        self.model.saveScene = SaveScene(self.model, self.screen, self.smallfont, self.model.soundMixer)
 
         #Création de walkers
         #for _ in range(1) : Immigrant(self.model.actualGame.map[19][38], self.model.actualGame, self.model.actualGame.map[19][20])
