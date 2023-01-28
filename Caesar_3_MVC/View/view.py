@@ -108,7 +108,9 @@ class GraphicalView(object):
 
         pygame.init()
         pygame.font.init()
-        pygame.display.set_caption('Game')
+        pygame.display.set_caption("INSA'lata Cesare")
+        pygame_icon = pygame.image.load('./image/augustus.png')
+        pygame.display.set_icon(pygame_icon)
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.clock = pygame.time.Clock()
         self.smallfont = pygame.font.Font(None, 40)
