@@ -44,4 +44,3 @@ class Camera:
             self.vect.y += self.dy
         if not (self.vect.y<-0.6*self.height) and self.dy <0:
             self.vect.y += self.dy
-
