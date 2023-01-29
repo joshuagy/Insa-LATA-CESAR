@@ -135,7 +135,7 @@ class House(Building):
                     h.wheat = h.wheat-h.nbHab
                 else :
                     h.nbHab = h.nbHab - (h.nbHab-h.wheat)
-                
+                    if h.nbHab==0 : h.nbHab = 1 
 
         
 
