@@ -65,8 +65,8 @@ class House(Building):
 
 
             #Augmentation du nombre d'habitant en fonction du blé disponible
-            if self.wheat >= self.wheatMax and self.nbHab < self.nbHabMax:
-                self.wheat = 0
+            if self.wheat >4 and self.nbHab < self.nbHabMax:
+                self.wheat = self.wheat-3
                 self.nbHab = self.nbHab +1
 
             #Merge 4 1*1 en un 2*2 :
@@ -97,24 +97,47 @@ class House(Building):
         if self.desc == "SmallShack" :
             self.desc = "LargeShack"
             self.set_nbHabMax(44)
+        self.wheatMax = self.nbHabMax + 10
 
     def downgrade(self) :
         if self.desc == "LargeTent":
             self.desc = "SmallTent"
             self.set_nbHabMax(5)
+            if self.nbHab>self.nbHabMax : 
+                self.nbHab=self.nbHabMax
         if self.desc=="LargeTent2" : 
             self.desc="SmallTent2"
             self.set_nbHabMax(20)
+            if self.nbHab>self.nbHabMax : 
+                self.nbHab=self.nbHabMax
         if self.desc =="SmallShack" :
             self.desc = "LargeTent2"
             self.set_nbHabMax(28)
+            if self.nbHab>self.nbHabMax : 
+                self.nbHab=self.nbHabMax
         if self.desc == "LargeShack" :
             self.desc = "SmallShack"
             self.set_nbHabMax(36)
+            if self.nbHab>self.nbHabMax : 
+                self.nbHab=self.nbHabMax
+        self.wheatMax = self.nbHabMax + 10
+        if self.wheat > self.wheatMax :
+            self.wheat = self.wheatMax
 
         #Ramène le nombre d'habitants au maximum de la nouvelle taille
         if self.nbHab > self.nbHabMax :
             self.nbHab = self.nbHabMax
+
+    def foodConsumption(plateau) :
+        for h in plateau.structures :
+            if isinstance(h,House) :
+                if h.wheat > h.nbHab :
+                    h.wheat = h.wheat-h.nbHab
+                else :
+                    h.nbHab = h.nbHab - (h.nbHab-h.wheat)
+                
+
+        
 
 class MergedHouse(House) :
     def __init__(self, case, plateau, size, desc, wheat, nbHab, secCases, fireRisk = 0, collapseRisk = 0) :

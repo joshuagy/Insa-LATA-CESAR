@@ -12,3 +12,4 @@ class SoundMixer:
       self.clickEffect.play()
     else:
       pass
+    
