@@ -382,7 +382,7 @@ class CartPusher(Walker):
         self.path = []
         self.granary = None
         for s in self.plateau.structures :
-            if s.desc == "Granary":
+            if s.desc == "Granary" and s.storedWheat < s.storedWheatMax:
                 x = s.case.x
                 y = s.case.y
 
@@ -411,8 +411,8 @@ class CartPusher(Walker):
                     new_pos = self.path[self.path_index]
                     # Mise à jour de la position sur le plateau
                     self.path_index += 1
-                    # On supprime le walker si la destination a été atteint
-                    if self.path_index >= len(self.path) - 1:
+
+                    if self.path_index >= len(self.path) - 3:
                         self.mode = 1
                     self.change_tile((self.cart.case.x, self.cart.case.y))
                     self.cart.change_tile(new_pos)
@@ -421,14 +421,17 @@ class CartPusher(Walker):
 
             #Livrer les ressources
             elif self.mode == 1:
-                if self.granary.structure == "Granary":
+                if self.granary.structure  and self.granary.structure.desc == "Granary":
                     if self.granary.structure.storedWheat < self.granary.structure.storedWheatMax:
                         self.granary.structure.storedWheat += 100
                         if self.granary.structure.storedWheat > self.granary.structure.storedWheatMax:
-                            self.granary.structure.storedWheat += self.granary.structure.storedWheatMax
+                            self.granary.structure.storedWheat = self.granary.structure.storedWheatMax
                         self.mode = 2
                         self.cart.action = 1
-                        self.create_path((self.workplace.case.x, self.workplace.case.y))
+                        self.create_path(self.workplace.case)
+                        print(self.granary.structure.storedWheat)
+                    else :
+                        self.mode = 2
                 else :
                     self.mode = 2
             #Rentre à la ferme
