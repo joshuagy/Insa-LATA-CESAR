@@ -35,6 +35,7 @@ class Foreground:
     effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
     if effect == 'activeClearLand':
       effectedImage.fill((200, 0, 0))
+      print(id_image, " active clear land")
       originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
     elif effect == 'activeBuildHouse':
       originalImage = self.originalImageActiveBuildHouse.copy()

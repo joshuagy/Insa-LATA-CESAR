@@ -574,6 +574,7 @@ class Plateau():
                                     
                 elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
                     id_image = self.map[cell_x][cell_y].structure.desc
+                    image = self.image_structures[id_image]
                     self.screen.blit(self.image_structures[id_image], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                             render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
