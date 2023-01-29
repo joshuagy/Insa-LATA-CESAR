@@ -31,7 +31,7 @@ from random import *
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, soundMixer,nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
+    def __init__(self, screen, clock, name, heigth, width, soundMixer, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
         
         self.screen = screen
         self.clock = clock

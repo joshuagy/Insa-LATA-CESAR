@@ -1,3 +1,5 @@
+from Model.Buildings.House import *
+
 class EmpireDate :
     def __init__(self, plateau) :
         self.cmpt = 0
@@ -12,7 +14,8 @@ class EmpireDate :
 
     def update(self) :
         self.cmpt = self.cmpt + 1
-        if self.cmpt >= 1500 :
+        if self.cmpt >= 2000 :
+            House.foodConsumption(self.plateau)
             self.cmpt = 0
             if self.month == 11 :
                 self.month = 0
