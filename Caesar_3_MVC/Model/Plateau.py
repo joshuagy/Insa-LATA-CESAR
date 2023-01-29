@@ -476,7 +476,50 @@ class Plateau():
                     self.screen.blit(image,
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
-    
+                 # DRAW OVERLAY
+                elif self.foreground.getOverlayInfo(cell_x, cell_y) != None:
+                    match self.foreground.getOverlayInfo(cell_x, cell_y):
+                        case 0:
+                            effectedImage = self.foreground.putGreen(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            ([min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            [min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 1:
+                            effectedImage = self.foreground.putGreenYellow(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            ([min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            [min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 2:
+                            effectedImage = self.foreground.putYellow(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            ([min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            [min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 3:
+                            effectedImage = self.foreground.putYellowOrange(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            ([min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            [min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 4:
+                            effectedImage = self.foreground.putOrange(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            ([min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            [min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
+                        case 5:
+                            effectedImage = self.foreground.putOrangeRed(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            ([min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            [min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+
+                        case 6:
+                            effectedImage = self.foreground.putRed(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            ([min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            [min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
                 # DRAW STRUCTURES
                 elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
                     self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)], 
