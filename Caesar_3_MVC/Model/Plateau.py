@@ -177,14 +177,14 @@ class Plateau():
                     HousingSpot(self.map[s["x"]][s["y"]], self, s["type"], s["nb_immigrant"])
                 case "SmallTent" | "LargeTent":
                     House(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["entertainLvl"], s["wheat"], s["nbHab"], s["nbHabMax"], s["religiousAccess"], s["fireRisk"], s["collapseRisk"])
-                case "SmallTent2" | "LargeTent2":
+                case "SmallTent2" | "LargeTent2" | "SmallShack" | "LargeShack":
                     MergedHouse(self.map[s["x"]][s["y"]], self, s["size"], s["type"],s["wheat"], s["nbHab"], [self.map[s["case1_x"]][s["case1_y"]], self.map[s["case2_x"]][s["case2_y"]], self.map[s["case3_x"]][s["case3_y"]]], s["fireRisk"], s["collapseRisk"])
                 case "Prefecture":
                     Prefecture(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["active"], s["fireRisk"], s["collapseRisk"])
                 case "EngineerPost":
                     EnginnerPost(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["active"], s["fireRisk"], s["collapseRisk"])   
                 case "Well":
-                    Well(self.map[s["x"]][s["y"]], self, s["type"])
+                    Well(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
                 case "BurningBuilding":
                     BurningBuilding(self.map[s["x"]][s["y"]], self, s["type"], s["fireRisk"], s["collapseRisk"], s["timeBurning"])
                 case "Ruins" | "BurnedRuins":
@@ -219,6 +219,7 @@ class Plateau():
                     MarketTrader(self.map[e["x"]][e["y"]], self,self.map[e["workplace_x"]][e["workplace_y"]].structure,e["mode"], e["wheat"], e["name"], e["rest"], e["ttw"], e["action"], e["direction"], e["path"])
         
         #Ville
+        self.create_collision_matrix()
         self.attractiveness = save.attractiveness
         self.treasury = save.treasury
         self.population = save.population
@@ -412,7 +413,7 @@ class Plateau():
             #Update de la position des walkers
             currentSpeedFactor = self.currentSpeed/100
             for e in self.entities: e.update(currentSpeedFactor)
-            for hs in self.cityHousingSpotsList: hs.generateImmigrant()
+            for hs in self.cityHousingSpotsList: hs.generateImmigrant(currentSpeedFactor)
             for bb in self.burningBuildings: bb.update(currentSpeedFactor)
             self.roadWarning=False
             for b in self.structures :

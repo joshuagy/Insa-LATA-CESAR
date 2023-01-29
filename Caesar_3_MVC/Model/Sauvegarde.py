@@ -34,7 +34,7 @@ class Sauvegarde() :
                     elif newdict["type"] == "SmallTent" or newdict["type"] == "LargeTent":
                         newdict |= {"entertainLvl" : s.entertainLvl,"wheat" : s.wheat, "nbHab" : s.nbHab, "nbHabMax" : s.nbHabMax,
                                     "religiousAccess" : s.religiousAccess}
-                    elif newdict["type"] == "SmallTent2" or newdict["type"] == "LargeTent2":
+                    elif newdict["type"] == "SmallTent2" or newdict["type"] == "LargeTent2" or newdict["type"] == "SmallShack" or newdict["type"] == "LargeShack":
                         newdict|= {"case1_x" : s.secCases[0].x, "case1_y" : s.secCases[0].y,
                                     "case2_x" : s.secCases[1].x, "case2_y" : s.secCases[1].y,
                                     "case3_x" : s.secCases[2].x, "case3_y" : s.secCases[2].y,
