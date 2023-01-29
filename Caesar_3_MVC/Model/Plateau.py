@@ -14,6 +14,7 @@ from Model.Buildings.House import HousingSpot
 from Model.Buildings.House import MergedHouse
 from Model.Buildings.UrbanPlanning import Well
 from Model.Buildings.UrbanPlanning import Senate
+from Model.Buildings.UrbanPlanning import Temple
 from Model.Buildings.RessourceBuilding import WheatFarm
 from Model.Buildings.RessourceBuilding import WheatPlot
 from Model.Buildings.RessourceBuilding import Granary
@@ -196,6 +197,8 @@ class Plateau():
                     Market(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["storedWheat"])
                 case "Granary" :
                     Granary(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["storedWheat"])
+                case "Temple" :
+                    Temple(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
 
         
         #Walker

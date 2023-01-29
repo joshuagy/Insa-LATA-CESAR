@@ -157,6 +157,10 @@ class Market(Building) :
         self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]-20]
         self.case.setStructure(None)
         self.plateau.structures.remove(self)
+        if self.transporter:
+            self.transporter.delete()
+        if self.giver:
+            self.giver.delete()
         for sc in self.secCases :
             sc.setStructure(None)
         del self 
