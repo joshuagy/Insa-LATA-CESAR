@@ -36,7 +36,7 @@ class GraphicalView(object):
         self.clock = None
         self.smallfont = None
 
-        self.counter = 0
+        self.counter = 20
 
     def notify(self, event):
         """
@@ -97,10 +97,12 @@ class GraphicalView(object):
         self.model.actualGame.update()
         self.model.actualGame.draw()
 
-        if self.counter == 50:
-            self.model.mini_map.draw_position(self.model.actualGame.screen, self.model.actualGame.camera,self.model.actualGame.map)
+        if self.counter == 40:
+            self.model.mini_map.update_mini_map(self.model.actualGame.map)
             self.counter = 0
         self.counter += 1
+
+        self.model.mini_map.draw_position(self.model.actualGame.screen, self.model.actualGame.camera,self.model.actualGame.map)
 
         self.model.pause_menu.draw_pause_menu()
         self.model.actualGame.draw_menu_File()
