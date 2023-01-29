@@ -362,14 +362,14 @@ class Prefet(Walker):
     
 
 class CartPusher(Walker):
-    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None, path = [], path_index = 0):
+    def __init__(self, case, plateau, workplace, name="Plebius Prepus", mode = 0, rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None, path = [], path_index = 0):
         super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
         self.workplace = workplace
         self.rest = rest
         self.workplace.walker = self
         self.findGranary()
+        self.mode = mode
         self.cart = Cart(self.plateau.map[self.case.x][self.case.y], self.plateau, self)
-        self.mode = 0
 
     
     def delete(self):
@@ -455,7 +455,10 @@ class Cart(Walker):
         super().__init__(case, plateau, name)
         self.owner = owner
         self.direction = self.owner.direction
-        self.action = 2
+        if self.owner.mode == 0:
+            self.action = 2
+        else:
+            self.action = 1
 
 class MarketTrader(Walker):
     def __init__(self, case, plateau, workplace, mode, wheat, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0):

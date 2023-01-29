@@ -9,10 +9,10 @@ from Model.Buildings.Building import DamagedBuilding
 
 class House(Building):
 
-    def __init__(self, case, plateau, size, desc, entertainLvl = 0, nbHab = 1, nbHabMax = 5, religiousAccess = 0, fireRisk = 0, collapseRisk = 0):
+    def __init__(self, case, plateau, size, desc, wheat = 0, entertainLvl = 0, nbHab = 1, nbHabMax = 5, religiousAccess = 0, fireRisk = 0, collapseRisk = 0):
         super().__init__(case, plateau, size, desc, fireRisk, collapseRisk)
         self.entertainLvl = entertainLvl
-        self.wheat = 0
+        self.wheat = wheat
         self.wheatMax = 10
         self.nbHab = nbHab
         self.nbHabMax = nbHabMax
@@ -81,7 +81,7 @@ class House(Building):
                             secCases.append(h.case)
                         for h in houses :
                             h.delete()
-                        MergedHouse(self.case,self.plateau,(2,2),self.desc+"2",nbHab, secCases)
+                        MergedHouse(self.case,self.plateau,(2,2),self.desc+"2",self.wheat,nbHab, secCases)
 
 
     def upgrade(self) :
@@ -117,9 +117,10 @@ class House(Building):
             self.nbHab = self.nbHabMax
 
 class MergedHouse(House) :
-    def __init__(self, case, plateau, size, desc, nbHab, secCases, fireRisk = 0, collapseRisk = 0) :
+    def __init__(self, case, plateau, size, desc, wheat, nbHab, secCases, fireRisk = 0, collapseRisk = 0) :
         super().__init__(case, plateau, size, desc, fireRisk, collapseRisk)
         self.nbHab = nbHab
+        self.wheat = wheat
         self.nbHabMax=self.nbHabMax * 4
         self.case.render_pos=[self.case.render_pos[0], self.case.render_pos[1]+10]
         self.secCases=secCases

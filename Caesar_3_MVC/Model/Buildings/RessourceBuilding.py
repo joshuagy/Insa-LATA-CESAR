@@ -8,12 +8,12 @@ from Model.Buildings.House import House
 import random
 
 class WheatFarm(Building) :
-    def __init__(self, case, plateau, size, desc):
+    def __init__(self, case, plateau, size, desc, storedQuant = 0, growingQuant = 0):
         super().__init__(case, plateau, size, desc)
         self.connectedToRoad = self.case.connectedToRoad
-        self.storedQuant=0
+        self.storedQuant=storedQuant
         self.storedQuantMax = 100
-        self.growingQuant = 0
+        self.growingQuant = growingQuant
         self.growingQuantMax = 100
         self.growingTimer = 0
         self.productivity = 0
@@ -118,9 +118,9 @@ class WheatPlot(Building) :
 
 
 class Market(Building) :
-    def __init__(self, case, plateau, size, desc):
+    def __init__(self, case, plateau, size, desc, storedWheat = 0):
         super().__init__(case, plateau, size, desc)
-        self.storedWheat = 0
+        self.storedWheat = storedWheat
         self.storedWheatMax = 800
         self.plateau.treasury = self.plateau.treasury - MARKET_COST
         self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]+20]
@@ -135,9 +135,9 @@ class Market(Building) :
             if ac.connectedToRoad > 0 or self.case.connectedToRoad > 0:
                 if self.storedWheat >= 100 and not self.giver:
                     self.storedWheat -= 100
-                    MarketTrader(self.case, self.plateau, self, 2, 100)
+                    MarketTrader(ac, self.plateau, self, 2, 100)
                 if self.storedWheat <= self.storedWheatMax and not self.transporter:
-                    MarketTrader(self.case, self.plateau, self, 1, 0)
+                    MarketTrader(ac, self.plateau, self, 1, 0)
                 return      
         self.plateau.roadWarning = True      
         
@@ -163,9 +163,9 @@ class Market(Building) :
 
 
 class Granary(Building) :
-    def __init__(self, case, plateau, size, desc):
+    def __init__(self, case, plateau, size, desc, storedWheat = 0):
         super().__init__(case, plateau, size, desc)
-        self.storedWheat = 0
+        self.storedWheat = storedWheat
         self.storedWheatMax = 2900
         self.levelB = 0
         self.levelV = 0

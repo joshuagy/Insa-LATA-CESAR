@@ -32,15 +32,20 @@ class Sauvegarde() :
                     if newdict["type"] == "BurningBuilding":
                         newdict |= {"timeBurning" : s.timeBurning}
                     elif newdict["type"] == "SmallTent" or newdict["type"] == "LargeTent":
-                        newdict |= {"entertainLvl" : s.entertainLvl, "nbHab" : s.nbHab, "nbHabMax" : s.nbHabMax,
+                        newdict |= {"entertainLvl" : s.entertainLvl,"wheat" : s.wheat, "nbHab" : s.nbHab, "nbHabMax" : s.nbHabMax,
                                     "religiousAccess" : s.religiousAccess}
                     elif newdict["type"] == "SmallTent2" or newdict["type"] == "LargeTent2":
                         newdict|= {"case1_x" : s.secCases[0].x, "case1_y" : s.secCases[0].y,
                                     "case2_x" : s.secCases[1].x, "case2_y" : s.secCases[1].y,
                                     "case3_x" : s.secCases[2].x, "case3_y" : s.secCases[2].y,
-                                    "nbHab" : s.nbHab}      
+                                    "wheat" : s.wheat, "nbHab" : s.nbHab}      
                     elif newdict["type"] == "Prefecture" or newdict["type"] == "EngineerPost":
                         newdict |= {"active" : s.active}
+                    elif newdict["type"] == "WheatFarm":
+                        newdict |= {"storedQuant" : s.storedQuant, "growingQuant" : s.growingQuant}
+                    elif newdict["type"] == "Granary" or newdict["type"] == "Market":
+                        newdict |= {"storedWheat" : s.storedWheat}
+                    
                 else:
                     newdict |= {"nb_immigrant" : s.nb_immigrant}
                 self.structures.append(newdict)
@@ -49,15 +54,21 @@ class Sauvegarde() :
         #Sauvegarde des entités
         self.entities = []
         for e in actualGame.entities :
-            if e.type != "Chariot":
+            if e.type != "Chariot" and e.type != "Cart":
                 newdict = {"type" : e.type, "x" : e.case.x, "y" : e.case.y, "name" : e.name, "ttw" : e.ttw, "action" : e.action, "direction" : e.direction, "path" : e.path}
-                if newdict["type"] == "Prefet" or newdict["type"] == "Engineer":
+
+                # WORKERS
+                if newdict["type"] == "Prefet" or newdict["type"] == "Engineer" or newdict["type"] == "CartPusher" or newdict["type"] == "MarketTrader":
                     newdict |= {"rest" : e.rest, "workplace_x" : e.workplace.case.x, "workplace_y" : e.workplace.case.y}
                     if newdict["type"] == "Prefet":
                         if e.target:
                             newdict |= {"target_x" : e.target.case.x, "target_y" : e.target.case.y}
                         else :
                             newdict |= {"target_x" : 0, "target_y" : 0}
+                    if newdict["type"] == "CartPusher":
+                        newdict |= {"mode" : e.mode}
+                    if newdict["type"] == "MarketTrader":
+                        newdict |= {"mode" : e.mode, "wheat" : e.wheat}
                 elif newdict["type"] == "Immigrant":
                     newdict |= {"target_x" : e.target.x, "target_y" : e.target.y}
 
