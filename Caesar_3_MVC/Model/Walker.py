@@ -15,7 +15,7 @@ class Walker:
         action : l'état dans lequel ils sont
 
         Attributs :
-        case_de_départ : La case de spawn du walker
+        case_de_depart : La case de spawn du walker
         type : string qui contient le nom de la sous classe
         index_sprite : Permet d'animer le walker
         direction : Permet de connaître la direction dans laquelle il va
@@ -23,7 +23,7 @@ class Walker:
         """
 
         self.case = case
-        self.case_de_départ = case
+        self.case_de_depart = case
         self.plateau = plateau
         self.name = name
         self.type = str(type(self))[21:-2]
@@ -173,7 +173,7 @@ class Citizen(Walker):
 
                 self.ttw -= 1
                 if self.ttw == 0:
-                    self.create_path(self.case_de_départ)
+                    self.create_path(self.case_de_depart)
             else :
                 new_pos = self.path[self.path_index]
                 # Mise à jour de la position sur le plateau
@@ -259,7 +259,7 @@ class Engineer(Walker):
 
                 self.ttw -= 1
                 if self.ttw == 0:
-                    self.create_path(self.case_de_départ)
+                    self.create_path(self.case_de_depart)
             else :
                 new_pos = self.path[self.path_index]
                 # Mise à jour de la position sur le plateau
@@ -317,7 +317,7 @@ class Prefet(Walker):
 
                         self.ttw -= 1
                         if self.ttw == 0:
-                            self.create_path(self.case_de_départ)
+                            self.create_path(self.case_de_depart)
                     else :              #Retour à la préfecture
                         new_pos = self.path[self.path_index]
                         # Mise à jour de la position sur le plateau
@@ -355,7 +355,7 @@ class Prefet(Walker):
                             self.create_path(self.target.case)
                             self.set_action(2)
                         else :
-                            self.create_path(self.case_de_départ)
+                            self.create_path(self.case_de_depart)
                             self.ttw = 0
                             self.set_action(1)
             self.move_timer = 0
@@ -428,8 +428,7 @@ class CartPusher(Walker):
                             self.granary.structure.storedWheat = self.granary.structure.storedWheatMax
                         self.mode = 2
                         self.cart.action = 1
-                        self.create_path(self.workplace.case)
-                        print(self.granary.structure.storedWheat)
+                        self.create_path(self.case_de_depart)
                     else :
                         self.mode = 2
                 else :
@@ -451,8 +450,121 @@ class CartPusher(Walker):
 
 
 class Cart(Walker):
+
     def __init__(self, case, plateau, owner, name=""):
         super().__init__(case, plateau, name)
         self.owner = owner
         self.direction = self.owner.direction
         self.action = 2
+
+class MarketTrader(Walker):
+    def __init__(self, case, plateau, workplace, mode, wheat, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0):
+        super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
+        self.workplace = workplace
+        self.rest = rest
+        self.wheat = wheat
+        self.mode = mode #1 = aller chercher du blé au grenier. #2 = aller distribuer du blé aux maisons
+        if self.mode == 1:
+            self.findGranary()
+            self.workplace.transporter = self
+        if self.mode == 2:
+            self.workplace.giver = self
+
+    def delete(self):
+        super().delete()
+        if self.mode == 1:
+            self.workplace.transporter = None
+        if self.mode == 2:
+            self.workplace.giver = None
+
+    def findGranary(self):
+        self.path_index = 0
+        self.path = []
+        self.granary = None
+        for s in self.plateau.structures :
+            if s.desc == "Granary" and s.storedWheat > 0:
+                x = s.case.x
+                y = s.case.y
+
+                grid = Grid(matrix=self.plateau.collision_matrix)
+
+                start = grid.node(self.case.x, self.case.y)
+                end = grid.node(x, y)
+                if start == end :
+                    newPath = [(x, y)]
+                else :
+
+                    finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
+                    newPath, runs = finder.find_path(start, end, grid)
+                if len(newPath) > len(self.path):
+                    self.path = newPath.copy()
+                    self.granary = s.case
+    
+    def distribFood(self):
+        if self.wheat >= 5:
+            x_min = self.case.x - 2
+            if x_min < 0 : x_min = 0
+            x_max = self.case.x + 3
+            if x_max > self.plateau.nbr_cell_x : x_max = self.plateau.nbr_cell_x
+            y_min = self.case.y - 2
+            if y_min < 0 : y_min = 0
+            y_max = self.case.y + 3
+            if y_max > self.plateau.nbr_cell_y : y_max = self.plateau.nbr_cell_y
+
+            for i in range(x_min, x_max):
+                for j in range(y_min, y_max):
+                    if self.plateau.map[i][j].getStructure() and self.plateau.map[i][j].structure in self.plateau.cityHousesList:
+                        if self.plateau.map[i][j].structure.wheat < self.plateau.map[i][j].structure.wheatMax:
+                            self.wheat -= 5
+                            self.plateau.map[i][j].structure.wheat += 5
+                            if self.plateau.map[i][j].structure.wheat > self.plateau.map[i][j].structure.wheatMax:
+                                self.plateau.map[i][j].structure.wheat = self.plateau.map[i][j].structure.wheatMax
+    
+    def update(self, currentSpeedFactor):
+        """
+        Mise à jour de la prochaine action du walker
+        """
+        self.move_timer += 1
+        self.animate_sprite(currentSpeedFactor)
+
+        if self.move_timer > (50 / currentSpeedFactor):
+            self.move_timer = 0
+            if self.ttw > 0:
+                match(self.mode):
+                    case 1 :
+                        if self.granary:
+                            new_pos = self.path[self.path_index]
+
+                            self.path_index += 1
+
+                            if self.path_index >= len(self.path) - 3:
+                                if self.granary.structure and self.granary.structure.desc == "Granary":
+                                    if self.granary.structure.storedWheat >= 100 :
+                                        self.wheat += 100
+                                        self.granary.structure.storedWheat -= 100
+                                    else:
+                                        self.wheat = self.granary.structure.storedWheat
+                                        self.granary.structure.storedWheat = 0
+                                self.ttw = 0
+                                self.create_path(self.case_de_depart)
+                            self.change_tile(new_pos)
+                        else :
+                            self.findGranary()
+                    case 2 :
+                        new_pos = self.random_path()
+
+                        self.ttw -= 1
+                        if self.ttw == 0:
+                            self.create_path(self.case_de_depart)
+                        self.change_tile(new_pos)
+                        self.distribFood()
+            else :  
+                new_pos = self.path[self.path_index]
+                self.path_index += 1
+                if self.path_index >= len(self.path) - 1:
+                    self.rest = 1
+                self.change_tile(new_pos)
+                self.distribFood()
+                if self.rest:
+                    self.workplace.storedWheat += self.wheat
+                    self.delete()

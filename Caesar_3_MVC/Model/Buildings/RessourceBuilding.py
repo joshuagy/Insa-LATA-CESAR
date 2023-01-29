@@ -121,22 +121,23 @@ class Market(Building) :
     def __init__(self, case, plateau, size, desc):
         super().__init__(case, plateau, size, desc)
         self.storedWheat = 0
-        self.storedWheatMax = 300
+        self.storedWheatMax = 800
         self.plateau.treasury = self.plateau.treasury - MARKET_COST
         self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]+20]
         self.secCases = [self.plateau.map[self.case.x][self.case.y-1],self.plateau.map[self.case.x+1][self.case.y],self.plateau.map[self.case.x+1][self.case.y-1]]
+        self.transporter = None
+        self.giver = None
         for sc in self.secCases :
             sc.setStructure(self)
 
     def update(self, currentSpeedFactor) :
         for ac in self.secCases :
             if ac.connectedToRoad > 0 or self.case.connectedToRoad > 0:
-                if self.storedWheat > 100 :
-                    for surroundingHouses in self.plateau.structures :
-                        if isinstance(surroundingHouses, House) :
-                            if (abs(self.case.x-surroundingHouses.case.x) < 15) and (abs(self.case.y-surroundingHouses.case.y) < 15) :
-                                surroundingHouses.wheat = surroundingHouses.wheat + 1
-                                self.storedWheat = self.storedWheat - 1
+                if self.storedWheat >= 100 and not self.giver:
+                    self.storedWheat -= 100
+                    MarketTrader(self.case, self.plateau, self, 2, 100)
+                if self.storedWheat <= self.storedWheatMax and not self.transporter:
+                    MarketTrader(self.case, self.plateau, self, 1, 0)
                 return      
         self.plateau.roadWarning = True      
         
