@@ -36,6 +36,8 @@ class GraphicalView(object):
         self.clock = None
         self.smallfont = None
 
+        self.counter = 0
+
     def notify(self, event):
         """
         Receive events posted to the message queue. 
@@ -94,10 +96,16 @@ class GraphicalView(object):
             self.initialize()
         self.model.actualGame.update()
         self.model.actualGame.draw()
-        self.model.mini_map.draw_position(self.model.actualGame.screen, self.model.actualGame.camera,self.model.actualGame.map)
+
+        if self.counter == 50:
+            self.model.mini_map.draw_position(self.model.actualGame.screen, self.model.actualGame.camera,self.model.actualGame.map)
+            self.counter = 0
+        self.counter += 1
+
         self.model.pause_menu.draw_pause_menu()
         self.model.actualGame.draw_menu_File()
         self.model.actualGame.restart = False
+
         pygame.display.flip()
 
 
