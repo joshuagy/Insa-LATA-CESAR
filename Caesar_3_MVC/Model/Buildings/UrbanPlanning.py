@@ -15,7 +15,6 @@ class Well(Building):
         self.plateau.treasury = self.plateau.treasury - WELL_COST
         self.riskTimer = 0
         Well.listWell.append(self)
-        print(self.case.getDesirability(self.plateau))
         for xi in range (self.case.x-2,self.case.x+3,1) :
             for yi in range (self.case.y-2,self.case.y+3,1) :
                 if 0<=xi<self.plateau.nbr_cell_x and 0<=yi<self.plateau.nbr_cell_y: 

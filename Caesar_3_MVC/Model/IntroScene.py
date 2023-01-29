@@ -30,7 +30,6 @@ class IntroScene:
   def handleMouseInput(self, event) -> Event:
     if self.isQuitState:
       quitSceneFeedBack = self.quitScene.handleMouseInput(event)
-      print(quitSceneFeedBack)
       match quitSceneFeedBack:
         case 1:
           return ExitEvent()
