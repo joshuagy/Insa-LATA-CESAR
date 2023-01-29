@@ -154,7 +154,8 @@ class LoadScene:
     for idx, saveName in enumerate(self.saveFileNames):
       item = ItemLoadScene(saveName, idx, self.font)
       self.saveItems.append(item)
-    self.saveItems[0].selected = True
+    if len(self.saveItems) > 0:
+      self.saveItems[0].selected = True
 
   def getMousePosRelative(self, event):
     return (event.pos[0] - self.posX, event.pos[1] - self.posY)
