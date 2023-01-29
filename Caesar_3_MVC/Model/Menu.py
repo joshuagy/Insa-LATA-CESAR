@@ -69,12 +69,12 @@ class Menu:
         if item.rect.collidepoint(event.pos):
           if isinstance(item.feedback, QuitEvent):
             self.soundMixer.playEffect('clickEffect')
-            self.quitScene = QuitScene(self.screen, self.surface.copy() self.soundMixer)
+            self.quitScene = QuitScene(self.screen, self.surface.copy(), self.soundMixer)
             self.isQuitState = True
             return TickEvent()
           elif isinstance(item.feedback, LoadEvent):
             self.soundMixer.playEffect('clickEffect')
-            self.loadScene = LoadScene(self.screen, self.surface.copy() self.soundMixer)
+            self.loadScene = LoadScene(self.screen, self.surface.copy(), self.soundMixer)
             self.isLoadState = True
             return TickEvent()
           else:
