@@ -1,5 +1,6 @@
 from Model.Plateau import *
 from Model.Buildings.House import *
+from Model.Buildings.Building import *
 
 class Well(Building):
 

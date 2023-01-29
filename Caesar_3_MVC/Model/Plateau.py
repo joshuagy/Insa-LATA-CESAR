@@ -7,12 +7,18 @@ from Model.Walker import *
 from Model.control_panel import *
 from Model.constants import *
 from Model.Route import Route
-from Model.Buildings.Building import *
+from Model.Buildings.Building import BurningBuilding
+from Model.Buildings.Building import DamagedBuilding
 from Model.Buildings.House import House
 from Model.Buildings.House import HousingSpot
 from Model.Buildings.House import MergedHouse
-from Model.Buildings.UrbanPlanning import *
-from Model.Buildings.RessourceBuilding import *
+from Model.Buildings.UrbanPlanning import Well
+from Model.Buildings.UrbanPlanning import Senate
+from Model.Buildings.RessourceBuilding import WheatFarm
+from Model.Buildings.RessourceBuilding import WheatPlot
+from Model.Buildings.RessourceBuilding import Granary
+from Model.Buildings.RessourceBuilding import Market
+
 from Model.Buildings.WorkBuilding import *
 from Model.Controls import Controls
 from Model.control_panel import TextRender
@@ -169,9 +175,9 @@ class Plateau():
                 case "HousingSpot":
                     HousingSpot(self.map[s["x"]][s["y"]], self, s["type"], s["nb_immigrant"])
                 case "SmallTent" | "LargeTent":
-                    House(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["entertainLvl"], s["nbHab"], s["nbHabMax"], s["religiousAccess"], s["fireRisk"], s["collapseRisk"])
+                    House(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["entertainLvl"], s["wheat"], s["nbHab"], s["nbHabMax"], s["religiousAccess"], s["fireRisk"], s["collapseRisk"])
                 case "SmallTent2" | "LargeTent2":
-                    MergedHouse(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["nbHab"], [self.map[s["case1_x"]][s["case1_y"]], self.map[s["case2_x"]][s["case2_y"]], self.map[s["case3_x"]][s["case3_y"]]], s["fireRisk"], s["collapseRisk"])
+                    MergedHouse(self.map[s["x"]][s["y"]], self, s["size"], s["type"],s["wheat"], s["nbHab"], [self.map[s["case1_x"]][s["case1_y"]], self.map[s["case2_x"]][s["case2_y"]], self.map[s["case3_x"]][s["case3_y"]]], s["fireRisk"], s["collapseRisk"])
                 case "Prefecture":
                     Prefecture(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["active"], s["fireRisk"], s["collapseRisk"])
                 case "EngineerPost":
@@ -185,11 +191,11 @@ class Plateau():
                 case "Senate" :
                     Senate(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
                 case "WheatFarm" :
-                    WheatFarm(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
+                    WheatFarm(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["storedQuant"], s["growingQuant"])
                 case "Market" :
-                    Market(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
+                    Market(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["storedWheat"])
                 case "Granary" :
-                    Granary(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
+                    Granary(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["storedWheat"])
 
         
         #Walker
@@ -204,6 +210,10 @@ class Plateau():
                     Engineer(self.map[e["x"]][e["y"]], self,self.map[e["workplace_x"]][e["workplace_y"]].structure, e["name"], e["rest"], e["ttw"], e["action"], e["direction"], e["path"])
                 case "Immigrant":
                     Immigrant(self.map[e["x"]][e["y"]], self, self.map[e["target_x"]][e["target_y"]], e["name"], e["ttw"], e["action"], e["direction"], e["path"])
+                case "CartPusher":
+                    CartPusher(self.map[e["x"]][e["y"]], self,self.map[e["workplace_x"]][e["workplace_y"]].structure, e["name"], e["mode"], e["rest"], e["ttw"], e["action"], e["direction"], e["path"])
+                case "MarketTrader":
+                    MarketTrader(self.map[e["x"]][e["y"]], self,self.map[e["workplace_x"]][e["workplace_y"]].structure,e["mode"], e["wheat"], e["name"], e["rest"], e["ttw"], e["action"], e["direction"], e["path"])
         
         #Ville
         self.attractiveness = save.attractiveness
@@ -298,7 +308,16 @@ class Plateau():
         #====== Engineer ======#
         engineer = {1 : create_liste_sprites_walker("Engineer", "Walk", 12)}
 
-        return {"Citizen" : citizen, "Prefet" : prefet, "Immigrant" : immigrant, "Chariot" : chariot, "Engineer" : engineer}
+        #====== CartPusher ======#
+        cartPusher = {1 : create_liste_sprites_walker("CartPusher", "Walk", 12)}
+
+        #====== Cart ======#
+        cart = {1 : create_liste_sprites_walker("Cart", "Empty", 1), 2 : create_liste_sprites_walker("Cart", "Full", 1)}
+
+        #====== MarketTrader ======#
+        marketTrader = {1 : create_liste_sprites_walker("MarketTrader", "Walk", 12)}
+
+        return {"Citizen" : citizen, "Prefet" : prefet, "Immigrant" : immigrant, "Chariot" : chariot, "Engineer" : engineer, "CartPusher" : cartPusher, "Cart" : cart, "MarketTrader" : marketTrader}
     def load_structures_images(self):
 
         hss = load_image("image/Buildings/Housng1a_00045.png")

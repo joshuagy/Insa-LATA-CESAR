@@ -8,12 +8,12 @@ from Model.Buildings.House import House
 import random
 
 class WheatFarm(Building) :
-    def __init__(self, case, plateau, size, desc):
+    def __init__(self, case, plateau, size, desc, storedQuant = 0, growingQuant = 0):
         super().__init__(case, plateau, size, desc)
         self.connectedToRoad = self.case.connectedToRoad
-        self.storedQuant=0
+        self.storedQuant=storedQuant
         self.storedQuantMax = 100
-        self.growingQuant = 0
+        self.growingQuant = growingQuant
         self.growingQuantMax = 100
         self.growingTimer = 0
         self.productivity = 0
@@ -34,33 +34,31 @@ class WheatFarm(Building) :
         for sc in self.secCases : self.allCases.append(sc)
         for p in self.plots : self.allCases.append(p.case)
 
+        self.walker = None
+
 
 
        
-    def update(self, currentSpeedFactor) : 
-        self.growingTimer += 1
+    def update(self, currentSpeedFactor) :
+        if self.growingQuant<self.growingQuantMax:
+            self.growingTimer += 1
         for ac in self.allCases :
             if ac.connectedToRoad > 0:
                 
                 #Récolte le blé si les champs sont pleins :
-                if self.growingQuant>=self.growingQuantMax :
+                if self.growingQuant>=self.growingQuantMax and not self.walker:
+                    CartPusher(ac, self.plateau, self)
                     self.storedQuant=self.storedQuant+10
                     self.growingQuant=0
                     for p in self.plots :
                         p.level = 0
-                    for surroundingGranaries in self.plateau.structures :
-                        if isinstance(surroundingGranaries, Granary) :
-                            if (abs(self.case.x-surroundingGranaries.case.x) < 15) and (abs(self.case.y-surroundingGranaries.case.y) < 15) :
-                                surroundingGranaries.storedWheat = surroundingGranaries.storedWheat + 30
-                    return
-
                 #Fait augmnter la quantité de blé qui pousse :
                 if self.growingTimer > (500 / currentSpeedFactor):
                     self.growingQuant+=1
                     self.growingTimer = 0
 
                 #Set the sprites of the plots
-                if self.growingQuant > 4 :
+                elif self.growingQuant > 4 :
                     for p in self.plots :   #Remet toutes les parcelles à 0 pour refaire le calcul
                         p.level = 0
                         rep = 0             #Répartition qui parcours les parcelles en donnant 5 blé à chaque jusqu'à épuisement
@@ -95,6 +93,8 @@ class WheatFarm(Building) :
         self.case.render_pos = [self.case.render_pos[0]+35, self.case.render_pos[1]-5]
         self.case.setStructure(None)
         self.plateau.structures.remove(self)
+        if self.walker:
+            self.walker.delete()
         for sc in self.secCases :
             sc.setStructure(None)
         for p in self.plots :
@@ -118,25 +118,26 @@ class WheatPlot(Building) :
 
 
 class Market(Building) :
-    def __init__(self, case, plateau, size, desc):
+    def __init__(self, case, plateau, size, desc, storedWheat = 0):
         super().__init__(case, plateau, size, desc)
-        self.storedWheat = 0
-        self.storedWheatMax = 300
+        self.storedWheat = storedWheat
+        self.storedWheatMax = 800
         self.plateau.treasury = self.plateau.treasury - MARKET_COST
         self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]+20]
         self.secCases = [self.plateau.map[self.case.x][self.case.y-1],self.plateau.map[self.case.x+1][self.case.y],self.plateau.map[self.case.x+1][self.case.y-1]]
+        self.transporter = None
+        self.giver = None
         for sc in self.secCases :
             sc.setStructure(self)
 
     def update(self, currentSpeedFactor) :
         for ac in self.secCases :
-            if ac.connectedToRoad>0 or self.case.connectedToRoad>0 :
-                if self.storedWheat > 100 :
-                    for surroundingHouses in self.plateau.structures :
-                        if isinstance(surroundingHouses, House) :
-                            if (abs(self.case.x-surroundingHouses.case.x) < 15) and (abs(self.case.y-surroundingHouses.case.y) < 15) :
-                                surroundingHouses.wheat = surroundingHouses.wheat + 1
-                                self.storedWheat = self.storedWheat - 1
+            if ac.connectedToRoad > 0 or self.case.connectedToRoad > 0:
+                if self.storedWheat >= 100 and not self.giver:
+                    self.storedWheat -= 100
+                    MarketTrader(ac, self.plateau, self, 2, 100)
+                if self.storedWheat <= self.storedWheatMax and not self.transporter:
+                    MarketTrader(ac, self.plateau, self, 1, 0)
                 return      
         self.plateau.roadWarning = True      
         
@@ -162,9 +163,9 @@ class Market(Building) :
 
 
 class Granary(Building) :
-    def __init__(self, case, plateau, size, desc):
+    def __init__(self, case, plateau, size, desc, storedWheat = 0):
         super().__init__(case, plateau, size, desc)
-        self.storedWheat = 0
+        self.storedWheat = storedWheat
         self.storedWheatMax = 2900
         self.levelB = 0
         self.levelV = 0
@@ -183,19 +184,10 @@ class Granary(Building) :
 
 
     def update(self, currentSpeedFactor) :
-        self.levelB = self.storedWheat//725     #Max divisé par 4
-        self.levelV = self.storedWheat//414      #Max divisé par 7
-
-        for ac in self.secCases :
-            if ac.connectedToRoad>0 or self.case.connectedToRoad>0 :
-                if self.storedWheat > 100 :
-                    for surroundingMarkets in self.plateau.structures :
-                        if isinstance(surroundingMarkets, Market) :
-                            if (abs(self.case.x-surroundingMarkets.case.x) < 15) and (abs(self.case.y-surroundingMarkets.case.y) < 15) :
-                                surroundingMarkets.storedWheat = surroundingMarkets.storedWheat + 30
-                                self.storedWheat = self.storedWheat - 30
-                return
-        self.plateau.roadWarning = True
+            for ac in self.secCases :
+                if ac.connectedToRoad > 0 or self.case.connectedToRoad > 0 :
+                    return
+            self.plateau.roadWarning = True
 
         
     def ignite(self):
