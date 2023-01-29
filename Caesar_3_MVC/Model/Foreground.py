@@ -18,6 +18,16 @@ class Foreground:
     self.originalImageActiveBuildHouse = pygame.image.load('image/Buildings/Housng1a_00045.png').convert_alpha()
     self.originalImageActiveBuildHouse = pygame.transform.scale(self.originalImageActiveBuildHouse, (self.originalImageActiveBuildHouse.get_width() / 2, self.originalImageActiveBuildHouse.get_height() / 2))
 
+    self.originalImageActiveEngineerPost = pygame.image.load('image/Buildings/transport_00056.png').convert_alpha()
+    self.originalImageActiveEngineerPost = pygame.transform.scale(self.originalImageActiveEngineerPost, (self.originalImageActiveEngineerPost.get_width() / 2, self.originalImageActiveEngineerPost.get_height() / 2))
+
+    self.originalImageActiveSecurityStructures = pygame.image.load('image/Buildings/Security_00001.png').convert_alpha()
+    self.originalImageActiveSecurityStructures = pygame.transform.scale(self.originalImageActiveSecurityStructures, (self.originalImageActiveSecurityStructures.get_width() / 2, self.originalImageActiveSecurityStructures.get_height() / 2))
+
+    self.originalImageActiveAA = pygame.image.load('image/Buildings/Utilitya_00001.png').convert_alpha()
+    self.originalImageActiveAA = pygame.transform.scale(self.originalImageActiveAA, (self.originalImageActiveAA.get_width() / 2, self.originalImageActiveAA.get_height() / 2))
+
+
   def initForegroundGrid(self):
     self.foregroundGrid = [[None for _ in range(self.nbr_cell_x)] for _ in range(self.nbr_cell_y)]
   
@@ -42,7 +52,7 @@ class Foreground:
       mask = pygame.mask.from_surface(originalImage)
       effectedImage = mask.to_surface()
       effectedImage.set_colorkey((0, 0, 0))
-      effectedImage.set_alpha(40)
+      effectedImage.set_alpha(120)
       originalImage.blit(effectedImage, (0, 0))
     elif effect == 'activeBuildRoads':
       effectedImage.fill((0, 0, 100))
@@ -50,6 +60,27 @@ class Foreground:
     elif effect == 'wrong':
       effectedImage.fill((200, 0, 0))
       originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+    elif effect == 'activeEngineerPost':
+      originalImage = self.originalImageActiveEngineerPost.copy()
+      mask = pygame.mask.from_surface(originalImage)
+      effectedImage = mask.to_surface()
+      effectedImage.set_colorkey((0, 0, 0))
+      effectedImage.set_alpha(120)
+      originalImage.blit(effectedImage, (0, 0))
+    elif effect == 'activeSecurityStructures':
+      originalImage = self.originalImageActiveSecurityStructures.copy()
+      mask = pygame.mask.from_surface(originalImage)
+      effectedImage = mask.to_surface()
+      effectedImage.set_colorkey((0, 0, 0))
+      effectedImage.set_alpha(120)
+      originalImage.blit(effectedImage, (0, 0))
+    elif effect == "activeAA":
+      originalImage = self.originalImageActiveAA.copy()
+      mask = pygame.mask.from_surface(originalImage)
+      effectedImage = mask.to_surface()
+      effectedImage.set_colorkey((0, 0, 0))
+      effectedImage.set_alpha(120)
+      originalImage.blit(effectedImage, (0, 0))
     elif effect == 'default':
       mask = pygame.mask.from_surface(originalImage)
       effectedImage = mask.to_surface()

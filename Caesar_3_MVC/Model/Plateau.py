@@ -578,7 +578,7 @@ class Plateau():
                     self.screen.blit(self.image_structures[id_image], 
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                             render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
-                                            
+
                     #if isinstance(self.map[cell_x][cell_y].structure, House) :
                     #    nbHabTxt = TextRender(str(self.map[cell_x][cell_y].structure.nbHab),(20,20),(0,0,0)).img_scaled
                     #    self.screen.blit(nbHabTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
@@ -594,7 +594,7 @@ class Plateau():
                         effectedImage = self.foreground.getEffectedImage(id_image, image.copy(), cell_x, cell_y)
                         self.screen.blit(effectedImage,
                                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                        render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
+                                        render_pos[1] - (effectedImage.get_height() - cell_size) + self.camera.vect.y))
 
                 # DRAW WALKERS
                 for e in self.walkers[cell_x][cell_y]:
