@@ -1031,7 +1031,101 @@ class MouseInputHandler:
             elif self.isMousePosInGrid(event.pos):
                 (x, y) = self.mousePosToGridPos(event.pos)
                 self.model.actualGame.foreground.addEffect(x, y, 'default') 
-                # for xi in range(grid_x1, grid_x2+1):
-                #     for yi in range(grid_y1, grid_y2+1):
-                #         self.model.actualGame.foreground.addEffect(xi, yi, 'activeBuildRoads')
+               
+        if controlsCurrentState == 'securityStructures':
+            self.model.actualGame.foreground.initForegroundGrid()
+            if self.clicked:
+                grid_x1, grid_y1 = self.mousePosToGridPos(self.initialMouseCoordinate)
+                grid_x2, grid_y2 = self.mousePosToGridPos(event.pos)
             
+                if grid_x1 > grid_x2:
+                    temp = grid_x1
+                    grid_x1 = grid_x2
+                    grid_x2 = temp
+
+                if grid_y1 > grid_y2:
+                    temp = grid_y1
+                    grid_y1 = grid_y2
+                    grid_y2 = temp
+
+                #Building Construction :
+                for xi in range(grid_x1, grid_x2+1):
+                    for yi in range(grid_y1, grid_y2+1):
+                        if self.model.actualGame.map[xi][yi].getConnectedToRoad() > 0 and not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
+                            self.model.actualGame.foreground.addEffect(xi, yi, 'activeSecurityStructures')
+                        else:
+                            self.model.actualGame.foreground.addEffect(xi, yi, 'wrong')
+                            
+
+            elif self.isMousePosInGrid(event.pos):
+                (x, y) = self.mousePosToGridPos(event.pos)
+                if self.model.actualGame.map[x][y].getConnectedToRoad() > 0 and not self.model.actualGame.map[x][y].road and not self.model.actualGame.map[x][y].structure and self.model.actualGame.map[x][y].sprite not in list_of_collision:
+                    self.model.actualGame.foreground.addEffect(x, y, 'activeSecurityStructures')
+                else:
+                    self.model.actualGame.foreground.addEffect(x, y, 'wrong')
+
+        if controlsCurrentState == 'buildEngineerPost':
+            self.model.actualGame.foreground.initForegroundGrid()
+            if self.clicked:
+                grid_x1, grid_y1 = self.mousePosToGridPos(self.initialMouseCoordinate)
+                grid_x2, grid_y2 = self.mousePosToGridPos(event.pos)
+            
+                if grid_x1 > grid_x2:
+                    temp = grid_x1
+                    grid_x1 = grid_x2
+                    grid_x2 = temp
+
+                if grid_y1 > grid_y2:
+                    temp = grid_y1
+                    grid_y1 = grid_y2
+                    grid_y2 = temp
+
+                #Building Construction :
+                for xi in range(grid_x1, grid_x2+1):
+                    for yi in range(grid_y1, grid_y2+1):
+                        edited = False
+                        if self.model.actualGame.map[xi][yi].getConnectedToRoad() > 0 and not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
+                            self.model.actualGame.foreground.addEffect(xi, yi, 'activeEngineerPost')
+                        else:
+                            self.model.actualGame.foreground.addEffect(xi, yi, 'wrong')
+
+            elif self.isMousePosInGrid(event.pos):
+                (x, y) = self.mousePosToGridPos(event.pos)
+                if self.model.actualGame.map[x][y].getConnectedToRoad() > 0 and not self.model.actualGame.map[x][y].road and not self.model.actualGame.map[x][y].structure and self.model.actualGame.map[x][y].sprite not in list_of_collision:
+                    self.model.actualGame.foreground.addEffect(x, y, 'activeEngineerPost')
+                else:
+                    self.model.actualGame.foreground.addEffect(x, y, 'wrong')
+
+        if self.model.actualGame.controls.water_related_structures.clicked:
+            self.model.actualGame.foreground.initForegroundGrid()
+            if self.clicked:
+                grid_x1, grid_y1 = self.mousePosToGridPos(self.initialMouseCoordinate)
+                grid_x2, grid_y2 = self.mousePosToGridPos(event.pos)
+            
+                if grid_x1 > grid_x2:
+                    temp = grid_x1
+                    grid_x1 = grid_x2
+                    grid_x2 = temp
+
+                if grid_y1 > grid_y2:
+                    temp = grid_y1
+                    grid_y1 = grid_y2
+                    grid_y2 = temp
+
+                #Building Construction :
+                for xi in range(grid_x1, grid_x2+1):
+                    for yi in range(grid_y1, grid_y2+1):
+                        edited = False
+                        if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
+                            self.model.actualGame.foreground.addEffect(xi, yi, 'activeAA')
+                        else:
+                            self.model.actualGame.foreground.addEffect(xi, yi, 'wrong')
+
+            elif self.isMousePosInGrid(event.pos):
+                (x, y) = self.mousePosToGridPos(event.pos)
+                if not self.model.actualGame.map[x][y].road and not self.model.actualGame.map[x][y].structure and self.model.actualGame.map[x][y].sprite not in list_of_collision:
+                    self.model.actualGame.foreground.addEffect(x, y, 'activeAA')
+                else:
+                    self.model.actualGame.foreground.addEffect(x, y, 'wrong')
+
+
