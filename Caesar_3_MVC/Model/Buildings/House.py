@@ -208,10 +208,10 @@ class HousingSpot() :
         self.case.setFeature("Small Tent")
         del self
     
-    def generateImmigrant(self):
+    def generateImmigrant(self, currentSpeedFactor):
         now = pygame.time.get_ticks()
 
-        if now - self.spawn_timer > 500:
+        if now - self.spawn_timer > (500 / currentSpeedFactor):
             if randint(0, 10) == 0 and self.nb_immigrant < 1:
                 Immigrant(self.plateau.map[19][38], self.plateau, self.case)
                 self.nb_immigrant += 1

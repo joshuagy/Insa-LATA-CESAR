@@ -125,6 +125,10 @@ class Walker:
             finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
             self.path, runs = finder.find_path(self.start, self.end, self.grid)
 
+            if self.path == []:
+                print("Error : impossible path")
+                self.delete()
+
 
             #Permet d'observer facilement la map et le walker
             #print('operations:', runs, 'path length:', len(self.path))
@@ -188,9 +192,9 @@ class Immigrant(Walker):
     def __init__(self, case, plateau, target, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0):
         super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
         self.target = target
-        self.create_path(target)
         self.chariot = Chariot(self.plateau.map[self.case.x][self.case.y+1], self.plateau, self)
         self.target.structure.immigrant = self
+        self.create_path(target)
     
     def delete(self):
         super().delete()
@@ -337,13 +341,16 @@ class Prefet(Walker):
                         self.set_action(2)
 
                 case 2 : #Se dirige vers un feu
-                    new_pos = self.path[self.path_index]
-                    self.path_index += 1
-                    if self.path_index >= len(self.path) - 2:
-                        self.set_action(3)
-                        self.throw_timer = 0
-                    self.change_tile(new_pos)
-                    self.reduceRisk()
+                    if self.target in self.plateau.burningBuildings:
+                        new_pos = self.path[self.path_index]
+                        self.path_index += 1
+                        if self.path_index >= len(self.path) - 2:
+                            self.set_action(3)
+                            self.throw_timer = 0
+                        self.change_tile(new_pos)
+                        self.reduceRisk()
+                    else:
+                        self.set_action(1)
                 case 3 : #Eteint un feu
                     if self.throw_timer < 3:
                         self.throw_timer += 1
@@ -367,9 +374,9 @@ class CartPusher(Walker):
         self.workplace = workplace
         self.rest = rest
         self.workplace.walker = self
-        self.findGranary()
         self.mode = mode
         self.cart = Cart(self.plateau.map[self.case.x][self.case.y], self.plateau, self)
+        self.findGranary()
 
     
     def delete(self):
@@ -396,7 +403,7 @@ class CartPusher(Walker):
 
                     finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
                     newPath, runs = finder.find_path(start, end, grid)
-                if len(newPath) > len(self.path):
+                if newPath and len(newPath) < len(self.path) or not self.path:
                     self.path = newPath.copy()
                     self.granary = s.case
     

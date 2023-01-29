@@ -219,6 +219,7 @@ class Plateau():
                     MarketTrader(self.map[e["x"]][e["y"]], self,self.map[e["workplace_x"]][e["workplace_y"]].structure,e["mode"], e["wheat"], e["name"], e["rest"], e["ttw"], e["action"], e["direction"], e["path"])
         
         #Ville
+        self.create_collision_matrix()
         self.attractiveness = save.attractiveness
         self.treasury = save.treasury
         self.population = save.population
@@ -412,7 +413,7 @@ class Plateau():
             #Update de la position des walkers
             currentSpeedFactor = self.currentSpeed/100
             for e in self.entities: e.update(currentSpeedFactor)
-            for hs in self.cityHousingSpotsList: hs.generateImmigrant()
+            for hs in self.cityHousingSpotsList: hs.generateImmigrant(currentSpeedFactor)
             for bb in self.burningBuildings: bb.update(currentSpeedFactor)
             self.roadWarning=False
             for b in self.structures :
