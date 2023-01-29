@@ -36,23 +36,11 @@ class Camera:
         else:
             self.dy = 0
 
-
-        if self.cell_size==60:
-            if not (self.vect.x> 0.3*self.width ) and self.dx>0:
-                self.vect.x += self.dx
-            if not (self.vect.x<-2.8*self.width) and self.dx <0:
-                self.vect.x += self.dx
-            if not (self.vect.y>0.5*self.height ) and self.dy>0:
-                self.vect.y += self.dy
-            if not (self.vect.y<-2.3*self.height) and self.dy <0:
-                self.vect.y += self.dy
-        elif self.cell_size==30:
-            if not (self.vect.x> 0.3*self.width ) and self.dx>0:
-                self.vect.x += self.dx
-            if not (self.vect.x<-0.9*self.width) and self.dx <0:
-                self.vect.x += self.dx
-            if not (self.vect.y>0.3*self.height ) and self.dy>0:
-                self.vect.y += self.dy
-            if not (self.vect.y<-0.9*self.height) and self.dy <0:
-                self.vect.y += self.dy
-
+        if not (self.vect.x> 0.1*self.width ) and self.dx>0:
+            self.vect.x += self.dx
+        if not (self.vect.x<-0.999*self.width) and self.dx <0:
+            self.vect.x += self.dx
+        if not (self.vect.y>0.1*self.height ) and self.dy>0:
+            self.vect.y += self.dy
+        if not (self.vect.y<-0.6*self.height) and self.dy <0:
+            self.vect.y += self.dy

@@ -38,7 +38,7 @@ class Controls:
   def setCurrentState(self, newState):
     #if self.currentState == 'industrialStructures' :
     #  self.end_industrial_structures_selection()
-    print(newState)
+
     self.currentState = newState
   
   def generateStaticSurface(self) -> pygame.Surface:

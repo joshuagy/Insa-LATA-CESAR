@@ -14,10 +14,10 @@ class Menu:
 
     self.initializeItems()
 
-    self.quitScene = QuitScene(self.screen, self.surface.copy(), self.soundMixer)
+    self.quitScene = None
     self.isQuitState = False
 
-    self.loadScene = LoadScene(self.screen, self.surface.copy(), self.soundMixer)
+    self.loadScene = None
     self.isLoadState = False
 
     self.defaultFeedback = TickEvent() # do nothing
@@ -69,10 +69,12 @@ class Menu:
         if item.rect.collidepoint(event.pos):
           if isinstance(item.feedback, QuitEvent):
             self.soundMixer.playEffect('clickEffect')
+            self.quitScene = QuitScene(self.screen, self.surface.copy(), self.soundMixer)
             self.isQuitState = True
             return TickEvent()
           elif isinstance(item.feedback, LoadEvent):
             self.soundMixer.playEffect('clickEffect')
+            self.loadScene = LoadScene(self.screen, self.surface.copy(), self.soundMixer)
             self.isLoadState = True
             return TickEvent()
           else:
@@ -152,6 +154,7 @@ class LoadScene:
     for idx, saveName in enumerate(self.saveFileNames):
       item = ItemLoadScene(saveName, idx, self.font)
       self.saveItems.append(item)
+    self.saveItems[0].selected = True
 
   def getMousePosRelative(self, event):
     return (event.pos[0] - self.posX, event.pos[1] - self.posY)
@@ -169,9 +172,6 @@ class LoadScene:
         break
     if self.okButtonRect.collidepoint(mousePosRelative): 
       self.soundMixer.playEffect('clickEffect')
-      # with open("./Model/Save_Folder/save_to_load.pickle", "w") as f, open("./Model/Save_Folder/"+self.currentSaveLoaded, "r") as f2:
-      #   print("copy de ", self.currentSaveLoaded, " vers save_to_load.pickle")
-      #   shutil.copyfile("./Model/Save_Folder/"+self.currentSaveLoaded, "./Model/Save_Folder/save_to_load.pickle")
       self.feedback = LoadSave(self.currentSaveLoaded)
       return self.feedback
     elif  self.cancelButtonRect.collidepoint(mousePosRelative):

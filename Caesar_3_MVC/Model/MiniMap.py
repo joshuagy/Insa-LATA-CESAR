@@ -20,14 +20,6 @@ class MiniMap:
 
     def draw_position(self, screen, camera,create_map):
 
-
-        self.draw_mini_map(create_map)
-        img = pygame.image.load("mini_map.png").convert_alpha()
-        img = pygame.transform.smoothscale(img,(75,75))
-        img = pygame.transform.rotate(img, -45).convert_alpha()
-
-        screen.blit(img,(self.width-img.get_size()[0]-27,60))
-
         # #Tentative échouée d'afficher le rectangle jaune là où est la map
         # self.mini_screen_rect = pg.Rect(self.width-img.get_size()[0]-17,
         #                         - camera.vect[1] * MiniMap.scale+75,
@@ -45,18 +37,23 @@ class MiniMap:
         #     pg.draw.rect(screen, (255, 255, 0), self.mini_screen_rect, 1)
         
         #Du coup là ça affiche le rectangle jaune là ou était la map quand elle était pas aux bonnes coordonnées, donc ça devrait continuer de fonctionner sur certains écrans
+        self.draw_mini_map(screen)
+
         self.mini_screen_rect = pg.Rect(- camera.vect[0] * MiniMap.scale+self.width*0.94,
                                         - camera.vect[1] * MiniMap.scale+0.08*self.height,
                                         self.mini_screen_width/12, self.mini_screen_height/10)
         if(not ((- camera.vect[0] * MiniMap.scale+self.width*0.94)>self.width*0.98 or ((- camera.vect[0] * MiniMap.scale+self.width*0.94)<self.width*0.92or( - camera.vect[1] * MiniMap.scale+0.08*self.height)<self.height*0.05 ) or ( - camera.vect[1] * MiniMap.scale+0.08*self.height)>self.height*0.147 ) ):
             pg.draw.rect(screen, (255, 255, 0), self.mini_screen_rect, 1)
 
+    def draw_mini_map(self, screen) -> None:
+        img=pygame.image.load("mini_map.png").convert_alpha()
+        img = pygame.transform.smoothscale(img,(75,75))
+        img = pygame.transform.rotate(img, -45).convert_alpha()
 
 
+        screen.blit(img,(self.width*0.93,self.height*0.058))
 
-
-
-    def draw_mini_map(self,create_map):
+    def update_mini_map(self, create_map):
         self.image = Image.new('RGB', (self.longueur, self.largeur))
 
         for cell_x in range(self.longueur):
@@ -92,8 +89,6 @@ class MiniMap:
                         self.image.putpixel((cell_x, cell_y), (rouge, vert, bleu))
 
         self.image.save("mini_map.png")
-
-
 
     def cartesian_to_isometric(self, x, y):
          return x - y,(x + y)/2

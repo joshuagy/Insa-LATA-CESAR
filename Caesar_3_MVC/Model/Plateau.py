@@ -585,12 +585,7 @@ class Plateau():
         self.overlayCounter += 1    
         self.topbar.render()
         self.controls.render()
-        
-        fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
-        self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
-                
-        self.topbar.render()
-        self.controls.render()
+     
         if self.roadWarning : self.screen.blit(self.road_warning_rectangle,(500,30))
 
         fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))

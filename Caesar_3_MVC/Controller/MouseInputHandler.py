@@ -91,7 +91,6 @@ class MouseInputHandler:
 
     def handleMouseEventsStateSaveScene(self, event):
         feedBack = self.model.saveScene.handleMouseInput(event)
-        print(feedBack)
         self.evManager.Post(feedBack)
 
     def handleMouseEventsStateIntroScene(self, event):

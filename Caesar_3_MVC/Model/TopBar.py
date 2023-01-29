@@ -66,6 +66,12 @@ class TopBar:
 
     self.File_bol = False
 
+    self.staticSurface.blit(self.Options, self.Options_rect)
+    self.staticSurface.blit(self.Help, self.Help_rect)
+    self.staticSurface.blit(self.Advisors, self.Advisors_rect)
+    self.staticSurface.blit(self.File, self.File_rect)
+    
+
   def generateStaticSurface(self):
     staticSurface = pygame.Surface((self.screenWidth, int(pnl_4.dim[1])+1))
     top_menu_axis_x = 0
@@ -113,13 +119,8 @@ class TopBar:
       self.dateBlocWithDynamicText = self.dateBloc.copy()
       self.dateBlocWithDynamicText.blit(TextRender(date.visualDate, (100, 20),(255,255,0)).img_scaled, (850 - self.dateBlocPos[0], 2.5))
 
-
   def render(self):
     self.staticSurface.blit(self.treasuryBlocWithDynamicText, self.treasuryBlocPos)
     self.staticSurface.blit(self.populationBlocWithDynamicText, self.populationBlocPos)
     self.staticSurface.blit(self.dateBlocWithDynamicText, self.dateBlocPos)
-    self.staticSurface.blit(self.File, self.File_rect)
-    self.staticSurface.blit(self.Options, self.Options_rect)
-    self.staticSurface.blit(self.Help, self.Help_rect)
-    self.staticSurface.blit(self.Advisors, self.Advisors_rect)
     self.screen.blit(self.staticSurface, (0, 0))
