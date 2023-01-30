@@ -135,18 +135,16 @@ class LoadScene:
     self.cancelButton = pygame.image.load("./image/UI/quit/cancelButton.png")
     self.cancelButtonPos = ((self.surface.get_width()/2) + 3*self.cancelButton.get_width(), (self.surface.get_height() - self.cancelButton.get_height())-20)
     self.cancelButtonRect = pygame.Rect(self.cancelButtonPos, self.cancelButton.get_size())
-
-   
+ 
   def currentSaveSelectedSurface(self):
     currentSaveSelected = pygame.Surface((380, 30)).convert_alpha()
-    currentSaveSelectedPos = (self.surface.get_width()/2 - currentSaveSelected.get_width()/2, 50)
+    currentSaveSelectedPos = (self.surface.get_width()/2 - currentSaveSelected.get_width()/2 + 20, 60)
     currentSaveSelectedText = self.font.render(self.currentSaveLoaded, 0, (0, 0, 0))
     currentSaveSelectedTextPos = (currentSaveSelectedPos[0]+5, currentSaveSelected.get_height()/2 - currentSaveSelectedText.get_height()/2)
-    currentSaveSelected.blit(currentSaveSelectedText, currentSaveSelectedTextPos)
-    return (currentSaveSelected, currentSaveSelectedPos)
+    return (currentSaveSelectedText, currentSaveSelectedPos)
   
   def saveSelectorSurface(self):
-    saveSelector = pygame.Surface((380, 200)).convert_alpha()
+    saveSelector = pygame.Surface((380, 200))
     saveSelectorPos = (self.surface.get_width()/2 - saveSelector.get_width()/2, 70)
     return (saveSelector, saveSelectorPos)
 
@@ -183,9 +181,6 @@ class LoadScene:
   def render(self):
     self.screen.blit(self.defaultSurface, (self.posX, self.posY))
     self.surface = self.defaultSurface.copy()
-
-    b = self.saveSelectorSurface()   
-    self.surface.blit(b[0], b[1])
 
     a = self.currentSaveSelectedSurface()
     self.surface.blit(a[0], a[1])
