@@ -198,6 +198,7 @@ class Immigrant(Walker):
     
     def delete(self):
         super().delete()
+        self.target.structure.immigrant = None
         self.chariot.delete()
     
     def update(self, currentSpeedFactor):

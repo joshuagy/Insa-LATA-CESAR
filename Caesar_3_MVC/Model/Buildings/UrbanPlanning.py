@@ -94,6 +94,6 @@ class Temple(Building) :
                     self.plateau.map[xi][yi].religiousAccess=0
                     for ct in Temple.listTemple :
                         if abs(ct.case.x-xi)<=10 and abs(ct.case.y-yi)<=10 :
-                            self.plateau.map[xi][yi].religiousAccess=1
+                            self.plateau.map[xi][yi].religiousAccess=0
         del self
         
