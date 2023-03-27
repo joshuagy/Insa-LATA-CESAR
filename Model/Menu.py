@@ -245,13 +245,15 @@ class JoinIPScene:
     self.cancelButtonPos = ((self.surface.get_width()/2) + 3*self.cancelButton.get_width(), (self.surface.get_height() - self.cancelButton.get_height())-20)
     self.cancelButtonRect = pygame.Rect(self.cancelButtonPos, self.cancelButton.get_size())
 
+    StateChangeEvent(STATE_JOIN_IP_SCENE)
+
   def handleKeyboardInput(self, event) -> Event:
     if event.key == pygame.K_BACKSPACE:
       self.userInputIP = self.userInputIP[:-1]
       if len(self.userInputIP) < 20:
         self.textError = ""
       elif event.key == pygame.K_ESCAPE:
-        return StateChangeEvent(STATE_PLAY)
+        return StateChangeEvent(STATE_MENU)
       elif event.key == pygame.K_SPACE:
           self.textErrorIP = "Invalid caracter !"
       else:
