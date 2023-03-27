@@ -232,9 +232,9 @@ class JoinIPScene:
     self.posY = (self.screen.get_height()/2) - (self.surface.get_height()/2)
 
     self.font = pygame.font.SysFont(None, 24)
-    self.userInputIP = ""
+    self.userInputIP = "Enter IP"
     self.textErrorIP = ""
-    self.userInputPort = ""
+    self.userInputPort = "Enter Port"
     self.textErrorPort = ""
 
     self.okButton = pygame.image.load("./image/UI/quit/okButton.png")
@@ -247,18 +247,18 @@ class JoinIPScene:
 
   def handleKeyboardInput(self, event) -> Event:
     if event.key == pygame.K_BACKSPACE:
-      self.userInput = self.userInput[:-1]
-      if len(self.userInput) < 20:
+      self.userInputIP = self.userInputIP[:-1]
+      if len(self.userInputIP) < 20:
         self.textError = ""
       elif event.key == pygame.K_ESCAPE:
         return StateChangeEvent(STATE_PLAY)
       elif event.key == pygame.K_SPACE:
-          self.textError = "Invalid caracter !"
+          self.textErrorIP = "Invalid caracter !"
       else:
-        if len(self.userInput) < 15:
-          self.userInput += event.unicode
+        if len(self.userInputIP) < 15:
+          self.userInputIP += event.unicode
         else:
-          self.textError = "Text too long !"
+          self.textErrorIP = "Text too long !"
       return TickEvent()
     
   def getMousePosRelative(self, event):
@@ -276,18 +276,19 @@ class JoinIPScene:
     else: return 0
 
   def render(self):
+    
     self.screen.blit(self.defaultSurface, (self.posX, self.posY))
     self.surface = self.defaultSurface.copy()
 
     self.surface.blit(self.okButton, self.okButtonPos)
     self.surface.blit(self.cancelButton, self.cancelButtonPos)
-  
-    self.screen.blit(self.surface, (self.posX, self.posY))
-
-    self.surface.blit(self.font.render(self.userInputIP, True, (0, 0, 0)), (25, 60))
-    self.surface.blit(self.font.render(self.userInputPort, True, (0, 0, 0)), (0, 0))
+    
+    #pygame.draw.rect(self.surface,(0,0,0),((30,30),(70,70)),1)
+    self.surface.blit(self.font.render(self.userInputIP, True, (0, 0, 0)), (40, 110))
+    self.surface.blit(self.font.render(self.userInputPort, True, (0, 0, 0)), (40, 260))
     self.surface.blit(pygame.font.Font(None, 20).render(self.textErrorIP, True, (255, 0, 0)), (10, 85))
     self.surface.blit(pygame.font.Font(None, 20).render(self.textErrorPort, True, (255, 0, 0)), (10, 85))
+    self.screen.blit(self.surface, (self.posX, self.posY))
 
 class ItemLoadScene:
   def __init__(self, saveName, idx, font):

@@ -16,6 +16,7 @@ STATE_HELP = 3
 STATE_QUIT = 4
 STATE_PLAY = 5
 STATE_SAVE_SCENE = 6
+STATE_JOIN_IP_SCENE = 7
 
 
 # ARGENT :
@@ -55,8 +56,6 @@ templed = [4,4,3,3,2,2]
 welld =[-1,0,0,0,0]
 #Engineering :
 enginpostd = [0,0,0,0,0]
-
-
 
 desirabilityDict = {"SmallTent" : smalltentd, "LargeTent" : largetentd, "SmallShack" : smallshackd, "Senate" : senated,
 "LargeShack" : largeshackd, "Prefecture" : prefectured, "SmallTemple" : templed, "Well" : welld, "EngineerPost" : enginpostd,

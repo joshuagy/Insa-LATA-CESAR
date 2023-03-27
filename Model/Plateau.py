@@ -439,8 +439,6 @@ class Plateau():
         if isinstance(b,WorkBuilding) and b.active==True :
             b.active = False
 
-
-
     def draw(self):
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
