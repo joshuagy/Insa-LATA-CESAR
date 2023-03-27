@@ -394,6 +394,118 @@ class Plateau():
         self.collision_matrix = self.create_collision_matrix()
         self.foreground.initForegroundGrid()
 
+    def buildRoads(self, pattern, grid_x1, grid_x2, grid_y1, grid_y2):
+        match(pattern):
+            case 0:
+                for xi in range(grid_x1, grid_x2+1):
+                    if self.map[xi][grid_y2].road == None and self.map[xi][grid_y2].structure == None and self.map[xi][grid_y2].sprite not in list_of_collision:
+                        Route(self.map[xi][grid_y2], self)
+
+                for yi in range(grid_y1, grid_y2+1):
+                    if self.map[grid_x1][yi].road == None and self.map[grid_x1][yi].structure == None and self.map[grid_x1][yi].sprite not in list_of_collision:
+                        Route(self.map[grid_x1][yi], self)
+            case 1:
+                for xi in range(grid_x1, grid_x2-1, -1):
+                    if self.map[xi][grid_y1].road == None and self.map[xi][grid_y1].structure == None and self.map[xi][grid_y1].sprite not in list_of_collision:
+                        Route(self.map[xi][grid_y1], self)
+                for yi in range(grid_y1, grid_y2+1):
+                    if self.map[grid_x2][yi].road == None and self.map[grid_x2][yi].structure == None and self.map[grid_x2][yi].sprite not in list_of_collision:
+                        Route(self.map[grid_x2][yi], self)
+            case 2:
+                for xi in range(grid_x1, grid_x2+1):
+                    if self.map[xi][grid_y1].road == None and self.map[xi][grid_y1].structure == None and self.map[xi][grid_y1].sprite not in list_of_collision:
+                        Route(self.map[xi][grid_y1], self)
+                for yi in range(grid_y1, grid_y2-1, -1):
+                    if self.map[grid_x2][yi].road == None and self.map[grid_x2][yi].structure == None and self.map[grid_x2][yi].sprite not in list_of_collision:
+                        Route(self.map[grid_x2][yi], self)
+            case 3:
+                for xi in range(grid_x1, grid_x2-1, -1):
+                    if self.map[xi][grid_y2].road == None and self.map[xi][grid_y2].structure == None and self.map[xi][grid_y2].sprite not in list_of_collision:
+                        Route(self.map[xi][grid_y2], self)
+                for yi in range(grid_y1, grid_y2-1, -1):
+                    if self.map[grid_x1][yi].road == None and self.map[grid_x1][yi].structure == None and self.map[grid_x1][yi].sprite not in list_of_collision:
+                        Route(self.map[grid_x1][yi], self)
+        
+        self.collision_matrix = self.create_collision_matrix()
+
+    def buildHousingSpot(self, grid_x1, grid_y1, grid_x2, grid_y2):
+        for xi in range(grid_x1, grid_x2+1):
+            for yi in range(grid_y1, grid_y2+1):
+                    for xcr in range (xi-2,xi+3,1) :
+                        for ycr in range (yi-2,yi+3,1) :
+                            if 0<=xcr<self.nbr_cell_x and 0<=ycr<self.nbr_cell_y:
+                                if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision and self.map[xi][yi].sprite not in list_of_undestructible:
+                                    if self.map[xcr][ycr].road :
+                                        HousingSpot(self.map[xi][yi], self)
+    
+    def buildPrefecture(self, grid_x1, grid_y1, grid_x2, grid_y2):
+        for xi in range(grid_x1, grid_x2+1):
+            for yi in range(grid_y1, grid_y2+1):
+                if self.map[xi][yi].getConnectedToRoad() > 0 :
+                    if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision:
+                        Prefecture(self.map[xi][yi],self,(1,1),"Prefecture",1)
+
+    def buildEngineerPost(self, grid_x1, grid_y1, grid_x2, grid_y2):
+        for xi in range(grid_x1, grid_x2+1):
+            for yi in range(grid_y1, grid_y2+1):
+                if self.map[xi][yi].getConnectedToRoad() > 0 :
+                    if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision:
+                        EnginnerPost(self.map[xi][yi],self,(1,1),"EngineerPost",1)
+    
+    def buildWell(self, grid_x1, grid_y1, grid_x2, grid_y2):
+        for xi in range(grid_x1, grid_x2+1):
+                for yi in range(grid_y1, grid_y2+1):
+                    if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision:
+                        Well(self.map[xi][yi],self,(1,1),"Well")
+    
+    def buildSenate(self, grid_x1, grid_y1, grid_x2, grid_y2):
+        for xi in range(grid_x1, grid_x2+1):
+            for yi in range(grid_y1, grid_y2+1):
+                for xccl in range(xi, xi+5, 1) :
+                    for yccl in range(yi, yi-5, -1 ) :
+                        if self.map[xccl][yccl].road or self.map[xccl][yccl].structure or self.map[xccl][yccl].sprite in list_of_collision:
+                            return
+        Senate(self.map[xi][yi],self,(5,5),"Senate")
+
+    def buildFarm(self, grid_x1, grid_y1, grid_x2, grid_y2):
+        #Vérifier que toutes les cases sont disponibles :
+        for xi in range(grid_x1, grid_x2+1):
+            for yi in range(grid_y1, grid_y2+1):
+                for xccl in range(xi-1, xi+2, 1) :
+                    for yccl in range(yi-1, yi+2, 1 ) :
+                        if self.map[xccl][yccl].road or self.map[xccl][yccl].structure or self.map[xccl][yccl].sprite in list_of_collision:
+                            return
+        WheatFarm(self.map[xi][yi],self,(2,2),"WheatFarm")
+            
+    def buildGranary(self, grid_x1, grid_y1, grid_x2, grid_y2):
+        #Vérifier que toutes les cases sont disponibles :
+        for xi in range(grid_x1, grid_x2+1):
+            for yi in range(grid_y1, grid_y2+1):
+                for xccl in range(xi, xi-3, -1) :
+                    for yccl in range(yi, yi-3, -1 ) :
+                        if self.map[xccl][yccl].road or self.map[xccl][yccl].structure or self.map[xccl][yccl].sprite in list_of_collision:
+                            return
+        Granary(self.map[xi][yi],self,(3,3),"Granary")
+            
+    def buildMarket(self, grid_x1, grid_y1, grid_x2, grid_y2):
+        for xi in range(grid_x1, grid_x2+1):
+            for yi in range(grid_y1, grid_y2+1):
+                for xccl in range(xi, xi+2, 1) :
+                    for yccl in range(yi, yi-2, -1 ) :
+                        if self.map[xccl][yccl].road or self.map[xccl][yccl].structure or self.map[xccl][yccl].sprite in list_of_collision:
+                            return
+        Market(self.map[xi][yi],self,(2,2),"Market")
+
+    def buildTemple(self, grid_x1, grid_y1, grid_x2, grid_y2):
+        #Vérifier que toutes les cases sont disponibles :
+        for xi in range(grid_x1, grid_x2+1):
+            for yi in range(grid_y1, grid_y2+1):
+                for xccl in range(xi, xi+2, 1) :
+                    for yccl in range(yi, yi-2, -1 ) :
+                        if self.map[xccl][yccl].road or self.map[xccl][yccl].structure or self.map[xccl][yccl].sprite in list_of_collision:
+                            return
+        Temple(self.map[xi][yi],self,(2,2),"Temple")
+
     def update(self):
         if self.restart:
 
