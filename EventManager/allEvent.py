@@ -30,6 +30,10 @@ class LoadEvent(Event):
     def __init__ (self):
         self.name = "Loadevent"
 
+class JoinIPEvent(Event):
+    def __init__ (self):
+        self.name = "JoinIPEvent"
+
 class TickEvent(Event):
     """
     Tick event.
