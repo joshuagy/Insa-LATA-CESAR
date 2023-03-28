@@ -1,4 +1,5 @@
 from Model.control_panel import *
+from ip import *
 
 class TopBar:
   def __init__(self, screen, treasury, population, date):
@@ -9,6 +10,12 @@ class TopBar:
     self.treasury = treasury
     self.population = population
     self.date = "Jan 340 BC"
+    
+    self.IP = get_ip()
+    
+   
+    
+    
 
     self.treasuryBloc = bloc_top_menu.img_scaled.copy()
     self.treasuryBlocPos = (480, 0)
