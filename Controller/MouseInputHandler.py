@@ -153,6 +153,7 @@ class MouseInputHandler:
             self.model.pause_menu.passed[3] = False
             self.model.pause_menu.Replay_rect.y = self.model.pause_menu.Replay_rectyinit
 
+
     def pause_menu(self,event):
         if self.model.pause_menu.Exit_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
             self.model.pause_menu.pause = False

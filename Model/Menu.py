@@ -69,9 +69,6 @@ class Menu:
           self.soundMixer.playEffect('clickEffect')
           self.isLoadState = False
           return loadSceneFeedBack
-      elif self.isJoinIPState:
-        self.isLoadState = False
-        self.soundMixer.playEffect('clickEffect')
 
     elif self.isJoinIPState:
       joinIPSceneFeedBack = self.joinIPScene.handleMouseInput(event)
@@ -98,6 +95,7 @@ class Menu:
             self.soundMixer.playEffect('clickEffect')
             self.joinIPScene = JoinIPScene(self.screen, self.surface.copy(), self.soundMixer)
             self.isJoinIPState = True
+            print("ok")
             return TickEvent()
           else:
             self.soundMixer.playEffect('clickEffect')
@@ -232,9 +230,9 @@ class JoinIPScene:
     self.posY = (self.screen.get_height()/2) - (self.surface.get_height()/2)
 
     self.font = pygame.font.SysFont(None, 24)
-    self.userInputIP = "Enter IP"
+    self.userInputIP = ""
     self.textErrorIP = ""
-    self.userInputPort = "Enter Port"
+    self.userInputPort = "87"
     self.textErrorPort = ""
 
     self.okButton = pygame.image.load("./image/UI/quit/okButton.png")
@@ -245,23 +243,21 @@ class JoinIPScene:
     self.cancelButtonPos = ((self.surface.get_width()/2) + 3*self.cancelButton.get_width(), (self.surface.get_height() - self.cancelButton.get_height())-20)
     self.cancelButtonRect = pygame.Rect(self.cancelButtonPos, self.cancelButton.get_size())
 
-    StateChangeEvent(STATE_JOIN_IP_SCENE)
-
   def handleKeyboardInput(self, event) -> Event:
     if event.key == pygame.K_BACKSPACE:
       self.userInputIP = self.userInputIP[:-1]
       if len(self.userInputIP) < 20:
-        self.textError = ""
-      elif event.key == pygame.K_ESCAPE:
-        return StateChangeEvent(STATE_MENU)
-      elif event.key == pygame.K_SPACE:
-          self.textErrorIP = "Invalid caracter !"
+        self.textErrorIP = ""
+    elif event.key == pygame.K_ESCAPE:
+      return StateChangeEvent(STATE_MENU)
+    elif event.key == pygame.K_SPACE:
+        self.textErrorIP = "Invalid caracter !"
+    else:
+      if len(self.userInputIP) < 15:
+        self.userInputIP += event.unicode
       else:
-        if len(self.userInputIP) < 15:
-          self.userInputIP += event.unicode
-        else:
-          self.textErrorIP = "Text too long !"
-      return TickEvent()
+        self.textErrorIP = "Text too long !"
+    return TickEvent()
     
   def getMousePosRelative(self, event):
     return (event.pos[0] - self.posX, event.pos[1] - self.posY)
@@ -270,7 +266,7 @@ class JoinIPScene:
     mousePosRelative = self.getMousePosRelative(event)
     if self.okButtonRect.collidepoint(mousePosRelative): 
       self.soundMixer.playEffect('clickEffect')
-      self.feedback = TickEvent() # RETOUR DE L'IP ET DU NUM DE PORT
+      self.feedback = TickEvent()
       return self.feedback
     elif  self.cancelButtonRect.collidepoint(mousePosRelative):
        self.soundMixer.playEffect('clickEffect')
@@ -285,10 +281,9 @@ class JoinIPScene:
     self.surface.blit(self.okButton, self.okButtonPos)
     self.surface.blit(self.cancelButton, self.cancelButtonPos)
     
-    #pygame.draw.rect(self.surface,(0,0,0),((30,30),(70,70)),1)
     self.surface.blit(self.font.render(self.userInputIP, True, (0, 0, 0)), (40, 110))
     self.surface.blit(self.font.render(self.userInputPort, True, (0, 0, 0)), (40, 260))
-    self.surface.blit(pygame.font.Font(None, 20).render(self.textErrorIP, True, (255, 0, 0)), (10, 85))
+    self.surface.blit(pygame.font.Font(None, 20).render(self.textErrorIP, True, (255, 0, 0)), (200, 160))
     self.surface.blit(pygame.font.Font(None, 20).render(self.textErrorPort, True, (255, 0, 0)), (10, 85))
     self.screen.blit(self.surface, (self.posX, self.posY))
 
