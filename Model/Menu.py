@@ -417,7 +417,7 @@ class MenuButton:
     filter.fill((180, 180, 180))
     self.hoveredSurface.blit(filter, (0,0), special_flags = pygame.BLEND_RGBA_MULT)
 
-    self.pos = (self.surface_to_blit.get_width()/2 - self.surface.get_width()/2, 400+idx_item*40)
+    self.pos = (self.surface_to_blit.get_width()/2 - self.surface.get_width()/2, 400+idx_item*MAP_SIZE)
     self.rect = pygame.Rect(self.pos, self.surface.get_size())
 
     self.feedback = feedback

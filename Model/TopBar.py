@@ -12,7 +12,14 @@ class TopBar:
     self.date = "Jan 340 BC"
     
     self.IP = get_ip()
-    
+    print("Ceci est un print to see when am i called")
+    print(self.IP)
+    #display_surface = pygame.display.set_mode((400, 400))
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    text = font.render('TextnjlnkjnkjnkjnTest', True, (0, 255, 0), (0, 0, 128))
+    textRect = text.get_rect()
+    self.screen.fill((255, 255, 255))
+    self.screen.blit(text, textRect)
    
     
     

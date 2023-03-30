@@ -32,7 +32,7 @@ from random import *
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, soundMixer, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
+    def __init__(self, screen, clock, name, heigth, width, soundMixer, nbr_cell_x=MAP_SIZE, nbr_cell_y=MAP_SIZE, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
         
         self.screen = screen
         self.clock = clock
@@ -53,7 +53,7 @@ class Plateau():
         self.surface_cells = pygame.Surface((nbr_cell_x * cell_size * 2, nbr_cell_y * cell_size  + 2 * cell_size )).convert_alpha()
         
 
-        #Load de tous les spirtes
+        #Load de tous les sprites
         self.image = self.load_cases_images()
         self.image_route = self.load_routes_images()
         self.image_walkers = self.load_walkers_images()
@@ -574,8 +574,8 @@ class Plateau():
         if self.overlayCounter == 30:
             if self.foreground.getOverlayName() == "fire":
                 self.foreground.initOverlayGrid()
-                for x in range(40):
-                    for y in range(40):
+                for x in range(MAP_SIZE):
+                    for y in range(MAP_SIZE):
                         temp = self.map[x][y].structure
                         if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
                             self.foreground.addOverlayInfo(x, y, temp.get_fireRisk())
@@ -583,8 +583,8 @@ class Plateau():
 
             elif self.foreground.getOverlayName() == "destruct":
                 self.foreground.initOverlayGrid()
-                for x in range(40):
-                    for y in range(40):
+                for x in range(MAP_SIZE):
+                    for y in range(MAP_SIZE):
                         temp = self.map[x][y].structure
                         if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
                             self.foreground.addOverlayInfo(x, y, temp.get_collapseRisk())
