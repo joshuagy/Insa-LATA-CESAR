@@ -98,7 +98,7 @@ class Building():
         BurningBuilding(self.case,self.plateau,"BurningBuilding")
 
 class DamagedBuilding(Building) :
-    def __init__(self, case, plateau, desc, size = (1,1), fireRisk = 0, collapseRisk = 0):
+    def __init__(self, case, plateau, desc, size = (1,1), property=1, fireRisk = 0, collapseRisk = 0):
         self.case=case
         self.size = size
         self.plateau = plateau
@@ -108,6 +108,7 @@ class DamagedBuilding(Building) :
         self.fireRisk = fireRisk 
         self.collapseRisk = collapseRisk
         self.riskTimer = 0
+        self.property = property
 
     def delete(self):
         self.plateau.structures.remove(self)
@@ -116,7 +117,7 @@ class DamagedBuilding(Building) :
 
 
 class BurningBuilding(Building) :
-    def __init__(self, case, plateau, desc, size = (1,1), fireRisk = 0, collapseRisk = 0, timeBurning = 0):
+    def __init__(self, case, plateau, desc, size = (1,1), property = 1, fireRisk = 0, collapseRisk = 0, timeBurning = 0):
         self.case=case
         self.timeBurning=timeBurning
         self.plateau = plateau
@@ -129,6 +130,7 @@ class BurningBuilding(Building) :
         self.collapseRisk = collapseRisk
         self.index_sprite = 0
         self.riskTimer = 0
+        self.property = property
     
     def delete(self):
         self.plateau.structures.remove(self)

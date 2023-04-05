@@ -174,31 +174,31 @@ class Plateau():
         for s in save.structures:
             match(s["type"]):
                 case "HousingSpot":
-                    HousingSpot(self.map[s["x"]][s["y"]], self, s["type"], s["nb_immigrant"])
+                    HousingSpot(self.map[s["x"]][s["y"]], self, s["type"], s["property"],s["nb_immigrant"])
                 case "SmallTent" | "LargeTent":
-                    House(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["entertainLvl"], s["wheat"], s["nbHab"], s["nbHabMax"], s["religiousAccess"], s["fireRisk"], s["collapseRisk"])
+                    House(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["entertainLvl"], s["wheat"], s["nbHab"], s["nbHabMax"], s["religiousAccess"], s["property"], s["fireRisk"], s["collapseRisk"])
                 case "SmallTent2" | "LargeTent2" | "SmallShack" | "LargeShack":
-                    MergedHouse(self.map[s["x"]][s["y"]], self, s["size"], s["type"],s["wheat"], s["nbHab"], [self.map[s["case1_x"]][s["case1_y"]], self.map[s["case2_x"]][s["case2_y"]], self.map[s["case3_x"]][s["case3_y"]]], s["fireRisk"], s["collapseRisk"])
+                    MergedHouse(self.map[s["x"]][s["y"]], self, s["size"], s["type"],s["wheat"], s["nbHab"], [self.map[s["case1_x"]][s["case1_y"]], self.map[s["case2_x"]][s["case2_y"]], self.map[s["case3_x"]][s["case3_y"]]], s["property"], s["fireRisk"], s["collapseRisk"])
                 case "Prefecture":
-                    Prefecture(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["active"], s["fireRisk"], s["collapseRisk"])
+                    Prefecture(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["active"], s["property"], s["fireRisk"], s["collapseRisk"])
                 case "EngineerPost":
-                    EnginnerPost(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["active"], s["fireRisk"], s["collapseRisk"])   
+                    EnginnerPost(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["active"], s["property"], s["fireRisk"], s["collapseRisk"])   
                 case "Well":
-                    Well(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
+                    Well(self.map[s["x"]][s["y"]], self, s["size"], s["type"],s["property"])
                 case "BurningBuilding":
-                    BurningBuilding(self.map[s["x"]][s["y"]], self, s["type"], s["fireRisk"], s["collapseRisk"], s["timeBurning"])
+                    BurningBuilding(self.map[s["x"]][s["y"]], self, s["type"], s["size"], s["property"], s["fireRisk"], s["collapseRisk"], s["timeBurning"])
                 case "Ruins" | "BurnedRuins":
-                    DamagedBuilding(self.map[s["x"]][s["y"]], self, s["type"], s["fireRisk"], s["collapseRisk"])
+                    DamagedBuilding(self.map[s["x"]][s["y"]], self, s["type"], s["size"], s["property"], s["fireRisk"], s["collapseRisk"])
                 case "Senate" :
-                    Senate(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
+                    Senate(self.map[s["x"]][s["y"]], self, s["size"], s["type"],s["property"])
                 case "WheatFarm" :
-                    WheatFarm(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["storedQuant"], s["growingQuant"])
+                    WheatFarm(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["property"], s["storedQuant"], s["growingQuant"])
                 case "Market" :
-                    Market(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["storedWheat"])
+                    Market(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["property"], s["storedWheat"])
                 case "Granary" :
-                    Granary(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["storedWheat"])
+                    Granary(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["property"], s["storedWheat"])
                 case "Temple" :
-                    Temple(self.map[s["x"]][s["y"]], self, s["size"], s["type"])
+                    Temple(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["property"])
 
         
         #Walker
