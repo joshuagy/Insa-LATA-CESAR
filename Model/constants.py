@@ -1,5 +1,7 @@
 # Constant file
-MAP_SIZE = 40
+
+#40 de base
+MAP_SIZE = 100
 
 cell_size = 30
 
