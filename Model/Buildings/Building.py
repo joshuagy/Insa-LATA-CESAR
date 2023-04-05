@@ -4,7 +4,7 @@ from random import *
 from Model.Buildings.House import *
 
 class Building():
-    def __init__(self, case, plateau, size, desc, fireRisk = 0, collapseRisk = 0):
+    def __init__(self, case, plateau, size, desc, property = 1, fireRisk = 0, collapseRisk = 0):
         self.size = size
         self.desc = desc
         self.connectedToRoad = 0
@@ -16,6 +16,7 @@ class Building():
         self.collapseRisk= collapseRisk
         self.riskTimer = 0
         self.cost = 0
+        self.property = property
     
     def delete(self):
         self.case.setStructure(None)
