@@ -321,8 +321,9 @@ class MouseInputHandler:
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         # #Engineer
         elif controlsCurrentState == 'buildEngineerPost' and not self.model.actualGame.controls.engineering_structures.rect.collidepoint(mousePosRelative):
-            x, y = event.pos
-            self.engineering_structure(x, y)
+            x2, y2 = event.pos
+            x1, y1 = self.initialMouseCoordinate
+            self.engineering_structure(x1, y1, x2, y2)
            
         #Well
         if self.model.actualGame.controls.water_related_structures.clicked and not self.model.actualGame.controls.water_related_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
@@ -434,54 +435,9 @@ class MouseInputHandler:
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Farm
         if self.model.actualGame.controls.industrial_structures.clicked and not self.model.actualGame.controls.industrial_structures.rect.collidepoint(event.pos):
-            x, y = self.initialMouseCoordinate
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x1 = int(cart_x // cell_size)
-            grid_y1 = int(cart_y // cell_size)
-
-            x, y = event.pos
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x2 = int(cart_x // cell_size)
-            grid_y2 = int(cart_y // cell_size)
-        
-            if grid_x1 <0:
-                grid_x1 = 0
-            if grid_x2 <0:
-                grid_x2 = 0
-            if grid_y1 <0:
-                grid_y1 = 0
-            if grid_y2 <0:
-                grid_y2 = 0
-
-            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
-                grid_x1 = self.model.actualGame.nbr_cell_x-1
-            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
-                grid_x2 = self.model.actualGame.nbr_cell_x-1
-            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
-                grid_y1 = self.model.actualGame.nbr_cell_y-1
-            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
-                grid_y2 = self.model.actualGame.nbr_cell_y-1
-
-            if grid_x1 > grid_x2:
-                temp = grid_x1
-                grid_x1 = grid_x2
-                grid_x2 = temp
-
-            if grid_y1 > grid_y2:
-                temp = grid_y1
-                grid_y1 = grid_y2
-                grid_y2 = temp
-            
-            self.model.actualGame.buildFarm(grid_x1, grid_y1, grid_x2, grid_y2)
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
+            x2, y2 = event.pos
+            x1, y1 = self.initialMouseCoordinate
+            self.farm(x1, y1, x2, y2)
         #Granary
         if self.model.actualGame.controls.message_view_button.clicked and not self.model.actualGame.controls.message_view_button.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
@@ -1006,7 +962,17 @@ class MouseInputHandler:
         self.model.actualGame.buildHousingSpot(grid_x1, grid_y1, grid_x2, grid_y2)
         self.model.actualGame.soundMixer.playEffect('buildEffect')
 
-    def engineering_structure(self, x, y):
+    def engineering_structure(self, x1, y1, x2, y2):
+        x, y = x1, y1
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
+
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+        grid_x1 = int(cart_x // cell_size)
+        grid_y1 = int(cart_y // cell_size)
+
+        x, y = x2, y2
         world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
         world_y = y - self.model.actualGame.camera.vect.y
 
@@ -1046,6 +1012,56 @@ class MouseInputHandler:
         #Building Construction :
         self.model.actualGame.buildEngineerPost(grid_x1, grid_y1, grid_x2, grid_y2)
         self.model.actualGame.soundMixer.playEffect('buildEffect')
+    
+    def farm(self, x1, y1, x2, y2):
+        x, y = x1, y1
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
+
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+        grid_x1 = int(cart_x // cell_size)
+        grid_y1 = int(cart_y // cell_size)
+
+        x, y = x1, y2
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
+
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+        grid_x2 = int(cart_x // cell_size)
+        grid_y2 = int(cart_y // cell_size)
+    
+        if grid_x1 <0:
+            grid_x1 = 0
+        if grid_x2 <0:
+            grid_x2 = 0
+        if grid_y1 <0:
+            grid_y1 = 0
+        if grid_y2 <0:
+            grid_y2 = 0
+
+        if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+            grid_x1 = self.model.actualGame.nbr_cell_x-1
+        if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+            grid_x2 = self.model.actualGame.nbr_cell_x-1
+        if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+            grid_y1 = self.model.actualGame.nbr_cell_y-1
+        if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+            grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+        if grid_x1 > grid_x2:
+            temp = grid_x1
+            grid_x1 = grid_x2
+            grid_x2 = temp
+
+        if grid_y1 > grid_y2:
+            temp = grid_y1
+            grid_y1 = grid_y2
+            grid_y2 = temp
+        
+        self.model.actualGame.buildFarm(grid_x1, grid_y1, grid_x2, grid_y2)
+        self.model.actualGame.soundMixer.playEffect('buildEffect')
 
     def wrapper(message):
         """ Wrapper that recieve message from the network manager and redirect it in the right method """
@@ -1056,6 +1072,6 @@ class MouseInputHandler:
         elif message_split[0] == "SBH":
             self.house(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
         elif message_split[0] == "SBI":
-            self.engineering_structure(int(message_split[1]), int(message_split[2]))
-        
-            
+            self.engineering_structure(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+        elif message_split[0] == "SBF":
+            self.farm(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
