@@ -1106,7 +1106,7 @@ class MouseInputHandler:
         """ Wrapper that recieve message from the network manager and redirect it in the right method """
         message_split = message.split(".")
         
-        #Building
+        #Building - Tested
         if message_split[0] == "SCL":
             self.model.actualGame.clearLand(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.model.actualGame.soundMixer.playEffect('buildEffect')
@@ -1137,4 +1137,23 @@ class MouseInputHandler:
         elif message_split[0] == "SBM":
             self.model.actualGame.buildMarket(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.model.actualGame.soundMixer.playEffect('buildEffect')
+
+        # Walker - Not tested
+        elif message_split[0] == "WA":
+            if message_split[1] == "1":
+                Citizen(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
+            if message_split[1] == "1":
+                Immigrant(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
+            elif message_split[1] == "2":
+                Chariot(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
+            elif message_split[1] == "3":
+                Engineer(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
+            elif message_split[1] == "4":
+                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
+            elif message_split[1] == "5":
+                cart = CartPusher(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
+                Cart(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], cart)
+            elif message_split[1] == "6":
+                MarketTrader(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
+
         
