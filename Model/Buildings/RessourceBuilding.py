@@ -8,8 +8,8 @@ from Model.Buildings.House import House
 import random
 
 class WheatFarm(Building) :
-    def __init__(self, case, plateau, size, desc, storedQuant = 0, growingQuant = 0):
-        super().__init__(case, plateau, size, desc)
+    def __init__(self, case, plateau, size, desc, property = 1, storedQuant = 0, growingQuant = 0):
+        super().__init__(case, plateau, size, desc, property=property)
         self.connectedToRoad = self.case.connectedToRoad
         self.storedQuant=storedQuant
         self.storedQuantMax = 100
@@ -118,8 +118,8 @@ class WheatPlot(Building) :
 
 
 class Market(Building) :
-    def __init__(self, case, plateau, size, desc, storedWheat = 0):
-        super().__init__(case, plateau, size, desc)
+    def __init__(self, case, plateau, size, desc, property = 1, storedWheat = 0):
+        super().__init__(case, plateau, size, desc, property=property)
         self.storedWheat = storedWheat
         self.storedWheatMax = 800
         self.plateau.treasury = self.plateau.treasury - MARKET_COST
@@ -167,8 +167,8 @@ class Market(Building) :
 
 
 class Granary(Building) :
-    def __init__(self, case, plateau, size, desc, storedWheat = 0):
-        super().__init__(case, plateau, size, desc)
+    def __init__(self, case, plateau, size, desc, property = 1, storedWheat = 0):
+        super().__init__(case, plateau, size, desc, property=property)
         self.storedWheat = storedWheat
         self.storedWheatMax = 2900
         self.levelB = 0

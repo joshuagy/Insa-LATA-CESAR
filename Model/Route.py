@@ -3,11 +3,12 @@ from Model.Buildings.House import *
 from Model.Buildings.WorkBuilding import *
 
 class Route():
-    def __init__(self, case, plateau):
+    def __init__(self, case, plateau, property = 1):
         self.case = case
         self.case.road = self
         self.plateau = plateau
         self.plateau.treasury = self.plateau.treasury - ROAD_COST
+        self.property = property
 
         #Informe les cases adjacentes qu'elles sont maintenant connectées à la route :
         self.case.changeConnectedToRoad(1)

@@ -6,7 +6,7 @@ class Well(Building):
 
     listWell = []
 
-    def __init__(self, case, plateau, size, desc) :
+    def __init__(self, case, plateau, size, desc, property = 1) :
         self.desc=desc
         self.case=case
         self.size = size
@@ -17,6 +17,7 @@ class Well(Building):
         self.riskTimer = 0
         self.fireRisk = 0
         self.collapseRisk = 0
+        self.property = property
         Well.listWell.append(self)
         for xi in range (self.case.x-2,self.case.x+3,1) :
             for yi in range (self.case.y-2,self.case.y+3,1) :
@@ -39,8 +40,8 @@ class Well(Building):
         del self
         
 class Senate(Building) :
-    def __init__(self, case, plateau, size, desc) :
-        super().__init__(case, plateau, size, desc)
+    def __init__(self, case, plateau, size, desc, property = 1,) :
+        super().__init__(case, plateau, size, desc, property=property)
         self.secCases = []
         self.plateau.treasury = self.plateau.treasury - SENATE_COST
         self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]+60]
@@ -63,8 +64,8 @@ class Temple(Building) :
 
     listTemple = []
 
-    def __init__(self, case, plateau, size, desc) :
-        super().__init__(case, plateau, size, desc)
+    def __init__(self, case, plateau, size, desc, property = 1) :
+        super().__init__(case, plateau, size, desc, property=property)
         self.plateau.treasury = self.plateau.treasury - TEMPLE_COST
         self.secCases = []
         self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]+20]

@@ -215,6 +215,7 @@ class MouseInputHandler:
         """
         Handles game mouse events
         """
+        property = self.model.actualGame.property
         self.model.actualGame.foreground.initOverlayGrid()
 
         mousePosRelative = (event.pos[0] - (self.model.actualGame.width - big_gap_menu.dim[0] - 1758.0) - 1758.0, event.pos[1] -24)
@@ -251,7 +252,7 @@ class MouseInputHandler:
                               
                 grid_y2 = temp
             
-            self.model.actualGame.clearLand(grid_x1, grid_x2, grid_y1, grid_y2)
+            self.model.actualGame.clearLand(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         # Routes
         elif controlsCurrentState == 'buildRoads' and not self.model.actualGame.controls.build_roads_button.rect.collidepoint(mousePosRelative):
@@ -266,7 +267,7 @@ class MouseInputHandler:
                 pattern += 2
 
             if self.model.actualGame.map[grid_x1][grid_y1].sprite not in list_of_undestructible and self.model.actualGame.map[grid_x2][grid_y2].sprite not in list_of_undestructible:
-                self.model.actualGame.buildRoads(pattern, grid_x1, grid_x2, grid_y1, grid_y2)
+                self.model.actualGame.buildRoads(pattern, grid_x1, grid_x2, grid_y1, grid_y2, property)
                 self.model.actualGame.soundMixer.playEffect('buildEffect')
 
         # #Buildings
@@ -285,7 +286,7 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
                 
-            self.model.actualGame.buildHousingSpot(grid_x1, grid_y1, grid_x2, grid_y2)
+            self.model.actualGame.buildHousingSpot(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         # #Prefecture     
         elif controlsCurrentState == 'securityStructures' and not self.model.actualGame.controls.security_structures.rect.collidepoint(mousePosRelative):
@@ -337,7 +338,7 @@ class MouseInputHandler:
                 grid_y2 = temp
 
             #Building Construction :
-            self.model.actualGame.buildPrefecture(grid_x1, grid_y1, grid_x2, grid_y2)
+            self.model.actualGame.buildPrefecture(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         # #Engineer
         elif controlsCurrentState == 'buildEngineerPost' and not self.model.actualGame.controls.engineering_structures.rect.collidepoint(mousePosRelative):
@@ -390,7 +391,7 @@ class MouseInputHandler:
                 grid_y2 = temp
 
             #Building Construction :
-            self.model.actualGame.buildEngineerPost(grid_x1, grid_y1, grid_x2, grid_y2)
+            self.model.actualGame.buildEngineerPost(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Well
         if self.model.actualGame.controls.water_related_structures.clicked and not self.model.actualGame.controls.water_related_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
@@ -443,7 +444,7 @@ class MouseInputHandler:
                 grid_y2 = temp
 
             #Building Construction :
-            self.model.actualGame.buildWell(grid_x1, grid_y1, grid_x2, grid_y2)
+            self.model.actualGame.buildWell(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Senate
         if self.model.actualGame.controls.administration_or_government_structures.clicked and not self.model.actualGame.controls.administration_or_government_structures.rect.collidepoint(event.pos):
@@ -498,7 +499,7 @@ class MouseInputHandler:
                 if ms.desc == "Senate" :
                     return
             #Vérifier que toutes les cases sont disponibles :
-            self.model.actualGame.buildSenate(grid_x1, grid_y1, grid_x2, grid_y2)
+            self.model.actualGame.buildSenate(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Farm
         if self.model.actualGame.controls.industrial_structures.clicked and not self.model.actualGame.controls.industrial_structures.rect.collidepoint(event.pos):
@@ -548,7 +549,7 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
             
-            self.model.actualGame.buildFarm(grid_x1, grid_y1, grid_x2, grid_y2)
+            self.model.actualGame.buildFarm(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Granary
         if self.model.actualGame.controls.message_view_button.clicked and not self.model.actualGame.controls.message_view_button.rect.collidepoint(event.pos):
@@ -598,7 +599,7 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
             
-            self.model.actualGame.buildGranary(grid_x1, grid_y1, grid_x2, grid_y2)
+            self.model.actualGame.buildGranary(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Market
         if self.model.actualGame.controls.see_recent_troubles_button.clicked and not self.model.actualGame.controls.see_recent_troubles_button.rect.collidepoint(event.pos):
@@ -649,7 +650,7 @@ class MouseInputHandler:
                 grid_y2 = temp
             
             #Vérifier que toutes les cases sont disponibles :
-            self.model.actualGame.buildMarket(grid_x1, grid_y1, grid_x2, grid_y2)
+            self.model.actualGame.buildMarket(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
                                     
         if self.model.actualGame.controls.religious_structures.clicked and not self.model.actualGame.controls.religious_structures.rect.collidepoint(event.pos):
@@ -699,7 +700,7 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
             
-            self.model.actualGame.buildTemple(grid_x1, grid_y1, grid_x2, grid_y2)
+            self.model.actualGame.buildTemple(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
             
 

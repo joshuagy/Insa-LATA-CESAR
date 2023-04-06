@@ -26,7 +26,7 @@ class Sauvegarde() :
         self.structures = []
         for s in actualGame.structures :
             if s.desc != "WheatPlot":
-                newdict = {"type" : s.desc, "x" : s.case.x, "y" : s.case.y}
+                newdict = {"type" : s.desc, "x" : s.case.x, "y" : s.case.y, "property" : s.property}
                 if newdict["type"] != "HousingSpot":
                     newdict |= {"size" : s.size, "fireRisk" : s.fireRisk, "collapseRisk" : s.collapseRisk}
                     if newdict["type"] == "BurningBuilding":
