@@ -215,6 +215,7 @@ class MouseInputHandler:
         """
         Handles game mouse events
         """
+        property = self.model.actualGame.property
         self.model.actualGame.foreground.initOverlayGrid()
 
         mousePosRelative = (event.pos[0] - (self.model.actualGame.width - big_gap_menu.dim[0] - 1758.0) - 1758.0, event.pos[1] -24)
@@ -250,7 +251,7 @@ class MouseInputHandler:
             x1, y1 = self.initialMouseCoordinate
             x2, y2 = event.pos
 
-            self.roads(x1, y1, x2, y2)
+            self.roads(x1, y1, x2, y2, property)
 
         # #Buildings
         # #HousingSpot
@@ -258,36 +259,36 @@ class MouseInputHandler:
             x2, y2 = event.pos
             x1, y1 = self.initialMouseCoordinate
             
-            self.house(x1, y1, x2, y2)
+            self.house(x1, y1, x2, y2, property)
     
         # #Prefecture     
         elif controlsCurrentState == 'securityStructures' and not self.model.actualGame.controls.security_structures.rect.collidepoint(mousePosRelative):
             x2, y2 = event.pos
             x1, y1 = self.initialMouseCoordinate
-            self.prefet(x1, y1, x2, y2)
+            self.prefet(x1, y1, x2, y2, property)
            
         # #Engineer
         elif controlsCurrentState == 'buildEngineerPost' and not self.model.actualGame.controls.engineering_structures.rect.collidepoint(mousePosRelative):
             x2, y2 = event.pos
             x1, y1 = self.initialMouseCoordinate
-            self.engineering_structure(x1, y1, x2, y2)
+            self.engineering_structure(x1, y1, x2, y2, property)
            
         #Well
         if self.model.actualGame.controls.water_related_structures.clicked and not self.model.actualGame.controls.water_related_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
             x2, y2 = event.pos
             x1, y1 = self.initialMouseCoordinate
-            self.well(x1, y1, x2, y2)
+            self.well(x1, y1, x2, y2, property)
           
         #Senate
         if self.model.actualGame.controls.administration_or_government_structures.clicked and not self.model.actualGame.controls.administration_or_government_structures.rect.collidepoint(event.pos):
             x2, y2 = event.pos
             x1, y1 = self.initialMouseCoordinate
-            self.senate(x1, y1, x2, y2)
+            self.senate(x1, y1, x2, y2, property)
         #Farm
         if self.model.actualGame.controls.industrial_structures.clicked and not self.model.actualGame.controls.industrial_structures.rect.collidepoint(event.pos):
             x2, y2 = event.pos
             x1, y1 = self.initialMouseCoordinate
-            self.farm(x1, y1, x2, y2)
+            self.farm(x1, y1, x2, y2, property)
         #Granary
         if self.model.actualGame.controls.message_view_button.clicked and not self.model.actualGame.controls.message_view_button.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
@@ -336,7 +337,7 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
             
-            self.model.actualGame.buildGranary(grid_x1, grid_y1, grid_x2, grid_y2)
+            self.model.actualGame.buildGranary(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Market
         if self.model.actualGame.controls.see_recent_troubles_button.clicked and not self.model.actualGame.controls.see_recent_troubles_button.rect.collidepoint(event.pos):
@@ -387,12 +388,14 @@ class MouseInputHandler:
                 grid_y2 = temp
             
             #Vérifier que toutes les cases sont disponibles :
-            self.model.actualGame.buildMarket(grid_x1, grid_y1, grid_x2, grid_y2)
+            self.model.actualGame.buildMarket(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
                                     
         if self.model.actualGame.controls.religious_structures.clicked and not self.model.actualGame.controls.religious_structures.rect.collidepoint(event.pos):
-           
             
+            x2, y2 = event.pos
+            x1, y1 = self.initialMouseCoordinate
+            god_structure(self, x1, y1, x2, y2, property)
 
         #Overlay part
         # if fire_overlay.clicked:
@@ -1046,7 +1049,7 @@ class MouseInputHandler:
         self.model.actualGame.buildWell(grid_x1, grid_y1, grid_x2, grid_y2)
         self.model.actualGame.soundMixer.playEffect('buildEffect')
 
-    def god_structure(self, x1, x2, y1, y2):
+    def god_structure(self, x1, x2, y1, y2, property):
         x, y = x1, y1
         world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
         world_y = y - self.model.actualGame.camera.vect.y

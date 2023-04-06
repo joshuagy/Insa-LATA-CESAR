@@ -9,8 +9,8 @@ from Model.Buildings.Building import DamagedBuilding
 
 class House(Building):
 
-    def __init__(self, case, plateau, size, desc, wheat = 0, entertainLvl = 0, nbHab = 1, nbHabMax = 5, religiousAccess = 0, fireRisk = 0, collapseRisk = 0):
-        super().__init__(case, plateau, size, desc, fireRisk, collapseRisk)
+    def __init__(self, case, plateau, size, desc, wheat = 0, entertainLvl = 0, nbHab = 1, nbHabMax = 5, religiousAccess = 0, property = 1, fireRisk = 0, collapseRisk = 0):
+        super().__init__(case, plateau, size, desc, property, fireRisk, collapseRisk)
         self.entertainLvl = entertainLvl
         self.wheat = wheat
         self.wheatMax = 10
@@ -140,8 +140,8 @@ class House(Building):
         
 
 class MergedHouse(House) :
-    def __init__(self, case, plateau, size, desc, wheat, nbHab, secCases, fireRisk = 0, collapseRisk = 0) :
-        super().__init__(case, plateau, size, desc, fireRisk, collapseRisk)
+    def __init__(self, case, plateau, size, desc, wheat, nbHab, secCases, property = 1, fireRisk = 0, collapseRisk = 0) :
+        super().__init__(case, plateau, size, desc, fireRisk=fireRisk, collapseRisk=collapseRisk, property=property)
         self.nbHab = nbHab
         self.wheat = wheat
         self.nbHabMax=self.nbHabMax * 4
@@ -167,7 +167,7 @@ class MergedHouse(House) :
 
 class HousingSpot() :
 
-    def __init__(self, case, plateau, desc="HousingSpot", nb_immigrant = 0) :
+    def __init__(self, case, plateau, desc="HousingSpot", property = 1, nb_immigrant = 0) :
         self.case = case
         self.case.setStructure(self)
         self.desc = desc
@@ -179,6 +179,7 @@ class HousingSpot() :
         self.spawn_timer = pygame.time.get_ticks()
         self.nb_immigrant = nb_immigrant
         self.immigrant = None
+        self.property = property
 
     def isConnectedToRoad(self):
         return self.connectedToRoad
@@ -204,18 +205,19 @@ class HousingSpot() :
     def becomeAHouse(self):
         self.plateau.cityHousingSpotsList.remove(self)
         self.plateau.structures.remove(self)
-        House(self.case,self.plateau,(1,1), "SmallTent")
+        House(self.case,self.plateau,(1,1), "SmallTent", property = self.property)
         self.case.setFeature("Small Tent")
         del self
     
     def generateImmigrant(self, currentSpeedFactor):
-        now = pygame.time.get_ticks()
+        if self.property == self.plateau.property :
+            now = pygame.time.get_ticks()
 
-        if now - self.spawn_timer > (500 / currentSpeedFactor):
-            if randint(0, 10) == 0 and self.nb_immigrant < 1:
-                Immigrant(self.plateau.map[19][38], self.plateau, self.case)
-                self.nb_immigrant += 1
-            self.spawn_timer = now
+            if now - self.spawn_timer > (500 / currentSpeedFactor):
+                if randint(0, 10) == 0 and self.nb_immigrant < 1:
+                    Immigrant(self.plateau.map[19][38], self.plateau, self.case)
+                    self.nb_immigrant += 1
+                self.spawn_timer = now
 
 """
         if house.desc=="Small Tent" and house.size is (2,2):

@@ -93,3 +93,19 @@ class KeyboardInputHandler:
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_KP3:
 				self.model.actualGame.controls.setCurrentState("water")
+		
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_1:
+				self.model.actualGame.property = 1
+		
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_2:
+				self.model.actualGame.property = 2
+		
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_3:
+				self.model.actualGame.property = 3
+		
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_4:
+				self.model.actualGame.property = 4

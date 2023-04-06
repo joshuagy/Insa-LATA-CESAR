@@ -4,7 +4,7 @@ from random import *
 from Model.Buildings.House import *
 
 class Building():
-    def __init__(self, case, plateau, size, desc, fireRisk = 0, collapseRisk = 0):
+    def __init__(self, case, plateau, size, desc, property = 1, fireRisk = 0, collapseRisk = 0):
         self.size = size
         self.desc = desc
         self.connectedToRoad = 0
@@ -16,6 +16,7 @@ class Building():
         self.collapseRisk= collapseRisk
         self.riskTimer = 0
         self.cost = 0
+        self.property = property
     
     def delete(self):
         self.case.setStructure(None)
@@ -71,22 +72,23 @@ class Building():
         return self.case
 
     def riskCheck(self, currentSpeedFactor) :
-        self.riskTimer += 1
-        if self.riskTimer > (500 / currentSpeedFactor):
-            #CollapseRisk :
-            if self.desc in list_of_brittle_structures :
-                if randint(0, 200) == 0:
-                    self.set_collapseRisk(self.get_collapseRisk()+1)
-                    if(self.get_collapseRisk() > 6):
-                        self.collapse()
-            #FireRisk :
-            if self.desc in list_of_flammable_structures :
-                if randint(0, 150) == 0:
-                    self.set_fireRisk(self.get_fireRisk()+1)
-                    if(self.get_fireRisk() > 6):
-                        self.ignite()
-            
-            self.riskTimer = 0
+        if self.property == self.plateau.property :
+            self.riskTimer += 1
+            if self.riskTimer > (500 / currentSpeedFactor):
+                #CollapseRisk :
+                if self.desc in list_of_brittle_structures :
+                    if randint(0, 200) == 0:
+                        self.set_collapseRisk(self.get_collapseRisk()+1)
+                        if(self.get_collapseRisk() > 6):
+                            self.collapse()
+                #FireRisk :
+                if self.desc in list_of_flammable_structures :
+                    if randint(0, 150) == 0:
+                        self.set_fireRisk(self.get_fireRisk()+1)
+                        if(self.get_fireRisk() > 6):
+                            self.ignite()
+                
+                self.riskTimer = 0
 
     def collapse(self):
         self.delete()
@@ -97,7 +99,7 @@ class Building():
         BurningBuilding(self.case,self.plateau,"BurningBuilding")
 
 class DamagedBuilding(Building) :
-    def __init__(self, case, plateau, desc, size = (1,1), fireRisk = 0, collapseRisk = 0):
+    def __init__(self, case, plateau, desc, size = (1,1), property=1, fireRisk = 0, collapseRisk = 0):
         self.case=case
         self.size = size
         self.plateau = plateau
@@ -107,6 +109,7 @@ class DamagedBuilding(Building) :
         self.fireRisk = fireRisk 
         self.collapseRisk = collapseRisk
         self.riskTimer = 0
+        self.property = property
 
     def delete(self):
         self.plateau.structures.remove(self)
@@ -115,7 +118,7 @@ class DamagedBuilding(Building) :
 
 
 class BurningBuilding(Building) :
-    def __init__(self, case, plateau, desc, size = (1,1), fireRisk = 0, collapseRisk = 0, timeBurning = 0):
+    def __init__(self, case, plateau, desc, size = (1,1), property = 1, fireRisk = 0, collapseRisk = 0, timeBurning = 0):
         self.case=case
         self.timeBurning=timeBurning
         self.plateau = plateau
@@ -128,6 +131,7 @@ class BurningBuilding(Building) :
         self.collapseRisk = collapseRisk
         self.index_sprite = 0
         self.riskTimer = 0
+        self.property = property
     
     def delete(self):
         self.plateau.structures.remove(self)
