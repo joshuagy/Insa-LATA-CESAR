@@ -220,7 +220,10 @@ class MouseInputHandler:
         mousePosRelative = (event.pos[0] - (self.model.actualGame.width - big_gap_menu.dim[0] - 1758.0) - 1758.0, event.pos[1] -24)
         controlsCurrentState = self.model.actualGame.controls.getCurrentState()
         
-       
+        message = input("Enter your protocol message: ")
+        self.wrapper(message)
+        print(event.pos)
+
         if self.model.actualGame.controls.overlays_button.rect.collidepoint(mousePosRelative):
             if self.model.actualGame.foreground.getOverlayName() == "fire":
                 self.model.actualGame.foreground.setOverlayName("destruct")
@@ -237,88 +240,32 @@ class MouseInputHandler:
             
         # Pelle 
         if controlsCurrentState == 'clearLand' and not self.model.actualGame.controls.clear_land_button.rect.collidepoint(mousePosRelative):
-            grid_x1, grid_y1 = self.mousePosToGridPos(self.initialMouseCoordinate)
-            grid_x2, grid_y2 = self.mousePosToGridPos(event.pos)
+            x1, y1 = self.initialMouseCoordinate
+            x2, y2 = event.pos
 
-            self.pelle(grid_x1, grid_x2, grid_y1, grid_y2)
+            self.pelle(x1, y1, x2, y2)
 
         # Routes
         elif controlsCurrentState == 'buildRoads' and not self.model.actualGame.controls.build_roads_button.rect.collidepoint(mousePosRelative):
-            grid_x1, grid_y1 = self.mousePosToGridPos(self.initialMouseCoordinate)
-            grid_x2, grid_y2 = self.mousePosToGridPos(event.pos)
-        
-            pattern = 0
-            if grid_x1 > grid_x2:
-                pattern += 1
+            x1, y1 = self.initialMouseCoordinate
+            x2, y2 = event.pos
 
-            if grid_y1 > grid_y2:
-                pattern += 2
-
-            if self.model.actualGame.map[grid_x1][grid_y1].sprite not in list_of_undestructible and self.model.actualGame.map[grid_x2][grid_y2].sprite not in list_of_undestructible:
-                self.model.actualGame.buildRoads(pattern, grid_x1, grid_x2, grid_y1, grid_y2)
-                self.model.actualGame.soundMixer.playEffect('buildEffect')
+            self.roads(x1, y1, x2, y2)
 
         # #Buildings
         # #HousingSpot
         elif controlsCurrentState == 'buildHousing' and not self.model.actualGame.controls.build_housing_button.rect.collidepoint(mousePosRelative):
-            grid_x1, grid_y1 = self.mousePosToGridPos(self.initialMouseCoordinate)
-            grid_x2, grid_y2 = self.mousePosToGridPos(event.pos)
-
-            self.house(grid_x1, grid_x2, grid_y1, grid_y2)
+            x2, y2 = event.pos
+            x1, y1 = self.initialMouseCoordinate
             
-            
+            self.house(x1, y1, x2, y2)
+    
         # #Prefecture     
         elif controlsCurrentState == 'securityStructures' and not self.model.actualGame.controls.security_structures.rect.collidepoint(mousePosRelative):
-        #Mouse Selection :
-            x, y = self.initialMouseCoordinate
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x1 = int(cart_x // cell_size)
-            grid_y1 = int(cart_y // cell_size)
-
-            x, y = event.pos
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x2 = int(cart_x // cell_size)
-            grid_y2 = int(cart_y // cell_size)
-        
-            if grid_x1 <0:
-                grid_x1 = 0
-            if grid_x2 <0:
-                grid_x2 = 0
-            if grid_y1 <0:
-                grid_y1 = 0
-            if grid_y2 <0:
-                grid_y2 = 0
-
-            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
-                grid_x1 = self.model.actualGame.nbr_cell_x-1
-            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
-                grid_x2 = self.model.actualGame.nbr_cell_x-1
-            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
-                grid_y1 = self.model.actualGame.nbr_cell_y-1
-            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
-                grid_y2 = self.model.actualGame.nbr_cell_y-1
-
-            if grid_x1 > grid_x2:
-                temp = grid_x1
-                grid_x1 = grid_x2
-                grid_x2 = temp
-
-            if grid_y1 > grid_y2:
-                temp = grid_y1
-                grid_y1 = grid_y2
-                grid_y2 = temp
-
-            #Building Construction :
-            self.model.actualGame.buildPrefecture(grid_x1, grid_y1, grid_x2, grid_y2)
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
+            x2, y2 = event.pos
+            x1, y1 = self.initialMouseCoordinate
+            self.prefet(x1, y1, x2, y2)
+           
         # #Engineer
         elif controlsCurrentState == 'buildEngineerPost' and not self.model.actualGame.controls.engineering_structures.rect.collidepoint(mousePosRelative):
             x2, y2 = event.pos
@@ -327,112 +274,15 @@ class MouseInputHandler:
            
         #Well
         if self.model.actualGame.controls.water_related_structures.clicked and not self.model.actualGame.controls.water_related_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
-        
-        #Mouse Selection :
-            x, y = self.initialMouseCoordinate
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x1 = int(cart_x // cell_size)
-            grid_y1 = int(cart_y // cell_size)
-
-            x, y = event.pos
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x2 = int(cart_x // cell_size)
-            grid_y2 = int(cart_y // cell_size)
-        
-            if grid_x1 <0:
-                grid_x1 = 0
-            if grid_x2 <0:
-                grid_x2 = 0
-            if grid_y1 <0:
-                grid_y1 = 0
-            if grid_y2 <0:
-                grid_y2 = 0
-
-            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
-                grid_x1 = self.model.actualGame.nbr_cell_x-1
-            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
-                grid_x2 = self.model.actualGame.nbr_cell_x-1
-            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
-                grid_y1 = self.model.actualGame.nbr_cell_y-1
-            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
-                grid_y2 = self.model.actualGame.nbr_cell_y-1
-
-            if grid_x1 > grid_x2:
-                temp = grid_x1
-                grid_x1 = grid_x2
-                grid_x2 = temp
-
-            if grid_y1 > grid_y2:
-                temp = grid_y1
-                grid_y1 = grid_y2
-                grid_y2 = temp
-
-            #Building Construction :
-            self.model.actualGame.buildWell(grid_x1, grid_y1, grid_x2, grid_y2)
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
+            x2, y2 = event.pos
+            x1, y1 = self.initialMouseCoordinate
+            self.well(x1, y1, x2, y2)
+          
         #Senate
         if self.model.actualGame.controls.administration_or_government_structures.clicked and not self.model.actualGame.controls.administration_or_government_structures.rect.collidepoint(event.pos):
-            x, y = self.initialMouseCoordinate
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x1 = int(cart_x // cell_size)
-            grid_y1 = int(cart_y // cell_size)
-
-            x, y = event.pos
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x2 = int(cart_x // cell_size)
-            grid_y2 = int(cart_y // cell_size)
-        
-            if grid_x1 <0:
-                grid_x1 = 0
-            if grid_x2 <0:
-                grid_x2 = 0
-            if grid_y1 <0:
-                grid_y1 = 0
-            if grid_y2 <0:
-                grid_y2 = 0
-
-            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
-                grid_x1 = self.model.actualGame.nbr_cell_x-1
-            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
-                grid_x2 = self.model.actualGame.nbr_cell_x-1
-            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
-                grid_y1 = self.model.actualGame.nbr_cell_y-1
-            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
-                grid_y2 = self.model.actualGame.nbr_cell_y-1
-
-            if grid_x1 > grid_x2:
-                temp = grid_x1
-                grid_x1 = grid_x2
-                grid_x2 = temp
-
-            if grid_y1 > grid_y2:
-                temp = grid_y1
-                grid_y1 = grid_y2
-                grid_y2 = temp
-            
-            #Vérifier qu'on a pas déjà un Sénat
-            for ms in self.model.actualGame.structures :
-                if ms.desc == "Senate" :
-                    return
-            #Vérifier que toutes les cases sont disponibles :
-            self.model.actualGame.buildSenate(grid_x1, grid_y1, grid_x2, grid_y2)
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
+            x2, y2 = event.pos
+            x1, y1 = self.initialMouseCoordinate
+            self.senate(x1, y1, x2, y2)
         #Farm
         if self.model.actualGame.controls.industrial_structures.clicked and not self.model.actualGame.controls.industrial_structures.rect.collidepoint(event.pos):
             x2, y2 = event.pos
@@ -541,54 +391,7 @@ class MouseInputHandler:
             self.model.actualGame.soundMixer.playEffect('buildEffect')
                                     
         if self.model.actualGame.controls.religious_structures.clicked and not self.model.actualGame.controls.religious_structures.rect.collidepoint(event.pos):
-            x, y = self.initialMouseCoordinate
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x1 = int(cart_x // cell_size)
-            grid_y1 = int(cart_y // cell_size)
-
-            x, y = event.pos
-            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
-            world_y = y - self.model.actualGame.camera.vect.y
-
-            cart_y = (2 * world_y - world_x) / 2
-            cart_x = cart_y + world_x
-            grid_x2 = int(cart_x // cell_size)
-            grid_y2 = int(cart_y // cell_size)
-        
-            if grid_x1 <0:
-                grid_x1 = 0
-            if grid_x2 <0:
-                grid_x2 = 0
-            if grid_y1 <0:
-                grid_y1 = 0
-            if grid_y2 <0:
-                grid_y2 = 0
-
-            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
-                grid_x1 = self.model.actualGame.nbr_cell_x-1
-            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
-                grid_x2 = self.model.actualGame.nbr_cell_x-1
-            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
-                grid_y1 = self.model.actualGame.nbr_cell_y-1
-            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
-                grid_y2 = self.model.actualGame.nbr_cell_y-1
-
-            if grid_x1 > grid_x2:
-                temp = grid_x1
-                grid_x1 = grid_x2
-                grid_x2 = temp
-
-            if grid_y1 > grid_y2:
-                temp = grid_y1
-                grid_y1 = grid_y2
-                grid_y2 = temp
-            
-            self.model.actualGame.buildTemple(grid_x1, grid_y1, grid_x2, grid_y2)
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
+           
             
 
         #Overlay part
@@ -933,7 +736,11 @@ class MouseInputHandler:
                 else:
                     self.model.actualGame.foreground.addEffect(x, y, 'wrong')
 
-    def pelle(self, grid_x1, grid_x2, grid_y1, grid_y2):
+    def pelle(self, x1, y1, x2, y2):
+
+        grid_x1, grid_y1 = self.mousePosToGridPos((x1, y1))
+        grid_x2, grid_y2 = self.mousePosToGridPos((x2, y2))
+
         if grid_x1 > grid_x2:
             temp = grid_x1
             grid_x1 = grid_x2
@@ -948,7 +755,11 @@ class MouseInputHandler:
         self.model.actualGame.clearLand(grid_x1, grid_x2, grid_y1, grid_y2)
         self.model.actualGame.soundMixer.playEffect('buildEffect')
     
-    def house(self, grid_x1, grid_x2, grid_y1, grid_y2):
+    def house(self, x1, y1, x2, y2):
+
+        grid_x1, grid_y1 = self.mousePosToGridPos((x1, y1))
+        grid_x2, grid_y2 = self.mousePosToGridPos((x2, y2))
+
         if grid_x1 > grid_x2:
             temp = grid_x1
             grid_x1 = grid_x2
@@ -1062,16 +873,257 @@ class MouseInputHandler:
         
         self.model.actualGame.buildFarm(grid_x1, grid_y1, grid_x2, grid_y2)
         self.model.actualGame.soundMixer.playEffect('buildEffect')
+    
+    def prefet(self, x1, y1, x2, y2):
+        x, y = x1, y1
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
 
-    def wrapper(message):
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+        grid_x1 = int(cart_x // cell_size)
+        grid_y1 = int(cart_y // cell_size)
+
+        x, y = x2, y2
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
+
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+        grid_x2 = int(cart_x // cell_size)
+        grid_y2 = int(cart_y // cell_size)
+    
+        if grid_x1 <0:
+            grid_x1 = 0
+        if grid_x2 <0:
+            grid_x2 = 0
+        if grid_y1 <0:
+            grid_y1 = 0
+        if grid_y2 <0:
+            grid_y2 = 0
+
+        if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+            grid_x1 = self.model.actualGame.nbr_cell_x-1
+        if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+            grid_x2 = self.model.actualGame.nbr_cell_x-1
+        if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+            grid_y1 = self.model.actualGame.nbr_cell_y-1
+        if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+            grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+        if grid_x1 > grid_x2:
+            temp = grid_x1
+            grid_x1 = grid_x2
+            grid_x2 = temp
+
+        if grid_y1 > grid_y2:
+            temp = grid_y1
+            grid_y1 = grid_y2
+            grid_y2 = temp
+
+        #Building Construction :
+        self.model.actualGame.buildPrefecture(grid_x1, grid_y1, grid_x2, grid_y2)
+        self.model.actualGame.soundMixer.playEffect('buildEffect')
+
+    def senate(self, x1, y1, x2, y2):
+        x, y = x1, y1
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
+
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+        grid_x1 = int(cart_x // cell_size)
+        grid_y1 = int(cart_y // cell_size)
+
+        x, y = x2, y2
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
+
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+        grid_x2 = int(cart_x // cell_size)
+        grid_y2 = int(cart_y // cell_size)
+    
+        if grid_x1 <0:
+            grid_x1 = 0
+        if grid_x2 <0:
+            grid_x2 = 0
+        if grid_y1 <0:
+            grid_y1 = 0
+        if grid_y2 <0:
+            grid_y2 = 0
+
+        if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+            grid_x1 = self.model.actualGame.nbr_cell_x-1
+        if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+            grid_x2 = self.model.actualGame.nbr_cell_x-1
+        if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+            grid_y1 = self.model.actualGame.nbr_cell_y-1
+        if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+            grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+        if grid_x1 > grid_x2:
+            temp = grid_x1
+            grid_x1 = grid_x2
+            grid_x2 = temp
+
+        if grid_y1 > grid_y2:
+            temp = grid_y1
+            grid_y1 = grid_y2
+            grid_y2 = temp
+        
+        #Vérifier qu'on a pas déjà un Sénat
+        for ms in self.model.actualGame.structures :
+            if ms.desc == "Senate" :
+                return
+        #Vérifier que toutes les cases sont disponibles :
+        self.model.actualGame.buildSenate(grid_x1, grid_y1, grid_x2, grid_y2)
+        self.model.actualGame.soundMixer.playEffect('buildEffect')
+    
+    def roads(self, x1, y1, x2, y2):
+        grid_x1, grid_y1 = self.mousePosToGridPos((x1, y1))
+        grid_x2, grid_y2 = self.mousePosToGridPos((x2, y2))
+    
+        pattern = 0
+        if grid_x1 > grid_x2:
+            pattern += 1
+
+        if grid_y1 > grid_y2:
+            pattern += 2
+
+        if self.model.actualGame.map[grid_x1][grid_y1].sprite not in list_of_undestructible and self.model.actualGame.map[grid_x2][grid_y2].sprite not in list_of_undestructible:
+            self.model.actualGame.buildRoads(pattern, grid_x1, grid_x2, grid_y1, grid_y2)
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
+
+    def well(self, x1, x2, y1, y2):
+        x, y =  x1, y1
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
+
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+        grid_x1 = int(cart_x // cell_size)
+        grid_y1 = int(cart_y // cell_size)
+
+        x, y = x2, y2
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
+
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+        grid_x2 = int(cart_x // cell_size)
+        grid_y2 = int(cart_y // cell_size)
+    
+        if grid_x1 <0:
+            grid_x1 = 0
+        if grid_x2 <0:
+            grid_x2 = 0
+        if grid_y1 <0:
+            grid_y1 = 0
+        if grid_y2 <0:
+            grid_y2 = 0
+
+        if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+            grid_x1 = self.model.actualGame.nbr_cell_x-1
+        if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+            grid_x2 = self.model.actualGame.nbr_cell_x-1
+        if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+            grid_y1 = self.model.actualGame.nbr_cell_y-1
+        if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+            grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+        if grid_x1 > grid_x2:
+            temp = grid_x1
+            grid_x1 = grid_x2
+            grid_x2 = temp
+
+        if grid_y1 > grid_y2:
+            temp = grid_y1
+            grid_y1 = grid_y2
+            grid_y2 = temp
+
+        #Building Construction :
+        self.model.actualGame.buildWell(grid_x1, grid_y1, grid_x2, grid_y2)
+        self.model.actualGame.soundMixer.playEffect('buildEffect')
+
+    def god_structure(self, x1, x2, y1, y2):
+        x, y = x1, y1
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
+
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+        grid_x1 = int(cart_x // cell_size)
+        grid_y1 = int(cart_y // cell_size)
+
+        x, y = x2, y2
+        world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+        world_y = y - self.model.actualGame.camera.vect.y
+
+        cart_y = (2 * world_y - world_x) / 2
+        cart_x = cart_y + world_x
+        grid_x2 = int(cart_x // cell_size)
+        grid_y2 = int(cart_y // cell_size)
+    
+        if grid_x1 <0:
+            grid_x1 = 0
+        if grid_x2 <0:
+            grid_x2 = 0
+        if grid_y1 <0:
+            grid_y1 = 0
+        if grid_y2 <0:
+            grid_y2 = 0
+
+        if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+            grid_x1 = self.model.actualGame.nbr_cell_x-1
+        if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+            grid_x2 = self.model.actualGame.nbr_cell_x-1
+        if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+            grid_y1 = self.model.actualGame.nbr_cell_y-1
+        if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+            grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+        if grid_x1 > grid_x2:
+            temp = grid_x1
+            grid_x1 = grid_x2
+            grid_x2 = temp
+
+        if grid_y1 > grid_y2:
+            temp = grid_y1
+            grid_y1 = grid_y2
+            grid_y2 = temp
+        
+        self.model.actualGame.buildTemple(grid_x1, grid_y1, grid_x2, grid_y2)
+        self.model.actualGame.soundMixer.playEffect('buildEffect')
+
+    def wrapper(self, message):
         """ Wrapper that recieve message from the network manager and redirect it in the right method """
         message_split = message.split(".")
         
         if message_split[0] == "SCL":
-            self.pelle(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+            self.model.actualGame.clearLand(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
         elif message_split[0] == "SBH":
-            self.house(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+            self.model.actualGame.buildHousingSpot(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+        self.model.actualGame.soundMixer.playEffect('buildEffect')
         elif message_split[0] == "SBI":
-            self.engineering_structure(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+           self.model.actualGame.buildEngineerPost(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
         elif message_split[0] == "SBF":
-            self.farm(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+            self.model.actualGame.buildFarm(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
+        elif message_split[0] == "SBP":
+            self.model.actualGame.buildPrefecture(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+        self.model.actualGame.soundMixer.playEffect('buildEffect')
+        elif message_split[0] == "SBS":
+            self.model.actualGame.buildSenate(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
+        elif message_split[0] == "SBR":
+            self.model.actualGame.buildRoads(int(message_split[5]), int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
+        elif message_split[0] == "SBW":
+            self.model.actualGame.buildWell(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
+        elif message_split[0] == "SBGo":
+            self.model.actualGame.buildTemple(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]))
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
