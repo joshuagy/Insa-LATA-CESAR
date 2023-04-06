@@ -206,19 +206,20 @@ class Immigrant(Walker):
         """
         Mise à jour de la prochaine action du walker
         """
-        self.move_timer += 1
         self.animate_sprite(currentSpeedFactor)
-        if self.move_timer > (50 / currentSpeedFactor):
-            new_pos = self.path[self.path_index]
-            # Mise à jour de la position sur le plateau
-            self.path_index += 1
-            if self.path_index >= len(self.path) - 1:
-                self.target.structure.becomeAHouse()
-                self.delete()
-            else :
-                self.chariot.change_tile((self.case.x, self.case.y))
-                self.change_tile(new_pos)
-                self.move_timer = 0
+        if self.target.structure.property == self.plateau.property :
+            self.move_timer += 1
+            if self.move_timer > (50 / currentSpeedFactor):
+                new_pos = self.path[self.path_index]
+                # Mise à jour de la position sur le plateau
+                self.path_index += 1
+                if self.path_index >= len(self.path) - 1:
+                    self.target.structure.becomeAHouse()
+                    self.delete()
+                else :
+                    self.chariot.change_tile((self.case.x, self.case.y))
+                    self.change_tile(new_pos)
+                    self.move_timer = 0
 
 class Chariot(Walker):
     def __init__(self, case, plateau, owner, name=""):
@@ -256,28 +257,29 @@ class Engineer(Walker):
         """
         Mise à jour de la prochaine action du walker
         """
-        self.move_timer += 1
         self.animate_sprite(currentSpeedFactor)
+        if self.workplace.property == self.plateau.property :
+            self.move_timer += 1
 
-        if self.move_timer > (50 / currentSpeedFactor):
-            if self.ttw > 0:
-                new_pos = self.random_path()
+            if self.move_timer > (50 / currentSpeedFactor):
+                if self.ttw > 0:
+                    new_pos = self.random_path()
 
-                self.ttw -= 1
-                if self.ttw == 0:
-                    self.create_path(self.case_de_depart)
-            else :
-                new_pos = self.path[self.path_index]
-                # Mise à jour de la position sur le plateau
-                self.path_index += 1
-                # On supprime le walker si la destination a été atteint
-                if self.path_index >= len(self.path) - 1:
-                    self.rest = 1
-            self.change_tile(new_pos)
-            self.reduceRisk()
-            if self.rest:
-                self.delete()
-            self.move_timer = 0
+                    self.ttw -= 1
+                    if self.ttw == 0:
+                        self.create_path(self.case_de_depart)
+                else :
+                    new_pos = self.path[self.path_index]
+                    # Mise à jour de la position sur le plateau
+                    self.path_index += 1
+                    # On supprime le walker si la destination a été atteint
+                    if self.path_index >= len(self.path) - 1:
+                        self.rest = 1
+                self.change_tile(new_pos)
+                self.reduceRisk()
+                if self.rest:
+                    self.delete()
+                self.move_timer = 0
 
 class Prefet(Walker):
     def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None, path = [], path_index = 0):
@@ -312,62 +314,63 @@ class Prefet(Walker):
         """
         Mise à jour de la prochaine action du walker
         """
-        self.move_timer += 1
         self.animate_sprite(currentSpeedFactor)
-        if self.move_timer > (50 / currentSpeedFactor):
-            match(self.action):
-                case 1 : #Ronde
-                    #Déplacement
-                    if self.ttw > 0:    #Déplacement aléatoire
-                        new_pos = self.random_path()
+        if self.workplace.property == self.plateau.property :
+            self.move_timer += 1
+            if self.move_timer > (50 / currentSpeedFactor):
+                match(self.action):
+                    case 1 : #Ronde
+                        #Déplacement
+                        if self.ttw > 0:    #Déplacement aléatoire
+                            new_pos = self.random_path()
 
-                        self.ttw -= 1
-                        if self.ttw == 0:
-                            self.create_path(self.case_de_depart)
-                    else :              #Retour à la préfecture
-                        new_pos = self.path[self.path_index]
-                        # Mise à jour de la position sur le plateau
-                        self.path_index += 1
-                        # On supprime le walker si la destination a été atteint
-                        if self.path_index >= len(self.path) - 1:
-                            self.rest = 1
-                    self.change_tile(new_pos)
-                    self.reduceRisk()
-                    if self.rest:
-                        self.delete()
-
-                    #Check s'il y a un feu
-                    if len(self.plateau.burningBuildings) > 0:
-                        self.target = random.choice(self.plateau.burningBuildings)
-                        self.create_path(self.target.case)
-                        self.set_action(2)
-
-                case 2 : #Se dirige vers un feu
-                    if self.target in self.plateau.burningBuildings:
-                        new_pos = self.path[self.path_index]
-                        self.path_index += 1
-                        if self.path_index >= len(self.path) - 2:
-                            self.set_action(3)
-                            self.throw_timer = 0
+                            self.ttw -= 1
+                            if self.ttw == 0:
+                                self.create_path(self.case_de_depart)
+                        else :              #Retour à la préfecture
+                            new_pos = self.path[self.path_index]
+                            # Mise à jour de la position sur le plateau
+                            self.path_index += 1
+                            # On supprime le walker si la destination a été atteint
+                            if self.path_index >= len(self.path) - 1:
+                                self.rest = 1
                         self.change_tile(new_pos)
                         self.reduceRisk()
-                    else:
-                        self.set_action(1)
-                case 3 : #Eteint un feu
-                    if self.throw_timer < 3:
-                        self.throw_timer += 1
-                    else :
-                        if self.target in self.plateau.burningBuildings:
-                            self.target.off()
+                        if self.rest:
+                            self.delete()
+
+                        #Check s'il y a un feu
                         if len(self.plateau.burningBuildings) > 0:
                             self.target = random.choice(self.plateau.burningBuildings)
                             self.create_path(self.target.case)
                             self.set_action(2)
-                        else :
-                            self.create_path(self.case_de_depart)
-                            self.ttw = 0
+
+                    case 2 : #Se dirige vers un feu
+                        if self.target in self.plateau.burningBuildings:
+                            new_pos = self.path[self.path_index]
+                            self.path_index += 1
+                            if self.path_index >= len(self.path) - 2:
+                                self.set_action(3)
+                                self.throw_timer = 0
+                            self.change_tile(new_pos)
+                            self.reduceRisk()
+                        else:
                             self.set_action(1)
-            self.move_timer = 0
+                    case 3 : #Eteint un feu
+                        if self.throw_timer < 3:
+                            self.throw_timer += 1
+                        else :
+                            if self.target in self.plateau.burningBuildings:
+                                self.target.off()
+                            if len(self.plateau.burningBuildings) > 0:
+                                self.target = random.choice(self.plateau.burningBuildings)
+                                self.create_path(self.target.case)
+                                self.set_action(2)
+                            else :
+                                self.create_path(self.case_de_depart)
+                                self.ttw = 0
+                                self.set_action(1)
+                self.move_timer = 0
     
 
 class CartPusher(Walker):
@@ -410,51 +413,52 @@ class CartPusher(Walker):
                     self.granary = s.case
     
     def update(self, currentSpeedFactor):
-        self.move_timer += 1
         if self.mode != 1 and self.granary:
             self.animate_sprite(currentSpeedFactor)
-        if self.move_timer > (50 / currentSpeedFactor):
-            #Aller vers un grenier
-            if self.mode == 0 :
-                if self.granary:
+        if self.workplace.property == self.plateau.property :
+            self.move_timer += 1
+            if self.move_timer > (50 / currentSpeedFactor):
+                #Aller vers un grenier
+                if self.mode == 0 :
+                    if self.granary:
+                        new_pos = self.path[self.path_index]
+                        # Mise à jour de la position sur le plateau
+                        self.path_index += 1
+
+                        if self.path_index >= len(self.path) - 3:
+                            self.mode = 1
+                        self.change_tile((self.cart.case.x, self.cart.case.y))
+                        self.cart.change_tile(new_pos)
+                    else :
+                        self.findGranary()
+
+                #Livrer les ressources
+                elif self.mode == 1:
+                    if self.granary.structure  and self.granary.structure.desc == "Granary":
+                        if self.granary.structure.storedWheat < self.granary.structure.storedWheatMax:
+                            self.granary.structure.storedWheat += 100
+                            if self.granary.structure.storedWheat > self.granary.structure.storedWheatMax:
+                                self.granary.structure.storedWheat = self.granary.structure.storedWheatMax
+                            self.mode = 2
+                            self.cart.action = 1
+                            self.create_path(self.case_de_depart)
+                        else :
+                            self.mode = 2
+                    else :
+                        self.mode = 2
+                #Rentre à la ferme
+                elif self.mode == 2:
                     new_pos = self.path[self.path_index]
                     # Mise à jour de la position sur le plateau
                     self.path_index += 1
-
-                    if self.path_index >= len(self.path) - 3:
-                        self.mode = 1
+                    # On supprime le walker si la destination a été atteint
+                    if self.path_index >= len(self.path) - 1:
+                        self.rest = 1
                     self.change_tile((self.cart.case.x, self.cart.case.y))
                     self.cart.change_tile(new_pos)
-                else :
-                    self.findGranary()
-
-            #Livrer les ressources
-            elif self.mode == 1:
-                if self.granary.structure  and self.granary.structure.desc == "Granary":
-                    if self.granary.structure.storedWheat < self.granary.structure.storedWheatMax:
-                        self.granary.structure.storedWheat += 100
-                        if self.granary.structure.storedWheat > self.granary.structure.storedWheatMax:
-                            self.granary.structure.storedWheat = self.granary.structure.storedWheatMax
-                        self.mode = 2
-                        self.cart.action = 1
-                        self.create_path(self.case_de_depart)
-                    else :
-                        self.mode = 2
-                else :
-                    self.mode = 2
-            #Rentre à la ferme
-            elif self.mode == 2:
-                new_pos = self.path[self.path_index]
-                # Mise à jour de la position sur le plateau
-                self.path_index += 1
-                # On supprime le walker si la destination a été atteint
-                if self.path_index >= len(self.path) - 1:
-                    self.rest = 1
-                self.change_tile((self.cart.case.x, self.cart.case.y))
-                self.cart.change_tile(new_pos)
-                if self.rest:
-                    self.delete()
-            self.move_timer = 0
+                    if self.rest:
+                        self.delete()
+                self.move_timer = 0
                 
 
 
@@ -536,47 +540,48 @@ class MarketTrader(Walker):
         """
         Mise à jour de la prochaine action du walker
         """
-        self.move_timer += 1
         self.animate_sprite(currentSpeedFactor)
+        if self.workplace.property == self.plateau.property :
+            self.move_timer += 1
 
-        if self.move_timer > (50 / currentSpeedFactor):
-            self.move_timer = 0
-            if self.ttw > 0:
-                match(self.mode):
-                    case 1 :
-                        if self.granary:
-                            new_pos = self.path[self.path_index]
+            if self.move_timer > (50 / currentSpeedFactor):
+                self.move_timer = 0
+                if self.ttw > 0:
+                    match(self.mode):
+                        case 1 :
+                            if self.granary:
+                                new_pos = self.path[self.path_index]
 
-                            self.path_index += 1
+                                self.path_index += 1
 
-                            if self.path_index >= len(self.path) - 3:
-                                if self.granary.structure and self.granary.structure.desc == "Granary":
-                                    if self.granary.structure.storedWheat >= 100 :
-                                        self.wheat += 100
-                                        self.granary.structure.storedWheat -= 100
-                                    else:
-                                        self.wheat = self.granary.structure.storedWheat
-                                        self.granary.structure.storedWheat = 0
-                                self.ttw = 0
+                                if self.path_index >= len(self.path) - 3:
+                                    if self.granary.structure and self.granary.structure.desc == "Granary":
+                                        if self.granary.structure.storedWheat >= 100 :
+                                            self.wheat += 100
+                                            self.granary.structure.storedWheat -= 100
+                                        else:
+                                            self.wheat = self.granary.structure.storedWheat
+                                            self.granary.structure.storedWheat = 0
+                                    self.ttw = 0
+                                    self.create_path(self.case_de_depart)
+                                self.change_tile(new_pos)
+                            else :
+                                self.findGranary()
+                        case 2 :
+                            new_pos = self.random_path()
+
+                            self.ttw -= 1
+                            if self.ttw == 0:
                                 self.create_path(self.case_de_depart)
                             self.change_tile(new_pos)
-                        else :
-                            self.findGranary()
-                    case 2 :
-                        new_pos = self.random_path()
-
-                        self.ttw -= 1
-                        if self.ttw == 0:
-                            self.create_path(self.case_de_depart)
-                        self.change_tile(new_pos)
-                        self.distribFood()
-            else :  
-                new_pos = self.path[self.path_index]
-                self.path_index += 1
-                if self.path_index >= len(self.path) - 1:
-                    self.rest = 1
-                self.change_tile(new_pos)
-                self.distribFood()
-                if self.rest:
-                    self.workplace.storedWheat += self.wheat
-                    self.delete()
+                            self.distribFood()
+                else :  
+                    new_pos = self.path[self.path_index]
+                    self.path_index += 1
+                    if self.path_index >= len(self.path) - 1:
+                        self.rest = 1
+                    self.change_tile(new_pos)
+                    self.distribFood()
+                    if self.rest:
+                        self.workplace.storedWheat += self.wheat
+                        self.delete()

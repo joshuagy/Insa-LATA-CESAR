@@ -205,18 +205,19 @@ class HousingSpot() :
     def becomeAHouse(self):
         self.plateau.cityHousingSpotsList.remove(self)
         self.plateau.structures.remove(self)
-        House(self.case,self.plateau,(1,1), "SmallTent")
+        House(self.case,self.plateau,(1,1), "SmallTent", property = self.property)
         self.case.setFeature("Small Tent")
         del self
     
     def generateImmigrant(self, currentSpeedFactor):
-        now = pygame.time.get_ticks()
+        if self.property == self.plateau.property :
+            now = pygame.time.get_ticks()
 
-        if now - self.spawn_timer > (500 / currentSpeedFactor):
-            if randint(0, 10) == 0 and self.nb_immigrant < 1:
-                Immigrant(self.plateau.map[19][38], self.plateau, self.case)
-                self.nb_immigrant += 1
-            self.spawn_timer = now
+            if now - self.spawn_timer > (500 / currentSpeedFactor):
+                if randint(0, 10) == 0 and self.nb_immigrant < 1:
+                    Immigrant(self.plateau.map[19][38], self.plateau, self.case)
+                    self.nb_immigrant += 1
+                self.spawn_timer = now
 
 """
         if house.desc=="Small Tent" and house.size is (2,2):

@@ -72,22 +72,23 @@ class Building():
         return self.case
 
     def riskCheck(self, currentSpeedFactor) :
-        self.riskTimer += 1
-        if self.riskTimer > (500 / currentSpeedFactor):
-            #CollapseRisk :
-            if self.desc in list_of_brittle_structures :
-                if randint(0, 200) == 0:
-                    self.set_collapseRisk(self.get_collapseRisk()+1)
-                    if(self.get_collapseRisk() > 6):
-                        self.collapse()
-            #FireRisk :
-            if self.desc in list_of_flammable_structures :
-                if randint(0, 150) == 0:
-                    self.set_fireRisk(self.get_fireRisk()+1)
-                    if(self.get_fireRisk() > 6):
-                        self.ignite()
-            
-            self.riskTimer = 0
+        if self.property == self.plateau.property :
+            self.riskTimer += 1
+            if self.riskTimer > (500 / currentSpeedFactor):
+                #CollapseRisk :
+                if self.desc in list_of_brittle_structures :
+                    if randint(0, 200) == 0:
+                        self.set_collapseRisk(self.get_collapseRisk()+1)
+                        if(self.get_collapseRisk() > 6):
+                            self.collapse()
+                #FireRisk :
+                if self.desc in list_of_flammable_structures :
+                    if randint(0, 150) == 0:
+                        self.set_fireRisk(self.get_fireRisk()+1)
+                        if(self.get_fireRisk() > 6):
+                            self.ignite()
+                
+                self.riskTimer = 0
 
     def collapse(self):
         self.delete()
