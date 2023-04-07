@@ -345,13 +345,13 @@ class Plateau():
         granabases = load_image("image/Buildings/Granary/Gbase.png")
         granabs = list(load_image(f"image/Buildings/Granary/b{i}.png")for i in range(0,4))
         granals = list(load_image(f"image/Buildings/Granary/l{i}.png")for i in range(0,7))
-        tems = load_image("image/Buildings/Security_00053.png")
+        temples = list(load_image(f"image/Buildings/Security_000{i}.png") for i in range(11,15))
 
         
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks, "GranaryTop" : granatops,
-                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : tems, "SmallShack" : sss, "LargeShack" : lss }
+                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : temples, "SmallShack" : sss, "LargeShack" : lss }
  
     def getButtonsFunctions(self):
         return {
@@ -686,8 +686,12 @@ class Plateau():
                         #self.screen.blit(storedQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                         #                    render_pos[1] - (self.image_structures["GranaryTop"].get_height() - cell_size) + self.camera.vect.y))
                                     
-
-
+                elif isinstance(self.map[cell_x][cell_y].structure, Temple) :
+                    if self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
+                        self.screen.blit(self.image_structures["Temple"][self.map[cell_x][cell_y].structure.property-1], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image_structures["Temple"][self.map[cell_x][cell_y].structure.property-1].get_height() - cell_size) + self.camera.vect.y))
+                    
                 elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
                     id_image = self.map[cell_x][cell_y].structure.desc
                     original_image = self.image_structures[id_image]
