@@ -227,6 +227,10 @@ class MouseInputHandler:
                 self.model.actualGame.foreground.setOverlayName("destruct")
 
             elif self.model.actualGame.foreground.getOverlayName() == "destruct":
+                self.model.actualGame.foreground.setOverlayName("influence")
+
+            elif self.model.actualGame.foreground.getOverlayName() == "influence":
+                self.model.actualGame.actualizeInf()
                 self.model.actualGame.foreground.setOverlayName(None)
             
             elif self.model.actualGame.foreground.getOverlayName() == None:

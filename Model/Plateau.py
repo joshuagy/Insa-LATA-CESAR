@@ -551,6 +551,11 @@ class Plateau():
         if isinstance(b,WorkBuilding) and b.active==True :
             b.active = False
 
+    def actualizeInf(self) :
+        for x in range(40):
+            for y in range(40):
+                self.map[x][y].getPlayerInfluence(self, self.property)
+
     def draw(self):
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.surface_cells, (self.camera.vect.x, self.camera.vect.y))
@@ -577,7 +582,15 @@ class Plateau():
                         temp = self.map[x][y].structure
                         if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
                             self.foreground.addOverlayInfo(x, y, temp.get_collapseRisk())
-                self.controls.overlays_button.change_image("image/UI/menu/menu_collapse_overlay.png")       
+                self.controls.overlays_button.change_image("image/UI/menu/menu_collapse_overlay.png")
+
+            elif self.foreground.getOverlayName() == "influence":
+                self.foreground.initOverlayGrid()
+                for x in range(40):
+                    for y in range(40):
+                        temp = self.map[x][y]
+                        self.foreground.addOverlayInfo(x, y, temp.influenceDifIndex)
+                self.controls.overlays_button.change_image("image/UI/menu/menu_fire_overlay.png")       
             
             elif self.foreground.getOverlayName() == None:
                 self.controls.overlays_button.change_image("image/UI/menu/menu_overlay_button.png")       
@@ -653,6 +666,7 @@ class Plateau():
                             self.screen.blit(effectedImage,
                                             ([min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                             [min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+                        
                 # DRAW STRUCTURES
                 elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
                     self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)], 
@@ -715,10 +729,6 @@ class Plateau():
                         (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                         render_pos[1] - (filtered_image.get_height() - cell_size) + self.camera.vect.y)
                     )
-
-
-
-
 
                     #if isinstance(self.map[cell_x][cell_y].structure, House) :
                     #    nbHabTxt = TextRender(str(self.map[cell_x][cell_y].structure.nbHab),(20,20),(0,0,0)).img_scaled
