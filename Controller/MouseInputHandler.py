@@ -215,6 +215,7 @@ class MouseInputHandler:
         """
         Handles game mouse events
         """
+        property = self.model.actualGame.property
         self.model.actualGame.foreground.initOverlayGrid()
 
         mousePosRelative = (event.pos[0] - (self.model.actualGame.width - big_gap_menu.dim[0] - 1758.0) - 1758.0, event.pos[1] -24)
@@ -251,7 +252,7 @@ class MouseInputHandler:
                               
                 grid_y2 = temp
             
-            self.model.actualGame.clearLand(grid_x1, grid_x2, grid_y1, grid_y2)
+            self.model.actualGame.clearLand(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         # Routes
         elif controlsCurrentState == 'buildRoads' and not self.model.actualGame.controls.build_roads_button.rect.collidepoint(mousePosRelative):
@@ -266,39 +267,8 @@ class MouseInputHandler:
                 pattern += 2
 
             if self.model.actualGame.map[grid_x1][grid_y1].sprite not in list_of_undestructible and self.model.actualGame.map[grid_x2][grid_y2].sprite not in list_of_undestructible:
-                match(pattern):
-                    case 0:
-                        for xi in range(grid_x1, grid_x2+1):
-                            if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None and self.model.actualGame.map[xi][grid_y2].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[xi][grid_y2], self.model.actualGame)
-
-                        for yi in range(grid_y1, grid_y2+1):
-                            if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None and self.model.actualGame.map[grid_x1][yi].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
-                    case 1:
-                        for xi in range(grid_x1, grid_x2-1, -1):
-                            if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None and self.model.actualGame.map[xi][grid_y1].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[xi][grid_y1], self.model.actualGame)
-                        for yi in range(grid_y1, grid_y2+1):
-                            if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None and self.model.actualGame.map[grid_x2][yi].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[grid_x2][yi], self.model.actualGame)
-                    case 2:
-                        for xi in range(grid_x1, grid_x2+1):
-                            if self.model.actualGame.map[xi][grid_y1].road == None and self.model.actualGame.map[xi][grid_y1].structure == None and self.model.actualGame.map[xi][grid_y1].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[xi][grid_y1], self.model.actualGame)
-                        for yi in range(grid_y1, grid_y2-1, -1):
-                            if self.model.actualGame.map[grid_x2][yi].road == None and self.model.actualGame.map[grid_x2][yi].structure == None and self.model.actualGame.map[grid_x2][yi].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[grid_x2][yi], self.model.actualGame)
-                    case 3:
-                        for xi in range(grid_x1, grid_x2-1, -1):
-                            if self.model.actualGame.map[xi][grid_y2].road == None and self.model.actualGame.map[xi][grid_y2].structure == None and self.model.actualGame.map[xi][grid_y2].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[xi][grid_y2], self.model.actualGame)
-                        for yi in range(grid_y1, grid_y2-1, -1):
-                            if self.model.actualGame.map[grid_x1][yi].road == None and self.model.actualGame.map[grid_x1][yi].structure == None and self.model.actualGame.map[grid_x1][yi].sprite not in list_of_collision:
-                                Route(self.model.actualGame.map[grid_x1][yi], self.model.actualGame)
-                
-                self.model.actualGame.collision_matrix = self.model.actualGame.create_collision_matrix()
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
+                self.model.actualGame.buildRoads(pattern, grid_x1, grid_x2, grid_y1, grid_y2, property)
+                self.model.actualGame.soundMixer.playEffect('buildEffect')
 
         # #Buildings
         # #HousingSpot
@@ -316,14 +286,7 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
                 
-            for xi in range(grid_x1, grid_x2+1):
-                    for yi in range(grid_y1, grid_y2+1):
-                            for xcr in range (xi-2,xi+3,1) :
-                                for ycr in range (yi-2,yi+3,1) :
-                                    if 0<=xcr<self.model.actualGame.nbr_cell_x and 0<=ycr<self.model.actualGame.nbr_cell_y:
-                                        if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision and self.model.actualGame.map[xi][yi].sprite not in list_of_undestructible:
-                                            if self.model.actualGame.map[xcr][ycr].road :
-                                                HousingSpot(self.model.actualGame.map[xi][yi], self.model.actualGame)
+            self.model.actualGame.buildHousingSpot(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         # #Prefecture     
         elif controlsCurrentState == 'securityStructures' and not self.model.actualGame.controls.security_structures.rect.collidepoint(mousePosRelative):
@@ -375,11 +338,7 @@ class MouseInputHandler:
                 grid_y2 = temp
 
             #Building Construction :
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                    if self.model.actualGame.map[xi][yi].getConnectedToRoad() > 0 :
-                        if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
-                            Prefecture(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Prefecture",1)
+            self.model.actualGame.buildPrefecture(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         # #Engineer
         elif controlsCurrentState == 'buildEngineerPost' and not self.model.actualGame.controls.engineering_structures.rect.collidepoint(mousePosRelative):
@@ -432,11 +391,7 @@ class MouseInputHandler:
                 grid_y2 = temp
 
             #Building Construction :
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                    if self.model.actualGame.map[xi][yi].getConnectedToRoad() > 0 :
-                        if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
-                            EnginnerPost(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"EngineerPost",1)
+            self.model.actualGame.buildEngineerPost(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Well
         if self.model.actualGame.controls.water_related_structures.clicked and not self.model.actualGame.controls.water_related_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
@@ -489,10 +444,7 @@ class MouseInputHandler:
                 grid_y2 = temp
 
             #Building Construction :
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                    if not self.model.actualGame.map[xi][yi].road and not self.model.actualGame.map[xi][yi].structure and self.model.actualGame.map[xi][yi].sprite not in list_of_collision:
-                        Well(self.model.actualGame.map[xi][yi],self.model.actualGame,(1,1),"Well")
+            self.model.actualGame.buildWell(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Senate
         if self.model.actualGame.controls.administration_or_government_structures.clicked and not self.model.actualGame.controls.administration_or_government_structures.rect.collidepoint(event.pos):
@@ -547,13 +499,7 @@ class MouseInputHandler:
                 if ms.desc == "Senate" :
                     return
             #Vérifier que toutes les cases sont disponibles :
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                    for xccl in range(xi, xi+5, 1) :
-                        for yccl in range(yi, yi-5, -1 ) :
-                            if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
-                                return
-            Senate(self.model.actualGame.map[xi][yi],self.model.actualGame,(5,5),"Senate")
+            self.model.actualGame.buildSenate(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Farm
         if self.model.actualGame.controls.industrial_structures.clicked and not self.model.actualGame.controls.industrial_structures.rect.collidepoint(event.pos):
@@ -603,14 +549,7 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
             
-            #Vérifier que toutes les cases sont disponibles :
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                    for xccl in range(xi-1, xi+2, 1) :
-                        for yccl in range(yi-1, yi+2, 1 ) :
-                            if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
-                                return
-            WheatFarm(self.model.actualGame.map[xi][yi],self.model.actualGame,(2,2),"WheatFarm")
+            self.model.actualGame.buildFarm(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Granary
         if self.model.actualGame.controls.message_view_button.clicked and not self.model.actualGame.controls.message_view_button.rect.collidepoint(event.pos):
@@ -660,14 +599,7 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
             
-            #Vérifier que toutes les cases sont disponibles :
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                    for xccl in range(xi, xi-3, -1) :
-                        for yccl in range(yi, yi-3, -1 ) :
-                            if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
-                                return
-            Granary(self.model.actualGame.map[xi][yi],self.model.actualGame,(3,3),"Granary")
+            self.model.actualGame.buildGranary(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Market
         if self.model.actualGame.controls.see_recent_troubles_button.clicked and not self.model.actualGame.controls.see_recent_troubles_button.rect.collidepoint(event.pos):
@@ -718,13 +650,7 @@ class MouseInputHandler:
                 grid_y2 = temp
             
             #Vérifier que toutes les cases sont disponibles :
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                    for xccl in range(xi, xi+2, 1) :
-                        for yccl in range(yi, yi-2, -1 ) :
-                            if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
-                                return
-            Market(self.model.actualGame.map[xi][yi],self.model.actualGame,(2,2),"Market")
+            self.model.actualGame.buildMarket(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
                                     
         if self.model.actualGame.controls.religious_structures.clicked and not self.model.actualGame.controls.religious_structures.rect.collidepoint(event.pos):
@@ -774,15 +700,7 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
             
-            #Vérifier que toutes les cases sont disponibles :
-            for xi in range(grid_x1, grid_x2+1):
-                for yi in range(grid_y1, grid_y2+1):
-                    for xccl in range(xi, xi+2, 1) :
-                        for yccl in range(yi, yi-2, -1 ) :
-                            if self.model.actualGame.map[xccl][yccl].road or self.model.actualGame.map[xccl][yccl].structure or self.model.actualGame.map[xccl][yccl].sprite in list_of_collision:
-                                return
-            Temple(self.model.actualGame.map[xi][yi],self.model.actualGame,(2,2),"Temple")
-
+            self.model.actualGame.buildTemple(grid_x1, grid_y1, grid_x2, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
             
 

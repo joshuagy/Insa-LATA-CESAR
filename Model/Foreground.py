@@ -45,7 +45,7 @@ class Foreground:
     effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
     if effect == 'activeClearLand':
       effectedImage.fill((200, 0, 0))
-      print(id_image, " active clear land")
+      #print(id_image, " active clear land")
       originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
     elif effect == 'activeBuildHouse':
       originalImage = self.originalImageActiveBuildHouse.copy()
@@ -87,7 +87,7 @@ class Foreground:
       effectedImage.set_colorkey((0, 0, 0))
       effectedImage.set_alpha(65)
       originalImage.blit(effectedImage, (0, 0))
-    return originalImage
+    return originalImage     
 
   def initOverlayGrid(self):
     self.overlayGrid = [[None for _ in range(self.nbr_cell_x)] for _ in range(self.nbr_cell_y)]
