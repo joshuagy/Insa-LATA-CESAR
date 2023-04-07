@@ -119,6 +119,7 @@ class DamagedBuilding(Building) :
 
 class BurningBuilding(Building) :
     def __init__(self, case, plateau, desc, size = (1,1), property = 1, fireRisk = 0, collapseRisk = 0, timeBurning = 0):
+        self.property = property
         self.case=case
         self.timeBurning=timeBurning
         self.plateau = plateau
@@ -126,22 +127,21 @@ class BurningBuilding(Building) :
         self.size = size
         self.plateau.structures.append(self)
         self.case.setStructure(self)
-        self.plateau.burningBuildings.append(self)
+        self.plateau.burningBuildings[self.property].append(self)
         self.fireRisk = fireRisk 
         self.collapseRisk = collapseRisk
         self.index_sprite = 0
         self.riskTimer = 0
-        self.property = property
     
     def delete(self):
         self.plateau.structures.remove(self)
         self.case.setStructure(None)
-        self.plateau.burningBuildings.remove(self)
+        self.plateau.burningBuildings[self.property].remove(self)
         del self
     
     def off(self):
         self.delete()
-        DamagedBuilding(self.case,self.plateau,"BurnedRuins")
+        DamagedBuilding(self.case,self.plateau,"BurnedRuins", property=self.property)
 
     def update(self, currentSpeedFactor):
         self.index_sprite += (0.1 * currentSpeedFactor)
