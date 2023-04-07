@@ -234,17 +234,21 @@ class Plateau():
             map.append([])
             for cell_y in range(self.nbr_cell_y):
                 sprite = self.choose_image()
-                cells_to_map = self.cells_to_map(cell_x, cell_y, sprite)
+                #cells_to_map = self.cells_to_map(cell_x, cell_y)
+                cells_to_map = self.cells_to_map(cell_x, cell_y,sprite,self.map[cell_x][cell_y]["indexSprite"])
+                
+                #cells_to_map = self.cells_to_map(self.map[cell_x][cell_y]["x"], self.map[cell_x][cell_y]["y"], self.map[cell_x][cell_y]["sprite"], self.map[cell_x][cell_y]["indexSprite"])
                 map[cell_x].append(cells_to_map)
                 render_pos = cells_to_map.render_pos
-                self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
+                self.surface_cells.blit(self.image["land"][1], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
         return map
     
     def choose_image(self):
         image=""
         global counter
         if counter<=MAP_SIZE**2:
-            image="land1"
+            #image="land1"
+            image=["land"][1]
             counter+=1
         return image
     
