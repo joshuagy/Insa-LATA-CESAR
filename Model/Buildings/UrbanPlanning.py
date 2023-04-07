@@ -24,7 +24,7 @@ class Well(Building):
                 if 0<=xi<self.plateau.nbr_cell_x and 0<=yi<self.plateau.nbr_cell_y: 
                     if self.plateau.map[xi][yi].waterAccess==0 :
                         self.plateau.map[xi][yi].waterAccess=1
-        print(self.case.getDesirability(self.plateau, self.property))
+        print(self.case.influenceDifIndex)
 
     def delete(self):
         self.case.setStructure(None)

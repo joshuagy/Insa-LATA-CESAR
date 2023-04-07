@@ -31,6 +31,8 @@ class Case():
         return self.connectedToRoad
     def changeConnectedToRoad(self, number):
         self.connectedToRoad=self.connectedToRoad+number
+    def getInfluenceDifIndex(self) :
+        return self.influenceDifIndex
     def setSprite(self, newSprite, indexSprite):
         self.sprite = newSprite
         self.indexSprite = int(indexSprite)
@@ -41,13 +43,12 @@ class Case():
 
     def getDesirability(self, plateau, player) :
         alreadyCheckedBuilding = []
-        alreadyCheckedCase = [self]
         desTotal = 0
         for ray in range(1,6) :
             for xi in range(self.x-ray, self.x+ray) :
                 for yi in range(self.y-ray,self.y+ray) :
                     if 0<xi<plateau.nbr_cell_x and 0<yi<plateau.nbr_cell_y :
-                        if plateau.map[xi][yi] not in alreadyCheckedCase :
+                        if plateau.map[xi][yi] is not self :
                             if plateau.map[xi][yi].structure :
                                 if plateau.map[xi][yi].structure.property == player :
                                     if plateau.map[xi][yi].structure not in alreadyCheckedBuilding :
@@ -56,11 +57,11 @@ class Case():
                                             alreadyCheckedBuilding.append(plateau.map[xi][yi].structure)
         return desTotal
 
-    def getPlayerInfluence(self, plateau, player) :
+    def setPlayerInfluence(self, plateau, player) :
         myInf = self.getDesirability(plateau, player)
         challInf = max(self.getDesirability(plateau,i) for i in range(1,5) if i != player)
         dif = myInf - challInf
-        if dif >= 4 : u= 0
+        if dif >= 3 : u= 0
         elif dif >= 2 : u= 1
         elif dif >= 1 : u= 2
         elif dif == 0 : u= -1

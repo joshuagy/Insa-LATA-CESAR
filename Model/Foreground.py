@@ -145,6 +145,12 @@ class Foreground:
     effectedImage.fill((0, 200, 0))
     originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
     return originalImage
+  
+  def putGrey(self, originalImage):
+    effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+    effectedImage.fill((150, 150, 150))
+    originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+    return originalImage
 
   def render(self):
     pass
