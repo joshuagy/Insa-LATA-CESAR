@@ -91,7 +91,7 @@ class KeyboardInputHandler:
 				self.model.actualGame.controls.setCurrentState("rock")
 		
 		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_KP3:
+			if event.key == pygame.K_w:
 				self.model.actualGame.controls.setCurrentState("water")
 		
 		if event.type == pygame.KEYDOWN:
