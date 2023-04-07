@@ -89,7 +89,7 @@ class Plateau():
         self.structures = []
         self.cityHousesList = []
         self.cityHousingSpotsList = []
-        self.burningBuildings = []
+        self.burningBuildings = {1 : [], 2 : [], 3 : [], 4 : []}
 
         self.currentSpeed = 100
         self.buttonsFunctions = self.getButtonsFunctions()
@@ -139,7 +139,7 @@ class Plateau():
         self.structures = []
         self.cityHousesList = []
         self.cityHousingSpotsList = []
-        self.burningBuildings = []
+        self.burningBuildings = {1 : [], 2 : [], 3 : [], 4 : []}
 
         #Clear Walkers
         """for e in self.entities:
@@ -527,7 +527,8 @@ class Plateau():
             currentSpeedFactor = self.currentSpeed/100
             for e in self.entities: e.update(currentSpeedFactor)
             for hs in self.cityHousingSpotsList: hs.generateImmigrant(currentSpeedFactor)
-            for bb in self.burningBuildings: bb.update(currentSpeedFactor)
+            for i in range(1, 4):
+                for bb in self.burningBuildings[i]: bb.update(currentSpeedFactor)
             self.roadWarning=False
             for b in self.structures :
                 if isinstance(b,Building) : b.riskCheck(self.currentSpeed)   # Vérifie et incrémente les risques d'incendies et d'effondrement
@@ -612,7 +613,7 @@ class Plateau():
                     self.screen.blit(image,
                                     (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                     render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
-                 # DRAW OVERLAY
+                # DRAW OVERLAY
                 elif self.foreground.getOverlayInfo(cell_x, cell_y) != None:
                     match self.foreground.getOverlayInfo(cell_x, cell_y):
                         case 0:
