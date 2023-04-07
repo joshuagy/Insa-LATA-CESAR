@@ -72,7 +72,9 @@ class Plateau():
         self.roadWarning = False #Affiche un avertissement quand un bâtiment qui a besoin de la route est déconnecté
         self.loyaltyWarning = False #Affiche un avertissement quand un bâtiment a une loyauté faible et pourrait changer de camp
 
-        self.load_savefile("DefaultMap.pickle")
+        #Map du début
+#        self.load_savefile("testx40.pickle")
+        self.map = self.default_map()
 
         self.foreground = Foreground(self.screen, self.nbr_cell_x, self.nbr_cell_y)
 
@@ -226,6 +228,26 @@ class Plateau():
         self.treasury = save.treasury
         self.population = save.population
         
+    def default_map(self):
+        map = []
+        for cell_x in range(self.nbr_cell_x):
+            map.append([])
+            for cell_y in range(self.nbr_cell_y):
+                sprite = self.choose_image()
+                cells_to_map = self.cells_to_map(cell_x, cell_y, sprite)
+                map[cell_x].append(cells_to_map)
+                render_pos = cells_to_map.render_pos
+                self.surface_cells.blit(self.image["land2"], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
+        return map
+    
+    def choose_image(self):
+        image=""
+        global counter
+        if counter<=MAP_SIZE**2:
+            image="land1"
+            counter+=1
+        return image
+    
     def cells_to_map(self, cell_x, cell_y, sprite, indexSprite):
 
         rectangle_cell = [
