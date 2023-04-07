@@ -70,6 +70,7 @@ class Plateau():
         self.population = 0
         self.empireDate = EmpireDate(self)
         self.roadWarning = False #Affiche un avertissement quand un bâtiment qui a besoin de la route est déconnecté
+        self.loyaltyWarning = False #Affiche un avertissement quand un bâtiment a une loyauté faible et pourrait changer de camp
 
         self.load_savefile("DefaultMap.pickle")
 
@@ -528,8 +529,11 @@ class Plateau():
             for hs in self.cityHousingSpotsList: hs.generateImmigrant(currentSpeedFactor)
             for bb in self.burningBuildings: bb.update(currentSpeedFactor)
             self.roadWarning=False
+            self.loyaltyWarning=False
             for b in self.structures :
-                if isinstance(b,Building) : b.riskCheck(self.currentSpeed)   # Vérifie et incrémente les risques d'incendies et d'effondrement
+                if isinstance(b,Building) : 
+                    b.riskCheck(self.currentSpeed)   # Vérifie et incrémente les risques d'incendies et d'effondrement
+                    b.loyaltyUpdate()                # Vérifie la loyauté du bâtiment
                 if isinstance(b,WorkBuilding): b.delay()
                 if isinstance(b,WheatFarm) or isinstance(b,Granary) or isinstance(b,Market ) : b.update(self.currentSpeed)     #Actualize Food Chain Buildings
                 self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
@@ -766,6 +770,7 @@ class Plateau():
         self.controls.render()
      
         if self.roadWarning : self.screen.blit(self.road_warning_rectangle,(500,30))
+        if self.loyaltyWarning : self.screen.blit(self.road_warning_rectangle,(500,30))
 
         fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
         propertyText = self.minimalFont.render(f"Player: {self.property}", 1, (255, 255, 255), (0, 0, 0))
