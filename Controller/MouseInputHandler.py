@@ -1,4 +1,5 @@
 import pygame
+import random
 from Model.constants import *
 from Model.control_panel import *
 from EventManager.Event import Event
@@ -775,7 +776,11 @@ class MouseInputHandler:
                             self.model.actualGame.map[xi][yi].indexSprite = randint(0, 7)
                         elif controlsCurrentState == 'water' :
                             self.model.actualGame.map[xi][yi].sprite = "water"
-                            self.model.actualGame.map[xi][yi].indexSprite = 1
+                            for i in range(xi-1, xi+2):
+                                for j in range(yi-1, yi+2):
+                                    if i >= 0 and i < self.model.actualGame.nbr_cell_x and j >= 0 and j < self.model.actualGame.nbr_cell_y:
+                                        if self.model.actualGame.map[i][j].sprite == "water":
+                                            self.water(i,j)
 
                         if self.model.actualGame.map[xi][yi].road :
                             self.model.actualGame.map[xi][yi].road.delete()
@@ -1051,3 +1056,44 @@ class MouseInputHandler:
                     self.model.actualGame.foreground.addEffect(x, y, 'wrong')
 
 
+    def water(self, x, y) :
+        index = 0
+        r = random.randint(0, 3)
+        if x < self.model.actualGame.nbr_cell_x-1 and y < self.model.actualGame.nbr_cell_y-1: 
+            if self.model.actualGame.map[x+1][y+1].sprite == "water":
+                index += 128 # + 10000000
+        if x < self.model.actualGame.nbr_cell_x-1 and y > 0:
+            if self.model.actualGame.map[x+1][y-1].sprite == "water": #
+                index += 64 # + 01000000
+        if x > 0 and y < self.model.actualGame.nbr_cell_y-1:
+            if self.model.actualGame.map[x-1][y+1].sprite == "water":
+                index += 32 # + 00100000
+        if x > 0 and y > 0:
+            if self.model.actualGame.map[x-1][y-1].sprite == "water": #
+                index += 16 # + 00010000
+        if y < self.model.actualGame.nbr_cell_y-1:
+            if self.model.actualGame.map[x][y+1].sprite == "water":
+                index += 8 # + 00001000
+        if x < self.model.actualGame.nbr_cell_x-1:
+            if self.model.actualGame.map[x+1][y].sprite == "water": 
+                index += 4 # + 00000100
+        if y > 0:
+            if self.model.actualGame.map[x][y-1].sprite == "water": #
+                index += 2 # + 00000010
+        if x > 0:
+            if self.model.actualGame.map[x-1][y].sprite == "water": #
+                index += 1 # + 00000001 EAST
+        table_correspondance = {0 : 0, 
+                                87 : 1, 119 : 1, 215 : 1, 252 : 1,
+                                206 : 5, 238 : 5, 222 : 5, 254 : 5,
+                                173 : 9, 189 : 9, 237 : 9, 253 : 9,
+                                59 : 13, 187 : 13, 123 : 13, 251 : 13,
+                                70 : 17, 86 : 17, 198 : 17, 214 : 17,
+                                140 : 21, 204 : 21, 172 : 21, 236 : 21,
+                                41 : 25, 57 : 25, 169 : 25, 185 : 25,
+                                19 : 29, 83 : 29, 51 : 29, 115 : 29,
+                                223 : 33, 239 : 34, 191 : 35, 127 : 36, }
+        index = table_correspondance.get(index, 0)
+        if 0 < index < 33:
+            index += r
+        self.model.actualGame.map[x][y].setSprite("water", index)
