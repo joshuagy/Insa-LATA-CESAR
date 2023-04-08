@@ -3,7 +3,7 @@ import random
 from Model.constants import *
 from Model.control_panel import *
 from EventManager.Event import Event
-from EventManager.allEvent import StateChangeEvent, LoadSave
+from EventManager.allEvent import StateChangeEvent, LoadSave, MultiplayerStart
 from Model.Plateau import Plateau, cell_size
 from Model.Route import Route
 from Model.Buildings.Building import *
@@ -11,6 +11,7 @@ from Model.Buildings.House import *
 from Model.Buildings.WorkBuilding import *
 from Model.Buildings.UrbanPlanning import *
 from Model.Buildings.RessourceBuilding import *
+from Model.Multiplayer import *
 
 class MouseInputHandler:
     """
@@ -110,6 +111,10 @@ class MouseInputHandler:
             self.model.saveScene.userInput = feedBack.saveName.split('.')[0]
             self.model.actualGame.load_savefile(feedBack.saveName)
             self.evManager.Post(StateChangeEvent(STATE_PLAY))
+        elif isinstance(feedBack, MultiplayerStart):
+            self.model.actualGame.multiplayer = Multiplayer(self.model.actualGame, feedBack.ipaddr, feedBack.portext, feedBack.portint, 1)
+            self.model.actualGame.load_savefile("DefaultMap.pickle")
+            self.evManager.Post(StateChangeEvent(STATE_PLAY))
         elif isinstance(feedBack, StateChangeEvent):
             if feedBack.state == STATE_PLAY:
                 self.model.saveScene.userInput = ""
@@ -157,7 +162,9 @@ class MouseInputHandler:
     def pause_menu(self,event):
         if self.model.pause_menu.Exit_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
             self.model.pause_menu.pause = False
-            self.model.actualGame.pause = False  
+            self.model.actualGame.pause = False
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.stop()
             self.evManager.Post(StateChangeEvent(STATE_MENU))
 
         if self.model.pause_menu.Continue_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
@@ -259,6 +266,8 @@ class MouseInputHandler:
             
             self.model.actualGame.clearLand(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SCL.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
         # Routes
         elif controlsCurrentState == 'buildRoads' and not self.model.actualGame.controls.build_roads_button.rect.collidepoint(mousePosRelative):
             grid_x1, grid_y1 = self.mousePosToGridPos(self.initialMouseCoordinate)
@@ -274,6 +283,8 @@ class MouseInputHandler:
             if self.model.actualGame.map[grid_x1][grid_y1].sprite not in list_of_undestructible and self.model.actualGame.map[grid_x2][grid_y2].sprite not in list_of_undestructible:
                 self.model.actualGame.buildRoads(pattern, grid_x1, grid_x2, grid_y1, grid_y2, property)
                 self.model.actualGame.soundMixer.playEffect('buildEffect')
+                if self.model.actualGame.multiplayer:
+                    self.model.actualGame.multiplayer.send(f"SBR.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{pattern}.{property}")
 
         # #Buildings
         # #HousingSpot
@@ -291,8 +302,10 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
                 
-            self.model.actualGame.buildHousingSpot(grid_x1, grid_y1, grid_x2, grid_y2, property)
+            self.model.actualGame.buildHousingSpot(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SBH.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
         # #Prefecture     
         elif controlsCurrentState == 'securityStructures' and not self.model.actualGame.controls.security_structures.rect.collidepoint(mousePosRelative):
         #Mouse Selection :
@@ -343,8 +356,10 @@ class MouseInputHandler:
                 grid_y2 = temp
 
             #Building Construction :
-            self.model.actualGame.buildPrefecture(grid_x1, grid_y1, grid_x2, grid_y2, property)
+            self.model.actualGame.buildPrefecture(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SBP.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
         # #Engineer
         elif controlsCurrentState == 'buildEngineerPost' and not self.model.actualGame.controls.engineering_structures.rect.collidepoint(mousePosRelative):
         
@@ -396,8 +411,10 @@ class MouseInputHandler:
                 grid_y2 = temp
 
             #Building Construction :
-            self.model.actualGame.buildEngineerPost(grid_x1, grid_y1, grid_x2, grid_y2, property)
+            self.model.actualGame.buildEngineerPost(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SBI.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
         #Well
         if self.model.actualGame.controls.water_related_structures.clicked and not self.model.actualGame.controls.water_related_structures.rect.collidepoint((event.pos[0] - 1758.0, event.pos[1] - 24)):
         
@@ -449,8 +466,10 @@ class MouseInputHandler:
                 grid_y2 = temp
 
             #Building Construction :
-            self.model.actualGame.buildWell(grid_x1, grid_y1, grid_x2, grid_y2, property)
+            self.model.actualGame.buildWell(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SBW.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
         #Senate
         if self.model.actualGame.controls.administration_or_government_structures.clicked and not self.model.actualGame.controls.administration_or_government_structures.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
@@ -504,8 +523,10 @@ class MouseInputHandler:
                 if ms.desc == "Senate" :
                     return
             #Vérifier que toutes les cases sont disponibles :
-            self.model.actualGame.buildSenate(grid_x1, grid_y1, grid_x2, grid_y2, property)
+            self.model.actualGame.buildSenate(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SBS.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
         #Farm
         if self.model.actualGame.controls.industrial_structures.clicked and not self.model.actualGame.controls.industrial_structures.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
@@ -554,8 +575,10 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
             
-            self.model.actualGame.buildFarm(grid_x1, grid_y1, grid_x2, grid_y2, property)
+            self.model.actualGame.buildFarm(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SBF.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
         #Granary
         if self.model.actualGame.controls.message_view_button.clicked and not self.model.actualGame.controls.message_view_button.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
@@ -604,8 +627,10 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
             
-            self.model.actualGame.buildGranary(grid_x1, grid_y1, grid_x2, grid_y2, property)
+            self.model.actualGame.buildGranary(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SBGr.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
         #Market
         if self.model.actualGame.controls.see_recent_troubles_button.clicked and not self.model.actualGame.controls.see_recent_troubles_button.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
@@ -655,8 +680,10 @@ class MouseInputHandler:
                 grid_y2 = temp
             
             #Vérifier que toutes les cases sont disponibles :
-            self.model.actualGame.buildMarket(grid_x1, grid_y1, grid_x2, grid_y2, property)
+            self.model.actualGame.buildMarket(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SBM.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
                                     
         if self.model.actualGame.controls.religious_structures.clicked and not self.model.actualGame.controls.religious_structures.rect.collidepoint(event.pos):
             x, y = self.initialMouseCoordinate
@@ -705,8 +732,10 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
             
-            self.model.actualGame.buildTemple(grid_x1, grid_y1, grid_x2, grid_y2, property)
+            self.model.actualGame.buildTemple(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SBGo.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
             
 
         #Overlay part
