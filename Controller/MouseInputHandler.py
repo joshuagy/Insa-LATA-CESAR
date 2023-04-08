@@ -341,7 +341,9 @@ class MouseInputHandler:
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         #Market
         if self.model.actualGame.controls.see_recent_troubles_button.clicked and not self.model.actualGame.controls.see_recent_troubles_button.rect.collidepoint(event.pos):
-            
+            x2, y2 = event.pos
+            x1, y1 = self.initialMouseCoordinate
+            market(self, x1, y1, x2, y2)
                                     
         if self.model.actualGame.controls.religious_structures.clicked and not self.model.actualGame.controls.religious_structures.rect.collidepoint(event.pos):
             
@@ -442,8 +444,6 @@ class MouseInputHandler:
             return False
         else:
             return True
-
-
 
     def mousePosToGridPos(self, mousePos):
         x, y = mousePos
@@ -1112,16 +1112,16 @@ class MouseInputHandler:
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         elif message_split[0] == "SBH":
             self.model.actualGame.buildHousingSpot(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
-        self.model.actualGame.soundMixer.playEffect('buildEffect')
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
         elif message_split[0] == "SBI":
-           self.model.actualGame.buildEngineerPost(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
+            self.model.actualGame.buildEngineerPost(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         elif message_split[0] == "SBF":
             self.model.actualGame.buildFarm(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.model.actualGame.soundMixer.playEffect('buildEffect')
         elif message_split[0] == "SBP":
             self.model.actualGame.buildPrefecture(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
-        self.model.actualGame.soundMixer.playEffect('buildEffect')
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
         elif message_split[0] == "SBS":
             self.model.actualGame.buildSenate(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.model.actualGame.soundMixer.playEffect('buildEffect')
@@ -1140,20 +1140,18 @@ class MouseInputHandler:
 
         # Walker - Not tested
         elif message_split[0] == "WA":
-            if message_split[1] == "1":
+            if message_split[1] == "0":
                 Citizen(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
             if message_split[1] == "1":
-                Immigrant(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
+                Immigrant(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6])
             elif message_split[1] == "2":
-                Chariot(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
-            elif message_split[1] == "3":
                 Engineer(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
-            elif message_split[1] == "4":
+            elif message_split[1] == "3":
                 Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
-            elif message_split[1] == "5":
+            elif message_split[1] == "4":
                 cart = CartPusher(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
                 Cart(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], cart)
-            elif message_split[1] == "6":
+            elif message_split[1] == "5":
                 MarketTrader(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
 
         
