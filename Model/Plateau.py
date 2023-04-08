@@ -70,11 +70,11 @@ class Plateau():
         self.population = 0
         self.empireDate = EmpireDate(self)
         self.roadWarning = False #Affiche un avertissement quand un bâtiment qui a besoin de la route est déconnecté
+        self.loyaltyWarning = False #Affiche un avertissement quand un bâtiment a une loyauté faible et pourrait changer de camp
 
         self.load_savefile("DefaultMap.pickle")
 
         self.foreground = Foreground(self.screen, self.nbr_cell_x, self.nbr_cell_y)
-
 
         #Tableau contenant toutes les cases occupées par les walkers
         self.walkers = [[[] for x in range(self.nbr_cell_x)] for y in range(self.nbr_cell_y)]
@@ -346,13 +346,13 @@ class Plateau():
         granabases = load_image("image/Buildings/Granary/Gbase.png")
         granabs = list(load_image(f"image/Buildings/Granary/b{i}.png")for i in range(0,4))
         granals = list(load_image(f"image/Buildings/Granary/l{i}.png")for i in range(0,7))
-        tems = load_image("image/Buildings/Security_00053.png")
+        temples = list(load_image(f"image/Buildings/Security_000{i}.png") for i in range(11,15))
 
         
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks, "GranaryTop" : granatops,
-                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : tems, "SmallShack" : sss, "LargeShack" : lss }
+                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : temples, "SmallShack" : sss, "LargeShack" : lss }
  
     def getButtonsFunctions(self):
         return {
@@ -530,8 +530,11 @@ class Plateau():
             for i in range(1, 4):
                 for bb in self.burningBuildings[i]: bb.update(currentSpeedFactor)
             self.roadWarning=False
+            self.loyaltyWarning=False
             for b in self.structures :
-                if isinstance(b,Building) : b.riskCheck(self.currentSpeed)   # Vérifie et incrémente les risques d'incendies et d'effondrement
+                if isinstance(b,Building) : 
+                    b.riskCheck(self.currentSpeed)   # Vérifie et incrémente les risques d'incendies et d'effondrement
+                    b.loyaltyUpdate()                # Vérifie la loyauté du bâtiment
                 if isinstance(b,WorkBuilding): b.delay()
                 if isinstance(b,WheatFarm) or isinstance(b,Granary) or isinstance(b,Market ) : b.update(self.currentSpeed)     #Actualize Food Chain Buildings
                 self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
@@ -553,7 +556,10 @@ class Plateau():
         if isinstance(b,WorkBuilding) and b.active==True :
             b.active = False
 
-
+    def actualizeInf(self) :
+        for x in range(self.nbr_cell_x):
+            for y in range(self.nbr_cell_y):
+                self.map[x][y].setPlayerInfluence(self, self.property)
 
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -581,7 +587,15 @@ class Plateau():
                         temp = self.map[x][y].structure
                         if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
                             self.foreground.addOverlayInfo(x, y, temp.get_collapseRisk())
-                self.controls.overlays_button.change_image("image/UI/menu/menu_collapse_overlay.png")       
+                self.controls.overlays_button.change_image("image/UI/menu/menu_collapse_overlay.png")
+
+            elif self.foreground.getOverlayName() == "influence":
+                self.foreground.initOverlayGrid()
+                for x in range(40):
+                    for y in range(40):
+                        temp = self.map[x][y]
+                        self.foreground.addOverlayInfo(x, y, temp.getInfluenceDifIndex())
+                self.controls.overlays_button.change_image("image/UI/menu/menu_influence_overlay.png")       
             
             elif self.foreground.getOverlayName() == None:
                 self.controls.overlays_button.change_image("image/UI/menu/menu_overlay_button.png")       
@@ -597,17 +611,9 @@ class Plateau():
                 render_pos =  self.map[cell_x][cell_y].render_pos
                 id_image = None
                 image = None
-                # DRAW DEFAULT CELLS
-                if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
-                    id_image = self.map[cell_x][cell_y].sprite
-                    index_image = self.map[cell_x][cell_y].indexSprite
-                    image = self.image[id_image][index_image]
-                    self.screen.blit(image,
-                                (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
                 
                 # DRAW ROADS
-                elif self.map[cell_x][cell_y].road:
+                if self.map[cell_x][cell_y].road:
                     id_image = self.map[cell_x][cell_y].road.sprite
                     image = self.image_route[id_image]
                     self.screen.blit(image,
@@ -657,6 +663,22 @@ class Plateau():
                             self.screen.blit(effectedImage,
                                             ([min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                                             [min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+
+                        case -1:
+                            effectedImage = self.foreground.putGrey(self.image[sprite].copy())
+                            self.screen.blit(effectedImage,
+                                            ([min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            [min([x for x, y in self.map[cell_x][cell_y].isometric_cell]), min([y for x, y in self.map[cell_x][cell_y].isometric_cell])][1] - (self.image[sprite].get_height() - cell_size) + self.camera.vect.y))
+
+                # DRAW DEFAULT CELLS   
+                elif not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
+                    id_image = self.map[cell_x][cell_y].sprite
+                    index_image = self.map[cell_x][cell_y].indexSprite
+                    image = self.image[id_image][index_image]
+                    self.screen.blit(image,
+                                (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
+                    
                 # DRAW STRUCTURES
                 elif isinstance(self.map[cell_x][cell_y].structure, BurningBuilding):
                     self.screen.blit(self.image_structures["BurningBuilding"][int(self.map[cell_x][cell_y].structure.index_sprite)], 
@@ -690,12 +712,35 @@ class Plateau():
                         #self.screen.blit(storedQuantTxt,(render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
                         #                    render_pos[1] - (self.image_structures["GranaryTop"].get_height() - cell_size) + self.camera.vect.y))
                                     
+                elif isinstance(self.map[cell_x][cell_y].structure, Temple) :
+                    if self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
+                        self.screen.blit(self.image_structures["Temple"][self.map[cell_x][cell_y].structure.property-1], 
+                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                            render_pos[1] - (self.image_structures["Temple"][self.map[cell_x][cell_y].structure.property-1].get_height() - cell_size) + self.camera.vect.y))
+                    
                 elif self.map[cell_x][cell_y].structure.case == self.map[cell_x][cell_y] :
                     id_image = self.map[cell_x][cell_y].structure.desc
-                    image = self.image_structures[id_image]
-                    self.screen.blit(self.image_structures[id_image], 
-                                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
-                                            render_pos[1] - (self.image_structures[id_image].get_height() - cell_size) + self.camera.vect.y))
+                    original_image = self.image_structures[id_image]
+                    image = original_image.copy()
+
+                    filt = pygame.Surface(image.get_size(), pygame.SRCALPHA)
+                    if self.map[cell_x][cell_y].structure.property == 1:
+                        filt.fill((255, 255, 255, 255))
+                    elif self.map[cell_x][cell_y].structure.property == 2:
+                        filt.fill((255, 155, 155, 255))
+                    elif self.map[cell_x][cell_y].structure.property == 3:
+                        filt.fill((155, 255, 155, 255))
+                    elif self.map[cell_x][cell_y].structure.property == 4:
+                        filt.fill((155, 155, 255, 255))
+
+                    filtered_image = image.copy()
+                    filtered_image.blit(filt, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+
+                    self.screen.blit(
+                        filtered_image,
+                        (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                        render_pos[1] - (filtered_image.get_height() - cell_size) + self.camera.vect.y)
+                    )
 
                     #if isinstance(self.map[cell_x][cell_y].structure, House) :
                     #    nbHabTxt = TextRender(str(self.map[cell_x][cell_y].structure.nbHab),(20,20),(0,0,0)).img_scaled
@@ -726,6 +771,7 @@ class Plateau():
         self.controls.render()
      
         if self.roadWarning : self.screen.blit(self.road_warning_rectangle,(500,30))
+        if self.loyaltyWarning : self.screen.blit(self.road_warning_rectangle,(500,30))
 
         fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
         propertyText = self.minimalFont.render(f"Player: {self.property}", 1, (255, 255, 255), (0, 0, 0))

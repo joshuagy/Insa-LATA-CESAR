@@ -28,15 +28,24 @@ class TopBar:
     self.dateBlocWithDynamicText.blit(TextRender(date.visualDate, (100, 20),(255,255,0)).img_scaled, (850 - self.dateBlocPos[0], 2.5))
 
     self.File = pygame.image.load("image/Menutop/File.png")
-    self.File = pygame.transform.scale(self.File, (self.File.get_width() * 0.9, self.File.get_height() * 0.7))
+    self.File = pygame.transform.scale(self.File, 
+                                       (self.File.get_width() * 0.9, self.File.get_height() * 0.7))
+    
     self.Options = pygame.image.load("image/Menutop/Options.png")
     self.Options = pygame.transform.scale(self.Options,
                                           (self.Options.get_width() * 0.9, self.Options.get_height() * 0.7))
+    
     self.Help = pygame.image.load("image/Menutop/Help.png")
-    self.Help = pygame.transform.scale(self.Help, (self.Help.get_width() * 0.9, self.Help.get_height() * 0.7))
+    self.Help = pygame.transform.scale(self.Help, 
+                                       (self.Help.get_width() * 0.9, self.Help.get_height() * 0.7))
+    
     self.Advisors = pygame.image.load("image/Menutop/Advisors.png")
     self.Advisors = pygame.transform.scale(self.Advisors,
                                            (self.Advisors.get_width() * 0.9, self.Advisors.get_height() * 0.7))
+    
+    self.OpenToLan = pygame.image.load("image/Menutop/OpenToLan.png")
+    self.OpenToLan = pygame.transform.scale(self.OpenToLan, 
+                                       (self.OpenToLan.get_width() * 0.9, self.OpenToLan.get_height() * 0.7))
 
     self.File_rect = self.File.get_rect()
     self.Options_rect = self.Options.get_rect()
@@ -45,6 +54,8 @@ class TopBar:
     self.Help_rect.x = self.Options_rect.x + self.Options_rect.width
     self.Advisors_rect = self.Advisors.get_rect()
     self.Advisors_rect.x = self.Help_rect.x + self.Help_rect.width
+    self.OpenToLan_rect = self.OpenToLan.get_rect()
+    self.OpenToLan_rect.x = self.dateBlocPos[0] + 350
 
     self.File_menu_Rm = pygame.image.load("image/Menutop/Rm.png")
     self.File_menu_Sg = pygame.image.load("image/Menutop/Sg.png")
@@ -70,6 +81,7 @@ class TopBar:
     self.staticSurface.blit(self.Help, self.Help_rect)
     self.staticSurface.blit(self.Advisors, self.Advisors_rect)
     self.staticSurface.blit(self.File, self.File_rect)
+    self.staticSurface.blit(self.OpenToLan, self.OpenToLan_rect)
     
 
   def generateStaticSurface(self):

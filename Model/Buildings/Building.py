@@ -87,6 +87,16 @@ class Building():
                         self.set_fireRisk(self.get_fireRisk()+1)
                         if(self.get_fireRisk() > 6):
                             self.ignite()
+                self.riskTimer = 0
+            
+    def loyaltyUpdate(self) :
+        if self.case.influenceDifIndex <=-1 :
+            self.plateau.loyaltyAlert = True
+            if randint(0,5000-1000*self.case.influenceDifIndex) == 0 :
+                propertyMax = max(self.case.getDesirability(self.plateau,i) for i in range(1,5) if i != self.property)
+                for i in range(1,5) : 
+                    if self.propertyMax == self.case.getDesirability(self.plateau,i):
+                        self.property = i
                 
                 self.riskTimer = 0
 
@@ -110,6 +120,7 @@ class DamagedBuilding(Building) :
         self.collapseRisk = collapseRisk
         self.riskTimer = 0
         self.property = property
+        self.filt = 0
 
     def delete(self):
         self.plateau.structures.remove(self)
@@ -132,6 +143,7 @@ class BurningBuilding(Building) :
         self.collapseRisk = collapseRisk
         self.index_sprite = 0
         self.riskTimer = 0
+        self.property = property
     
     def delete(self):
         self.plateau.structures.remove(self)
@@ -154,4 +166,5 @@ class BurningBuilding(Building) :
             val = randint(0,1000)
             if val<=5 :
                 self.off()
-                
+
+

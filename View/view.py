@@ -51,8 +51,6 @@ class GraphicalView(object):
             pygame.quit()
             exit()
         elif isinstance(event, TickEvent):
-            if not self.isinitialized:
-                return
             currentstate = self.model.state.peek()
             if currentstate == STATE_INTRO_SCENE:
                 self.renderIntroScene();

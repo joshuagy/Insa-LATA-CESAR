@@ -87,7 +87,7 @@ class Foreground:
       effectedImage.set_colorkey((0, 0, 0))
       effectedImage.set_alpha(65)
       originalImage.blit(effectedImage, (0, 0))
-    return originalImage
+    return originalImage     
 
   def initOverlayGrid(self):
     self.overlayGrid = [[None for _ in range(self.nbr_cell_x)] for _ in range(self.nbr_cell_y)]
@@ -143,6 +143,12 @@ class Foreground:
   def putGreen(self, originalImage):
     effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
     effectedImage.fill((0, 200, 0))
+    originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
+    return originalImage
+  
+  def putGrey(self, originalImage):
+    effectedImage = pygame.Surface(originalImage.get_size()).convert_alpha()
+    effectedImage.fill((150, 150, 150))
     originalImage.blit(effectedImage, (0, 0), special_flags = pygame.BLEND_RGBA_MULT)
     return originalImage
 
