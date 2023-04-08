@@ -6,6 +6,11 @@ class LoadSave(Event):
         self.saveName = saveName
         self.name = "Exit event"
 
+class MultiplayerStart(Event):
+    def __init__ (self, port):
+        self.port = port
+        self.name = "Multiplayer start event"
+
 class ExitEvent(Event):
     """
     Exit event.
@@ -29,6 +34,10 @@ class QuitEvent(Event):
 class LoadEvent(Event):
     def __init__ (self):
         self.name = "Loadevent"
+
+class MultiplayerEvent(Event):
+    def __init__ (self):
+        self.name = "Multiplayerevent"
 
 class TickEvent(Event):
     """
