@@ -36,7 +36,7 @@ class GraphicalView(object):
         self.clock = None
         self.smallfont = None
 
-        self.counter = 20
+        self.counter = 40
 
     def notify(self, event):
         """
