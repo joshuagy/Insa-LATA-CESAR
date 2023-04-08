@@ -117,8 +117,9 @@ class MouseInputHandler:
             self.evManager.Post(StateChangeEvent(STATE_PLAY))
         elif isinstance(feedBack, StateChangeEvent):
             if feedBack.state == STATE_PLAY:
-                self.model.saveScene.userInput = ""
-                #self.model.actualGame.load_savefile("DefaultMap.pickle") #DefaultMap normalement
+                self.model.saveScene.userInput = ""                
+                #Just uncomment the line below to have a defined map, otherwise it will be full of grass
+                self.model.actualGame.load_savefile("DefaultMap.pickle")
             self.evManager.Post(feedBack)
         else:
             self.evManager.Post(feedBack)

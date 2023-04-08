@@ -229,12 +229,13 @@ class Plateau():
         self.population = save.population
         
     def default_map(self):
+        '''Generate a map filled with grass'''
         self.map = []
         for cell_x in range(self.nbr_cell_x):
             self.map.append([])
             for cell_y in range(self.nbr_cell_y):
                 sprite = self.choose_image()[0]
-                cells_to_map = self.cells_to_map(cell_x, cell_y, sprite, 0)
+                cells_to_map = self.cells_to_map(cell_x, cell_y, sprite, randint(0, 57))
                 self.map[cell_x].append(cells_to_map)
                 render_pos = cells_to_map.render_pos
                 self.surface_cells.blit(self.image["land"][1], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))

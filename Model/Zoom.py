@@ -1,7 +1,4 @@
 import pygame
-
-
-
 class Zoom:
     def __init__(self,image):
         self.image=image
@@ -22,3 +19,4 @@ class Zoom:
         self.image["water4"] = pygame.transform.scale(self.image["water4"], (self.image["water4"].get_width() * X__, self.image["water4"].get_height() * X__))
         self.image["water5"] = pygame.transform.scale(self.image["water5"], (self.image["water5"].get_width() * X__, self.image["water5"].get_height() * X__))
         self.image["rock3"] = pygame.transform.scale(self.image["rock3"], (self.image["rock3"].get_width() * X__, self.image["rock3"].get_height() * X__))
+        
