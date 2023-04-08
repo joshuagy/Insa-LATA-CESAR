@@ -40,16 +40,18 @@ void print_all_clients(void)
 
 int main(int argc , char *argv[])
 {
-    if ( argc != 3 ) 
+    if ( argc != 5 ) 
     {
-        printf("Usage: %s <port> <mode>\n", argv[0]);
+        printf("Usage: %s <IP address> <destination port> <listen port> <mode>\n", argv[0]);
         exit(1);
     }
 
     int client_fd;
 
-    int PORT = atoi(argv[1]);
-    int mode = atoi(argv[2]);
+    char * IP_ADDR = argv[1];
+    int PORT_EXT = atoi(argv[2]);
+    int PORT = atoi(argv[3]);
+    int mode = atoi(argv[4]);
 
     char *payload = NULL;
     size_t payload_len;
@@ -119,9 +121,9 @@ int main(int argc , char *argv[])
 
         // Set server address and port
         address.sin_family = AF_INET;
-        address.sin_addr.s_addr = inet_addr("192.168.1.70");
+        address.sin_addr.s_addr = inet_addr(IP_ADDR);
         // address.sin_addr.s_addr = INADDR_ANY;
-        address.sin_port = htons(8888);
+        address.sin_port = htons(PORT_EXT);
 
         // Connect to server
         if ( connect(client_fd, (struct sockaddr *)&address, sizeof(address)) < 0 ) {

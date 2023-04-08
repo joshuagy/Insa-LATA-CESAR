@@ -34,12 +34,12 @@ class Menu:
   def initializeItems(self):
     startButton = MenuButton(self.surface, "./image/UI/menu/menu_start_button.png", 0, StateChangeEvent(STATE_PLAY))
     loadSaveButton = MenuButton(self.surface, "./image/UI/menu/menu_load_save_button.png", 1, LoadEvent())
-    MultiplayerButton = MenuButton(self.surface, "./image/UI/menu/menu_multiplayer_button.png", 3, MultiplayerEvent())
-    exitButton = MenuButton(self.surface, "./image/UI/menu/menu_exit_button.png", 2, QuitEvent())
+    multiplayerButton = MenuButton(self.surface, "./image/UI/menu/join_by_IP.png", 2, MultiplayerEvent())
+    exitButton = MenuButton(self.surface, "./image/UI/menu/menu_exit_button.png", 3, QuitEvent())
     
     self.items.append(startButton)
     self.items.append(loadSaveButton)
-    self.items.append(MultiplayerButton)
+    self.items.append(multiplayerButton)
     self.items.append(exitButton)
 
   def renderItems(self) -> None:
@@ -127,7 +127,7 @@ class MultiplayerScene:
     self.surface = background_surface
     self.soundMixer = soundMixer
 
-    self.image = pygame.image.load("./image/UI/menu/loadInterface.png").convert_alpha()
+    self.image = pygame.image.load("./image/UI/menu/joinIPInterface.png").convert_alpha()
     self.defaultSurface = pygame.transform.scale(self.image, (400, 400))
 
     self.surface = self.defaultSurface.copy()
@@ -135,8 +135,26 @@ class MultiplayerScene:
     self.posX = (self.screen.get_width()/2) - (self.surface.get_width()/2)
     self.posY = (self.screen.get_height()/2) - (self.surface.get_height()/2)
 
-    self.font = pygame.font.SysFont(None, 24)
-    self.userInput = ""
+    self.font = pygame.font.SysFont(None, 36)
+    self.fontError = pygame.font.SysFont(None, 24)
+    self.textboxselection = 1
+    self.IPaddrInput = "127.0.0.1"
+    self.portExtInput = "8888"
+    self.portIntInput = "8889"
+    self.textError = ""
+    
+    self.IPaddrText = pygame.image.load("./image/UI/menu/textbox.png").convert_alpha()
+    self.IPaddrPos = ((self.surface.get_width()/10) ,self.surface.get_height()/4 - 15)
+    self.IPaddrRect = pygame.Rect(self.IPaddrPos, self.IPaddrText.get_size())
+
+    self.portExtText = pygame.image.load("./image/UI/menu/textbox.png").convert_alpha()
+    self.portExtPos = ((self.surface.get_width()/10) ,self.surface.get_height()/2 - 30)
+    self.portExtRect = pygame.Rect(self.portExtPos, self.portExtText.get_size())
+
+    self.portIntText = pygame.image.load("./image/UI/menu/textbox.png").convert_alpha()
+    self.portIntPos = ((self.surface.get_width()/10) ,self.surface.get_height()*(2/3) - 15)
+    self.portIntRect = pygame.Rect(self.portIntPos, self.portIntText.get_size())
+
 
     self.okButton = pygame.image.load("./image/UI/quit/okButton.png")
     self.okButtonPos = ((self.surface.get_width()/2) + self.okButton.get_width(), (self.surface.get_height() - self.okButton.get_height())-20)
@@ -152,30 +170,68 @@ class MultiplayerScene:
   def handleMouseInput(self, event) -> Event:
     mousePosRelative = self.getMousePosRelative(event)
     if self.okButtonRect.collidepoint(mousePosRelative):
-      self.feedBack = MultiplayerStart(int(self.userInput))
-      self.soundMixer.playEffect('clickEffect')
-      return self.feedBack
+      if self.textError == "":
+        self.feedBack = MultiplayerStart(str(self.IPaddrInput), int(self.portExtInput), int(self.portIntInput))
+        self.soundMixer.playEffect('clickEffect')
+        return self.feedBack
+      else:
+        self.soundMixer.playEffect('clickEffect')
+        return 0
     elif  self.cancelButtonRect.collidepoint(mousePosRelative):
        self.soundMixer.playEffect('clickEffect')
        return TickEvent()
+    elif self.IPaddrRect.collidepoint(mousePosRelative):
+      self.textboxselection = 1
+    elif self.portExtRect.collidepoint(mousePosRelative):
+      self.textboxselection = 2
+    elif self.portIntRect.collidepoint(mousePosRelative):
+      self.textboxselection = 3
     else: return 0
   
   def handleKeyboardInput(self, event) -> Event:
-    if event.key == pygame.K_BACKSPACE:
-      self.userInput = self.userInput[:-1]
-    elif event.key in numerical_keys:
-      if len(self.userInput) < 4:
-        self.userInput += event.unicode
-    return TickEvent()
+    match(self.textboxselection):
+      case(1):
+        if event.key == pygame.K_BACKSPACE:
+          self.IPaddrInput = self.IPaddrInput[:-1]
+        elif event.key in numerical_keys or event.key == pygame.K_PERIOD or event.key == pygame.K_KP_PERIOD or event.key == pygame.K_SEMICOLON:
+          if len(self.IPaddrInput) < 16:
+            self.IPaddrInput += event.unicode
+        if self.IPaddrInput.count('.') != 3:
+          self.textError = "Invalid IP address"
+        else:
+          self.textError = ""
+        return TickEvent()
+      case(2):
+        if event.key == pygame.K_BACKSPACE:
+          self.portExtInput = self.portExtInput[:-1]
+        elif event.key in numerical_keys:
+          if len(self.portExtInput) < 4:
+            self.portExtInput += event.unicode
+        return TickEvent()
+      case(3):
+        if event.key == pygame.K_BACKSPACE:
+          self.portIntInput = self.portIntInput[:-1]
+        elif event.key in numerical_keys:
+          if len(self.portIntInput) < 4:
+            self.portIntInput += event.unicode
+        return TickEvent()
+
 
   def render(self):
     self.screen.blit(self.defaultSurface, (self.posX, self.posY))
     self.surface = self.defaultSurface.copy()
 
+    self.surface.blit(self.IPaddrText, self.IPaddrPos)
+    self.surface.blit(self.portExtText, self.portExtPos)
+    self.surface.blit(self.portIntText, self.portIntPos)
+
     self.surface.blit(self.okButton, self.okButtonPos)
     self.surface.blit(self.cancelButton, self.cancelButtonPos)
 
-    self.surface.blit(self.font.render(self.userInput, True, (0, 0, 0)), (25, 60))
+    self.surface.blit(self.font.render(self.IPaddrInput, True, (0, 0, 0)), (self.IPaddrPos[0], self.IPaddrPos[1]+10))
+    self.surface.blit(self.font.render(self.portExtInput, True, (0, 0, 0)), (self.portExtPos[0], self.portExtPos[1]+10))
+    self.surface.blit(self.font.render(self.portIntInput, True, (0, 0, 0)), (self.portIntPos[0], self.portIntPos[1]+10))
+    self.surface.blit(self.fontError.render(self.textError, True, (255, 0, 0)), (self.IPaddrPos[0], self.IPaddrPos[1]+45))
 
     self.screen.blit(self.surface, (self.posX, self.posY))
 
