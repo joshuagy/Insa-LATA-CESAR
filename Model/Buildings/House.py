@@ -6,6 +6,7 @@ from Model.Plateau import *
 from Model.Case import *
 from Model.Walker import Immigrant
 from Model.Buildings.Building import DamagedBuilding
+from Model.constants import MAP_SIZE
 
 class House(Building):
 
@@ -215,7 +216,7 @@ class HousingSpot() :
 
             if now - self.spawn_timer > (500 / currentSpeedFactor):
                 if randint(0, 10) == 0 and self.nb_immigrant < 1:
-                    Immigrant(self.plateau.map[19][38], self.plateau, self.case)
+                    Immigrant(self.plateau.map[int(MAP_SIZE/2)-1][MAP_SIZE-2], self.plateau, self.case)
                     self.nb_immigrant += 1
                 self.spawn_timer = now
 
