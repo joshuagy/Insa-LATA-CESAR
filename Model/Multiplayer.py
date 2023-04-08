@@ -16,21 +16,25 @@ class Multiplayer():
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect((self.server_address, self.server_port))
 
-        self.recv_queue = []
+        self._stop_event = threading.Event()
 
         self.recv_thread = threading.Thread(target=self.recv_thread)
         self.recv_thread.start()
 
-    def delete(self):
-        self.p.kill()
+    def stop(self):
+        self._stop_event.set()
         self.client_socket.close()
+        self.p.kill()
+        del self
+
 
     def recv_thread(self):
-        while True:
+        while not self._stop_event.is_set():
             data_len, data = self.recv_packet(self.client_socket)
-            data = data.decode('utf-8')
-            #print(f"[R] payload: {data} | payload_length: {data_len}")
-            self.wrapper(data)
+            if data :
+                data = data.decode('utf-8')
+                #print(f"[R] payload: {data} | payload_length: {data_len}")
+                self.wrapper(data)
     
     def send(self, message):
         payload = message

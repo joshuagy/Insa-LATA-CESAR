@@ -162,7 +162,9 @@ class MouseInputHandler:
     def pause_menu(self,event):
         if self.model.pause_menu.Exit_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
             self.model.pause_menu.pause = False
-            self.model.actualGame.pause = False  
+            self.model.actualGame.pause = False
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.stop()
             self.evManager.Post(StateChangeEvent(STATE_MENU))
 
         if self.model.pause_menu.Continue_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
