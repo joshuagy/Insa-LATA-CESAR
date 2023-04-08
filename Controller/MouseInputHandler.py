@@ -112,7 +112,7 @@ class MouseInputHandler:
             self.model.actualGame.load_savefile(feedBack.saveName)
             self.evManager.Post(StateChangeEvent(STATE_PLAY))
         elif isinstance(feedBack, MultiplayerStart):
-            self.model.actualGame.multiplayer = Multiplayer(self.model.actualGame, feedBack.port)
+            self.model.actualGame.multiplayer = Multiplayer(self.model.actualGame, feedBack.ipaddr, feedBack.portext, feedBack.portint, 1)
             self.model.actualGame.load_savefile("DefaultMap.pickle")
             self.evManager.Post(StateChangeEvent(STATE_PLAY))
         elif isinstance(feedBack, StateChangeEvent):

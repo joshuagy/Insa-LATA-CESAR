@@ -7,8 +7,10 @@ class LoadSave(Event):
         self.name = "Exit event"
 
 class MultiplayerStart(Event):
-    def __init__ (self, port):
-        self.port = port
+    def __init__ (self, ipaddr, portext, portint):
+        self.ipaddr = ipaddr
+        self.portext = portext
+        self.portint = portint
         self.name = "Multiplayer start event"
 
 class ExitEvent(Event):

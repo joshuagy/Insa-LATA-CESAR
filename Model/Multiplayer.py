@@ -6,15 +6,18 @@ import subprocess
 import struct
 
 class Multiplayer():
-    def __init__(self, plateau, PORT):
+    def __init__(self, plateau, server_address, server_port, listen_port, mode):
         self.plateau = plateau
-        self.server_port = PORT
+        self.server_address = server_address
+        self.server_port = server_port
+        self.listen_port = listen_port
+        self.mode = mode
 
-        self.p = subprocess.Popen(["./master", str(self.server_port), "1"])
+        self.p = subprocess.Popen(["./master",str(self.server_address), str(self.server_port), str(self.listen_port), str(self.mode)])
         time.sleep(1)
-        self.server_address = "127.0.0.1"
+        self.localhost = "127.0.0.1"
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client_socket.connect((self.server_address, self.server_port))
+        self.client_socket.connect((self.localhost, self.listen_port))
 
         self._stop_event = threading.Event()
 
