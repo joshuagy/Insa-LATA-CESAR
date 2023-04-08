@@ -117,7 +117,8 @@ class Plateau():
         global counter
         counter = 1
         self.overlayCounter = 0   
-        self.property = 1      
+        self.property = 1
+        self.multiplayer = None
 
     def save_game(self, filename):
         if filename.split(".")[-1] != "pickle":
@@ -429,37 +430,37 @@ class Plateau():
         
         self.collision_matrix = self.create_collision_matrix()
 
-    def buildHousingSpot(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildHousingSpot(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
-                    for xcr in range (xi-2,xi+3,1) :
-                        for ycr in range (yi-2,yi+3,1) :
-                            if 0<=xcr<self.nbr_cell_x and 0<=ycr<self.nbr_cell_y:
-                                if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision and self.map[xi][yi].sprite not in list_of_undestructible:
-                                    if self.map[xcr][ycr].road :
-                                        HousingSpot(self.map[xi][yi], self, property=property)
+                for xcr in range (xi-2,xi+3,1) :
+                    for ycr in range (yi-2,yi+3,1) :
+                        if 0<=xcr<self.nbr_cell_x and 0<=ycr<self.nbr_cell_y:
+                            if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision and self.map[xi][yi].sprite not in list_of_undestructible:
+                                if self.map[xcr][ycr].road :
+                                    HousingSpot(self.map[xi][yi], self, property=property)
     
-    def buildPrefecture(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildPrefecture(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
                 if self.map[xi][yi].getConnectedToRoad() > 0 :
                     if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision:
                         Prefecture(self.map[xi][yi],self,(1,1),"Prefecture",1, property)
 
-    def buildEngineerPost(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildEngineerPost(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
                 if self.map[xi][yi].getConnectedToRoad() > 0 :
                     if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision:
                         EnginnerPost(self.map[xi][yi],self,(1,1),"EngineerPost",1, property)
     
-    def buildWell(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildWell(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
                     if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision:
                         Well(self.map[xi][yi],self,(1,1),"Well", property)
     
-    def buildSenate(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildSenate(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
                 for xccl in range(xi, xi+5, 1) :
@@ -468,7 +469,7 @@ class Plateau():
                             return
         Senate(self.map[xi][yi],self,(5,5),"Senate", property)
 
-    def buildFarm(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildFarm(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         #Vérifier que toutes les cases sont disponibles :
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
@@ -478,7 +479,7 @@ class Plateau():
                             return
         WheatFarm(self.map[xi][yi],self,(2,2),"WheatFarm", property)
             
-    def buildGranary(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildGranary(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         #Vérifier que toutes les cases sont disponibles :
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
@@ -488,7 +489,7 @@ class Plateau():
                             return
         Granary(self.map[xi][yi],self,(3,3),"Granary", property)
             
-    def buildMarket(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildMarket(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
                 for xccl in range(xi, xi+2, 1) :
@@ -497,7 +498,7 @@ class Plateau():
                             return
         Market(self.map[xi][yi],self,(2,2),"Market", property)
 
-    def buildTemple(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildTemple(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         #Vérifier que toutes les cases sont disponibles :
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):

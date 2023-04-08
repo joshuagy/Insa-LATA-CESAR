@@ -20,8 +20,8 @@ class Menu:
     self.loadScene = None
     self.isLoadState = False
 
-    self.joinIPScene = None
-    self.isJoinIPState = False
+    self.multiplayerScene = None
+    self.isMultiplayerState = False
 
     self.defaultFeedback = TickEvent() # do nothing
 
@@ -34,19 +34,21 @@ class Menu:
   def initializeItems(self):
     startButton = MenuButton(self.surface, "./image/UI/menu/menu_start_button.png", 0, StateChangeEvent(STATE_PLAY))
     loadSaveButton = MenuButton(self.surface, "./image/UI/menu/menu_load_save_button.png", 1, LoadEvent())
-    joinLocalNetworkButton = MenuButton(self.surface, "./image/UI/menu/join_local_network.png", 2, LoadEvent())
-    joinIPAddressButton = MenuButton(self.surface, "./image/UI/menu/join_by_IP.png", 3, JoinIPEvent())
-    exitButton = MenuButton(self.surface, "./image/UI/menu/menu_exit_button.png", 4, QuitEvent())
+    MultiplayerButton = MenuButton(self.surface, "./image/UI/menu/menu_multiplayer_button.png", 3, MultiplayerEvent())
+    exitButton = MenuButton(self.surface, "./image/UI/menu/menu_exit_button.png", 2, QuitEvent())
     
     self.items.append(startButton)
     self.items.append(loadSaveButton)
-    self.items.append(joinLocalNetworkButton)
-    self.items.append(joinIPAddressButton)
+    self.items.append(MultiplayerButton)
     self.items.append(exitButton)
 
   def renderItems(self) -> None:
     for item in self.items:
       item.render(self.currentMousePos)
+
+  def handleKeyboardInput(self, event) -> Event:
+    if self.isMultiplayerState:
+      self.multiplayerScene.handleKeyboardInput(event)
 
   def handleMouseInput(self, event) -> Event:
     if self.isQuitState:
@@ -81,6 +83,16 @@ class Menu:
         return joinIPSceneFeedBack
       else:
        return TickEvent()
+    elif self.isMultiplayerState:
+      MultiplayerSceneFeedBack = self.multiplayerScene.handleMouseInput(event)
+      if isinstance(MultiplayerSceneFeedBack, TickEvent):
+        self.isMultiplayerState = False
+        self.soundMixer.playEffect('clickEffect')
+        return MultiplayerSceneFeedBack
+      if isinstance(MultiplayerSceneFeedBack, MultiplayerStart):
+        self.soundMixer.playEffect('clickEffect')
+        self.isMultiplayerState = False
+        return MultiplayerSceneFeedBack
     else:
       for item in self.items:
         if item.rect.collidepoint(event.pos):
@@ -94,10 +106,10 @@ class Menu:
             self.loadScene = LoadScene(self.screen, self.surface.copy(), self.soundMixer)
             self.isLoadState = True
             return TickEvent()
-          elif isinstance(item.feedback, JoinIPEvent):
+          elif isinstance(item.feedback, MultiplayerEvent):
             self.soundMixer.playEffect('clickEffect')
-            self.joinIPScene = JoinIPScene(self.screen, self.surface.copy(), self.soundMixer)
-            self.isJoinIPState = True
+            self.multiplayerScene = MultiplayerScene(self.screen, self.surface.copy(), self.soundMixer)
+            self.isMultiplayerState = True
             return TickEvent()
           else:
             self.soundMixer.playEffect('clickEffect')
@@ -113,12 +125,75 @@ class Menu:
       self.quitScene.render(self.currentMousePos)
     elif self.isLoadState:
       self.loadScene.render()
-    elif self.isJoinIPState:
-      self.joinIPScene.render()
+    elif self.isMultiplayerState:
+      self.multiplayerScene.render()
     else: 
       self.renderItems()
       self.screen.blit(self.surface, (0, 0))
 
+class MultiplayerScene:
+  def __init__(self, screen, background_surface, soundMixer):
+    self.screen = screen
+    self.surface = background_surface
+    self.soundMixer = soundMixer
+
+    self.image = pygame.image.load("./image/UI/menu/loadInterface.png").convert_alpha()
+    self.defaultSurface = pygame.transform.scale(self.image, (400, 400))
+
+    self.surface = self.defaultSurface.copy()
+
+    self.posX = (self.screen.get_width()/2) - (self.surface.get_width()/2)
+    self.posY = (self.screen.get_height()/2) - (self.surface.get_height()/2)
+
+    self.font = pygame.font.SysFont(None, 24)
+    self.userInput = ""
+
+    self.okButton = pygame.image.load("./image/UI/quit/okButton.png")
+    self.okButtonPos = ((self.surface.get_width()/2) + self.okButton.get_width(), (self.surface.get_height() - self.okButton.get_height())-20)
+    self.okButtonRect = pygame.Rect(self.okButtonPos,  self.okButton.get_size())
+
+    self.cancelButton = pygame.image.load("./image/UI/quit/cancelButton.png")
+    self.cancelButtonPos = ((self.surface.get_width()/2) + 3*self.cancelButton.get_width(), (self.surface.get_height() - self.cancelButton.get_height())-20)
+    self.cancelButtonRect = pygame.Rect(self.cancelButtonPos, self.cancelButton.get_size())
+  
+  def getMousePosRelative(self, event):
+    return (event.pos[0] - self.posX, event.pos[1] - self.posY)
+
+  def handleMouseInput(self, event) -> Event:
+    mousePosRelative = self.getMousePosRelative(event)
+    if self.okButtonRect.collidepoint(mousePosRelative):
+      self.feedBack = MultiplayerStart(int(self.userInput))
+      self.soundMixer.playEffect('clickEffect')
+      return self.feedBack
+    elif  self.cancelButtonRect.collidepoint(mousePosRelative):
+       self.soundMixer.playEffect('clickEffect')
+       return TickEvent()
+    else: return 0
+  
+  def handleKeyboardInput(self, event) -> Event:
+    if event.key == pygame.K_BACKSPACE:
+      self.userInput = self.userInput[:-1]
+    elif event.key in numerical_keys:
+      if len(self.userInput) < 4:
+        self.userInput += event.unicode
+    return TickEvent()
+
+  def render(self):
+    self.screen.blit(self.defaultSurface, (self.posX, self.posY))
+    self.surface = self.defaultSurface.copy()
+
+    self.surface.blit(self.okButton, self.okButtonPos)
+    self.surface.blit(self.cancelButton, self.cancelButtonPos)
+
+    self.surface.blit(self.font.render(self.userInput, True, (0, 0, 0)), (25, 60))
+
+    self.screen.blit(self.surface, (self.posX, self.posY))
+
+
+numerical_keys = [pygame.K_0, pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4,
+                pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9,
+                pygame.K_KP0, pygame.K_KP1, pygame.K_KP2, pygame.K_KP3, pygame.K_KP4,
+                pygame.K_KP5, pygame.K_KP6, pygame.K_KP7, pygame.K_KP8, pygame.K_KP9]
 
 class LoadScene:
   def __init__(self, screen, background_surface, soundMixer):

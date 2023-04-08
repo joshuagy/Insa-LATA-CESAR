@@ -19,6 +19,8 @@ class KeyboardInputHandler:
 		currentstate = self.model.state.peek()
 		if currentstate == STATE_INTRO_SCENE:
 			self.handleKeyboardEventsStateIntroScene(event)
+		if currentstate == STATE_MENU:
+			self.handleKeyboardEventsStateMenu(event)
 		elif currentstate == STATE_PLAY:
 			self.handleKeyboardEventsStatePlay(event)
 		elif currentstate == STATE_SAVE_SCENE:
@@ -27,6 +29,9 @@ class KeyboardInputHandler:
 			self.handleKeyboardEventsStateJoinIPScene(event)
 		elif event.key == pygame.K_ESCAPE:
 			self.evManager.Post(ExitEvent())
+
+	def handleKeyboardEventsStateMenu(self, event):
+		self.model.menu.handleKeyboardInput(event)
 
 	def handleKeyboardEventsStateSaveScene(self, event):
 		feedback = self.model.saveScene.handleKeyboardInput(event)
