@@ -233,18 +233,14 @@ class Plateau():
         for cell_x in range(self.nbr_cell_x):
             self.map.append([])
             for cell_y in range(self.nbr_cell_y):
-                #debug
-                print(f"cell_x: {cell_x}, cell_y: {cell_y}, map length: {len(self.map)}")
-                
-                sprite = self.choose_image()
-                #cells_to_map = self.cells_to_map(cell_x, cell_y)
-                cells_to_map = self.cells_to_map(cell_x, cell_y,sprite,self.map[cell_x][cell_y]["indexSprite"])
-                
-                #cells_to_map = self.cells_to_map(self.map[cell_x][cell_y]["x"], self.map[cell_x][cell_y]["y"], self.map[cell_x][cell_y]["sprite"], self.map[cell_x][cell_y]["indexSprite"])
+                sprite = self.choose_image()[0]
+                #index_image = self.map[cell_x][cell_y].indexSprite
+                cells_to_map = self.cells_to_map(cell_x, cell_y, sprite, 0)
                 self.map[cell_x].append(cells_to_map)
                 render_pos = cells_to_map.render_pos
                 self.surface_cells.blit(self.image["land"][1], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
         return self.map
+
     
     def choose_image(self):
         image=""
@@ -635,11 +631,21 @@ class Plateau():
 
         # DRAW CELLS
 
-        for cell_x in range(self.nbr_cell_y):
+        for cell_x in range(self.nbr_cell_x):
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
                 id_image = None
                 image = None
+                # DRAW DEFAULT CELLS
+                if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
+                    id_image = self.map[cell_x][cell_y].sprite
+                    index_image = self.map[cell_x][cell_y].indexSprite
+                    if type(id_image) != str:
+                        print("id_image is not a string:", id_image)
+                    image = self.image[id_image][index_image]
+                    self.screen.blit(image,
+                                (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
                 
                 # DRAW ROADS
                 if self.map[cell_x][cell_y].road:
