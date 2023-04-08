@@ -234,7 +234,6 @@ class Plateau():
             self.map.append([])
             for cell_y in range(self.nbr_cell_y):
                 sprite = self.choose_image()[0]
-                #index_image = self.map[cell_x][cell_y].indexSprite
                 cells_to_map = self.cells_to_map(cell_x, cell_y, sprite, 0)
                 self.map[cell_x].append(cells_to_map)
                 render_pos = cells_to_map.render_pos
