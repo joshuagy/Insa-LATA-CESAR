@@ -73,7 +73,7 @@ class Plateau():
         self.loyaltyWarning = False #Affiche un avertissement quand un bâtiment a une loyauté faible et pourrait changer de camp
 
         #Map du début
-#        self.load_savefile("testx40.pickle")
+#       self.load_savefile("testx40.pickle")
         self.map = self.default_map()
 
         self.foreground = Foreground(self.screen, self.nbr_cell_x, self.nbr_cell_y)
@@ -229,26 +229,28 @@ class Plateau():
         self.population = save.population
         
     def default_map(self):
-        map = []
+        self.map = []
         for cell_x in range(self.nbr_cell_x):
-            map.append([])
+            self.map.append([])
             for cell_y in range(self.nbr_cell_y):
+                #debug
+                print(f"cell_x: {cell_x}, cell_y: {cell_y}, map length: {len(self.map)}")
+                
                 sprite = self.choose_image()
                 #cells_to_map = self.cells_to_map(cell_x, cell_y)
                 cells_to_map = self.cells_to_map(cell_x, cell_y,sprite,self.map[cell_x][cell_y]["indexSprite"])
                 
                 #cells_to_map = self.cells_to_map(self.map[cell_x][cell_y]["x"], self.map[cell_x][cell_y]["y"], self.map[cell_x][cell_y]["sprite"], self.map[cell_x][cell_y]["indexSprite"])
-                map[cell_x].append(cells_to_map)
+                self.map[cell_x].append(cells_to_map)
                 render_pos = cells_to_map.render_pos
                 self.surface_cells.blit(self.image["land"][1], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
-        return map
+        return self.map
     
     def choose_image(self):
         image=""
         global counter
         if counter<=MAP_SIZE**2:
-            #image="land1"
-            image=["land"][1]
+            image=["land"]
             counter+=1
         return image
     
