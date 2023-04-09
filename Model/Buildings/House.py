@@ -221,13 +221,13 @@ class HousingSpot() :
                         #South
                         Immigrant(self.plateau.map[int(MAP_SIZE/2)-1][MAP_SIZE-2], self.plateau, self.case)
                     elif self.property == 2:
-                        #East
-                        Immigrant(self.plateau.map[0][int(MAP_SIZE/2)], self.plateau, self.case)
+                        #West
+                        Immigrant(self.plateau.map[1][int(MAP_SIZE/2)], self.plateau, self.case)
                     elif self.property == 3:
                         #North
-                        Immigrant(self.plateau.map[int(MAP_SIZE/2)-1][0], self.plateau, self.case)
+                        Immigrant(self.plateau.map[int(MAP_SIZE/2)-1][1], self.plateau, self.case)
                     else:
-                        #West
+                        #East
                         Immigrant(self.plateau.map[MAP_SIZE-2][int(MAP_SIZE/2)-1], self.plateau, self.case)
                         
                     
