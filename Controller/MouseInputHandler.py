@@ -12,6 +12,7 @@ from Model.Buildings.WorkBuilding import *
 from Model.Buildings.UrbanPlanning import *
 from Model.Buildings.RessourceBuilding import *
 from Model.Multiplayer import *
+from Model.TopBar import TopBar
 
 class MouseInputHandler:
     """
@@ -55,6 +56,8 @@ class MouseInputHandler:
                                 self.handleMouseButtonUpEventStatePlay(event)
                         elif currentstate == STATE_SAVE_SCENE:
                                 self.handleMouseEventsStateSaveScene(event)
+                        elif currentstate == STATE_OPEN_TO_LAN_SCENE:
+                                self.handleMouseEventsStateOpenToLanScene(event)
                 if event.button == 1:
                         self.clicked = False
                         self.initialMouseCoordinate = None
@@ -93,6 +96,10 @@ class MouseInputHandler:
 
     def handleMouseEventsStateSaveScene(self, event):
         feedBack = self.model.saveScene.handleMouseInput(event)
+        self.evManager.Post(feedBack)
+    
+    def handleMouseEventsStateOpenToLanScene(self, event):
+        feedBack = self.model.openToLanScene.handleMouseInput(event)
         self.evManager.Post(feedBack)
 
     def handleMouseEventsStateIntroScene(self, event):
@@ -166,6 +173,7 @@ class MouseInputHandler:
             self.model.actualGame.pause = False
             if self.model.actualGame.multiplayer:
                 self.model.actualGame.multiplayer.stop()
+                print("stop")
             self.evManager.Post(StateChangeEvent(STATE_MENU))
 
         if self.model.pause_menu.Continue_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
@@ -200,6 +208,9 @@ class MouseInputHandler:
                 event.pos) and self.model.actualGame.topbar.File_bol:
             self.model.actualGame.restart = True
             self.model.actualGame.update()
+        elif self.model.actualGame.topbar.OpenToLan_rect.collidepoint(
+                event.pos):
+            self.evManager.Post(StateChangeEvent(STATE_OPEN_TO_LAN_SCENE))
 
 
         else:
