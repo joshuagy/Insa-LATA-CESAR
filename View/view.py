@@ -9,6 +9,7 @@ from Model.constants import *
 from Model.MiniMap import MiniMap
 from Model.Menu_pause import *
 from Model.SaveScene import *
+from Model.constants import *
 
 
 class GraphicalView(object):
@@ -126,7 +127,7 @@ class GraphicalView(object):
         self.model.introScene = IntroScene(self.screen)
         self.model.menu = Menu(self.screen, self.model.soundMixer)
         self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1], self.model.soundMixer)
-        self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), 40 , 40)
+        self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), MAP_SIZE , MAP_SIZE)
         self.model.pause_menu = Pausemenu(self.screen.get_width(), self.screen.get_height(), self.screen)
         self.model.saveScene = SaveScene(self.model, self.screen, self.smallfont, self.model.soundMixer)
 

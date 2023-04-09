@@ -1,5 +1,8 @@
 # Constant file
 
+#40 de base
+MAP_SIZE = 60
+
 cell_size = 30
 
 # Scale to redimension the sprites

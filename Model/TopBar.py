@@ -1,4 +1,5 @@
 from Model.control_panel import *
+from ip import *
 
 class TopBar:
   def __init__(self, screen, treasury, population, date):
@@ -9,6 +10,19 @@ class TopBar:
     self.treasury = treasury
     self.population = population
     self.date = "Jan 340 BC"
+    
+    self.IP = get_ip()
+    print("Ceci est un print to see when am i called")
+    print(self.IP)
+    #display_surface = pygame.display.set_mode((400, 400))
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    text = font.render('TextnjlnkjnkjnkjnTest', True, (0, 255, 0), (0, 0, 128))
+    textRect = text.get_rect()
+    self.screen.fill((255, 255, 255))
+    self.screen.blit(text, textRect)
+   
+    
+    
 
     self.treasuryBloc = bloc_top_menu.img_scaled.copy()
     self.treasuryBlocPos = (480, 0)
