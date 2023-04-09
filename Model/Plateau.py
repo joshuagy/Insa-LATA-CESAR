@@ -119,7 +119,7 @@ class Plateau():
         global counter
         counter = 1
         self.overlayCounter = 0   
-        self.property = 1
+        self.property = 1   #Player Number
         self.multiplayer = None
 
     def save_game(self, filename):
