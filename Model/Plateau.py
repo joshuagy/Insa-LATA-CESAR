@@ -32,7 +32,7 @@ from random import *
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, soundMixer, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
+    def __init__(self, screen, clock, name, heigth, width, soundMixer, nbr_cell_x=MAP_SIZE, nbr_cell_y=MAP_SIZE, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
         
         self.screen = screen
         self.clock = clock
@@ -53,7 +53,7 @@ class Plateau():
         self.surface_cells = pygame.Surface((nbr_cell_x * cell_size * 2, nbr_cell_y * cell_size  + 2 * cell_size )).convert_alpha()
         
 
-        #Load de tous les spirtes
+        #Load de tous les sprites
         self.image = self.load_cases_images()
         self.image_route = self.load_routes_images()
         self.image_walkers = self.load_walkers_images()
@@ -72,7 +72,9 @@ class Plateau():
         self.roadWarning = False #Affiche un avertissement quand un bâtiment qui a besoin de la route est déconnecté
         self.loyaltyWarning = False #Affiche un avertissement quand un bâtiment a une loyauté faible et pourrait changer de camp
 
-        self.load_savefile("DefaultMap.pickle")
+        #Map du début
+#       self.load_savefile("testx40.pickle")
+        self.map = self.default_map()
 
         self.foreground = Foreground(self.screen, self.nbr_cell_x, self.nbr_cell_y)
 
@@ -117,7 +119,8 @@ class Plateau():
         global counter
         counter = 1
         self.overlayCounter = 0   
-        self.property = 1      
+        self.property = 1
+        self.multiplayer = None
 
     def save_game(self, filename):
         if filename.split(".")[-1] != "pickle":
@@ -225,6 +228,28 @@ class Plateau():
         self.treasury = save.treasury
         self.population = save.population
         
+    def default_map(self):
+        '''Generate a map filled with grass'''
+        self.map = []
+        for cell_x in range(self.nbr_cell_x):
+            self.map.append([])
+            for cell_y in range(self.nbr_cell_y):
+                sprite = self.choose_image()[0]
+                cells_to_map = self.cells_to_map(cell_x, cell_y, sprite, randint(0, 57))
+                self.map[cell_x].append(cells_to_map)
+                render_pos = cells_to_map.render_pos
+                self.surface_cells.blit(self.image["land"][1], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
+        return self.map
+
+    
+    def choose_image(self):
+        image=""
+        global counter
+        if counter<=MAP_SIZE**2:
+            image=["land"]
+            counter+=1
+        return image
+    
     def cells_to_map(self, cell_x, cell_y, sprite, indexSprite):
 
         rectangle_cell = [
@@ -429,37 +454,37 @@ class Plateau():
         
         self.collision_matrix = self.create_collision_matrix()
 
-    def buildHousingSpot(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildHousingSpot(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
-                    for xcr in range (xi-2,xi+3,1) :
-                        for ycr in range (yi-2,yi+3,1) :
-                            if 0<=xcr<self.nbr_cell_x and 0<=ycr<self.nbr_cell_y:
-                                if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision and self.map[xi][yi].sprite not in list_of_undestructible:
-                                    if self.map[xcr][ycr].road :
-                                        HousingSpot(self.map[xi][yi], self, property=property)
+                for xcr in range (xi-2,xi+3,1) :
+                    for ycr in range (yi-2,yi+3,1) :
+                        if 0<=xcr<self.nbr_cell_x and 0<=ycr<self.nbr_cell_y:
+                            if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision and self.map[xi][yi].sprite not in list_of_undestructible:
+                                if self.map[xcr][ycr].road :
+                                    HousingSpot(self.map[xi][yi], self, property=property)
     
-    def buildPrefecture(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildPrefecture(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
                 if self.map[xi][yi].getConnectedToRoad() > 0 :
                     if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision:
                         Prefecture(self.map[xi][yi],self,(1,1),"Prefecture",1, property)
 
-    def buildEngineerPost(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildEngineerPost(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
                 if self.map[xi][yi].getConnectedToRoad() > 0 :
                     if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision:
                         EnginnerPost(self.map[xi][yi],self,(1,1),"EngineerPost",1, property)
     
-    def buildWell(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildWell(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
                     if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision:
                         Well(self.map[xi][yi],self,(1,1),"Well", property)
     
-    def buildSenate(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildSenate(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
                 for xccl in range(xi, xi+5, 1) :
@@ -468,7 +493,7 @@ class Plateau():
                             return
         Senate(self.map[xi][yi],self,(5,5),"Senate", property)
 
-    def buildFarm(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildFarm(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         #Vérifier que toutes les cases sont disponibles :
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
@@ -478,7 +503,7 @@ class Plateau():
                             return
         WheatFarm(self.map[xi][yi],self,(2,2),"WheatFarm", property)
             
-    def buildGranary(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildGranary(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         #Vérifier que toutes les cases sont disponibles :
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
@@ -488,7 +513,7 @@ class Plateau():
                             return
         Granary(self.map[xi][yi],self,(3,3),"Granary", property)
             
-    def buildMarket(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildMarket(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
                 for xccl in range(xi, xi+2, 1) :
@@ -497,7 +522,7 @@ class Plateau():
                             return
         Market(self.map[xi][yi],self,(2,2),"Market", property)
 
-    def buildTemple(self, grid_x1, grid_y1, grid_x2, grid_y2, property):
+    def buildTemple(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         #Vérifier que toutes les cases sont disponibles :
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
@@ -573,8 +598,8 @@ class Plateau():
         if self.overlayCounter == 30:
             if self.foreground.getOverlayName() == "fire":
                 self.foreground.initOverlayGrid()
-                for x in range(40):
-                    for y in range(40):
+                for x in range(MAP_SIZE):
+                    for y in range(MAP_SIZE):
                         temp = self.map[x][y].structure
                         if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
                             self.foreground.addOverlayInfo(x, y, temp.get_fireRisk())
@@ -582,8 +607,8 @@ class Plateau():
 
             elif self.foreground.getOverlayName() == "destruct":
                 self.foreground.initOverlayGrid()
-                for x in range(40):
-                    for y in range(40):
+                for x in range(MAP_SIZE):
+                    for y in range(MAP_SIZE):
                         temp = self.map[x][y].structure
                         if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
                             self.foreground.addOverlayInfo(x, y, temp.get_collapseRisk())
@@ -606,11 +631,21 @@ class Plateau():
 
         # DRAW CELLS
 
-        for cell_x in range(self.nbr_cell_y):
+        for cell_x in range(self.nbr_cell_x):
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
                 id_image = None
                 image = None
+                # DRAW DEFAULT CELLS
+                if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
+                    id_image = self.map[cell_x][cell_y].sprite
+                    index_image = self.map[cell_x][cell_y].indexSprite
+                    if type(id_image) != str:
+                        print("id_image is not a string:", id_image)
+                    image = self.image[id_image][index_image]
+                    self.screen.blit(image,
+                                (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
                 
                 # DRAW ROADS
                 if self.map[cell_x][cell_y].road:

@@ -9,7 +9,8 @@ from Model.constants import *
 from Model.MiniMap import MiniMap
 from Model.Menu_pause import *
 from Model.SaveScene import *
-
+from Model.constants import *
+from Model.OpenToLanScene import *
 
 class GraphicalView(object):
     """
@@ -36,7 +37,7 @@ class GraphicalView(object):
         self.clock = None
         self.smallfont = None
 
-        self.counter = 20
+        self.counter = 40
 
     def notify(self, event):
         """
@@ -60,8 +61,16 @@ class GraphicalView(object):
                 self.renderGame()
             elif currentstate == STATE_SAVE_SCENE:
                 self.renderSaveScene()
+            elif currentstate == STATE_OPEN_TO_LAN_SCENE:
+                self.renderOpenToLanScene()
             self.clock.tick(300)
 
+    def renderOpenToLanScene(self) -> None:
+        """
+        Render the Open to LAN scene.
+        """
+        self.model.openToLanScene.render()
+        pygame.display.flip()
 
     def renderSaveScene(self) -> None:
         """
@@ -126,9 +135,7 @@ class GraphicalView(object):
         self.model.introScene = IntroScene(self.screen)
         self.model.menu = Menu(self.screen, self.model.soundMixer)
         self.model.actualGame = Plateau(self.screen, self.clock, "Plateau", self.screen.get_size()[0], self.screen.get_size()[1], self.model.soundMixer)
-        self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), 40 , 40)
+        self.model.mini_map = MiniMap(self.screen.get_width(), self.screen.get_height(), MAP_SIZE , MAP_SIZE)
         self.model.pause_menu = Pausemenu(self.screen.get_width(), self.screen.get_height(), self.screen)
         self.model.saveScene = SaveScene(self.model, self.screen, self.smallfont, self.model.soundMixer)
-
-        #Création de walkers
-        #for _ in range(1) : Immigrant(self.model.actualGame.map[19][38], self.model.actualGame, self.model.actualGame.map[19][20])
+        self.model.openToLanScene = OpenToLanScene(self.model, self.screen, self.smallfont, self.model.soundMixer)

@@ -64,6 +64,9 @@ class GameEngine(object):
 		while self.running:
 				newTick = TickEvent()
 				self.evManager.Post(newTick)
+		print("a")
+		if self.actualGame.multiplayer:
+			self.actualGame.multiplayer.delete()
 
 
 

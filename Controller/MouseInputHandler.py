@@ -3,7 +3,7 @@ import random
 from Model.constants import *
 from Model.control_panel import *
 from EventManager.Event import Event
-from EventManager.allEvent import StateChangeEvent, LoadSave
+from EventManager.allEvent import StateChangeEvent, LoadSave, MultiplayerStart
 from Model.Plateau import Plateau, cell_size
 from Model.Route import Route
 from Model.Buildings.Building import *
@@ -11,6 +11,8 @@ from Model.Buildings.House import *
 from Model.Buildings.WorkBuilding import *
 from Model.Buildings.UrbanPlanning import *
 from Model.Buildings.RessourceBuilding import *
+from Model.Multiplayer import *
+from Model.TopBar import TopBar
 
 class MouseInputHandler:
     """
@@ -54,6 +56,8 @@ class MouseInputHandler:
                                 self.handleMouseButtonUpEventStatePlay(event)
                         elif currentstate == STATE_SAVE_SCENE:
                                 self.handleMouseEventsStateSaveScene(event)
+                        elif currentstate == STATE_OPEN_TO_LAN_SCENE:
+                                self.handleMouseEventsStateOpenToLanScene(event)
                 if event.button == 1:
                         self.clicked = False
                         self.initialMouseCoordinate = None
@@ -93,6 +97,10 @@ class MouseInputHandler:
     def handleMouseEventsStateSaveScene(self, event):
         feedBack = self.model.saveScene.handleMouseInput(event)
         self.evManager.Post(feedBack)
+    
+    def handleMouseEventsStateOpenToLanScene(self, event):
+        feedBack = self.model.openToLanScene.handleMouseInput(event)
+        self.evManager.Post(feedBack)
 
     def handleMouseEventsStateIntroScene(self, event):
         """
@@ -110,9 +118,14 @@ class MouseInputHandler:
             self.model.saveScene.userInput = feedBack.saveName.split('.')[0]
             self.model.actualGame.load_savefile(feedBack.saveName)
             self.evManager.Post(StateChangeEvent(STATE_PLAY))
+        elif isinstance(feedBack, MultiplayerStart):
+            self.model.actualGame.multiplayer = Multiplayer(self.model.actualGame, feedBack.ipaddr, feedBack.portext, feedBack.portint, 1)
+            self.model.actualGame.load_savefile("DefaultMap.pickle")
+            self.evManager.Post(StateChangeEvent(STATE_PLAY))
         elif isinstance(feedBack, StateChangeEvent):
             if feedBack.state == STATE_PLAY:
-                self.model.saveScene.userInput = ""
+                self.model.saveScene.userInput = ""                
+                #Just uncomment the line below to have a defined map, otherwise it will be full of grass
                 self.model.actualGame.load_savefile("DefaultMap.pickle")
             self.evManager.Post(feedBack)
         else:
@@ -157,7 +170,10 @@ class MouseInputHandler:
     def pause_menu(self,event):
         if self.model.pause_menu.Exit_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
             self.model.pause_menu.pause = False
-            self.model.actualGame.pause = False  
+            self.model.actualGame.pause = False
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.stop()
+                print("stop")
             self.evManager.Post(StateChangeEvent(STATE_MENU))
 
         if self.model.pause_menu.Continue_rect.collidepoint(event.pos) and self.model.pause_menu.pause:
@@ -192,6 +208,9 @@ class MouseInputHandler:
                 event.pos) and self.model.actualGame.topbar.File_bol:
             self.model.actualGame.restart = True
             self.model.actualGame.update()
+        elif self.model.actualGame.topbar.OpenToLan_rect.collidepoint(
+                event.pos):
+            self.evManager.Post(StateChangeEvent(STATE_OPEN_TO_LAN_SCENE))
 
 
         else:
@@ -251,6 +270,16 @@ class MouseInputHandler:
 
             self.pelle(x1, y1, x2, y2)
 
+            if grid_y1 > grid_y2:
+                temp = grid_y1
+                grid_y1 = grid_y2
+                              
+                grid_y2 = temp
+            
+            self.model.actualGame.clearLand(grid_x1, grid_x2, grid_y1, grid_y2, property)
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SCL.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
         # Routes
         elif controlsCurrentState == 'buildRoads' and not self.model.actualGame.controls.build_roads_button.rect.collidepoint(mousePosRelative):
             x1, y1 = self.initialMouseCoordinate
@@ -342,8 +371,10 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
             
-            self.model.actualGame.buildGranary(grid_x1, grid_y1, grid_x2, grid_y2)
+            self.model.actualGame.buildGranary(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SBGr.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
         #Market
         if self.model.actualGame.controls.see_recent_troubles_button.clicked and not self.model.actualGame.controls.see_recent_troubles_button.rect.collidepoint(event.pos):
             x2, y2 = event.pos
