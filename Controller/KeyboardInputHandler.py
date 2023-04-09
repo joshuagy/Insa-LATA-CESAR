@@ -23,11 +23,17 @@ class KeyboardInputHandler:
 			self.handleKeyboardEventsStatePlay(event)
 		elif currentstate == STATE_SAVE_SCENE:
 			self.handleKeyboardEventsStateSaveScene(event)
+		elif currentstate == STATE_JOIN_IP_SCENE:
+			self.handleKeyboardEventsStateJoinIPScene(event)
 		elif event.key == pygame.K_ESCAPE:
 			self.evManager.Post(ExitEvent())
 
 	def handleKeyboardEventsStateSaveScene(self, event):
 		feedback = self.model.saveScene.handleKeyboardInput(event)
+		self.evManager.Post(feedback)
+
+	def handleKeyboardEventsStateJoinIPScene(self, event):
+		feedback = self.model.menu.joinIPScene.handleKeyboardInput(event)
 		self.evManager.Post(feedback)
 
 	def handleKeyboardEventsStateIntroScene(self, event):
@@ -45,8 +51,6 @@ class KeyboardInputHandler:
 			elif event.key == pygame.K_ESCAPE and self.model.actualGame.pause:
 				self.model.pause_menu.pause = False
 				self.model.actualGame.pause = False
-
-
 
 		#if event.type == pygame.KEYDOWN:
 		#	if event.key == pygame.K_2:
@@ -91,7 +95,7 @@ class KeyboardInputHandler:
 				self.model.actualGame.controls.setCurrentState("rock")
 		
 		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_KP3:
+			if event.key == pygame.K_w:
 				self.model.actualGame.controls.setCurrentState("water")
 		
 		if event.type == pygame.KEYDOWN:

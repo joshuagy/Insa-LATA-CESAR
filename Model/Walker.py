@@ -340,13 +340,13 @@ class Prefet(Walker):
                             self.delete()
 
                         #Check s'il y a un feu
-                        if len(self.plateau.burningBuildings) > 0:
-                            self.target = random.choice(self.plateau.burningBuildings)
+                        if len(self.plateau.burningBuildings[self.workplace.property]) > 0:
+                            self.target = random.choice(self.plateau.burningBuildings[self.workplace.property])
                             self.create_path(self.target.case)
                             self.set_action(2)
 
                     case 2 : #Se dirige vers un feu
-                        if self.target in self.plateau.burningBuildings:
+                        if self.target in self.plateau.burningBuildings[self.workplace.property]:
                             new_pos = self.path[self.path_index]
                             self.path_index += 1
                             if self.path_index >= len(self.path) - 2:
@@ -360,10 +360,10 @@ class Prefet(Walker):
                         if self.throw_timer < 3:
                             self.throw_timer += 1
                         else :
-                            if self.target in self.plateau.burningBuildings:
+                            if self.target in self.plateau.burningBuildings[self.workplace.property]:
                                 self.target.off()
-                            if len(self.plateau.burningBuildings) > 0:
-                                self.target = random.choice(self.plateau.burningBuildings)
+                            if len(self.plateau.burningBuildings[self.workplace.property]) > 0:
+                                self.target = random.choice(self.plateau.burningBuildings[self.workplace.property])
                                 self.create_path(self.target.case)
                                 self.set_action(2)
                             else :
