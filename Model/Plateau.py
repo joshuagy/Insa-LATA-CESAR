@@ -77,7 +77,9 @@ class Plateau():
         self.roadWarning = False #Affiche un avertissement quand un bâtiment qui a besoin de la route est déconnecté
         self.loyaltyWarning = False #Affiche un avertissement quand un bâtiment a une loyauté faible et pourrait changer de camp
         self.loyAct = 0     #Timer pour l'actualisation de la loyauté
-
+        #Map du début
+#       self.load_savefile("testx40.pickle")
+        self.map = self.default_map()
         self.foreground = Foreground(self.screen, self.nbr_cell_x, self.nbr_cell_y)
 
         #Tableau contenant toutes les cases occupées par les walkers

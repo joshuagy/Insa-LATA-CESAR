@@ -42,7 +42,7 @@ list_of_collision = ["tree", "water", "rock", "sign"]
 list_of_undestructible = ["water", "rock", "sign"]
 list_of_flammable_structures = ["EngineerPost", "SmallTent", "LargeTent", "SmallTent2", "LargeTent2", "WheatFarm", "Market", "Granary"]
 list_of_brittle_structures = ["Prefecture", "WheatFarm", "Market", "Granary"]
-list_of_non_flippable_structures = ["WheatCrop", "Senate", "HousingSpot"]
+list_of_non_flippable_structures = ["WheatPlot", "Senate", "HousingSpot", "BurningBuilding", "Ruins"]
 
 #DESIRABILITY
 #Housing :
