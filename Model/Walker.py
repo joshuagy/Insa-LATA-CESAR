@@ -2,6 +2,7 @@ import random
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
+from Model.Plateau import *
 
 ttwmax = 30
 
@@ -195,10 +196,27 @@ class Citizen(Walker):
             self.move_timer = 0"""
 
 class Immigrant(Walker):
-    def __init__(self, case, plateau, target, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0, id = None):
+    def __init__(self, case, plateau, target, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 4, path = [], path_index = 0, id = None):
         super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
+        print(self.plateau.property)
+        
+        if self.plateau.property == 1:
+            self.direction = 1
+            self.chariot = Chariot(self.plateau.map[self.case.x][self.case.y+1], self.plateau, self)
+            
+        elif self.plateau.property == 2:
+            self.direction = 2            
+            self.chariot = Chariot(self.plateau.map[self.case.x-1][self.case.y], self.plateau, self)
+            
+        elif self.plateau.property == 3:
+            self.direction = 3   
+            self.chariot = Chariot(self.plateau.map[self.case.x][self.case.y-1], self.plateau, self)         
+            
+        else:
+            self.direction = 4 
+            self.chariot = Chariot(self.plateau.map[self.case.x+1][self.case.y], self.plateau, self)     
+            
         self.target = target
-        self.chariot = Chariot(self.plateau.map[self.case.x][self.case.y+1], self.plateau, self)
         self.target.structure.immigrant = self
         self.create_path(target)
     
