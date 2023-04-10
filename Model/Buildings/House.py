@@ -173,14 +173,15 @@ class HousingSpot() :
         self.case.setStructure(self)
         self.desc = desc
         self.plateau=plateau
+        self.property = property
         self.plateau.structures.append(self)
-        self.plateau.treasury = self.plateau.treasury - HOUSE_COST
+        self.plateau.treasury[self.property-1] = self.plateau.treasury[self.property-1] - HOUSE_COST
         self.case.setFeature("HousingSpot")
         self.plateau.cityHousingSpotsList.append(self)
         self.spawn_timer = pygame.time.get_ticks()
         self.nb_immigrant = nb_immigrant
         self.immigrant = None
-        self.property = property
+        
 
     def isConnectedToRoad(self):
         return self.connectedToRoad

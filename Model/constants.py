@@ -23,7 +23,7 @@ STATE_OPEN_TO_LAN_SCENE = 7
 
 
 # ARGENT :
-START_TREASURY = 5000 # Argent au début du jeu
+START_TREASURY = [2000,2000,2000,2000] # Argent au début du jeu
 # Coût des différentes structures :
 PREFECTURE_COST = 50
 ENGINEERPOST_COST = 70
@@ -42,6 +42,7 @@ list_of_collision = ["tree", "water", "rock", "sign"]
 list_of_undestructible = ["water", "rock", "sign"]
 list_of_flammable_structures = ["EngineerPost", "SmallTent", "LargeTent", "SmallTent2", "LargeTent2", "WheatFarm", "Market", "Granary"]
 list_of_brittle_structures = ["Prefecture", "WheatFarm", "Market", "Granary"]
+list_of_non_flippable_structures = ["WheatCrop", "Senate", "HousingSpot"]
 
 #DESIRABILITY
 #Housing :

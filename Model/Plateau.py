@@ -65,15 +65,18 @@ class Plateau():
 
         self.attractiveness = attractiveness
         self.listeCase = listeCase
+
+        
         #Trésorerie
-        self.treasury = START_TREASURY + self.nbr_cell_y * ROAD_COST    #Remboursement auto des routes par défaut
+        self.treasury = START_TREASURY
+        self.treasury[0] = self.treasury[0] + self.nbr_cell_y * ROAD_COST    #Remboursement auto des routes par défaut
+        self.load_savefile("DefaultMap.pickle")
         #Population
-        self.population = 0
+        self.population = [0,0,0,0]
         self.empireDate = EmpireDate(self)
         self.roadWarning = False #Affiche un avertissement quand un bâtiment qui a besoin de la route est déconnecté
         self.loyaltyWarning = False #Affiche un avertissement quand un bâtiment a une loyauté faible et pourrait changer de camp
         self.loyAct = 0     #Timer pour l'actualisation de la loyauté
-        self.load_savefile("DefaultMap.pickle")
 
         self.foreground = Foreground(self.screen, self.nbr_cell_x, self.nbr_cell_y)
 
@@ -96,8 +99,8 @@ class Plateau():
         self.buttonsFunctions = self.getButtonsFunctions()
         self.controls = Controls(self.screen, self.minimalFont, self.currentSpeed, self.buttonsFunctions, self.soundMixer)
 
-
-        self.topbar = TopBar(self.screen, self.treasury, self.population, self.empireDate)
+        self.property = 1
+        self.topbar = TopBar(self.screen, self.treasury[self.property-1], self.population[self.property-1], self.empireDate)
         self.topbarbol = False
 
         #Define the position of the button on the full panel button who won't change position after
@@ -118,7 +121,6 @@ class Plateau():
         global counter
         counter = 1
         self.overlayCounter = 0   
-        self.property = 1
         self.multiplayer = None
 
     def save_game(self, filename):
@@ -224,8 +226,8 @@ class Plateau():
         #Ville
         self.create_collision_matrix()
         self.attractiveness = save.attractiveness
-        self.treasury = save.treasury
-        self.population = save.population
+        self.treasury = [save.treasury,2000,2000,2000]
+        self.population = [save.population,0,0,0]
         
     def default_map(self):
         '''Generate a map filled with grass'''
@@ -410,11 +412,11 @@ class Plateau():
                                 self.map[xi][yi].indexSprite = randint(0, 57)
                             if self.map[xi][yi].road and self.map[xi][yi].road.property == property:
                                 self.map[xi][yi].road.delete()
-                                self.treasury = self.treasury - DESTRUCTION_COST
+                                self.treasury[self.property-1] = self.treasury[self.property-1] - DESTRUCTION_COST
                             if self.map[xi][yi].structure and self.map[xi][yi].structure.property == property :
                                 if self.map[xi][yi].structure.desc != "BurningBuilding" :
                                     self.map[xi][yi].structure.delete()
-                                    self.treasury = self.treasury - DESTRUCTION_COST
+                                    self.treasury[self.property-1] = self.treasury[self.property-1] - DESTRUCTION_COST
                                    
         self.collision_matrix = self.create_collision_matrix()
         self.foreground.initForegroundGrid()
@@ -461,27 +463,31 @@ class Plateau():
                         if 0<=xcr<self.nbr_cell_x and 0<=ycr<self.nbr_cell_y:
                             if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision and self.map[xi][yi].sprite not in list_of_undestructible:
                                 if self.map[xcr][ycr].road :
-                                    HousingSpot(self.map[xi][yi], self, property=property)
+                                    if self.treasury[self.property-1] > HOUSE_COST :
+                                        HousingSpot(self.map[xi][yi], self, property=property)
     
     def buildPrefecture(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
                 if self.map[xi][yi].getConnectedToRoad() > 0 :
                     if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision:
-                        Prefecture(self.map[xi][yi],self,(1,1),"Prefecture",1, property)
+                        if self.treasury[self.property-1] > PREFECTURE_COST :
+                            Prefecture(self.map[xi][yi],self,(1,1),"Prefecture",1, property)
 
     def buildEngineerPost(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
             for yi in range(grid_y1, grid_y2+1):
                 if self.map[xi][yi].getConnectedToRoad() > 0 :
                     if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision:
-                        EnginnerPost(self.map[xi][yi],self,(1,1),"EngineerPost",1, property)
+                        if self.treasury[self.property-1] > ENGINEERPOST_COST :
+                            EnginnerPost(self.map[xi][yi],self,(1,1),"EngineerPost",1, property)
     
     def buildWell(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
                 for yi in range(grid_y1, grid_y2+1):
                     if not self.map[xi][yi].road and not self.map[xi][yi].structure and self.map[xi][yi].sprite not in list_of_collision:
-                        Well(self.map[xi][yi],self,(1,1),"Well", property)
+                        if self.treasury[self.property-1] > WELL_COST :
+                            Well(self.map[xi][yi],self,(1,1),"Well", property)
     
     def buildSenate(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
@@ -490,7 +496,12 @@ class Plateau():
                     for yccl in range(yi, yi-5, -1 ) :
                         if self.map[xccl][yccl].road or self.map[xccl][yccl].structure or self.map[xccl][yccl].sprite in list_of_collision:
                             return
-        Senate(self.map[xi][yi],self,(5,5),"Senate", property)
+        #Vérifier qu'on a pas déjà un Sénat
+        for ms in self.structures :
+            if ms.desc == "Senate" and ms.property == self.property:
+                return
+        if self.treasury[self.property-1] > SENATE_COST :
+            Senate(self.map[xi][yi],self,(5,5),"Senate", property)
 
     def buildFarm(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         #Vérifier que toutes les cases sont disponibles :
@@ -500,7 +511,8 @@ class Plateau():
                     for yccl in range(yi-1, yi+2, 1 ) :
                         if self.map[xccl][yccl].road or self.map[xccl][yccl].structure or self.map[xccl][yccl].sprite in list_of_collision:
                             return
-        WheatFarm(self.map[xi][yi],self,(2,2),"WheatFarm", property)
+        if self.treasury[self.property-1] > WHEATFARM_COST :
+            WheatFarm(self.map[xi][yi],self,(2,2),"WheatFarm", property)
             
     def buildGranary(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         #Vérifier que toutes les cases sont disponibles :
@@ -510,7 +522,8 @@ class Plateau():
                     for yccl in range(yi, yi-3, -1 ) :
                         if self.map[xccl][yccl].road or self.map[xccl][yccl].structure or self.map[xccl][yccl].sprite in list_of_collision:
                             return
-        Granary(self.map[xi][yi],self,(3,3),"Granary", property)
+        if self.treasury[self.property-1] > GRANARY_COST :
+            Granary(self.map[xi][yi],self,(3,3),"Granary", property)
             
     def buildMarket(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         for xi in range(grid_x1, grid_x2+1):
@@ -519,7 +532,8 @@ class Plateau():
                     for yccl in range(yi, yi-2, -1 ) :
                         if self.map[xccl][yccl].road or self.map[xccl][yccl].structure or self.map[xccl][yccl].sprite in list_of_collision:
                             return
-        Market(self.map[xi][yi],self,(2,2),"Market", property)
+        if self.treasury[self.property-1] > MARKET_COST :
+            Market(self.map[xi][yi],self,(2,2),"Market", property)
 
     def buildTemple(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
         #Vérifier que toutes les cases sont disponibles :
@@ -529,7 +543,8 @@ class Plateau():
                     for yccl in range(yi, yi-2, -1 ) :
                         if self.map[xccl][yccl].road or self.map[xccl][yccl].structure or self.map[xccl][yccl].sprite in list_of_collision:
                             return
-        Temple(self.map[xi][yi],self,(2,2),"Temple", property)
+        if self.treasury[self.property-1] > TEMPLE_COST :
+            Temple(self.map[xi][yi],self,(2,2),"Temple", property)
 
     def update(self):
         if self.restart:
@@ -545,7 +560,7 @@ class Plateau():
             
             self.camera.update()
             self.controls.update(self.currentSpeed)
-            self.topbar.update(self.treasury, self.population, self.empireDate)
+            self.topbar.update(self.treasury[self.property-1], self.population[self.property-1], self.empireDate)
 
             #Update de la position des walkers
             currentSpeedFactor = self.currentSpeed/100
@@ -566,10 +581,11 @@ class Plateau():
                 if isinstance(b,WorkBuilding): b.delay()
                 if isinstance(b,WheatFarm) or isinstance(b,Granary) or isinstance(b,Market ) : b.update(self.currentSpeed)     #Actualize Food Chain Buildings
                 self.nearbyRoadsCheck(b)                    #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route
-            self.population = 0
+            self.population[self.property-1] = 0
             for h in self.cityHousesList:
                 h.udmCheck()   # Vérifie les upgrades, downgrades et merge d'habitations
-                self.population = self.population + h.nbHab
+                if h.property == self.property :
+                    self.population[self.property-1] = self.population[self.property-1] + h.nbHab
             self.empireDate.update()
 
     def nearbyRoadsCheck(self, b):     #Supprime les maisons/hs et désactive les wb s'il ne sont pas connectés à la route

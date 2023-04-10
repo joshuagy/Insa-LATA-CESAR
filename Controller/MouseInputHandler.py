@@ -530,10 +530,6 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
             
-            #Vérifier qu'on a pas déjà un Sénat
-            for ms in self.model.actualGame.structures :
-                if ms.desc == "Senate" :
-                    return
             #Vérifier que toutes les cases sont disponibles :
             self.model.actualGame.buildSenate(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
