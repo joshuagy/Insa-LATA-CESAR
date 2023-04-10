@@ -12,12 +12,13 @@ class Well(Building):
         self.size = size
         self.case.setStructure(self)
         self.plateau=plateau
+        self.property = property
         self.plateau.structures.append(self)
         self.plateau.treasury[self.property-1] = self.plateau.treasury[self.property-1] - WELL_COST
         self.riskTimer = 0
         self.fireRisk = 0
         self.collapseRisk = 0
-        self.property = property
+        
         self.loyFlipTimer = 0
         Well.listWell.append(self)
         for xi in range (self.case.x-2,self.case.x+3,1) :
