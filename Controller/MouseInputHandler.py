@@ -1235,4 +1235,4 @@ class MouseInputHandler:
                 Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6],message_split[7],message_split[8])
         elif message_split[0] == "WD":
             for walker in self.model.actualGame.walker:
-                
+                pass
