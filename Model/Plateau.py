@@ -32,7 +32,7 @@ from random import *
 counter=1
 
 class Plateau():
-    def __init__(self, screen, clock, name, heigth, width, soundMixer, nbr_cell_x=40, nbr_cell_y=40, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
+    def __init__(self, screen, clock, name, heigth, width, soundMixer, nbr_cell_x=MAP_SIZE, nbr_cell_y=MAP_SIZE, attractiveness=0, listeCase=[], entities = [], structures = [], cityHousesList = [], cityHousingSpotsList = [], burningBuildings = []):
         
         self.screen = screen
         self.clock = clock
@@ -52,7 +52,8 @@ class Plateau():
 
         self.surface_cells = pygame.Surface((nbr_cell_x * cell_size * 2, nbr_cell_y * cell_size  + 2 * cell_size )).convert_alpha()
         
-        #Load de tous les spirtes
+
+        #Load de tous les sprites
         self.image = self.load_cases_images()
         self.image_route = self.load_routes_images()
         self.image_walkers = self.load_walkers_images()
@@ -226,6 +227,28 @@ class Plateau():
         self.treasury = save.treasury
         self.population = save.population
         
+    def default_map(self):
+        '''Generate a map filled with grass'''
+        self.map = []
+        for cell_x in range(self.nbr_cell_x):
+            self.map.append([])
+            for cell_y in range(self.nbr_cell_y):
+                sprite = self.choose_image()[0]
+                cells_to_map = self.cells_to_map(cell_x, cell_y, sprite, randint(0, 57))
+                self.map[cell_x].append(cells_to_map)
+                render_pos = cells_to_map.render_pos
+                self.surface_cells.blit(self.image["land"][1], (render_pos[0] + self.surface_cells.get_width()/2, render_pos[1]))
+        return self.map
+
+    
+    def choose_image(self):
+        image=""
+        global counter
+        if counter<=MAP_SIZE**2:
+            image=["land"]
+            counter+=1
+        return image
+    
     def cells_to_map(self, cell_x, cell_y, sprite, indexSprite):
 
         rectangle_cell = [
@@ -578,8 +601,8 @@ class Plateau():
         if self.overlayCounter == 30:
             if self.foreground.getOverlayName() == "fire":
                 self.foreground.initOverlayGrid()
-                for x in range(40):
-                    for y in range(40):
+                for x in range(MAP_SIZE):
+                    for y in range(MAP_SIZE):
                         temp = self.map[x][y].structure
                         if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
                             self.foreground.addOverlayInfo(x, y, temp.get_fireRisk())
@@ -587,8 +610,8 @@ class Plateau():
 
             elif self.foreground.getOverlayName() == "destruct":
                 self.foreground.initOverlayGrid()
-                for x in range(40):
-                    for y in range(40):
+                for x in range(MAP_SIZE):
+                    for y in range(MAP_SIZE):
                         temp = self.map[x][y].structure
                         if isinstance(temp, Building) and not isinstance(temp, BurningBuilding):
                             self.foreground.addOverlayInfo(x, y, temp.get_collapseRisk())
@@ -596,8 +619,8 @@ class Plateau():
 
             elif self.foreground.getOverlayName() == "influence":
                 self.foreground.initOverlayGrid()
-                for x in range(40):
-                    for y in range(40):
+                for x in range(MAP_SIZE):
+                    for y in range(MAP_SIZE):
                         temp = self.map[x][y]
                         self.foreground.addOverlayInfo(x, y, temp.getInfluenceDifIndex())
                 self.controls.overlays_button.change_image("image/UI/menu/menu_influence_overlay.png")       
@@ -611,11 +634,21 @@ class Plateau():
 
         # DRAW CELLS
 
-        for cell_x in range(self.nbr_cell_y):
+        for cell_x in range(self.nbr_cell_x):
             for cell_y in range(self.nbr_cell_y):
                 render_pos =  self.map[cell_x][cell_y].render_pos
                 id_image = None
                 image = None
+                # DRAW DEFAULT CELLS
+                if not self.map[cell_x][cell_y].road and not self.map[cell_x][cell_y].structure:
+                    id_image = self.map[cell_x][cell_y].sprite
+                    index_image = self.map[cell_x][cell_y].indexSprite
+                    if type(id_image) != str:
+                        print("id_image is not a string:", id_image)
+                    image = self.image[id_image][index_image]
+                    self.screen.blit(image,
+                                (render_pos[0] + self.surface_cells.get_width()/2 + self.camera.vect.x,
+                                render_pos[1] - (image.get_height() - cell_size) + self.camera.vect.y))
                 
                 # DRAW ROADS
                 if self.map[cell_x][cell_y].road:

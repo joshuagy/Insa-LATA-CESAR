@@ -51,7 +51,8 @@ class MiniMap:
         img = pygame.transform.rotate(img, -45).convert_alpha()
 
 
-        screen.blit(img,(self.width*0.93,self.height*0.058))
+        #screen.blit(img,(self.width*0.93,self.height*0.058))
+        screen.blit(img,(self.width-img.get_size()[0]-27,60))
 
     def update_mini_map(self, create_map):
         self.image = Image.new('RGB', (self.longueur, self.largeur))

@@ -1,5 +1,8 @@
 # Constant file
 
+#40 de base
+MAP_SIZE = 60
+
 cell_size = 30
 
 # Scale to redimension the sprites
@@ -16,7 +19,7 @@ STATE_HELP = 3
 STATE_QUIT = 4
 STATE_PLAY = 5
 STATE_SAVE_SCENE = 6
-STATE_JOIN_IP_SCENE = 7
+STATE_OPEN_TO_LAN_SCENE = 7
 
 
 # ARGENT :
