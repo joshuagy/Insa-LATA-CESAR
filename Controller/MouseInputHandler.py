@@ -1220,19 +1220,24 @@ class MouseInputHandler:
             self.model.actualGame.buildMarket(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.model.actualGame.soundMixer.playEffect('buildEffect')
 
-        # Walker - Appear tested
+        # Walker - Appear/Disapear tested
         elif message_split[0] == "WA":
             if message_split[1] == "0":
-                Immigrant(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6])
+                Immigrant(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6], id=int(message_split[7]))
             elif message_split[1] == "1":
-                Engineer(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6])
+                Engineer(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6], id=int(message_split[7]))
             elif message_split[1] == "2":
-                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6])
+                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6], id=int(message_split[7]))
             elif message_split[1] == "3":
-                cartPusher = CartPusher(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6])
+                cartPusher = CartPusher(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6], id=int(message_split[7]))
                 Cart(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, cartPusher)
             elif message_split[1] == "4":
-                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6],message_split[7],message_split[8])
+                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6],message_split[7],message_split[8], id=int(message_split[9]))
         elif message_split[0] == "WD":
-            for walker in self.model.actualGame.walker:
-                pass
+            for e in self.model.actualGame.entities:
+                if e.id == int(message_split[1]):
+                    e.delete()
+        elif message_split[0] == "WMo": #A discuter niveau pertinence
+            for e in self.model.actualGame.entities:
+                if e.id == int(message_split[1]):
+                    e.mode = int(message_split[2])
