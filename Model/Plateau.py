@@ -69,8 +69,8 @@ class Plateau():
         
         #Trésorerie
         self.treasury = START_TREASURY
-        self.treasury[0] = self.treasury[0] + self.nbr_cell_y * ROAD_COST    #Remboursement auto des routes par défaut
-        self.load_savefile("DefaultMap.pickle")
+        #self.treasury[0] = self.treasury[0] + self.nbr_cell_y * ROAD_COST    #Remboursement auto des routes par défaut
+        
         #Population
         self.population = [0,0,0,0]
         self.empireDate = EmpireDate(self)
@@ -82,7 +82,7 @@ class Plateau():
         #Map du début
 #       self.load_savefile("testx40.pickle")
         self.map = self.default_map()
-
+        self.load_savefile("DefaultMap.pickle")
         self.foreground = Foreground(self.screen, self.nbr_cell_x, self.nbr_cell_y)
 
         #Tableau contenant toutes les cases occupées par les walkers
@@ -234,8 +234,8 @@ class Plateau():
         #Ville
         self.create_collision_matrix()
         self.attractiveness = save.attractiveness
-        self.treasury = [save.treasury,2000,2000,2000]
-        self.population = [save.population,0,0,0]
+        self.treasury = save.treasury
+        self.population = save.population
         
     def default_map(self):
         '''Generate a map filled with grass'''
