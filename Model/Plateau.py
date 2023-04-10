@@ -52,13 +52,13 @@ class Plateau():
 
         self.surface_cells = pygame.Surface((nbr_cell_x * cell_size * 2, nbr_cell_y * cell_size  + 2 * cell_size )).convert_alpha()
         
-
         #Load de tous les spirtes
         self.image = self.load_cases_images()
         self.image_route = self.load_routes_images()
         self.image_walkers = self.load_walkers_images()
         self.image_structures = self.load_structures_images()
         self.road_warning_rectangle =load_image("image/UI/menu/roadWarning.png")
+        self.loyalty_warning_rectangle =load_image("image/UI/menu/loyaltyWarning.png")
 
         self.zoom__=Zoom(self.image)
 
@@ -71,7 +71,7 @@ class Plateau():
         self.empireDate = EmpireDate(self)
         self.roadWarning = False #Affiche un avertissement quand un bâtiment qui a besoin de la route est déconnecté
         self.loyaltyWarning = False #Affiche un avertissement quand un bâtiment a une loyauté faible et pourrait changer de camp
-
+        self.loyAct = 0     #Timer pour l'actualisation de la loyauté
         self.load_savefile("DefaultMap.pickle")
 
         self.foreground = Foreground(self.screen, self.nbr_cell_x, self.nbr_cell_y)
@@ -532,6 +532,10 @@ class Plateau():
                 for bb in self.burningBuildings[i]: bb.update(currentSpeedFactor)
             self.roadWarning=False
             self.loyaltyWarning=False
+            if self.loyAct >= 1000 :        #On actualise la loyauté seulement tous les 1000 ticks sinon le jeu tourne à 3 FPS
+                self.loyAct = 0
+                self.actualizeInf()
+            else : self.loyAct = self.loyAct+1
             for b in self.structures :
                 if isinstance(b,Building) : 
                     b.riskCheck(self.currentSpeed)   # Vérifie et incrémente les risques d'incendies et d'effondrement
@@ -772,7 +776,7 @@ class Plateau():
         self.controls.render()
      
         if self.roadWarning : self.screen.blit(self.road_warning_rectangle,(500,30))
-        if self.loyaltyWarning : self.screen.blit(self.road_warning_rectangle,(500,30))
+        if self.loyaltyWarning : self.screen.blit(self.loyalty_warning_rectangle,(500,30))
 
         fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
         propertyText = self.minimalFont.render(f"Player: {self.property}", 1, (255, 255, 255), (0, 0, 0))

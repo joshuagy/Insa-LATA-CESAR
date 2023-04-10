@@ -17,6 +17,7 @@ class Building():
         self.riskTimer = 0
         self.cost = 0
         self.property = property
+        self.loyFlipTimer = 0
     
     def delete(self):
         self.case.setStructure(None)
@@ -90,15 +91,17 @@ class Building():
                 self.riskTimer = 0
             
     def loyaltyUpdate(self) :
-        if self.case.influenceDifIndex <=-1 :
-            self.plateau.loyaltyAlert = True
-            if randint(0,5000-1000*self.case.influenceDifIndex) == 0 :
-                propertyMax = max(self.case.getDesirability(self.plateau,i) for i in range(1,5) if i != self.property)
-                for i in range(1,5) : 
-                    if self.propertyMax == self.case.getDesirability(self.plateau,i):
-                        self.property = i
-                
-                self.riskTimer = 0
+        if self.case.influenceDifIndex >=5 :
+            if self.plateau.property == self.property : self.plateau.loyaltyWarning = True
+            if self.loyFlipTimer >= 1000 :
+                self.loyFlipTimer = 0
+                if randint(0,5000-1000*self.case.influenceDifIndex) <= 0 :
+                    influenceMax = max(self.case.getDesirability(self.plateau,i) for i in range(1,5) if i != self.property)
+                    for i in range(1,5) : 
+                        if influenceMax == self.case.getDesirability(self.plateau,i) and influenceMax > 0:
+                            self.property = i
+            else :
+                self.loyFlipTimer = self.loyFlipTimer + 1
 
     def collapse(self):
         self.delete()
@@ -126,7 +129,6 @@ class DamagedBuilding(Building) :
         self.plateau.structures.remove(self)
         self.case.setStructure(None)
         del self
-
 
 class BurningBuilding(Building) :
     def __init__(self, case, plateau, desc, size = (1,1), property = 1, fireRisk = 0, collapseRisk = 0, timeBurning = 0):

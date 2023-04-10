@@ -48,13 +48,12 @@ class Case():
             for xi in range(self.x-ray, self.x+ray) :
                 for yi in range(self.y-ray,self.y+ray) :
                     if 0<xi<plateau.nbr_cell_x and 0<yi<plateau.nbr_cell_y :
-                        if plateau.map[xi][yi] is not self :
-                            if plateau.map[xi][yi].structure :
-                                if plateau.map[xi][yi].structure.property == player :
-                                    if plateau.map[xi][yi].structure not in alreadyCheckedBuilding :
-                                        if plateau.map[xi][yi].structure.desc in desirabilityDict :
-                                            desTotal = desTotal + desirabilityDict[plateau.map[xi][yi].structure.desc][ray-1]
-                                            alreadyCheckedBuilding.append(plateau.map[xi][yi].structure)
+                        if plateau.map[xi][yi].structure :
+                            if plateau.map[xi][yi].structure.property == player :
+                                if plateau.map[xi][yi].structure not in alreadyCheckedBuilding :
+                                    if plateau.map[xi][yi].structure.desc in desirabilityDict :
+                                        desTotal = desTotal + desirabilityDict[plateau.map[xi][yi].structure.desc][ray-1]
+                                        alreadyCheckedBuilding.append(plateau.map[xi][yi].structure)
         return desTotal
 
     def setPlayerInfluence(self, plateau, player) :
