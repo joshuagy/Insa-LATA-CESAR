@@ -731,6 +731,48 @@ class MouseInputHandler:
                 else:
                     self.model.actualGame.foreground.addEffect(x, y, 'wrong')
 
+    def water(self, x, y) :
+        index = 0
+        r = random.randint(0, 3)
+        if x < self.model.actualGame.nbr_cell_x-1 and y < self.model.actualGame.nbr_cell_y-1: 
+            if self.model.actualGame.map[x+1][y+1].sprite == "water":
+                index += 128 # + 10000000
+        if x < self.model.actualGame.nbr_cell_x-1 and y > 0:
+            if self.model.actualGame.map[x+1][y-1].sprite == "water": #
+                index += 64 # + 01000000
+        if x > 0 and y < self.model.actualGame.nbr_cell_y-1:
+            if self.model.actualGame.map[x-1][y+1].sprite == "water":
+                index += 32 # + 00100000
+        if x > 0 and y > 0:
+            if self.model.actualGame.map[x-1][y-1].sprite == "water": #
+                index += 16 # + 00010000
+        if y < self.model.actualGame.nbr_cell_y-1:
+            if self.model.actualGame.map[x][y+1].sprite == "water":
+                index += 8 # + 00001000
+        if x < self.model.actualGame.nbr_cell_x-1:
+            if self.model.actualGame.map[x+1][y].sprite == "water": 
+                index += 4 # + 00000100
+        if y > 0:
+            if self.model.actualGame.map[x][y-1].sprite == "water": #
+                index += 2 # + 00000010
+        if x > 0:
+            if self.model.actualGame.map[x-1][y].sprite == "water": #
+                index += 1 # + 00000001 EAST
+        table_correspondance = {0 : 0, 
+                                87 : 1, 119 : 1, 215 : 1, 252 : 1,
+                                206 : 5, 238 : 5, 222 : 5, 254 : 5,
+                                173 : 9, 189 : 9, 237 : 9, 253 : 9,
+                                59 : 13, 187 : 13, 123 : 13, 251 : 13,
+                                70 : 17, 86 : 17, 198 : 17, 214 : 17,
+                                140 : 21, 204 : 21, 172 : 21, 236 : 21,
+                                41 : 25, 57 : 25, 169 : 25, 185 : 25,
+                                19 : 29, 83 : 29, 51 : 29, 115 : 29,
+                                223 : 33, 239 : 34, 191 : 35, 127 : 36, }
+        index = table_correspondance.get(index, 0)
+        if 0 < index < 33:
+            index += r
+        self.model.actualGame.map[x][y].setSprite("water", index)
+
     def pelle(self, x1, y1, x2, y2):
 
         grid_x1, grid_y1 = self.mousePosToGridPos((x1, y1))
@@ -1178,61 +1220,19 @@ class MouseInputHandler:
             self.model.actualGame.buildMarket(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.model.actualGame.soundMixer.playEffect('buildEffect')
 
-        # Walker - Not tested
+        # Walker - Appear tested
         elif message_split[0] == "WA":
             if message_split[1] == "0":
-                Citizen(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
-            if message_split[1] == "1":
                 Immigrant(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6])
+            elif message_split[1] == "1":
+                Engineer(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6])
             elif message_split[1] == "2":
-                Engineer(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
+                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6])
             elif message_split[1] == "3":
-                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
+                cartPusher = CartPusher(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6])
+                Cart(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, cartPusher)
             elif message_split[1] == "4":
-                cart = CartPusher(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
-                Cart(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], cart)
-            elif message_split[1] == "5":
-                MarketTrader(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
-
-        
-    def water(self, x, y) :
-        index = 0
-        r = random.randint(0, 3)
-        if x < self.model.actualGame.nbr_cell_x-1 and y < self.model.actualGame.nbr_cell_y-1: 
-            if self.model.actualGame.map[x+1][y+1].sprite == "water":
-                index += 128 # + 10000000
-        if x < self.model.actualGame.nbr_cell_x-1 and y > 0:
-            if self.model.actualGame.map[x+1][y-1].sprite == "water": #
-                index += 64 # + 01000000
-        if x > 0 and y < self.model.actualGame.nbr_cell_y-1:
-            if self.model.actualGame.map[x-1][y+1].sprite == "water":
-                index += 32 # + 00100000
-        if x > 0 and y > 0:
-            if self.model.actualGame.map[x-1][y-1].sprite == "water": #
-                index += 16 # + 00010000
-        if y < self.model.actualGame.nbr_cell_y-1:
-            if self.model.actualGame.map[x][y+1].sprite == "water":
-                index += 8 # + 00001000
-        if x < self.model.actualGame.nbr_cell_x-1:
-            if self.model.actualGame.map[x+1][y].sprite == "water": 
-                index += 4 # + 00000100
-        if y > 0:
-            if self.model.actualGame.map[x][y-1].sprite == "water": #
-                index += 2 # + 00000010
-        if x > 0:
-            if self.model.actualGame.map[x-1][y].sprite == "water": #
-                index += 1 # + 00000001 EAST
-        table_correspondance = {0 : 0, 
-                                87 : 1, 119 : 1, 215 : 1, 252 : 1,
-                                206 : 5, 238 : 5, 222 : 5, 254 : 5,
-                                173 : 9, 189 : 9, 237 : 9, 253 : 9,
-                                59 : 13, 187 : 13, 123 : 13, 251 : 13,
-                                70 : 17, 86 : 17, 198 : 17, 214 : 17,
-                                140 : 21, 204 : 21, 172 : 21, 236 : 21,
-                                41 : 25, 57 : 25, 169 : 25, 185 : 25,
-                                19 : 29, 83 : 29, 51 : 29, 115 : 29,
-                                223 : 33, 239 : 34, 191 : 35, 127 : 36, }
-        index = table_correspondance.get(index, 0)
-        if 0 < index < 33:
-            index += r
-        self.model.actualGame.map[x][y].setSprite("water", index)
+                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6],message_split[7],message_split[8])
+        elif message_split[0] == "WD":
+            for walker in self.model.actualGame.walker:
+                
