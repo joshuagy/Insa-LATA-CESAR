@@ -1,12 +1,12 @@
 from Model.control_panel import *
 
 class TopBar:
-  def __init__(self, screen, treasury, population, date):
+  def __init__(self, screen, ctreasury, population, date):
     self.screen = screen
     self.screenWidth, self.screenHeight = self.screen.get_size()
     self.staticSurface = self.generateStaticSurface()
 
-    self.treasury = treasury
+    self.treasury = ctreasury
     self.population = population
     self.date = "Jan 340 BC"
     

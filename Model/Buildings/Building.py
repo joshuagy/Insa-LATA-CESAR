@@ -91,7 +91,7 @@ class Building():
                 self.riskTimer = 0
             
     def loyaltyUpdate(self) :
-        if self.case.influenceDifIndex >=5 :
+        if self.case.influenceDifIndex >=3 :
             if self.plateau.property == self.property : self.plateau.loyaltyWarning = True
             if self.loyFlipTimer >= 1000 :
                 self.loyFlipTimer = 0
