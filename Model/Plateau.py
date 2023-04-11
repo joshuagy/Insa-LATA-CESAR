@@ -119,10 +119,7 @@ class Plateau():
         global counter
         counter = 1
         self.overlayCounter = 0   
-<<<<<<< HEAD
         self.property = 1 #ID player
-=======
->>>>>>> 9484386c (Trésorerie et pop indiv. et limite d'argent)
         self.multiplayer = None
         self.modeText = "Singleplayer Mode"
 
@@ -376,13 +373,12 @@ class Plateau():
         granabs = list(load_image(f"image/Buildings/Granary/b{i}.png")for i in range(0,4))
         granals = list(load_image(f"image/Buildings/Granary/l{i}.png")for i in range(0,7))
         temples = list(load_image(f"image/Buildings/Security_000{i}.png") for i in range(11,15))
-        coloss = load_image("image/Buildings/entertainment_00036.png")
 
         
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks, "GranaryTop" : granatops,
-                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : temples, "SmallShack" : sss, "LargeShack" : lss, "Colosseum" : coloss }
+                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : temples, "SmallShack" : sss, "LargeShack" : lss }
  
     def getButtonsFunctions(self):
         return {

@@ -217,6 +217,7 @@ class HousingSpot() :
 
             if now - self.spawn_timer > (500 / currentSpeedFactor):
                 if randint(0, 10) == 0 and self.nb_immigrant < 1:
+                    
                     if self.property == 1:
                         #South
                         Immigrant(self.plateau.map[int(MAP_SIZE/2)-1][MAP_SIZE-2], self.plateau, self.case)
@@ -228,7 +229,9 @@ class HousingSpot() :
                         Immigrant(self.plateau.map[int(MAP_SIZE/2)-1][1], self.plateau, self.case)
                     else:
                         #East
-                        Immigrant(self.plateau.map[MAP_SIZE-2][int(MAP_SIZE/2)-1], self.plateau, self.case)   
+                        Immigrant(self.plateau.map[MAP_SIZE-2][int(MAP_SIZE/2)-1], self.plateau, self.case)
+                        
+                    
                     self.nb_immigrant += 1
                 self.spawn_timer = now
 
