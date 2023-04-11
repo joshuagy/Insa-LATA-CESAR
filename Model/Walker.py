@@ -2,12 +2,11 @@ import random
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
-from Model.Plateau import *
 
 ttwmax = 30
 
 class Walker:
-    def __init__(self, case, plateau, name = "Plebius Prepus", ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0, id = None):
+    def __init__(self, case, plateau, name = "Plebius Prepus", ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0, id=None):
         """
         case : La case de départ sur laquelle est le Walker
         plateau : Le plateau sur lequel est le Walker
@@ -39,13 +38,11 @@ class Walker:
         self.path_index = path_index
 
         self.move_timer = 0
-        
+
         if (id == None):
             self.id = len(self.plateau.entities)
         else:
             self.id = id
-
-
 
     def delete(self) :
         self.plateau.entities.remove(self)
@@ -168,7 +165,7 @@ class Walker:
 
 
 class Citizen(Walker):
-    def __init__(self, case, plateau, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0, id = None):
+    def __init__(self, case, plateau, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0, id=None):
         super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
     
     def update(self, currentSpeedFactor):
@@ -196,7 +193,7 @@ class Citizen(Walker):
             self.move_timer = 0"""
 
 class Immigrant(Walker):
-    def __init__(self, case, plateau, target, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 4, path = [], path_index = 0, id = None):
+    def __init__(self, case, plateau, target, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 4, path = [], path_index = 0, id=None):
         super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
         print(self.plateau.property)
         
@@ -246,13 +243,13 @@ class Immigrant(Walker):
                     self.move_timer = 0
 
 class Chariot(Walker):
-    def __init__(self, case, plateau, owner, name="", id = None):
+    def __init__(self, case, plateau, owner, name="", id=None):
         super().__init__(case, plateau, name, id=id)
         self.owner = owner
         self.direction = self.owner.direction
 
 class Engineer(Walker):
-    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0, id = None):
+    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0, id=None):
         super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
         self.workplace = workplace
         self.rest = rest
@@ -306,7 +303,7 @@ class Engineer(Walker):
                 self.move_timer = 0
 
 class Prefet(Walker):
-    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None, path = [], path_index = 0, id = None):
+    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None, path = [], path_index = 0, id=None):
         super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
         self.workplace = workplace
         self.rest = rest
@@ -396,8 +393,9 @@ class Prefet(Walker):
                                 self.set_action(1)
                 self.move_timer = 0
     
+
 class CartPusher(Walker):
-    def __init__(self, case, plateau, workplace, name="Plebius Prepus", mode = 0, rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None, path = [], path_index = 0, id = None):
+    def __init__(self, case, plateau, workplace, name="Plebius Prepus", mode = 0, rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None, path = [], path_index = 0, id=None):
         super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
         self.workplace = workplace
         self.rest = rest
@@ -483,9 +481,11 @@ class CartPusher(Walker):
                         self.delete()
                 self.move_timer = 0
                 
+
+
 class Cart(Walker):
 
-    def __init__(self, case, plateau, owner, name="", id = None):
+    def __init__(self, case, plateau, owner, name="", id=None):
         super().__init__(case, plateau, name, id=id)
         self.owner = owner
         self.direction = self.owner.direction
@@ -495,7 +495,7 @@ class Cart(Walker):
             self.action = 1
 
 class MarketTrader(Walker):
-    def __init__(self, case, plateau, workplace, mode, wheat, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0, id = None):
+    def __init__(self, case, plateau, workplace, mode, wheat, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0, id=None):
         super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
         self.workplace = workplace
         self.rest = rest
