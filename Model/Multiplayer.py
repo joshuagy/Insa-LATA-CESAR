@@ -63,17 +63,19 @@ class Multiplayer():
         payload = bytearray(payload_len)
 
         # Read the payload from the stream
-        total_received = 0
-        while total_received < payload_len:
-            remaining = payload_len - total_received
-            chunk = sockfd.recv(remaining)
-            if not chunk:
-                # The connection was closed by the peer
-                return 0, None
-            payload[total_received:total_received + len(chunk)] = chunk
-            total_received += len(chunk)
+        try:
+            view = memoryview(payload)
+            while len(view):
+                nbytes = sockfd.recv_into(view)
+                if not nbytes:
+                    # The connection was closed by the peer
+                    return 0, None
+                view = view[nbytes:]
+        except socket.error:
+            return 0, None
 
         return payload_len, payload
+
 
     def send_packet(self, sockfd, payload):
         # Calculate the total length of the packet (payload + header)
