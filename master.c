@@ -147,6 +147,9 @@ int main(int argc , char *argv[])
 
         // Add the client to the list of clients
         add_client(game_master_socket_fd);
+        receive_file("./Model/Save_Folder/test.pickle",game_master_socket_fd);
+        send_packet( python_socket_fd, "SNC", 3 );
+
 
         // Alert all python client that a new client has joined
         update_number_of_connected_players(buffer);
@@ -196,8 +199,13 @@ int main(int argc , char *argv[])
 
             printf( YELLOW "New connection , socket fd is %d , ip is : %s , port : %d \n" RESET, new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
             if(mode == 0){
-                send_packet(python_socket_fd,"NC", sizeof(char)*2);
+                send_packet(python_socket_fd,"NC", sizeof(char)*2); // good
+
+                recv_packet(client_socket[0], &payload, &payload_len);
+
+                send_file("./Model/Save_Folder/multiplayer_game.pickle",new_socket);
             }
+
             add_client(new_socket);
            
 
@@ -401,6 +409,78 @@ void add_client(int socket)
 }
 
 
+void send_file(const char *filename, int sockfd) {
+    FILE *file = fopen(filename, "rb");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+
+    // Get file size
+    fseek(file, 0L, SEEK_END);
+    long file_size = ftell(file);
+    fseek(file, 0L, SEEK_SET);
+
+    // Send file size as header
+    if (send(sockfd, &file_size, sizeof(file_size), 0) != sizeof(file_size)) {
+        perror("Error sending file size");
+        fclose(file);
+        return;
+    }
+
+    char buffer[BUFFER_SIZE];
+    ssize_t read_bytes;
+
+    while ((read_bytes = fread(buffer, 1, sizeof(buffer), file)) > 0) {
+        if (send(sockfd, buffer, read_bytes, 0) != read_bytes) {
+            perror("Error sending data");
+            fclose(file);
+            return;
+        }
+    }
+
+    if (read_bytes < 0) {
+        perror("Error reading file");
+    }
+
+    fclose(file);
+    printf("File sent successfully!\n");
+}
+void receive_file(const char *filename, int sockfd) {
+    FILE *file = fopen(filename, "wb");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+
+    // Receive file size as header
+    long file_size;
+    if (recv(sockfd, &file_size, sizeof(file_size), 0) != sizeof(file_size)) {
+        perror("Error receiving file size");
+        fclose(file);
+        return;
+    }
+
+    char buffer[BUFFER_SIZE];
+    ssize_t received_bytes;
+    long remaining_bytes = file_size;
+
+    while (remaining_bytes > 0 && (received_bytes = recv(sockfd, buffer, sizeof(buffer), 0)) > 0) {
+        if (fwrite(buffer, 1, received_bytes, file) != received_bytes) {
+            perror("Error writing data to file");
+            fclose(file);
+            return;
+        }
+        remaining_bytes -= received_bytes;
+    }
+
+    if (received_bytes < 0) {
+        perror("Error receiving data");
+    }
+
+    fclose(file);
+    printf("File received successfully!\n");
+}
 int number_of_connected_clients() 
 {
     int count = 0;
