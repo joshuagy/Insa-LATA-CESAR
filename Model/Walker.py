@@ -2,6 +2,7 @@ import random
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
+from Model.Plateau import *
 
 ttwmax = 30
 
@@ -193,8 +194,13 @@ class Citizen(Walker):
             self.move_timer = 0"""
 
 class Immigrant(Walker):
+<<<<<<< HEAD
     def __init__(self, case, plateau, target, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 4, path = [], path_index = 0, id=None):
         super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
+=======
+    def __init__(self, case, plateau, target, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 4, path = [], path_index = 0):
+        super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
+>>>>>>> 3b730ead (Merging)
         print(self.plateau.property)
         
         if self.plateau.property == 1:

@@ -624,8 +624,8 @@ class Plateau():
 
             elif self.foreground.getOverlayName() == "influence":
                 self.foreground.initOverlayGrid()
-                for x in range(40):
-                    for y in range(40):
+                for x in range(MAP_SIZE):
+                    for y in range(MAP_SIZE):
                         temp = self.map[x][y]
                         self.foreground.addOverlayInfo(x, y, temp.getInfluenceDifIndex())
                 self.controls.overlays_button.change_image("image/UI/menu/menu_influence_overlay.png")       
