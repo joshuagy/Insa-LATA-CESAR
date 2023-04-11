@@ -16,9 +16,7 @@ class Camera:
     def get_cell_size(self,cell_size):
         self.cell_size=cell_size
 
-
     def update(self):
-
         mouse_pos = pygame.mouse.get_pos()
 
         # x movement
