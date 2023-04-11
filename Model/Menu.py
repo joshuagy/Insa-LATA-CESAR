@@ -285,9 +285,9 @@ class PlayerSelectionScene:
       return StateChangeEvent(STATE_PLAY)
     elif self.cancelButtonRect.collidepoint(pos):
       self.soundMixer.playEffect("clickEffect")
-      return StateChangeEvent(STATE_PLAY)
-    else:
       return TickEvent()
+    else:
+      return 0
   
   def render(self):
     self.screen.blit(self.defaultSurface, (self.posX, self.posY))
