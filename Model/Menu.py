@@ -274,6 +274,27 @@ class PlayerSelectionScene:
     self.cancelButton = pygame.image.load("./image/UI/quit/cancelButton.png")
     self.cancelButtonPos = ((self.surface.get_width()/2) + 3*self.cancelButton.get_width(), (self.surface.get_height() - self.cancelButton.get_height())-20)
     self.cancelButtonRect = pygame.Rect(self.cancelButtonPos, self.cancelButton.get_size())
+    
+    self.choosePlayer1 = pygame.image.load("./image/Buildings/Security_00011.png")
+    self.choosePlayer1 = pygame.transform.scale(self.choosePlayer1, (self.choosePlayer1.get_width()*0.6, self.choosePlayer1.get_height()*0.6))
+    self.choosePlayer1Pos = ((self.surface.get_width()/2) - (self.choosePlayer1.get_width()+10)-9, (self.surface.get_height()/2) - self.choosePlayer1.get_height())
+    self.choosePlayer1Rect = pygame.Rect(self.choosePlayer1Pos, self.choosePlayer1.get_size())
+
+    self.choosePlayer2 = pygame.image.load("./image/Buildings/Security_00012.png")
+    self.choosePlayer2 = pygame.transform.scale(self.choosePlayer2, (self.choosePlayer2.get_width()*0.6, self.choosePlayer2.get_height()*0.6))
+    self.choosePlayer2Pos = ((self.surface.get_width()-25) - self.choosePlayer2.get_width()-9, (self.surface.get_height()/2) - self.choosePlayer2.get_height())
+    self.choosePlayer2Rect = pygame.Rect(self.choosePlayer2Pos, self.choosePlayer2.get_size())
+
+    self.choosePlayer3 = pygame.image.load("./image/Buildings/Security_00013.png")
+    self.choosePlayer3 = pygame.transform.scale(self.choosePlayer3, (self.choosePlayer3.get_width()*0.6, self.choosePlayer3.get_height()*0.6))
+    self.choosePlayer3Pos = ((self.surface.get_width()/2) - self.choosePlayer3.get_width()-9, ((self.surface.get_height()/2) - self.choosePlayer3.get_height())*2.7)
+    self.choosePlayer3Rect = pygame.Rect(self.choosePlayer3Pos, self.choosePlayer3.get_size())
+
+    self.choosePlayer4 = pygame.image.load("./image/Buildings/Security_00014.png")
+    self.choosePlayer4 = pygame.transform.scale(self.choosePlayer4, (self.choosePlayer4.get_width()*0.6, self.choosePlayer4.get_height()*0.6))
+    self.choosePlayer4Pos = ((self.surface.get_width()-39) - self.choosePlayer4.get_width(), ((self.surface.get_height()/2) - self.choosePlayer4.get_height())*2.7)
+    self.choosePlayer4Rect = pygame.Rect(self.choosePlayer4Pos, self.choosePlayer4.get_size())
+
 
   def getMousePosRelative(self, event):
     return (event.pos[0] - self.posX, event.pos[1] - self.posY)
@@ -282,9 +303,15 @@ class PlayerSelectionScene:
     pos = self.getMousePosRelative(event)
     if self.okButtonRect.collidepoint(pos):
       self.soundMixer.playEffect("clickEffect")
+      #self.feedback = LoadSave(self.currentSaveLoaded)
+      #return self.feedback
       return StateChangeEvent(STATE_PLAY)
     elif self.cancelButtonRect.collidepoint(pos):
       self.soundMixer.playEffect("clickEffect")
+      return TickEvent()
+    elif self.cancelButtonRect.collidepoint(pos):
+      self.soundMixer.playEffect("clickEffect")
+      print("Player 1 selectionned")
       return TickEvent()
     else:
       return 0
@@ -295,6 +322,10 @@ class PlayerSelectionScene:
 
     self.surface.blit(self.okButton, self.okButtonPos)
     self.surface.blit(self.cancelButton, self.cancelButtonPos)
+    self.surface.blit(self.choosePlayer1, self.choosePlayer1Pos)
+    self.surface.blit(self.choosePlayer2, self.choosePlayer2Pos)
+    self.surface.blit(self.choosePlayer3, self.choosePlayer3Pos)
+    self.surface.blit(self.choosePlayer4, self.choosePlayer4Pos)    
 
     self.screen.blit(self.surface, self.pos)
 
