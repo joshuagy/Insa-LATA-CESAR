@@ -266,16 +266,6 @@ class MouseInputHandler:
 
             self.pelle(x1, y1, x2, y2)
 
-            if grid_y1 > grid_y2:
-                temp = grid_y1
-                grid_y1 = grid_y2
-                              
-                grid_y2 = temp
-            
-            self.model.actualGame.clearLand(grid_x1, grid_x2, grid_y1, grid_y2, property)
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
-            if self.model.actualGame.multiplayer:
-                self.model.actualGame.multiplayer.send(f"SCL.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
         # Routes
         elif controlsCurrentState == 'buildRoads' and not self.model.actualGame.controls.build_roads_button.rect.collidepoint(mousePosRelative):
             x1, y1 = self.initialMouseCoordinate
@@ -787,6 +777,8 @@ class MouseInputHandler:
         
         self.model.actualGame.clearLand(grid_x1, grid_x2, grid_y1, grid_y2, property)
         self.model.actualGame.soundMixer.playEffect('buildEffect')
+        if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SCL.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
     
     def house(self, x1, y1, x2, y2):
 
