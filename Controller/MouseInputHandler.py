@@ -240,10 +240,6 @@ class MouseInputHandler:
 
         mousePosRelative = (event.pos[0] - (self.model.actualGame.width - big_gap_menu.dim[0] - 1758.0) - 1758.0, event.pos[1] -24)
         controlsCurrentState = self.model.actualGame.controls.getCurrentState()
-        
-        message = input("Enter your protocol message: ")
-        self.wrapper(message)
-        print(event.pos)
 
         if self.model.actualGame.controls.overlays_button.rect.collidepoint(mousePosRelative):
             if self.model.actualGame.foreground.getOverlayName() == "fire":
