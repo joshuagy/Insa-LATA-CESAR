@@ -122,8 +122,9 @@ class Plateau():
         global counter
         counter = 1
         self.overlayCounter = 0   
-        self.property = 1
+        self.property = 1 #ID player
         self.multiplayer = None
+        self.modeText = "Singleplayer Mode"
 
     def save_game(self, filename):
         if filename.split(".")[-1] != "pickle":
@@ -817,8 +818,10 @@ class Plateau():
 
         fpsText = self.minimalFont.render(f"FPS: {self.clock.get_fps():.0f}", 1, (255, 255, 255), (0, 0, 0))
         propertyText = self.minimalFont.render(f"Player: {self.property}", 1, (255, 255, 255), (0, 0, 0))
+
         self.screen.blit(fpsText, (0, self.screen.get_height() - fpsText.get_height()))
         self.screen.blit(propertyText, (0, self.screen.get_height() - fpsText.get_height() - propertyText.get_height()))
+        self.screen.blit(self.minimalFont.render(self.modeText, 1, (255, 255, 255), (0, 0, 0)), (0, self.screen.get_height() - fpsText.get_height() - propertyText.get_height() - 20))
 
         # if state_control_panel=="reduced":
 

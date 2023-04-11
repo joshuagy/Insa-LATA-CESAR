@@ -4,10 +4,12 @@ import time
 import sys
 import subprocess
 import struct
+from ip import get_ip
 
 class Multiplayer():
     def __init__(self, plateau, server_address, server_port, listen_port, mode):
         self.plateau = plateau
+        self.plateau.modeText = f"Multiplayer Mode - {get_ip()} : {listen_port}"
         self.server_address = server_address
         self.server_port = server_port
         self.listen_port = listen_port
@@ -25,6 +27,7 @@ class Multiplayer():
         self.recv_thread.start()
 
     def stop(self):
+        self.plateau.modeText = "Singleplayer Mode"
         self._stop_event.set()
         self.client_socket.close()
         self.p.kill()
