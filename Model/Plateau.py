@@ -204,6 +204,8 @@ class Plateau():
                     Granary(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["property"], s["storedWheat"])
                 case "Temple" :
                     Temple(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["property"])
+                case "Colosseum" :
+                    Colosseum(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["property"])
 
         
         #Walker
@@ -373,12 +375,12 @@ class Plateau():
         granabs = list(load_image(f"image/Buildings/Granary/b{i}.png")for i in range(0,4))
         granals = list(load_image(f"image/Buildings/Granary/l{i}.png")for i in range(0,7))
         temples = list(load_image(f"image/Buildings/Security_000{i}.png") for i in range(11,15))
-
+        colosseums = load_image("image/Buildings/entertainment_00036.png")
         
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks, "GranaryTop" : granatops,
-                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : temples, "SmallShack" : sss, "LargeShack" : lss }
+                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : temples, "SmallShack" : sss, "LargeShack" : lss, "Colosseum" : colosseums }
  
     def getButtonsFunctions(self):
         return {
