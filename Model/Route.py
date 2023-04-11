@@ -7,8 +7,9 @@ class Route():
         self.case = case
         self.case.road = self
         self.plateau = plateau
-        self.plateau.treasury = self.plateau.treasury - ROAD_COST
         self.property = property
+        self.plateau.treasury[self.property-1] = self.plateau.treasury[self.property-1] - ROAD_COST
+        
 
         #Informe les cases adjacentes qu'elles sont maintenant connectées à la route :
         self.case.changeConnectedToRoad(1)

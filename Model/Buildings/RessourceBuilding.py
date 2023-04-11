@@ -18,7 +18,7 @@ class WheatFarm(Building) :
         self.growingTimer = 0
         self.productivity = 0
         self.nbEmpl = 0
-        self.plateau.treasury = self.plateau.treasury - WHEATFARM_COST
+        self.plateau.treasury[self.property-1] = self.plateau.treasury[self.property-1] - WHEATFARM_COST
         self.case.render_pos = [self.case.render_pos[0]-35, self.case.render_pos[1]+5]
         self.plots = []
         self.secCases = [self.plateau.map[self.case.x][self.case.y-1],self.plateau.map[self.case.x-1][self.case.y],self.plateau.map[self.case.x-1][self.case.y-1]]
@@ -122,7 +122,7 @@ class Market(Building) :
         super().__init__(case, plateau, size, desc, property=property)
         self.storedWheat = storedWheat
         self.storedWheatMax = 800
-        self.plateau.treasury = self.plateau.treasury - MARKET_COST
+        self.plateau.treasury[self.property-1] = self.plateau.treasury[self.property-1] - MARKET_COST
         self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]+20]
         self.secCases = [self.plateau.map[self.case.x][self.case.y-1],self.plateau.map[self.case.x+1][self.case.y],self.plateau.map[self.case.x+1][self.case.y-1]]
         self.transporter = None
@@ -173,7 +173,7 @@ class Granary(Building) :
         self.storedWheatMax = 2900
         self.levelB = 0
         self.levelV = 0
-        self.plateau.treasury = self.plateau.treasury - GRANARY_COST
+        self.plateau.treasury[self.property-1] = self.plateau.treasury[self.property-1] - GRANARY_COST
         self.secCases = []
         for sc in self.secCases :
             sc.setStructure(self)

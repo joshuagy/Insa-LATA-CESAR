@@ -169,4 +169,9 @@ class Multiplayer():
                 if isinstance(b, Building):
                     if b.case == self.model.actualGame.map[int(message_split[1])][int(message_split[2])]:
                         b.set_fireRisk(int(message_split[3]))
-        
+                        
+        # Gestion de transmission de propriété
+        elif message_split[0] == "SLF":
+            for b in self.plateau.structures :
+                if b.case.x == message_split[1] and b.case.y == message_split[2] :
+                    b.property = message_split[3]
