@@ -23,7 +23,7 @@ STATE_OPEN_TO_LAN_SCENE = 7
 
 
 # ARGENT :
-START_TREASURY = 5000 # Argent au début du jeu
+START_TREASURY = [2000,2000,2000,2000] # Argent au début du jeu
 # Coût des différentes structures :
 PREFECTURE_COST = 50
 ENGINEERPOST_COST = 70
@@ -36,27 +36,29 @@ GRANARY_COST = 100
 WHEATFARM_COST = 50
 TEMPLE_COST = 100
 SENATE_COST = 500
+COLOSSEUM_COST = 4000
 
 
 list_of_collision = ["tree", "water", "rock", "sign"]
 list_of_undestructible = ["water", "rock", "sign"]
 list_of_flammable_structures = ["EngineerPost", "SmallTent", "LargeTent", "SmallTent2", "LargeTent2", "WheatFarm", "Market", "Granary"]
 list_of_brittle_structures = ["Prefecture", "WheatFarm", "Market", "Granary"]
+list_of_non_flippable_structures = ["WheatPlot", "Senate", "HousingSpot", "BurningBuilding", "Ruins"]
 
 #DESIRABILITY
 #Housing :
 smalltentd = [0,1,2,2,2,2]
-largetentd = [-3,-2,-1,0,0,0]
-smallshackd = [-2,-1,0,0,0,0]
-largeshackd = [-2, -1, 0,0,0,0]
+largetentd = [3,2,1,0,0,0]
+smallshackd = [2,1,0,0,0,0]
+largeshackd = [2, 1, 0,0,0,0]
 #Security :
-prefectured = [-2,-1,0,0,0,0]
+prefectured = [2,1,0,0,0,0]
 #Administrative :
 senated = [8,8,7,7,6,6]
 #Religion :
 templed = [5,5,4,4,3]
 #Water :
-welld =[-1,0,0,0,0,0]
+welld =[2,0,0,0,0,0]
 #Engineering :
 enginpostd = [0,0,0,0,0,0]
 

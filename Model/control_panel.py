@@ -209,6 +209,10 @@ def not_implemented_func():
     """Not implemented function"""
     print("i'm in not_implemented_func")
 
+def build_colosseum_func():
+    """Not implemented function"""
+    print("i'm in not_implemented_func")
+
 
         
 

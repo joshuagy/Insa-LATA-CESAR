@@ -173,14 +173,15 @@ class HousingSpot() :
         self.case.setStructure(self)
         self.desc = desc
         self.plateau=plateau
+        self.property = property
         self.plateau.structures.append(self)
-        self.plateau.treasury = self.plateau.treasury - HOUSE_COST
+        self.plateau.treasury[self.property-1] = self.plateau.treasury[self.property-1] - HOUSE_COST
         self.case.setFeature("HousingSpot")
         self.plateau.cityHousingSpotsList.append(self)
         self.spawn_timer = pygame.time.get_ticks()
         self.nb_immigrant = nb_immigrant
         self.immigrant = None
-        self.property = property
+        
 
     def isConnectedToRoad(self):
         return self.connectedToRoad
@@ -216,6 +217,7 @@ class HousingSpot() :
 
             if now - self.spawn_timer > (500 / currentSpeedFactor):
                 if randint(0, 10) == 0 and self.nb_immigrant < 1:
+                    
                     if self.property == 1:
                         #South
                         Immigrant(self.plateau.map[int(MAP_SIZE/2)-1][MAP_SIZE-2], self.plateau, self.case)
@@ -228,7 +230,8 @@ class HousingSpot() :
                     else:
                         #East
                         Immigrant(self.plateau.map[MAP_SIZE-2][int(MAP_SIZE/2)-1], self.plateau, self.case)
-                    Immigrant(self.plateau.map[int(MAP_SIZE/2)-1][MAP_SIZE-2], self.plateau, self.case)
+                        
+                    
                     self.nb_immigrant += 1
                 self.spawn_timer = now
 
