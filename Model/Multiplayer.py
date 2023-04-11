@@ -109,6 +109,7 @@ class Multiplayer():
         elif message_split[0] == "SBH":
             self.plateau.buildHousingSpot(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.plateau.soundMixer.playEffect('buildEffect')
+        
         elif message_split[0] == "SBI":
             self.plateau.buildEngineerPost(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.plateau.soundMixer.playEffect('buildEffect')
@@ -133,6 +134,12 @@ class Multiplayer():
         elif message_split[0] == "SBM":
             self.plateau.buildMarket(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.plateau.soundMixer.playEffect('buildEffect')
+
+        elif message_split[0] == "UH":
+            for b in self.plateau.structures :
+                if b.case.x == message_split[1] and b.case.y == message_split[2] :
+                    b.becomeAHouse()
+
 
         # Change actual player number
         elif message_split[0] == "SYNCNP":
