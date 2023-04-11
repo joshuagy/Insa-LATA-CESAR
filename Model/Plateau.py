@@ -15,6 +15,7 @@ from Model.Buildings.House import MergedHouse
 from Model.Buildings.UrbanPlanning import Well
 from Model.Buildings.UrbanPlanning import Senate
 from Model.Buildings.UrbanPlanning import Temple
+from Model.Buildings.UrbanPlanning import Colosseum
 from Model.Buildings.RessourceBuilding import WheatFarm
 from Model.Buildings.RessourceBuilding import WheatPlot
 from Model.Buildings.RessourceBuilding import Granary
@@ -65,19 +66,13 @@ class Plateau():
 
         self.attractiveness = attractiveness
         self.listeCase = listeCase
-
-        
-        #Trésorerie
-        self.treasury = START_TREASURY
-        self.treasury[0] = self.treasury[0] + self.nbr_cell_y * ROAD_COST    #Remboursement auto des routes par défaut
-        self.load_savefile("DefaultMap.pickle")
-        #Population
-        self.population = [0,0,0,0]
+        self.treasury = START_TREASURY #Trésorerie
+        self.population = [0,0,0,0] #Population
         self.empireDate = EmpireDate(self)
         self.roadWarning = False #Affiche un avertissement quand un bâtiment qui a besoin de la route est déconnecté
         self.loyaltyWarning = False #Affiche un avertissement quand un bâtiment a une loyauté faible et pourrait changer de camp
         self.loyAct = 0     #Timer pour l'actualisation de la loyauté
-
+        self.load_savefile("DefaultMap.pickle")
         #Map du début
 #       self.load_savefile("testx40.pickle")
         self.map = self.default_map()
@@ -381,12 +376,13 @@ class Plateau():
         granabs = list(load_image(f"image/Buildings/Granary/b{i}.png")for i in range(0,4))
         granals = list(load_image(f"image/Buildings/Granary/l{i}.png")for i in range(0,7))
         temples = list(load_image(f"image/Buildings/Security_000{i}.png") for i in range(11,15))
+        coloss = load_image("image/Buildings/entertainment_00036.png")
 
         
 
         return {"HousingSpot" : hss, "SmallTent" : st1s, "SmallTent2" : st2s, "LargeTent" : lt1s, "LargeTent2" : lt2s, "Prefecture" : ps, "EngineerPost" : eps, "Well" : ws, 
                 "BurningBuilding" : bsts, "Ruins" : ruinss, "BurnedRuins" : burnruinss, "Senate" : sens, "WheatFarm" : whfas, "WheatPlot" : whpls, "Market" : marks, "GranaryTop" : granatops,
-                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : temples, "SmallShack" : sss, "LargeShack" : lss }
+                "GranaryBase" : granabases, "GranaryRoom" : granabs, "GranaryLev" : granals, "Temple" : temples, "SmallShack" : sss, "LargeShack" : lss, "Colosseum" : coloss }
  
     def getButtonsFunctions(self):
         return {
@@ -553,6 +549,20 @@ class Plateau():
                             return
         if self.treasury[self.property-1] > TEMPLE_COST :
             Temple(self.map[xi][yi],self,(2,2),"Temple", property)
+
+    def buildColosseum(self, grid_x1, grid_x2, grid_y1, grid_y2, property):
+        for xi in range(grid_x1, grid_x2+1):
+            for yi in range(grid_y1, grid_y2+1):
+                for xccl in range(xi, xi+5, 1) :
+                    for yccl in range(yi, yi-5, -1 ) :
+                        if self.map[xccl][yccl].road or self.map[xccl][yccl].structure or self.map[xccl][yccl].sprite in list_of_collision:
+                            return
+        #Vérifier que personne n'a construit un sanctuaire
+        for ms in self.structures :
+            if ms.desc == "Sanctuary":
+                return
+        if self.treasury[self.property-1] > COLOSSEUM_COST :
+            Colosseum(self.map[xi][yi],self,(5,5),"Colosseum", property)
 
     def update(self):
         if self.restart:

@@ -36,6 +36,7 @@ GRANARY_COST = 100
 WHEATFARM_COST = 50
 TEMPLE_COST = 100
 SENATE_COST = 500
+COLOSSEUM_COST = 4000
 
 
 list_of_collision = ["tree", "water", "rock", "sign"]

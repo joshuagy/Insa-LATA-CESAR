@@ -62,6 +62,13 @@ class Senate(Building) :
         for oc in self.secCases :
             oc.setStructure(None)
         del self
+    
+    def taxCollection(plateau) :
+        gain = 0
+        for b in plateau.structures :
+            if isinstance(b,House) and b.property == plateau.property :
+                gain = gain + b.nbHab
+        plateau.treasury[plateau.property-1] = plateau.treasury[plateau.property-1] + gain
         
 class Temple(Building) :
 
@@ -101,3 +108,22 @@ class Temple(Building) :
                             self.plateau.map[xi][yi].religiousAccess=0
         del self
         
+class Colosseum(Building) :
+    def __init__(self, case, plateau, size, desc, property = 1,) :
+        super().__init__(case, plateau, size, desc, property=property)
+        self.secCases = []
+        self.plateau.treasury[self.property-1] = self.plateau.treasury[self.property-1] - COLOSSEUM_COST
+        self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]+60]
+        for xi in range(self.case.x, self.case.x+5, 1) :
+            for yi in range(self.case.y, self.case.y-5, -1 ) :
+                if self.plateau.map[xi][yi] != self.case :
+                    self.secCases.append(self.plateau.map[xi][yi])
+                    self.plateau.map[xi][yi].setStructure(self)
+
+    def delete(self) :
+        self.case.render_pos = [self.case.render_pos[0], self.case.render_pos[1]-60]
+        self.plateau.structures.remove(self)
+        self.case.setStructure(None)
+        for oc in self.secCases :
+            oc.setStructure(None)
+        del self

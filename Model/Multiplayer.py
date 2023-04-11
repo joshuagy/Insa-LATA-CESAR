@@ -132,3 +132,7 @@ class Multiplayer():
         elif message_split[0] == "SBM":
             self.plateau.buildMarket(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.plateau.soundMixer.playEffect('buildEffect')
+        elif message_split[0] == "SLF":
+            for b in self.plateau.structures :
+                if b.case.x == message_split[1] and b.case.y == message_split[2] :
+                    b.property = message_split[3]
