@@ -24,10 +24,12 @@
 int send_packet(int sockfd, const char *payload, size_t payload_len);
 int recv_packet(int sockfd, char **payload, size_t *payload_len);
 void add_client(int socket);
+int number_of_connected_clients();
+void update_number_of_connected_players(char *buffer);
 
 int python_socket_fd = -1;
 int client_socket[ MAX_CLIENTS + 1 ];
-int active_clients = 1;
+int game_master_socket_fd = -1;
 
 int main(int argc , char *argv[])
 {
@@ -88,7 +90,7 @@ int main(int argc , char *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-	printf("Listener on port %d \n", PORT);
+	printf( YELLOW "Listener on port %d \n" RESET, PORT);
 	
     if ( listen(master_socket, MAX_CLIENTS) < 0 )
     {
@@ -117,7 +119,7 @@ int main(int argc , char *argv[])
         } 
         else 
         {
-            printf("Client %s:%d rejected\n", inet_ntoa(address.sin_addr), ntohs(address.sin_port));
+            printf( RED "Client %s:%d rejected\n" RESET, inet_ntoa(address.sin_addr), ntohs(address.sin_port));
             close(new_socket); // close the connection
         }
     }
@@ -125,7 +127,7 @@ int main(int argc , char *argv[])
     // Connect to ip specified by user
     if ( mode == 1 )
     {
-        if ( (new_socket = socket(AF_INET, SOCK_STREAM, 0)) == 0 ) 
+        if ( (game_master_socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0 ) 
         {
             perror("socket failed");
             exit(EXIT_FAILURE);
@@ -135,19 +137,22 @@ int main(int argc , char *argv[])
         address.sin_family = AF_INET;
         //address.sin_addr.s_addr = INADDR_ANY;
         address.sin_addr.s_addr = inet_addr(IP_ADDR);
-        address.sin_port = htons(PORT_EXT);
+        address.sin_port = htons(8888);
 
-        // Connect to server
-        if ( connect(new_socket, (struct sockaddr *)&address, sizeof(address)) < 0 ) 
+        if ( connect(game_master_socket_fd, (struct sockaddr *)&address, sizeof(address)) < 0 ) 
         {
             perror("connect failed");
             exit(EXIT_FAILURE);
         }
 
         // Add the client to the list of clients
-        add_client(new_socket);
+        add_client(game_master_socket_fd);
+        receive_file("./Model/Save_Folder/test.pickle",game_master_socket_fd);
+        send_packet( python_socket_fd, "SNC", 3 );
 
-        send_packet( python_socket_fd, "PJ", 2 );
+
+        // Alert all python client that a new client has joined
+        update_number_of_connected_players(buffer);
     }
 
 	while(TRUE) 
@@ -194,8 +199,13 @@ int main(int argc , char *argv[])
 
             printf( YELLOW "New connection , socket fd is %d , ip is : %s , port : %d \n" RESET, new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
             if(mode == 0){
-                send_packet(python_socket_fd,"NC", sizeof(char)*2);
+                send_packet(python_socket_fd,"NC", sizeof(char)*2); // good
+
+                recv_packet(client_socket[0], &payload, &payload_len);
+
+                send_file("./Model/Save_Folder/multiplayer_game.pickle",new_socket);
             }
+
             add_client(new_socket);
            
 
@@ -209,11 +219,14 @@ int main(int argc , char *argv[])
                         && client_socket[i] != python_socket_fd 
                             && client_socket[i] != new_socket )
                 {
-                    printf("Sending to %d: %s\n", client_socket[i], buffer );
-                    send_packet( client_socket[i], buffer, sizeof(buffer) );
+                    // printf("Sending to %d: %s\n", client_socket[i], buffer );
+                    send_packet( client_socket[i], buffer, sizeof( buffer ) );
                 }
                 
             }
+
+            // Alert all python client that a new client has joined
+            update_number_of_connected_players( buffer );
         }
         for( i = 0; i < MAX_CLIENTS; i++ ) 
         {
@@ -225,30 +238,29 @@ int main(int argc , char *argv[])
                 {
                     // Somebody disconnected , get his details and print
                     getpeername(sd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-                    printf("Host disconnected , ip %s , port %d \n" , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
+                    printf( YELLOW "Client disconnected , ip %s , port %d \n" RESET, inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
                      
                     // Close the socket and mark as 0 in list for reuse
                     close(sd);
                     client_socket[i] = 0;
-                    send_packet(python_socket_fd, "PJJ", 3);
+
+                    // Alert all python client that a new client has left
+                    update_number_of_connected_players(buffer);
                 }
 
                 if ( sd == python_socket_fd )
                 {
-                    printf( CYAN "from python socket (fd: %d): %s [length: %zu]\n" RESET, python_socket_fd, payload, payload_len);
+                    printf( CYAN "from python socket (fd: %d): %s [length: %zu]\n" RESET, python_socket_fd, payload, payload_len );
                     for ( int i = 0; i < MAX_CLIENTS; i++ )
                     {
                         if ( client_socket[i] != 0 && client_socket[i] != python_socket_fd )
                         {
-                            send_packet(client_socket[i], payload, payload_len);
+                            send_packet( client_socket[i], payload, payload_len );
                         }
                     }
                 }
-                else
+                 else if ( sd == game_master_socket_fd )
                 {
-                    getpeername(sd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-                    printf( GREEN "from client (fd: %d, ip: %s, port: %d): %s [length: %zu]\n" RESET, sd, inet_ntoa(address.sin_addr), ntohs(address.sin_port), payload, payload_len);
-                    
                     if ( strncmp(payload, "[PROTOCOL][CONNECT]", 19) == 0 )
                     {   
                         // get ip to connect to
@@ -265,9 +277,8 @@ int main(int argc , char *argv[])
                             j++;
                         }
                         
-                        printf("PROTOCOL MESSAGE CONNECT (try to connect to %s\n", ip_to_connect);
+                        printf( YELLOW "Try to connect to %s:%d\n" RESET, ip_to_connect, 8888);
 
-                        // Create client socket
                         if ( (new_socket = socket(AF_INET, SOCK_STREAM, 0)) == 0 ) {
                             perror("socket failed");
                             exit(EXIT_FAILURE);
@@ -275,10 +286,9 @@ int main(int argc , char *argv[])
 
                         // Set server address and port
                         address.sin_family = AF_INET;
-                        // address.sin_addr.s_addr = inet_addr("192.168.72.202");
                         // address.sin_addr.s_addr = INADDR_ANY;
-                        address.sin_addr.s_addr = inet_addr(ip_to_connect);
-                        address.sin_port = htons(8888);
+                        address.sin_addr.s_addr = inet_addr( ip_to_connect );
+                        address.sin_port = htons( 8888 );
 
                         // Connect to server
                         if ( connect(new_socket, (struct sockaddr *)&address, sizeof(address)) < 0 ) {
@@ -287,12 +297,23 @@ int main(int argc , char *argv[])
                         }
 
                         // add client to client list
-                        add_client(new_socket);
+                        add_client( new_socket );
+
+                        // Alert all python client that a new client has joined
+                        update_number_of_connected_players( buffer );
                     }
                     else
-                    {
+                    {   
+                        getpeername(sd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
+                        printf( GREEN "from client (fd: %d, ip: %s, port: %d): %s [length: %zu]\n" RESET, sd, inet_ntoa(address.sin_addr), ntohs(address.sin_port), payload, payload_len );
                         send_packet(python_socket_fd, payload, payload_len);
-                    }
+                    } 
+                }
+                else
+                {   
+                    getpeername(sd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
+                    printf( GREEN "from client (fd: %d, ip: %s, port: %d): %s [length: %zu]\n" RESET, sd, inet_ntoa(address.sin_addr), ntohs(address.sin_port), payload, payload_len );
+                    send_packet(python_socket_fd, payload, payload_len);
                 }
             }
         }
@@ -378,12 +399,104 @@ void add_client(int socket)
 {
     for (int i = 0; i < MAX_CLIENTS; i++) 
     {
-        //if position is empty
         if( client_socket[i] == 0 )
         {
             client_socket[i] = socket;
-            printf("Adding to list of sockets as %d\n" , i);
+            //printf("Adding to list of sockets as %d\n" , i);
             break;
         }
     }
+}
+
+
+void send_file(const char *filename, int sockfd) {
+    FILE *file = fopen(filename, "rb");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+
+    // Get file size
+    fseek(file, 0L, SEEK_END);
+    long file_size = ftell(file);
+    fseek(file, 0L, SEEK_SET);
+
+    // Send file size as header
+    if (send(sockfd, &file_size, sizeof(file_size), 0) != sizeof(file_size)) {
+        perror("Error sending file size");
+        fclose(file);
+        return;
+    }
+
+    char buffer[BUFFER_SIZE];
+    ssize_t read_bytes;
+
+    while ((read_bytes = fread(buffer, 1, sizeof(buffer), file)) > 0) {
+        if (send(sockfd, buffer, read_bytes, 0) != read_bytes) {
+            perror("Error sending data");
+            fclose(file);
+            return;
+        }
+    }
+
+    if (read_bytes < 0) {
+        perror("Error reading file");
+    }
+
+    fclose(file);
+    printf("File sent successfully!\n");
+}
+void receive_file(const char *filename, int sockfd) {
+    FILE *file = fopen(filename, "wb");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+
+    // Receive file size as header
+    long file_size;
+    if (recv(sockfd, &file_size, sizeof(file_size), 0) != sizeof(file_size)) {
+        perror("Error receiving file size");
+        fclose(file);
+        return;
+    }
+
+    char buffer[BUFFER_SIZE];
+    ssize_t received_bytes;
+    long remaining_bytes = file_size;
+
+    while (remaining_bytes > 0 && (received_bytes = recv(sockfd, buffer, sizeof(buffer), 0)) > 0) {
+        if (fwrite(buffer, 1, received_bytes, file) != received_bytes) {
+            perror("Error writing data to file");
+            fclose(file);
+            return;
+        }
+        remaining_bytes -= received_bytes;
+    }
+
+    if (received_bytes < 0) {
+        perror("Error receiving data");
+    }
+
+    fclose(file);
+    printf("File received successfully!\n");
+}
+int number_of_connected_clients() 
+{
+    int count = 0;
+    for (int i = 0; i < MAX_CLIENTS; i++) 
+    {
+        if ( client_socket[i] != 0 && client_socket[i] != python_socket_fd )
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+void update_number_of_connected_players(char *buffer)
+{
+    bzero( buffer, BUFFER_SIZE + 1 );
+    sprintf( buffer, "UPDATE.NUMPLAYERS.%d", number_of_connected_clients() + 1 );
+    send_packet( python_socket_fd, buffer, strlen( buffer ) );
 }

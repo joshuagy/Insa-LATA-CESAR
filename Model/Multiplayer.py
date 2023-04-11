@@ -7,10 +7,13 @@ import struct
 from ip import get_ip
 import os
 from Model.Buildings.House import HousingSpot
+from EventManager.allEvent import StateChangeEvent
+from Model.constants import *
 
 class Multiplayer():
-    def __init__(self, plateau, server_address, server_port, listen_port, mode):
+    def __init__(self, plateau, evManager, server_address, server_port, listen_port, mode):
         self.plateau = plateau
+        self.evManager = evManager
         self.number_of_players = 1
         self.plateau.modeText = f"Multiplayer Mode - {get_ip()} : {listen_port} - {self.number_of_players} players"
         self.server_address = server_address
@@ -64,17 +67,19 @@ class Multiplayer():
         payload = bytearray(payload_len)
 
         # Read the payload from the stream
-        total_received = 0
-        while total_received < payload_len:
-            remaining = payload_len - total_received
-            chunk = sockfd.recv(remaining)
-            if not chunk:
-                # The connection was closed by the peer
-                return 0, None
-            payload[total_received:total_received + len(chunk)] = chunk
-            total_received += len(chunk)
+        try:
+            view = memoryview(payload)
+            while len(view):
+                nbytes = sockfd.recv_into(view)
+                if not nbytes:
+                    # The connection was closed by the peer
+                    return 0, None
+                view = view[nbytes:]
+        except socket.error:
+            return 0, None
 
         return payload_len, payload
+
 
     def send_packet(self, sockfd, payload):
         # Calculate the total length of the packet (payload + header)
@@ -145,8 +150,8 @@ class Multiplayer():
 
 
         # Change actual player number
-        elif message_split[0] == "SYNCNP":
-            self.number_of_players = int(message_split[1])
+        elif message_split[0] == "UPDATE":
+            self.number_of_players = int(message_split[2])
             self.plateau.modeText = f"Multiplayer Mode - {get_ip()} : {self.listen_port} – {self.number_of_players} players"
        
         # Walker - Appear/Disapear tested
@@ -196,16 +201,9 @@ class Multiplayer():
         # On intercepte les nouvelles connexion (uniquement pour lhost)
         elif message_split[0] == "NC":
             self.plateau.save_game("multiplayer_game")  # sauvegarde de la game
-            full_path = os.path.join("./Model/Save_Folder", "multiplayer_game.pickle")
-            with open(full_path, 'rb') as f:
-                file_content = f.read()
-                fonctionne = "fonctionne"
-                self.send(f"SNC.{fonctionne}.{self.plateau.property}")
-            self.nb_NC += 1
+            self.send(f"Game saved in python")
         # load map
         elif message_split[0] == "SNC":
             print("ca marche")
-           # full_path = os.path.join("./Model/Save_Folder", "multiplayer_game.pickle")
-            #with open(full_path, 'wb') as f:
-             #   f.write(message_split[1].encode())
-            # self.plateau.load_savefile("multiplayer_game")
+            self.plateau.load_savefile("test.pickle")
+            self.evManager.Post(StateChangeEvent(STATE_PLAY))

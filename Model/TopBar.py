@@ -121,7 +121,7 @@ class TopBar:
     return staticSurface
       
   def get_snss_treasury(self):
-    return 15 if 99 < abs(self.treasury) < 1000 else 30 if 9<abs(self.treasury)<100 else 68 if abs(self.treasury)<10 else 0  #Smaller number -> smaller size
+    return 15 if 99 < abs(self.treasury) < 1000 else 30 if 9<abs(self.treasury)<100 else 50 if abs(self.treasury)<10 else 0  #Smaller number -> smaller size
  
   def get_snss_population(self):
     return 15 if 99 < abs(self.population) < 1000 else 30 if 9<abs(self.population)<100 else 40 if abs(self.population)<10 else 0  #Smaller number -> smaller size
