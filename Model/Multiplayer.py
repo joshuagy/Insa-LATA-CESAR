@@ -145,7 +145,6 @@ class Multiplayer():
 
         # Change actual player number
         elif message_split[0] == "UPDATE":
-            print("UPDATE" + message_split[2])
             self.number_of_players = int(message_split[2])
             self.plateau.modeText = f"Multiplayer Mode - {get_ip()} : {self.listen_port} – {self.number_of_players} players"
        
