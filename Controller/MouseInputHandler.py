@@ -530,10 +530,6 @@ class MouseInputHandler:
                 grid_y1 = grid_y2
                 grid_y2 = temp
             
-            #Vérifier qu'on a pas déjà un Sénat
-            for ms in self.model.actualGame.structures :
-                if ms.desc == "Senate" :
-                    return
             #Vérifier que toutes les cases sont disponibles :
             self.model.actualGame.buildSenate(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
@@ -745,6 +741,59 @@ class MouseInputHandler:
                 grid_y2 = temp
             
             self.model.actualGame.buildTemple(grid_x1, grid_x2, grid_y1, grid_y2, property)
+            self.model.actualGame.soundMixer.playEffect('buildEffect')
+            if self.model.actualGame.multiplayer:
+                self.model.actualGame.multiplayer.send(f"SBGo.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
+
+        #Colosseum
+        if self.model.actualGame.controls.colosseum_button.clicked and not self.model.actualGame.controls.colosseum_button.rect.collidepoint(event.pos):
+            x, y = self.initialMouseCoordinate
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x1 = int(cart_x // cell_size)
+            grid_y1 = int(cart_y // cell_size)
+
+            x, y = event.pos
+            world_x = x - self.model.actualGame.camera.vect.x - self.model.actualGame.surface_cells.get_width() / 2
+            world_y = y - self.model.actualGame.camera.vect.y
+
+            cart_y = (2 * world_y - world_x) / 2
+            cart_x = cart_y + world_x
+            grid_x2 = int(cart_x // cell_size)
+            grid_y2 = int(cart_y // cell_size)
+        
+            if grid_x1 <0:
+                grid_x1 = 0
+            if grid_x2 <0:
+                grid_x2 = 0
+            if grid_y1 <0:
+                grid_y1 = 0
+            if grid_y2 <0:
+                grid_y2 = 0
+
+            if grid_x1 > self.model.actualGame.nbr_cell_x-1:
+                grid_x1 = self.model.actualGame.nbr_cell_x-1
+            if grid_x2 > self.model.actualGame.nbr_cell_x-1:
+                grid_x2 = self.model.actualGame.nbr_cell_x-1
+            if grid_y1 > self.model.actualGame.nbr_cell_y-1:
+                grid_y1 = self.model.actualGame.nbr_cell_y-1
+            if grid_y2 > self.model.actualGame.nbr_cell_y-1:
+                grid_y2 = self.model.actualGame.nbr_cell_y-1
+
+            if grid_x1 > grid_x2:
+                temp = grid_x1
+                grid_x1 = grid_x2
+                grid_x2 = temp
+
+            if grid_y1 > grid_y2:
+                temp = grid_y1
+                grid_y1 = grid_y2
+                grid_y2 = temp
+            
+            self.model.actualGame.buildColosseum(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
             if self.model.actualGame.multiplayer:
                 self.model.actualGame.multiplayer.send(f"SBGo.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
@@ -1548,55 +1597,3 @@ class MouseInputHandler:
         #Vérifier que toutes les cases sont disponibles :
         self.model.actualGame.buildMarket(grid_x1, grid_y1, grid_x2, grid_y2, property)
         self.model.actualGame.soundMixer.playEffect('buildEffect')
-
-    def wrapper(self, message):
-        """ Wrapper that recieve message from the network manager and redirect it in the right method """
-        message_split = message.split(".")
-        
-        #Building - Tested
-        if message_split[0] == "SCL":
-            self.model.actualGame.clearLand(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
-        elif message_split[0] == "SBH":
-            self.model.actualGame.buildHousingSpot(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
-        elif message_split[0] == "SBI":
-            self.model.actualGame.buildEngineerPost(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
-        elif message_split[0] == "SBF":
-            self.model.actualGame.buildFarm(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
-        elif message_split[0] == "SBP":
-            self.model.actualGame.buildPrefecture(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
-        elif message_split[0] == "SBS":
-            self.model.actualGame.buildSenate(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
-        elif message_split[0] == "SBR":
-            self.model.actualGame.buildRoads(int(message_split[5]), int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[6]))
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
-        elif message_split[0] == "SBW":
-            self.model.actualGame.buildWell(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
-        elif message_split[0] == "SBGo":
-            self.model.actualGame.buildTemple(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
-        elif message_split[0] == "SBM":
-            self.model.actualGame.buildMarket(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
-            self.model.actualGame.soundMixer.playEffect('buildEffect')
-
-        # Walker - Not tested
-        elif message_split[0] == "WA":
-            if message_split[1] == "0":
-                Citizen(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
-            if message_split[1] == "1":
-                Immigrant(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6])
-            elif message_split[1] == "2":
-                Engineer(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
-            elif message_split[1] == "3":
-                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, message_split[4])
-            elif message_split[1] == "4":
-                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6],message_split[7],message_split[8])
-        elif message_split[0] == "WD":
-            for walker in self.model.actualGame.walker:
-                pass

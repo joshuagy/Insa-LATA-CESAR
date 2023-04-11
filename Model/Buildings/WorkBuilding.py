@@ -39,13 +39,7 @@ class Prefecture(WorkBuilding) :
 
     def __init__(self, case, plateau, size, desc, active, property = 1, fireRisk = 0, collapseRisk = 0):
         super().__init__( case, plateau, size, desc, active, property, fireRisk, collapseRisk)
-        self.plateau.treasury = self.plateau.treasury - PREFECTURE_COST
-
-    """def activatePrefecture(aPrefecture,lePlateau) :
-        aPrefecture.setActive(True)
-        myPrefect=Prefet(aPrefecture.case,lePlateau,"Pompus Prefectus")
-        aPrefecture.setWalker(myPrefect)
-        #Reste à afficher le drapeau ROUGE"""
+        self.plateau.treasury[self.property-1] = self.plateau.treasury[self.property-1] - PREFECTURE_COST
     
     def spawnWalker(self):
         Prefet(self.case,self.plateau, self, "Prefectus")
@@ -55,13 +49,7 @@ class EnginnerPost(WorkBuilding) :
 
     def __init__(self, case, plateau, size, desc, active, property = 1, fireRisk = 0, collapseRisk = 0):
         super().__init__( case, plateau, size, desc, active, property, fireRisk, collapseRisk)
-        self.plateau.treasury = self.plateau.treasury - ENGINEERPOST_COST
-
-    """def activateEngineerPost(anEngineerPost,lePlateau) :
-        anEngineerPost.setActive(True)
-        myEngineer=Engineer(anEngineerPost.case,lePlateau,"Emerius")
-        anEngineerPost.setWalker(myEngineer)
-        #Reste à afficher le drapeau BLEU"""
+        self.plateau.treasury[self.property-1] = self.plateau.treasury[self.property-1] - ENGINEERPOST_COST
     
     def spawnWalker(self):
         Engineer(self.case,self.plateau, self, "UnIngenieur")

@@ -1,4 +1,5 @@
-from Model.Buildings.House import *
+from Model.Buildings.House import House
+from Model.Buildings.UrbanPlanning import Senate
 
 class EmpireDate :
     def __init__(self, plateau) :
@@ -16,6 +17,7 @@ class EmpireDate :
         self.cmpt = self.cmpt + 1
         if self.cmpt >= 2000 :
             House.foodConsumption(self.plateau)
+            Senate.taxCollection(self.plateau)
             self.cmpt = 0
             if self.month == 11 :
                 self.month = 0
