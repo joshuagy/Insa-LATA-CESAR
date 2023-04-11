@@ -37,7 +37,7 @@ class OpenToLanScene:
         pos = self.getMousePosRelative(event)
         if self.okButtonRect.collidepoint(pos):
             self.soundMixer.playEffect("clickEffect")
-            self.model.actualGame.multiplayer = Multiplayer(self.model.actualGame, "127.0.0.1", 8888, int(self.userInput), 0)
+            self.model.actualGame.multiplayer = Multiplayer(self.model.actualGame, None, "127.0.0.1", 8888, int(self.userInput), 0)
             return StateChangeEvent(STATE_PLAY)
         elif self.cancelButtonRect.collidepoint(pos):
             self.soundMixer.playEffect("clickEffect")

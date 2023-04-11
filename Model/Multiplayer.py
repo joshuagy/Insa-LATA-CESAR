@@ -6,10 +6,14 @@ import subprocess
 import struct
 from ip import get_ip
 import os
+from EventManager.allEvent import StateChangeEvent
+from Model.constants import *
+
 
 class Multiplayer():
-    def __init__(self, plateau, server_address, server_port, listen_port, mode):
+    def __init__(self, plateau, evManager, server_address, server_port, listen_port, mode):
         self.plateau = plateau
+        self.evManager = evManager
         self.number_of_players = 1
         self.plateau.modeText = f"Multiplayer Mode - {get_ip()} : {listen_port} - {self.number_of_players} players"
         self.server_address = server_address
@@ -195,16 +199,9 @@ class Multiplayer():
         # On intercepte les nouvelles connexion (uniquement pour lhost)
         elif message_split[0] == "NC":
             self.plateau.save_game("multiplayer_game")  # sauvegarde de la game
-            full_path = os.path.join("./Model/Save_Folder", "multiplayer_game.pickle")
-            with open(full_path, 'rb') as f:
-                file_content = f.read()
-                content = "contenu factice"
-                self.send(f"SNC.{content}.{self.plateau.property}")
-            self.nb_NC += 1
+            self.send(f"Game saved in python")
         # load map
         elif message_split[0] == "SNC":
             print("ca marche")
-            full_path = os.path.join("./Model/Save_Folder", "multiplayer_game_received.pickle")
-            with open(full_path, 'wb') as f:
-                f.write(message_split[1].encode())
-            # self.plateau.load_savefile("multiplayer_game")
+            self.plateau.load_savefile("test.pickle")
+            self.evManager.Post(StateChangeEvent(STATE_PLAY))
