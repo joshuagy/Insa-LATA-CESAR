@@ -6,7 +6,7 @@ from pathfinding.finder.a_star import AStarFinder
 ttwmax = 30
 
 class Walker:
-    def __init__(self, case, plateau, name = "Plebius Prepus", ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0):
+    def __init__(self, case, plateau, name = "Plebius Prepus", ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0, id=None):
         """
         case : La case de départ sur laquelle est le Walker
         plateau : Le plateau sur lequel est le Walker
@@ -39,6 +39,10 @@ class Walker:
 
         self.move_timer = 0
 
+        if (id == None):
+            self.id = len(self.plateau.entities)
+        else:
+            self.id = id
 
     def delete(self) :
         self.plateau.entities.remove(self)
@@ -161,8 +165,8 @@ class Walker:
 
 
 class Citizen(Walker):
-    def __init__(self, case, plateau, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0):
-        super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
+    def __init__(self, case, plateau, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0, id=None):
+        super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
     
     def update(self, currentSpeedFactor):
         """
@@ -189,8 +193,8 @@ class Citizen(Walker):
             self.move_timer = 0"""
 
 class Immigrant(Walker):
-    def __init__(self, case, plateau, target, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 4, path = [], path_index = 0):
-        super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
+    def __init__(self, case, plateau, target, name="Plebius Prepus", ttw = ttwmax, action = 1, direction = 4, path = [], path_index = 0, id=None):
+        super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
         print(self.plateau.property)
         
         if self.plateau.property == 1:
@@ -210,7 +214,6 @@ class Immigrant(Walker):
             self.chariot = Chariot(self.plateau.map[self.case.x+1][self.case.y], self.plateau, self)     
             
         self.target = target
-        self.chariot = Chariot(self.plateau.map[self.case.x][self.case.y+1], self.plateau, self)
         self.target.structure.immigrant = self
         self.create_path(target)
     
@@ -240,14 +243,14 @@ class Immigrant(Walker):
                     self.move_timer = 0
 
 class Chariot(Walker):
-    def __init__(self, case, plateau, owner, name=""):
-        super().__init__(case, plateau, name)
+    def __init__(self, case, plateau, owner, name="", id=None):
+        super().__init__(case, plateau, name, id=id)
         self.owner = owner
         self.direction = self.owner.direction
 
 class Engineer(Walker):
-    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0):
-        super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
+    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0, id=None):
+        super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
         self.workplace = workplace
         self.rest = rest
         self.workplace.walker = self
@@ -300,8 +303,8 @@ class Engineer(Walker):
                 self.move_timer = 0
 
 class Prefet(Walker):
-    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None, path = [], path_index = 0):
-        super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
+    def __init__(self, case, plateau, workplace, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None, path = [], path_index = 0, id=None):
+        super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
         self.workplace = workplace
         self.rest = rest
         self.workplace.walker = self
@@ -392,8 +395,8 @@ class Prefet(Walker):
     
 
 class CartPusher(Walker):
-    def __init__(self, case, plateau, workplace, name="Plebius Prepus", mode = 0, rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None, path = [], path_index = 0):
-        super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
+    def __init__(self, case, plateau, workplace, name="Plebius Prepus", mode = 0, rest = 0, ttw = ttwmax, action = 1, direction = 1, target = None, path = [], path_index = 0, id=None):
+        super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
         self.workplace = workplace
         self.rest = rest
         self.workplace.walker = self
@@ -482,8 +485,8 @@ class CartPusher(Walker):
 
 class Cart(Walker):
 
-    def __init__(self, case, plateau, owner, name=""):
-        super().__init__(case, plateau, name)
+    def __init__(self, case, plateau, owner, name="", id=None):
+        super().__init__(case, plateau, name, id=id)
         self.owner = owner
         self.direction = self.owner.direction
         if self.owner.mode == 0:
@@ -492,8 +495,8 @@ class Cart(Walker):
             self.action = 1
 
 class MarketTrader(Walker):
-    def __init__(self, case, plateau, workplace, mode, wheat, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0):
-        super().__init__(case, plateau, name, ttw, action, direction, path, path_index)
+    def __init__(self, case, plateau, workplace, mode, wheat, name="Plebius Prepus", rest = 0, ttw = ttwmax, action = 1, direction = 1, path = [], path_index = 0, id=None):
+        super().__init__(case, plateau, name, ttw, action, direction, path, path_index, id=id)
         self.workplace = workplace
         self.rest = rest
         self.wheat = wheat
