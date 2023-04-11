@@ -5,6 +5,7 @@ import sys
 import subprocess
 import struct
 from ip import get_ip
+import os
 
 class Multiplayer():
     def __init__(self, plateau, server_address, server_port, listen_port, mode):
@@ -191,12 +192,12 @@ class Multiplayer():
         # intercept new Player (work)
         # On intercepte les nouvelles connexion (uniquement pour lhost)
         elif message_split[0] == "NC":
-            if self.nb_NC > 0:  # On ne compte pas la premiere car c'est lhost
-                self.plateau.save_game("multiplayer_game")  # sauvegarde de la game
-                full_path = os.path.join("./Model/Save_Folder", "multiplayer_game.pickle")
-                with open(full_path, 'rb') as f:
-                    file_content = f.read()
-                    self.send(f"SNC.{fonctionne}.{self.plateau.property}")
+            self.plateau.save_game("multiplayer_game")  # sauvegarde de la game
+            full_path = os.path.join("./Model/Save_Folder", "multiplayer_game.pickle")
+            with open(full_path, 'rb') as f:
+                file_content = f.read()
+                fonctionne = "fonctionne"
+                self.send(f"SNC.{fonctionne}.{self.plateau.property}")
             self.nb_NC += 1
         # load map
         elif message_split[0] == "SNC":
