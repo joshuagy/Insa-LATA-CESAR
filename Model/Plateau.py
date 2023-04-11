@@ -52,12 +52,8 @@ class Plateau():
 
         self.surface_cells = pygame.Surface((nbr_cell_x * cell_size * 2, nbr_cell_y * cell_size  + 2 * cell_size )).convert_alpha()
         
-<<<<<<< HEAD
-        #Load de tous les spirtes
-=======
 
         #Load de tous les sprites
->>>>>>> a3efa1b9774539601650bed99f62a431c643d3d2
         self.image = self.load_cases_images()
         self.image_route = self.load_routes_images()
         self.image_walkers = self.load_walkers_images()
@@ -76,15 +72,12 @@ class Plateau():
         self.empireDate = EmpireDate(self)
         self.roadWarning = False #Affiche un avertissement quand un bâtiment qui a besoin de la route est déconnecté
         self.loyaltyWarning = False #Affiche un avertissement quand un bâtiment a une loyauté faible et pourrait changer de camp
-<<<<<<< HEAD
         self.loyAct = 0     #Timer pour l'actualisation de la loyauté
         self.load_savefile("DefaultMap.pickle")
-=======
 
         #Map du début
 #       self.load_savefile("testx40.pickle")
         self.map = self.default_map()
->>>>>>> a3efa1b9774539601650bed99f62a431c643d3d2
 
         self.foreground = Foreground(self.screen, self.nbr_cell_x, self.nbr_cell_y)
 
