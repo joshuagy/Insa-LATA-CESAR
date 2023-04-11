@@ -100,8 +100,8 @@ class Building():
                     for i in range(1,5) : 
                         if influenceMax == self.case.getDesirability(self.plateau,i) and influenceMax > 0:
                             self.property = i
-                        if self.plateau.multiplayer:
-                            self.plateau.multiplayer.send(f"SLF.{self.case.x}.{self.case.y}.{i}")
+                            if self.plateau.multiplayer:
+                                self.plateau.multiplayer.send(f"SLF.{self.case.x}.{self.case.y}.{i}")
             else :
                 self.loyFlipTimer = self.loyFlipTimer + 1
 
