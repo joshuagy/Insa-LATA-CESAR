@@ -27,7 +27,6 @@ void add_client(int socket);
 
 int python_socket_fd = -1;
 int client_socket[ MAX_CLIENTS + 1 ];
-int game_master_socket_fd = -1;
 
 int main(int argc , char *argv[])
 {
@@ -131,7 +130,7 @@ int main(int argc , char *argv[])
     {
         printf( "Mode: %d\n" , mode );
         // Create client socket
-        if ( (game_master_socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0 ) {
+        if ( (new_socket = socket(AF_INET, SOCK_STREAM, 0)) == 0 ) {
             perror("socket failed");
             exit(EXIT_FAILURE);
         }
@@ -144,13 +143,13 @@ int main(int argc , char *argv[])
         address.sin_port = htons(8888);
 
         // Connect to server
-        if ( connect(game_master_socket_fd, (struct sockaddr *)&address, sizeof(address)) < 0 ) {
+        if ( connect(new_socket, (struct sockaddr *)&address, sizeof(address)) < 0 ) {
             perror("connect failed");
             exit(EXIT_FAILURE);
         }
 
         // add player to player list and client list
-        add_client(game_master_socket_fd);
+        add_client(new_socket);
     }
 
 	while(TRUE) 
@@ -236,10 +235,11 @@ int main(int argc , char *argv[])
                         }
                     }
                 }
-                else if ( sd == game_master_socket_fd )
+                else
                 {
-                    // print the message in red
-                    printf( RED "from game master (fd: %d): %s [length: %zu]\n" RESET, sd , payload, payload_len);
+                    getpeername(sd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
+                    printf( GREEN "from client (fd: %d, ip: %s, port: %d): %s [length: %zu]\n" RESET, sd, inet_ntoa(address.sin_addr), ntohs(address.sin_port), payload, payload_len);
+                    
                     if ( strncmp(payload, "[PROTOCOL][CONNECT]", 19) == 0 )
                     {   
                         // get ip to connect to
@@ -284,13 +284,6 @@ int main(int argc , char *argv[])
                     {
                         send_packet(python_socket_fd, payload, payload_len);
                     }
-                }
-                // Send to python socket the incoming message
-                else
-                {
-                    getpeername(sd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-                    printf( GREEN "from client (fd: %d, ip: %s, port: %d): %s [length: %zu]\n" RESET, sd, inet_ntoa(address.sin_addr), ntohs(address.sin_port), payload, payload_len);
-                    send_packet(python_socket_fd, payload, payload_len);
                 }
             }
         }
