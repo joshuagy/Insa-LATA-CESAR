@@ -34,7 +34,7 @@ ROAD_COST = 4
 MARKET_COST = 20
 GRANARY_COST = 100
 WHEATFARM_COST = 50
-TEMPLE_COST = 100
+TEMPLE_COST = 300
 SENATE_COST = 500
 COLOSSEUM_COST = 4000
 
@@ -43,26 +43,28 @@ list_of_collision = ["tree", "water", "rock", "sign"]
 list_of_undestructible = ["water", "rock", "sign"]
 list_of_flammable_structures = ["EngineerPost", "SmallTent", "LargeTent", "SmallTent2", "LargeTent2", "WheatFarm", "Market", "Granary"]
 list_of_brittle_structures = ["Prefecture", "WheatFarm", "Market", "Granary"]
-list_of_non_flippable_structures = ["WheatPlot", "Senate", "HousingSpot", "BurningBuilding", "Ruins"]
+list_of_non_flippable_structures = ["WheatPlot", "Senate", "HousingSpot", "BurningBuilding", "Ruins", "Colosseum"]
 
 #DESIRABILITY
 #Housing :
-smalltentd = [0,1,2,2,2,2]
-largetentd = [3,2,1,0,0,0]
-smallshackd = [2,1,0,0,0,0]
-largeshackd = [2, 1, 0,0,0,0]
+smalltentd = [2,1,0,0,0,0]
+largetentd = [2,1,0,0,0,0]
+smallshackd = [3,2,1,0,0,0]
+largeshackd = [4, 3, 2,1,0,0]
 #Security :
-prefectured = [2,1,0,0,0,0]
+prefectured = [1,1,0,0,0,0]
+colosseumd = [10,10,10,10,10]
 #Administrative :
 senated = [8,8,7,7,6,6]
 #Religion :
 templed = [5,5,4,4,3]
 #Water :
-welld =[2,0,0,0,0,0]
+welld =[2,1,0,0,0,0]
 #Engineering :
-enginpostd = [0,0,0,0,0,0]
+enginpostd = [1,1,0,0,0,0]
 
 
 desirabilityDict = {"SmallTent" : smalltentd, "LargeTent" : largetentd, "SmallShack" : smallshackd, "Senate" : senated,
 "LargeShack" : largeshackd, "Prefecture" : prefectured, "Temple" : templed, "Well" : welld, "EngineerPost" : enginpostd,
+"Colosseum" : colosseumd
 }

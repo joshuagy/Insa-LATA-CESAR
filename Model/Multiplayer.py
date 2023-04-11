@@ -9,7 +9,8 @@ from ip import get_ip
 class Multiplayer():
     def __init__(self, plateau, server_address, server_port, listen_port, mode):
         self.plateau = plateau
-        self.plateau.modeText = f"Multiplayer Mode - {get_ip()} : {listen_port}"
+        self.number_of_players = 1
+        self.plateau.modeText = f"Multiplayer Mode - {get_ip()} : {listen_port} - {self.number_of_players} players"
         self.server_address = server_address
         self.server_port = server_port
         self.listen_port = listen_port
@@ -108,6 +109,7 @@ class Multiplayer():
         elif message_split[0] == "SBH":
             self.plateau.buildHousingSpot(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.plateau.soundMixer.playEffect('buildEffect')
+        
         elif message_split[0] == "SBI":
             self.plateau.buildEngineerPost(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.plateau.soundMixer.playEffect('buildEffect')
@@ -132,6 +134,56 @@ class Multiplayer():
         elif message_split[0] == "SBM":
             self.plateau.buildMarket(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.plateau.soundMixer.playEffect('buildEffect')
+
+        elif message_split[0] == "UH":
+            for b in self.plateau.structures :
+                if b.case.x == message_split[1] and b.case.y == message_split[2] :
+                    b.becomeAHouse()
+
+
+        # Change actual player number
+        elif message_split[0] == "SYNCNP":
+            self.number_of_players = int(message_split[1])
+            self.plateau.modeText = f"Multiplayer Mode - {get_ip()} : {self.listen_port} – {self.number_of_players} players"
+       
+        # Walker - Appear/Disapear tested
+        #Appear
+        elif message_split[0] == "WA":
+            if message_split[1] == "0":
+                Immigrant(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6], id=int(message_split[7]))
+            elif message_split[1] == "1":
+                Engineer(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6], id=int(message_split[7]))
+            elif message_split[1] == "2":
+                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6], id=int(message_split[7]))
+            elif message_split[1] == "3":
+                cartPusher = CartPusher(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6], id=int(message_split[7]))
+                Cart(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, cartPusher)
+            elif message_split[1] == "4":
+                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6],message_split[7],message_split[8], id=int(message_split[9]))
+        #Disappear
+        elif message_split[0] == "WD":
+            for e in self.model.actualGame.entities:
+                if e.id == int(message_split[1]):
+                    e.delete()
+        #Switch mode
+        elif message_split[0] == "WMo": #A discuter niveau pertinence
+            for e in self.model.actualGame.entities:
+                if e.id == int(message_split[1]):
+                    e.mode = int(message_split[2])
+        #Move
+        elif message_split[0] == "WM": #A discuter niveau pertinence
+            for e in self.model.actualGame.entities:
+                if e.id == int(message_split[1]):
+                    e.change_tile(self.model.actualGame.map[int(message_split[2])][int(message_split[3])])
+
+        # Fire risk related
+        elif message_split[0] == "FRC":
+            for b in self.model.actualGame.structures:
+                if isinstance(b, Building):
+                    if b.case == self.model.actualGame.map[int(message_split[1])][int(message_split[2])]:
+                        b.set_fireRisk(int(message_split[3]))
+                        
+        # Gestion de transmission de propriété
         elif message_split[0] == "SLF":
             for b in self.plateau.structures :
                 if b.case.x == message_split[1] and b.case.y == message_split[2] :

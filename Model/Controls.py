@@ -155,22 +155,22 @@ class Controls:
     self.arrow_rotate_clockwise = ButtonCtrlPnl(self, not_implemented_func, "Rotate the map clockwise", self.screenWidth-39-self.originX,208-self.originY,"image/C3/paneling_00094.png","image/C3/paneling_00095.png","image/C3/paneling_00096.png")
     listOfButtons.append(self.arrow_rotate_clockwise)
     
-    self.clear_land_button = ButtonCtrlPnl(self, clear_land, "Clear land", self.screenWidth-99 - self.originX, 301 - self.originY, "image/C3/paneling_00131.png", "image/C3/paneling_00132.png","image/C3/paneling_00133.png", state='clearLand')
+    self.clear_land_button = ButtonCtrlPnl(self, clear_land, f"Clear land({DESTRUCTION_COST}Dn)", self.screenWidth-99 - self.originX, 301 - self.originY, "image/C3/paneling_00131.png", "image/C3/paneling_00132.png","image/C3/paneling_00133.png", state='clearLand')
     listOfButtons.append(self.clear_land_button)
 
-    self.build_roads_button = ButtonCtrlPnl(self, build_roads, "Build roads", self.screenWidth - 49 - self.originX ,301 - self.originY,"image/C3/paneling_00135.png","image/C3/paneling_00136.png","image/C3/paneling_00137.png", state='buildRoads')
+    self.build_roads_button = ButtonCtrlPnl(self, build_roads, f"Roads({ROAD_COST}Dn)", self.screenWidth - 49 - self.originX ,301 - self.originY,"image/C3/paneling_00135.png","image/C3/paneling_00136.png","image/C3/paneling_00137.png", state='buildRoads')
     listOfButtons.append(self.build_roads_button)
     
-    self.build_housing_button = ButtonCtrlPnl(self, build_housing, "Build housing", self.screenWidth-149 - self.originX, 301 - self.originY,"image/C3/paneling_00123.png","image/C3/paneling_00124.png","image/C3/paneling_00125.png", state='buildHousing')
+    self.build_housing_button = ButtonCtrlPnl(self, build_housing, f"Housing Spot({HOUSE_COST}Dn)", self.screenWidth-149 - self.originX, 301 - self.originY,"image/C3/paneling_00123.png","image/C3/paneling_00124.png","image/C3/paneling_00125.png", state='buildHousing')
     listOfButtons.append(self.build_housing_button)
 
-    self.water_related_structures = ButtonCtrlPnl(self, build_water_related_structures, "Water related structure", self.screenWidth - 149 - self.originX, 337 - self.originY,"image/C3/paneling_00127.png","image/C3/paneling_00128.png","image/C3/paneling_00129.png", state='buildWaterRelatedStructures')
+    self.water_related_structures = ButtonCtrlPnl(self, build_water_related_structures, f"Well({WELL_COST}Dn)", self.screenWidth - 149 - self.originX, 337 - self.originY,"image/C3/paneling_00127.png","image/C3/paneling_00128.png","image/C3/paneling_00129.png", state='buildWaterRelatedStructures')
     listOfButtons.append(self.water_related_structures)
 
     self.health_related_structures= ButtonCtrlPnl(self, not_implemented_func,  "Health related structures", self.screenWidth-99-self.originX,337-self.originY, "image/C3/paneling_00163.png", "image/C3/paneling_00164.png", "image/C3/paneling_00165.png","image/C3/paneling_00166.png")
     listOfButtons.append(self.health_related_structures)
 
-    self.religious_structures = ButtonCtrlPnl(self, not_implemented_func, "Religious Structures", 0, 0,"image/C3/paneling_00151.png","image/C3/paneling_00152.png","image/C3/paneling_00153.png")
+    self.religious_structures = ButtonCtrlPnl(self, not_implemented_func, f"Temple({TEMPLE_COST}Dn)", 0, 0,"image/C3/paneling_00151.png","image/C3/paneling_00152.png","image/C3/paneling_00153.png")
     self.religious_structures.change_pos(self.screenWidth - 49 - self.originX, 337 - self.originY)
     listOfButtons.append(self.religious_structures)
 
@@ -181,19 +181,19 @@ class Controls:
     self.entertainment_structures= ButtonCtrlPnl(self, not_implemented_func, "Entertainment_structures", self.screenWidth-99-self.originX,373-self.originY,"image/C3/paneling_00143.png","image/C3/paneling_00144.png","image/C3/paneling_00145.png","image/C3/paneling_00146.png")      
     listOfButtons.append(self.entertainment_structures)
 
-    self.administration_or_government_structures = ButtonCtrlPnl(self, not_implemented_func, "Administration or Government Structures", self.screenWidth-49-self.originX,373-self.originY,"image/C3/paneling_00139.png","image/C3/paneling_00140.png","image/C3/paneling_00141.png")
+    self.administration_or_government_structures = ButtonCtrlPnl(self, not_implemented_func, f"Senate({SENATE_COST}Dn)", self.screenWidth-49-self.originX,373-self.originY,"image/C3/paneling_00139.png","image/C3/paneling_00140.png","image/C3/paneling_00141.png")
     listOfButtons.append(self.administration_or_government_structures)
 
-    self.engineering_structures = ButtonCtrlPnl(self, build_engineer_post, "Engineering function", self.screenWidth - 149 - self.originX,409 - self.originY,"image/C3/paneling_00167.png","image/C3/paneling_00168.png","image/C3/paneling_00169.png", state='buildEngineerPost')
+    self.engineering_structures = ButtonCtrlPnl(self, build_engineer_post, f"Engineering Post({ENGINEERPOST_COST}Dn)", self.screenWidth - 149 - self.originX,409 - self.originY,"image/C3/paneling_00167.png","image/C3/paneling_00168.png","image/C3/paneling_00169.png", state='buildEngineerPost')
     listOfButtons.append(self.engineering_structures)
 
-    self.security_structures = ButtonCtrlPnl(self, build_prefecture, "Security Structures", self.screenWidth - 99 - self.originX, 409 - self.originY, "image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png", state='securityStructures')
+    self.security_structures = ButtonCtrlPnl(self, build_prefecture, f"Prefecture({PREFECTURE_COST}Dn)", self.screenWidth - 99 - self.originX, 409 - self.originY, "image/C3/paneling_00159.png","image/C3/paneling_00160.png","image/C3/paneling_00161.png", state='securityStructures')
     listOfButtons.append(self.security_structures)
 
-    self.industrial_structures = ButtonCtrlPnl(self, not_implemented_func, "Wheat Farm", self.screenWidth-49-self.originX,409-self.originY,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png", state = 'industrialStructures')
+    self.industrial_structures = ButtonCtrlPnl(self, not_implemented_func, f"Wheat Farm({WHEATFARM_COST}Dn)", self.screenWidth-49-self.originX,409-self.originY,"image/C3/paneling_00155.png","image/C3/paneling_00156.png","image/C3/paneling_00157.png", state = 'industrialStructures')
     listOfButtons.append(self.industrial_structures)
 
-    self.colosseum_button = ButtonCtrlPnl(self, build_colosseum_func, "Colosseum (4000Dn)", self.screenWidth-149-self.originX, 445-self.originY,"image/C3/paneling_00171.png","image/C3/paneling_00172.png","image/C3/paneling_00173.png","image/C3/paneling_00174.png")
+    self.colosseum_button = ButtonCtrlPnl(self, build_colosseum_func, f"Colosseum ({COLOSSEUM_COST}Dn)", self.screenWidth-149-self.originX, 445-self.originY,"image/C3/paneling_00151.png","image/C3/paneling_00152.png","image/C3/paneling_00153.png")
     listOfButtons.append(self.colosseum_button)
     
 #    self.message_view_button = ButtonCtrlPnl(self, not_implemented_func, "Message View", self.screenWidth-99-self.originX,445-self.originY,"image/C3/paneling_00115.png","image/C3/paneling_00116.png","image/C3/paneling_00117.png","image/C3/paneling_00118.png")
