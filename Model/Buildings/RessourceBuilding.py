@@ -47,7 +47,9 @@ class WheatFarm(Building) :
                 
                 #Récolte le blé si les champs sont pleins :
                 if self.growingQuant>=self.growingQuantMax and not self.walker:
-                    CartPusher(ac, self.plateau, self)
+                    cartpusher = CartPusher(ac, self.plateau, self, property = self.property)
+                    if self.plateau.multiplayer :
+                        self.plateau.multiplayer.send(f"WA.3.{cartpusher.case.x}.{cartpusher.case.y}.{self.case.x}.{self.case.y}.{cartpusher.property}.{cartpusher.id}")
                     self.storedQuant=self.storedQuant+10
                     self.growingQuant=0
                     for p in self.plots :
@@ -135,9 +137,13 @@ class Market(Building) :
             if ac.connectedToRoad > 0 or self.case.connectedToRoad > 0:
                 if self.storedWheat >= 100 and not self.giver:
                     self.storedWheat -= 100
-                    MarketTrader(ac, self.plateau, self, 2, 100)
+                    markettrader = MarketTrader(ac, self.plateau, self, 2, 100, property = self.property)
+                    if self.plateau.multiplayer :
+                        self.plateau.multiplayer.send(f"WA.4.{markettrader.case.x}.{markettrader.case.y}.{self.case.x}.{self.case.y}.{markettrader.mode}.{markettrader.wheat}.{markettrader.property}.{markettrader.id}")
                 if self.storedWheat <= self.storedWheatMax and not self.transporter:
-                    MarketTrader(ac, self.plateau, self, 1, 0)
+                    MarketTrader(ac, self.plateau, self, 1, 0, property = self.property)
+                    if self.plateau.multiplayer :
+                        self.plateau.multiplayer.send(f"WA.4.{markettrader.case.x}.{markettrader.case.y}.{self.case.x}.{self.case.y}.{markettrader.mode}.{markettrader.wheat}.{markettrader.property}.{markettrader.id}")
                 return      
         self.plateau.roadWarning = True      
         

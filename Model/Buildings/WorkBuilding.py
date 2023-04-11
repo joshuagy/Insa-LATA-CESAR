@@ -42,7 +42,9 @@ class Prefecture(WorkBuilding) :
         self.plateau.treasury[self.property-1] = self.plateau.treasury[self.property-1] - PREFECTURE_COST
     
     def spawnWalker(self):
-        Prefet(self.case,self.plateau, self, "Prefectus")
+        prefet = Prefet(self.case,self.plateau, self, "Prefectus", property = self.property)
+        if self.plateau.multiplayer :
+            self.plateau.multiplayer.send(f"WA.2.{prefet.case.x}.{prefet.case.y}.{self.case.x}.{self.case.y}.{prefet.property}.{prefet.id}")
     
     
 class EnginnerPost(WorkBuilding) :
@@ -52,5 +54,7 @@ class EnginnerPost(WorkBuilding) :
         self.plateau.treasury[self.property-1] = self.plateau.treasury[self.property-1] - ENGINEERPOST_COST
     
     def spawnWalker(self):
-        Engineer(self.case,self.plateau, self, "UnIngenieur")
+        engineer = Engineer(self.case,self.plateau, self, "UnIngenieur", property = self.property)
+        if self.plateau.multiplayer :
+            self.plateau.multiplayer.send(f"WA.1.{engineer.case.x}.{engineer.case.y}.{self.case.x}.{self.case.y}.{engineer.property}.{engineer.id}")
 
