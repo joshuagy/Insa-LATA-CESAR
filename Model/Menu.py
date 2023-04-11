@@ -19,6 +19,9 @@ class Menu:
 
     self.loadScene = None
     self.isLoadState = False
+    
+    self.playerSelectionScene = None
+    self.isPlayerSelectionState = False
 
     self.multiplayerScene = None
     self.isMultiplayerState = False
@@ -34,11 +37,13 @@ class Menu:
   def initializeItems(self):
     startButton = MenuButton(self.surface, "./image/UI/menu/menu_start_button.png", 0, StateChangeEvent(STATE_PLAY))
     loadSaveButton = MenuButton(self.surface, "./image/UI/menu/menu_load_save_button.png", 1, LoadEvent())
-    multiplayerButton = MenuButton(self.surface, "./image/UI/menu/join_by_IP.png", 2, MultiplayerEvent())
-    exitButton = MenuButton(self.surface, "./image/UI/menu/menu_exit_button.png", 3, QuitEvent())
+    playerButton = MenuButton(self.surface, "./image/UI/menu/SelectPlayer.png",2, SelectPlayerEvent())
+    multiplayerButton = MenuButton(self.surface, "./image/UI/menu/join_by_IP.png", 3, MultiplayerEvent())
+    exitButton = MenuButton(self.surface, "./image/UI/menu/menu_exit_button.png", 4, QuitEvent())
     
     self.items.append(startButton)
     self.items.append(loadSaveButton)
+    self.items.append(playerButton)
     self.items.append(multiplayerButton)
     self.items.append(exitButton)
 
@@ -82,6 +87,12 @@ class Menu:
         self.soundMixer.playEffect('clickEffect')
         self.isMultiplayerState = False
         return MultiplayerSceneFeedBack
+    elif self.isPlayerSelectionState:
+      SelectPlayerFeedback = self.playerSelectionScene.handleMouseInput(event)
+      if isinstance(SelectPlayerFeedback, TickEvent):
+        self.soundMixer.playEffect('clickEffect')
+        self.isPlayerSelectionState = False
+        return SelectPlayerFeedback      
     else:
       for item in self.items:
         if item.rect.collidepoint(event.pos):
@@ -95,6 +106,11 @@ class Menu:
             self.loadScene = LoadScene(self.screen, self.surface.copy(), self.soundMixer)
             self.isLoadState = True
             return TickEvent()
+          elif isinstance(item.feedback, SelectPlayerEvent):
+            self.soundMixer.playEffect('clickEffect')
+            self.playerSelectionScene = PlayerSelectionScene(self.screen, self.surface.copy(), self.soundMixer)
+            self.isPlayerSelectionState = True
+            
           elif isinstance(item.feedback, MultiplayerEvent):
             self.soundMixer.playEffect('clickEffect')
             self.multiplayerScene = MultiplayerScene(self.screen, self.surface.copy(), self.soundMixer)
@@ -116,6 +132,8 @@ class Menu:
       self.loadScene.render()
     elif self.isMultiplayerState:
       self.multiplayerScene.render()
+    elif self.isPlayerSelectionState:
+      self.playerSelectionScene.render()
     else: 
       self.renderItems()
       self.screen.blit(self.surface, (0, 0))
@@ -233,6 +251,54 @@ class MultiplayerScene:
     self.surface.blit(self.fontError.render(self.textError, True, (255, 0, 0)), (self.IPaddrPos[0], self.IPaddrPos[1]+45))
 
     self.screen.blit(self.surface, (self.posX, self.posY))
+
+
+class PlayerSelectionScene:
+  def __init__(self, screen, model, soundMixer):
+    self.screen = screen
+    self.soundMixer = soundMixer
+
+    self.surface = model
+    self.image = pygame.image.load("./image/UI/menu/Empty_interface.png").convert_alpha()
+    self.defaultSurface = pygame.transform.scale(self.image, (400, 400))
+    self.surface = self.defaultSurface.copy()
+
+    self.pos = (self.screen.get_width()/2 - self.surface.get_width()/2, self.screen.get_height()/2 - self.surface.get_height()/2)
+    self.posX = self.pos[0]
+    self.posY = self.pos[1]
+
+    self.okButton = pygame.image.load("./image/UI/quit/okButton.png")
+    self.okButtonPos = ((self.surface.get_width()/2) + self.okButton.get_width(), (self.surface.get_height() - self.okButton.get_height())-20)
+    self.okButtonRect = pygame.Rect(self.okButtonPos,  self.okButton.get_size())
+
+    self.cancelButton = pygame.image.load("./image/UI/quit/cancelButton.png")
+    self.cancelButtonPos = ((self.surface.get_width()/2) + 3*self.cancelButton.get_width(), (self.surface.get_height() - self.cancelButton.get_height())-20)
+    self.cancelButtonRect = pygame.Rect(self.cancelButtonPos, self.cancelButton.get_size())
+
+  def getMousePosRelative(self, event):
+    return (event.pos[0] - self.posX, event.pos[1] - self.posY)
+  
+  def handleMouseInput(self, event) -> Event:
+    pos = self.getMousePosRelative(event)
+    if self.okButtonRect.collidepoint(pos):
+      self.soundMixer.playEffect("clickEffect")
+      return StateChangeEvent(STATE_PLAY)
+    elif self.cancelButtonRect.collidepoint(pos):
+      self.soundMixer.playEffect("clickEffect")
+      return StateChangeEvent(STATE_PLAY)
+    else:
+      return TickEvent()
+  
+  def render(self):
+    self.screen.blit(self.defaultSurface, (self.posX, self.posY))
+    self.surface = self.defaultSurface.copy()
+
+    self.surface.blit(self.okButton, self.okButtonPos)
+    self.surface.blit(self.cancelButton, self.cancelButtonPos)
+
+    self.screen.blit(self.surface, self.pos)
+
+    
 
 
 numerical_keys = [pygame.K_0, pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4,

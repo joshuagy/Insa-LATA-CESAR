@@ -63,6 +63,8 @@ class GraphicalView(object):
                 self.renderSaveScene()
             elif currentstate == STATE_OPEN_TO_LAN_SCENE:
                 self.renderOpenToLanScene()
+            elif currentstate == STATE_SELECT_PLAYER:
+                self.renderSelectPlayerScene()
             self.clock.tick(300)
 
     def renderOpenToLanScene(self) -> None:
@@ -77,6 +79,10 @@ class GraphicalView(object):
         Render the save scene.
         """
         self.model.saveScene.render()
+        pygame.display.flip()
+        
+    def renderSelectPlayerScene(self) -> None:
+        self.model.selectPlayerScene.render()
         pygame.display.flip()
 
     def renderIntroScene(self) -> None:
