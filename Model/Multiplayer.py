@@ -144,8 +144,8 @@ class Multiplayer():
 
 
         # Change actual player number
-        elif message_split[0] == "SYNCNP":
-            self.number_of_players = int(message_split[1])
+        elif message_split[0] == "UPDATE":
+            self.number_of_players = int(message_split[2])
             self.plateau.modeText = f"Multiplayer Mode - {get_ip()} : {self.listen_port} – {self.number_of_players} players"
        
         # Walker - Appear/Disapear tested
