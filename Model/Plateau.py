@@ -226,8 +226,8 @@ class Plateau():
         #Ville
         self.create_collision_matrix()
         self.attractiveness = save.attractiveness
-        self.treasury = [save.treasury,2000,2000,2000]
-        self.population = [save.population,0,0,0]
+        self.treasury = save.treasury
+        self.population = save.population
         
     def default_map(self):
         '''Generate a map filled with grass'''
