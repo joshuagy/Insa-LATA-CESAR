@@ -9,7 +9,8 @@ from ip import get_ip
 class Multiplayer():
     def __init__(self, plateau, server_address, server_port, listen_port, mode):
         self.plateau = plateau
-        self.plateau.modeText = f"Multiplayer Mode - {get_ip()} : {listen_port}"
+        self.number_of_players = 1
+        self.plateau.modeText = f"Multiplayer Mode - {get_ip()} : {listen_port} – {self.number_of_players} players"
         self.server_address = server_address
         self.server_port = server_port
         self.listen_port = listen_port
@@ -132,3 +133,10 @@ class Multiplayer():
         elif message_split[0] == "SBM":
             self.plateau.buildMarket(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.plateau.soundMixer.playEffect('buildEffect')
+
+        elif message_split[0] == "PJ":
+            self.number_of_players += 1
+            self.plateau.modeText = f"Multiplayer Mode - {get_ip()} : {self.listen_port} – {self.number_of_players} players"
+        elif message_split[0] == "PJJ":
+            self.number_of_players -= 1
+            self.plateau.modeText = f"Multiplayer Mode - {get_ip()} : {self.listen_port} – {self.number_of_players} players"
