@@ -36,11 +36,20 @@ class Camera:
         else:
             self.dy = 0
 
+        #Left
         if not (self.vect.x> 0.1*self.width ) and self.dx>0:
             self.vect.x += self.dx
-        if not (self.vect.x<-0.999*self.width) and self.dx <0:
-            self.vect.x += self.dx
+        #Top
         if not (self.vect.y>0.1*self.height ) and self.dy>0:
             self.vect.y += self.dy
-        if not (self.vect.y<-0.6*self.height) and self.dy <0:
+            
+        #These ones need to be adapted if we change the map size,
+        #otherwise we either don't see the whole map or there is too much black background
+        #Right
+        #if not (self.vect.x<-0.999*self.width) and self.dx <0:     
+        if not (self.vect.x<-self.width*2) and self.dx <0:
+            self.vect.x += self.dx
+        #Bottom
+        #if not (self.vect.y<-0.6*self.height) and self.dy <0:
+        if not (self.vect.y<-self.height*1.5) and self.dy <0:
             self.vect.y += self.dy
