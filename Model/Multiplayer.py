@@ -6,9 +6,9 @@ import subprocess
 import struct
 from ip import get_ip
 import os
+from Model.Buildings.House import HousingSpot
 from EventManager.allEvent import StateChangeEvent
 from Model.constants import *
-
 
 class Multiplayer():
     def __init__(self, plateau, evManager, server_address, server_port, listen_port, mode):
@@ -142,8 +142,10 @@ class Multiplayer():
             self.plateau.buildMarket(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.plateau.soundMixer.playEffect('buildEffect')
         elif message_split[0] == "UH":
-            for b in self.plateau.structures :
-                if b.case.x == message_split[1] and b.case.y == message_split[2] :
+            for b in self.plateau.structures:
+                if b.case.x == int(message_split[1]) and b.case.y == int(message_split[2]) and isinstance(b, HousingSpot):
+                    print("Evolve")
+                    print(self.plateau.structures)
                     b.becomeAHouse()
 
 
