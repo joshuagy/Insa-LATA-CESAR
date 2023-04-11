@@ -113,6 +113,9 @@ int main(int argc , char *argv[])
                    inet_ntoa(address.sin_addr), ntohs(address.sin_port));
             python_socket_fd = new_socket;
             add_client(python_socket_fd);
+            if(mode == 0){
+                send_packet(python_socket_fd,"NC", sizeof(char)*2);
+            }
             break; // exit the loop and continue with the connected client
         } 
         else 
