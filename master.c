@@ -27,7 +27,7 @@ void add_client(int socket);
 
 int python_socket_fd = -1;
 int client_socket[ MAX_CLIENTS + 1 ];
-int active_clients = 1;
+int game_master_socket_fd = -1;
 
 int main(int argc , char *argv[])
 {
@@ -125,7 +125,7 @@ int main(int argc , char *argv[])
     // Connect to ip specified by user
     if ( mode == 1 )
     {
-        if ( (new_socket = socket(AF_INET, SOCK_STREAM, 0)) == 0 ) 
+        if ( (game_master_socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0 ) 
         {
             perror("socket failed");
             exit(EXIT_FAILURE);
@@ -138,14 +138,14 @@ int main(int argc , char *argv[])
         address.sin_port = htons(PORT_EXT);
 
         // Connect to server
-        if ( connect(new_socket, (struct sockaddr *)&address, sizeof(address)) < 0 ) 
+        if ( connect(game_master_socket_fd, (struct sockaddr *)&address, sizeof(address)) < 0 ) 
         {
             perror("connect failed");
             exit(EXIT_FAILURE);
         }
 
         // Add the client to the list of clients
-        add_client(new_socket);
+        add_client(game_master_socket_fd);
 
         send_packet( python_socket_fd, "PJ", 2 );
     }
@@ -244,7 +244,7 @@ int main(int argc , char *argv[])
                         }
                     }
                 }
-                else
+                 else if ( sd == game_master_socket_fd )
                 {
                     getpeername(sd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
                     printf( GREEN "from client (fd: %d, ip: %s, port: %d): %s [length: %zu]\n" RESET, sd, inet_ntoa(address.sin_addr), ntohs(address.sin_port), payload, payload_len);
@@ -293,6 +293,10 @@ int main(int argc , char *argv[])
                     {
                         send_packet(python_socket_fd, payload, payload_len);
                     }
+                }
+                else
+                {
+                    send_packet(python_socket_fd, payload, payload_len);
                 }
             }
         }
