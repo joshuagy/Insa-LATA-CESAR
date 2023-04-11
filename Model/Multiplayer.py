@@ -196,13 +196,13 @@ class Multiplayer():
             full_path = os.path.join("./Model/Save_Folder", "multiplayer_game.pickle")
             with open(full_path, 'rb') as f:
                 file_content = f.read()
-                fonctionne = "fonctionne"
-                self.send(f"SNC.{fonctionne}.{self.plateau.property}")
+                content = "contenu factice"
+                self.send(f"SNC.{content}.{self.plateau.property}")
             self.nb_NC += 1
         # load map
         elif message_split[0] == "SNC":
             print("ca marche")
-           # full_path = os.path.join("./Model/Save_Folder", "multiplayer_game.pickle")
-            #with open(full_path, 'wb') as f:
-             #   f.write(message_split[1].encode())
+            full_path = os.path.join("./Model/Save_Folder", "multiplayer_game_received.pickle")
+            with open(full_path, 'wb') as f:
+                f.write(message_split[1].encode())
             # self.plateau.load_savefile("multiplayer_game")
