@@ -2,6 +2,7 @@ import pygame
 import os
 from EventManager.allEvent import *
 from Model.constants import *
+from View.view import *
 
 class Menu:
   def __init__(self, screen, soundMixer):
@@ -259,7 +260,7 @@ class PlayerSelectionScene:
     self.soundMixer = soundMixer
 
     self.surface = model
-    self.image = pygame.image.load("./image/UI/menu/Empty_interface.png").convert_alpha()
+    self.image = pygame.image.load("./image/UI/menu/select_player_interface.png").convert_alpha()
     self.defaultSurface = pygame.transform.scale(self.image, (400, 400))
     self.surface = self.defaultSurface.copy()
 
@@ -305,14 +306,23 @@ class PlayerSelectionScene:
       self.soundMixer.playEffect("clickEffect")
       #self.feedback = LoadSave(self.currentSaveLoaded)
       #return self.feedback
-      return StateChangeEvent(STATE_PLAY)
-    elif self.cancelButtonRect.collidepoint(pos):
-      self.soundMixer.playEffect("clickEffect")
       return TickEvent()
     elif self.cancelButtonRect.collidepoint(pos):
       self.soundMixer.playEffect("clickEffect")
-      print("Player 1 selectionned")
+      print("button clicked")
       return TickEvent()
+    elif self.choosePlayer1Rect.collidepoint(pos):
+      self.soundMixer.playEffect("clickEffect")
+      print("Player 1 selected")
+    elif self.choosePlayer2Rect.collidepoint(pos):
+      self.soundMixer.playEffect("clickEffect")
+      print("Player 2 selected")
+    elif self.choosePlayer3Rect.collidepoint(pos):
+      self.soundMixer.playEffect("clickEffect")
+      print("Player 3 selected")
+    elif self.choosePlayer4Rect.collidepoint(pos):
+      self.soundMixer.playEffect("clickEffect")
+      print("Player 4 selected")
     else:
       return 0
   
