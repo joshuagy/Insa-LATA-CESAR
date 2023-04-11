@@ -204,6 +204,8 @@ class Plateau():
                     Granary(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["property"], s["storedWheat"])
                 case "Temple" :
                     Temple(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["property"])
+                case "Colosseum" :
+                    Colosseum(self.map[s["x"]][s["y"]], self, s["size"], s["type"], s["property"])
 
         
         #Walker
