@@ -113,9 +113,6 @@ int main(int argc , char *argv[])
                    inet_ntoa(address.sin_addr), ntohs(address.sin_port));
             python_socket_fd = new_socket;
             add_client(python_socket_fd);
-            if(mode == 0){
-                send_packet(python_socket_fd,"NC", sizeof(char)*2);
-            }
             break; // exit the loop and continue with the connected client
         } 
         else 
@@ -196,8 +193,11 @@ int main(int argc , char *argv[])
             }
 
             printf( YELLOW "New connection , socket fd is %d , ip is : %s , port : %d \n" RESET, new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
-
+            if(mode == 0){
+                send_packet(python_socket_fd,"NC", sizeof(char)*2);
+            }
             add_client(new_socket);
+           
 
             // Alert all clients that a new client has joined
             bzero( buffer, BUFFER_SIZE + 1 );
@@ -212,6 +212,7 @@ int main(int argc , char *argv[])
                     printf("Sending to %d: %s\n", client_socket[i], buffer );
                     send_packet( client_socket[i], buffer, sizeof(buffer) );
                 }
+                
             }
         }
         for( i = 0; i < MAX_CLIENTS; i++ ) 
