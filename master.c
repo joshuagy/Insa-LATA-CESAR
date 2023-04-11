@@ -24,6 +24,8 @@
 int send_packet(int sockfd, const char *payload, size_t payload_len);
 int recv_packet(int sockfd, char **payload, size_t *payload_len);
 void add_client(int socket);
+int number_of_connected_clients();
+void update_number_of_connected_players(char *buffer);
 
 int python_socket_fd = -1;
 int client_socket[ MAX_CLIENTS + 1 ];
@@ -135,7 +137,7 @@ int main(int argc , char *argv[])
         address.sin_family = AF_INET;
         //address.sin_addr.s_addr = INADDR_ANY;
         address.sin_addr.s_addr = inet_addr(IP_ADDR);
-        address.sin_port = htons(PORT_EXT);
+        address.sin_port = htons(8888);
 
         // Connect to server
         if ( connect(game_master_socket_fd, (struct sockaddr *)&address, sizeof(address)) < 0 ) 
@@ -147,7 +149,8 @@ int main(int argc , char *argv[])
         // Add the client to the list of clients
         add_client(game_master_socket_fd);
 
-        send_packet( python_socket_fd, "PJ", 2 );
+        // Alert all python client that a new client has joined
+        update_number_of_connected_players(buffer);
     }
 
 	while(TRUE) 
@@ -210,10 +213,13 @@ int main(int argc , char *argv[])
                             && client_socket[i] != new_socket )
                 {
                     printf("Sending to %d: %s\n", client_socket[i], buffer );
-                    send_packet( client_socket[i], buffer, sizeof(buffer) );
+                    send_packet( client_socket[i], buffer, sizeof( buffer ) );
                 }
                 
             }
+
+            // Alert all python client that a new client has joined
+            update_number_of_connected_players( buffer );
         }
         for( i = 0; i < MAX_CLIENTS; i++ ) 
         {
@@ -230,7 +236,9 @@ int main(int argc , char *argv[])
                     // Close the socket and mark as 0 in list for reuse
                     close(sd);
                     client_socket[i] = 0;
-                    send_packet(python_socket_fd, "PJJ", 3);
+
+                    // Alert all python client that a new client has left
+                    update_number_of_connected_players(buffer);
                 }
 
                 if ( sd == python_socket_fd )
@@ -288,6 +296,9 @@ int main(int argc , char *argv[])
 
                         // add client to client list
                         add_client(new_socket);
+
+                        // Alert all python client that a new client has joined
+                        update_number_of_connected_players(buffer);
                     }
                     else
                     {
@@ -390,4 +401,25 @@ void add_client(int socket)
             break;
         }
     }
+}
+
+
+int number_of_connected_clients() 
+{
+    int count = 0;
+    for (int i = 0; i < MAX_CLIENTS; i++) 
+    {
+        if ( client_socket[i] != 0 && client_socket[i] != python_socket_fd )
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+void update_number_of_connected_players(char *buffer)
+{
+    bzero( buffer, BUFFER_SIZE + 1 );
+    sprintf( buffer, "UPDATE.NUMPLAYERS.%d", number_of_connected_clients() + 1 );
+    send_packet( python_socket_fd, buffer, strlen( buffer ) );
 }
