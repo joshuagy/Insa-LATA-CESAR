@@ -19,6 +19,8 @@ class Multiplayer():
         self.p = subprocess.Popen(["./master",str(self.server_address), str(self.server_port), str(self.listen_port), str(self.mode)])
         time.sleep(1)
         self.localhost = "127.0.0.1"
+        
+        self.nb_NC = 0
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect((self.localhost, self.listen_port))
 
@@ -34,19 +36,18 @@ class Multiplayer():
         self.p.kill()
         del self
 
-
     def recv_thread(self):
         while not self._stop_event.is_set():
             data_len, data = self.recv_packet(self.client_socket)
-            if data :
+            if data:
                 data = data.decode('utf-8')
-                #print(f"[R] payload: {data} | payload_length: {data_len}")
+                print(f"[R] payload: {data} | payload_length: {data_len}")
                 self.wrapper(data)
-    
+
     def send(self, message):
         payload = message
         self.send_packet(self.client_socket, payload.encode('utf-8'))
-    
+
     def recv_packet(self, sockfd):
         # Read the length field from the stream
         length_bytes = sockfd.recv(4)
@@ -109,7 +110,6 @@ class Multiplayer():
         elif message_split[0] == "SBH":
             self.plateau.buildHousingSpot(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.plateau.soundMixer.playEffect('buildEffect')
-        
         elif message_split[0] == "SBI":
             self.plateau.buildEngineerPost(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.plateau.soundMixer.playEffect('buildEffect')
@@ -134,7 +134,6 @@ class Multiplayer():
         elif message_split[0] == "SBM":
             self.plateau.buildMarket(int(message_split[1]), int(message_split[3]), int(message_split[2]), int(message_split[4]), int(message_split[5]))
             self.plateau.soundMixer.playEffect('buildEffect')
-
         elif message_split[0] == "UH":
             for b in self.plateau.structures :
                 if b.case.x == message_split[1] and b.case.y == message_split[2] :
@@ -188,3 +187,15 @@ class Multiplayer():
             for b in self.plateau.structures :
                 if b.case.x == message_split[1] and b.case.y == message_split[2] :
                     b.property = message_split[3]
+                    
+        # intercept new Player (work)
+        # On intercepte les nouvelles connexion (uniquement pour lhost)
+        elif message_split[0] == "NC":
+            if self.nb_NC > 0:  # On ne compte pas la premiere car c'est lhost
+                self.plateau.save_game("multiplayer_game")  # sauvegarde de la game
+                full_path = os.path.join("./Model/Save_Folder", "multiplayer_game.pickle")
+                with open(full_path, 'rb') as f:
+                    file_content = f.read()
+                    self.send(f"SNC.{fonctionne}.{self.plateau.property}")
+            self.nb_NC += 1
+      
