@@ -148,8 +148,6 @@ class Multiplayer():
         elif message_split[0] == "UH":
             for b in self.plateau.structures:
                 if b.case.x == int(message_split[1]) and b.case.y == int(message_split[2]) and isinstance(b, HousingSpot):
-                    print("Evolve")
-                    print(self.plateau.structures)
                     b.becomeAHouse()
 
 
@@ -209,6 +207,5 @@ class Multiplayer():
             self.send(f"Game saved in python")
         # load map
         elif message_split[0] == "SNC":
-            print("ca marche")
             self.plateau.load_savefile("test.pickle")
             self.evManager.Post(StateChangeEvent(STATE_PLAY))
