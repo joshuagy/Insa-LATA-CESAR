@@ -223,18 +223,19 @@ class HousingSpot() :
                     
                     if self.property == 1:
                         #South
-                        Immigrant(self.plateau.map[int(MAP_SIZE/2)-1][MAP_SIZE-2], self.plateau, self.case)
+                        immigrant = Immigrant(self.plateau.map[int(MAP_SIZE/2)-1][MAP_SIZE-2], self.plateau, self.case, property = self.property)
                     elif self.property == 2:
                         #West
-                        Immigrant(self.plateau.map[1][int(MAP_SIZE/2)], self.plateau, self.case)
+                        immigrant = Immigrant(self.plateau.map[1][int(MAP_SIZE/2)], self.plateau, self.case, property = self.property)
                     elif self.property == 3:
                         #North
-                        Immigrant(self.plateau.map[int(MAP_SIZE/2)-1][1], self.plateau, self.case)
+                        immigrant = Immigrant(self.plateau.map[int(MAP_SIZE/2)-1][1], self.plateau, self.case, property = self.property)
                     else:
                         #East
-                        Immigrant(self.plateau.map[MAP_SIZE-2][int(MAP_SIZE/2)-1], self.plateau, self.case)
+                        immigrant = Immigrant(self.plateau.map[MAP_SIZE-2][int(MAP_SIZE/2)-1], self.plateau, self.case, property = self.property)
                         
-                    
+                    if self.plateau.multiplayer :
+                        self.plateau.multiplayer.send(f"WA.0.{immigrant.case.x}.{immigrant.case.y}.{self.case.x}.{self.case.y}.{immigrant.property}.{immigrant.id}")
                     self.nb_immigrant += 1
                 self.spawn_timer = now
 

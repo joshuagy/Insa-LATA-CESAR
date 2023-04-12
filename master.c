@@ -26,6 +26,8 @@ int recv_packet(int sockfd, char **payload, size_t *payload_len);
 void add_client(int socket);
 int number_of_connected_clients();
 void update_number_of_connected_players(char *buffer);
+void receive_file(const char *file_name, int socket_fd);
+void send_file(const char *file_name, int socket_fd);
 
 int python_socket_fd = -1;
 int client_socket[ MAX_CLIENTS + 1 ];

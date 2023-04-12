@@ -9,6 +9,7 @@ import os
 from Model.Buildings.House import HousingSpot
 from EventManager.allEvent import StateChangeEvent
 from Model.constants import *
+from Model.Walker import *
 
 class Multiplayer():
     def __init__(self, plateau, evManager, server_address, server_port, listen_port, mode):
@@ -158,37 +159,38 @@ class Multiplayer():
         #Appear
         elif message_split[0] == "WA":
             if message_split[1] == "0":
-                Immigrant(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6], id=int(message_split[7]))
+                Immigrant(self.plateau.map[int(message_split[2])][int(message_split[3])], self.plateau, self.plateau.map[int(message_split[4])][int(message_split[5])], property = int(message_split[6]), id=int(message_split[7]))
             elif message_split[1] == "1":
-                Engineer(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6], id=int(message_split[7]))
+                Engineer(self.plateau.map[int(message_split[2])][int(message_split[3])], self.plateau, self.plateau.map[int(message_split[4])][int(message_split[5])].structure, property = int(message_split[6]), id=int(message_split[7]))
             elif message_split[1] == "2":
-                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6], id=int(message_split[7]))
+                Prefet(self.plateau.map[int(message_split[2])][int(message_split[3])], self.plateau, self.plateau.map[int(message_split[4])][int(message_split[5])].structure, property = int(message_split[6]), id=int(message_split[7]))
             elif message_split[1] == "3":
-                cartPusher = CartPusher(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6], id=int(message_split[7]))
-                Cart(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, cartPusher)
+                CartPusher(self.plateau.map[int(message_split[2])][int(message_split[3])], self.plateau, self.plateau.map[int(message_split[4])][int(message_split[5])], property = int(message_split[6]), id=int(message_split[7]))
             elif message_split[1] == "4":
-                Prefet(self.model.actualGame.map[int(message_split[2])][int(message_split[3])], self.model.actualGame, self.model.actualGame.map[int(message_split[4])][int(message_split[5])],message_split[6],message_split[7],message_split[8], id=int(message_split[9]))
+                MarketTrader(self.plateau.map[int(message_split[2])][int(message_split[3])], self.plateau, self.plateau.map[int(message_split[4])][int(message_split[5])],message_split[6],message_split[7], property = int(message_split[8]), id=int(message_split[9]))
         #Disappear
         elif message_split[0] == "WD":
-            for e in self.model.actualGame.entities:
-                if e.id == int(message_split[1]):
+            for e in self.plateau.entities:
+                if e.property == int(message_split[1]) and e.id == int(message_split[2]):
                     e.delete()
+                    return
         #Switch mode
         elif message_split[0] == "WMo": #A discuter niveau pertinence
-            for e in self.model.actualGame.entities:
-                if e.id == int(message_split[1]):
-                    e.mode = int(message_split[2])
+            for e in self.plateau.entities:
+                if e.property == int(message_split[1]) and e.id == int(message_split[2]):
+                    e.mode = int(message_split[3])
+                    return
         #Move
         elif message_split[0] == "WM": #A discuter niveau pertinence
-            for e in self.model.actualGame.entities:
-                if e.id == int(message_split[1]):
-                    e.change_tile(self.model.actualGame.map[int(message_split[2])][int(message_split[3])])
+            for e in self.plateau.entities:
+                if e.property == int(message_split[1]) and e.id == int(message_split[2]):
+                    e.change_tile((int(message_split[3]),int(message_split[4])))
 
         # Fire risk related
         elif message_split[0] == "FRC":
-            for b in self.model.actualGame.structures:
+            for b in self.plateau.structures:
                 if isinstance(b, Building):
-                    if b.case == self.model.actualGame.map[int(message_split[1])][int(message_split[2])]:
+                    if b.case == self.plateau.map[int(message_split[1])][int(message_split[2])]:
                         b.set_fireRisk(int(message_split[3]))
                         
         # Gestion de transmission de propriété
