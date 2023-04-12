@@ -209,7 +209,6 @@ class HousingSpot() :
         self.plateau.structures.remove(self)
         House(self.case,self.plateau,(1,1), "SmallTent", property = self.property)
         self.case.setFeature("Small Tent")
-        print(self.property, self.plateau.property)
         if self.plateau.multiplayer and self.property == self.plateau.property:
                 self.plateau.multiplayer.send(f"UH."+str(self.case.x)+"."+str(self.case.y))
         del self
