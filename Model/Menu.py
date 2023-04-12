@@ -2,6 +2,9 @@ import pygame
 import os
 from EventManager.allEvent import *
 from Model.constants import *
+#To get actual_game
+from View.view import * 
+from EventManager.Event import Event
 
 class Menu:
   def __init__(self, screen, soundMixer):
@@ -19,6 +22,9 @@ class Menu:
 
     self.loadScene = None
     self.isLoadState = False
+    
+    self.playerSelectionScene = None
+    self.isPlayerSelectionState = False
 
     self.multiplayerScene = None
     self.isMultiplayerState = False
@@ -34,11 +40,13 @@ class Menu:
   def initializeItems(self):
     startButton = MenuButton(self.surface, "./image/UI/menu/menu_start_button.png", 0, StateChangeEvent(STATE_PLAY))
     loadSaveButton = MenuButton(self.surface, "./image/UI/menu/menu_load_save_button.png", 1, LoadEvent())
-    multiplayerButton = MenuButton(self.surface, "./image/UI/menu/join_by_IP.png", 2, MultiplayerEvent())
-    exitButton = MenuButton(self.surface, "./image/UI/menu/menu_exit_button.png", 3, QuitEvent())
+    playerButton = MenuButton(self.surface, "./image/UI/menu/SelectPlayer.png",2, SelectPlayerEvent())
+    multiplayerButton = MenuButton(self.surface, "./image/UI/menu/join_by_IP.png", 3, MultiplayerEvent())
+    exitButton = MenuButton(self.surface, "./image/UI/menu/menu_exit_button.png", 4, QuitEvent())
     
     self.items.append(startButton)
     self.items.append(loadSaveButton)
+    self.items.append(playerButton)
     self.items.append(multiplayerButton)
     self.items.append(exitButton)
 
@@ -82,6 +90,12 @@ class Menu:
         self.soundMixer.playEffect('clickEffect')
         self.isMultiplayerState = False
         return MultiplayerSceneFeedBack
+    elif self.isPlayerSelectionState:
+      SelectPlayerFeedback = self.playerSelectionScene.handleMouseInput(event)
+      if isinstance(SelectPlayerFeedback, TickEvent):
+        self.soundMixer.playEffect('clickEffect')
+        self.isPlayerSelectionState = False
+        return SelectPlayerFeedback      
     else:
       for item in self.items:
         if item.rect.collidepoint(event.pos):
@@ -95,6 +109,11 @@ class Menu:
             self.loadScene = LoadScene(self.screen, self.surface.copy(), self.soundMixer)
             self.isLoadState = True
             return TickEvent()
+          elif isinstance(item.feedback, SelectPlayerEvent):
+            self.soundMixer.playEffect('clickEffect')
+            self.playerSelectionScene = PlayerSelectionScene(self.screen, self.surface.copy(), self.soundMixer)
+            self.isPlayerSelectionState = True
+            
           elif isinstance(item.feedback, MultiplayerEvent):
             self.soundMixer.playEffect('clickEffect')
             self.multiplayerScene = MultiplayerScene(self.screen, self.surface.copy(), self.soundMixer)
@@ -116,6 +135,8 @@ class Menu:
       self.loadScene.render()
     elif self.isMultiplayerState:
       self.multiplayerScene.render()
+    elif self.isPlayerSelectionState:
+      self.playerSelectionScene.render()
     else: 
       self.renderItems()
       self.screen.blit(self.surface, (0, 0))
@@ -233,6 +254,99 @@ class MultiplayerScene:
     self.surface.blit(self.fontError.render(self.textError, True, (255, 0, 0)), (self.IPaddrPos[0], self.IPaddrPos[1]+45))
 
     self.screen.blit(self.surface, (self.posX, self.posY))
+
+
+class PlayerSelectionScene:
+  def __init__(self, screen, model, soundMixer):
+    self.screen = screen
+    self.soundMixer = soundMixer
+
+    self.model = model
+    self.surface = model
+    self.image = pygame.image.load("./image/UI/menu/select_player_interface.png").convert_alpha()
+    self.defaultSurface = pygame.transform.scale(self.image, (400, 400))
+    self.surface = self.defaultSurface.copy()
+
+    self.pos = (self.screen.get_width()/2 - self.surface.get_width()/2, self.screen.get_height()/2 - self.surface.get_height()/2)
+    self.posX = self.pos[0]
+    self.posY = self.pos[1]
+
+    self.okButton = pygame.image.load("./image/UI/quit/okButton.png")
+    self.okButtonPos = ((self.surface.get_width()/2) + self.okButton.get_width(), (self.surface.get_height() - self.okButton.get_height())-20)
+    self.okButtonRect = pygame.Rect(self.okButtonPos,  self.okButton.get_size())
+
+    self.cancelButton = pygame.image.load("./image/UI/quit/cancelButton.png")
+    self.cancelButtonPos = ((self.surface.get_width()/2) + 3*self.cancelButton.get_width(), (self.surface.get_height() - self.cancelButton.get_height())-20)
+    self.cancelButtonRect = pygame.Rect(self.cancelButtonPos, self.cancelButton.get_size())
+    
+    self.choosePlayer1 = pygame.image.load("./image/Buildings/Security_00011.png")
+    self.choosePlayer1 = pygame.transform.scale(self.choosePlayer1, (self.choosePlayer1.get_width()*0.6, self.choosePlayer1.get_height()*0.6))
+    self.choosePlayer1Pos = ((self.surface.get_width()/2) - (self.choosePlayer1.get_width()+10)-9, (self.surface.get_height()/2) - self.choosePlayer1.get_height())
+    self.choosePlayer1Rect = pygame.Rect(self.choosePlayer1Pos, self.choosePlayer1.get_size())
+
+    self.choosePlayer2 = pygame.image.load("./image/Buildings/Security_00012.png")
+    self.choosePlayer2 = pygame.transform.scale(self.choosePlayer2, (self.choosePlayer2.get_width()*0.6, self.choosePlayer2.get_height()*0.6))
+    self.choosePlayer2Pos = ((self.surface.get_width()-25) - self.choosePlayer2.get_width()-9, (self.surface.get_height()/2) - self.choosePlayer2.get_height())
+    self.choosePlayer2Rect = pygame.Rect(self.choosePlayer2Pos, self.choosePlayer2.get_size())
+
+    self.choosePlayer3 = pygame.image.load("./image/Buildings/Security_00013.png")
+    self.choosePlayer3 = pygame.transform.scale(self.choosePlayer3, (self.choosePlayer3.get_width()*0.6, self.choosePlayer3.get_height()*0.6))
+    self.choosePlayer3Pos = ((self.surface.get_width()/2) - self.choosePlayer3.get_width()-9, ((self.surface.get_height()/2) - self.choosePlayer3.get_height())*2.7)
+    self.choosePlayer3Rect = pygame.Rect(self.choosePlayer3Pos, self.choosePlayer3.get_size())
+
+    self.choosePlayer4 = pygame.image.load("./image/Buildings/Security_00014.png")
+    self.choosePlayer4 = pygame.transform.scale(self.choosePlayer4, (self.choosePlayer4.get_width()*0.6, self.choosePlayer4.get_height()*0.6))
+    self.choosePlayer4Pos = ((self.surface.get_width()-39) - self.choosePlayer4.get_width(), ((self.surface.get_height()/2) - self.choosePlayer4.get_height())*2.7)
+    self.choosePlayer4Rect = pygame.Rect(self.choosePlayer4Pos, self.choosePlayer4.get_size())
+
+
+  def getMousePosRelative(self, event):
+    return (event.pos[0] - self.posX, event.pos[1] - self.posY)
+  
+  def handleMouseInput(self, event) -> Event:
+    pos = self.getMousePosRelative(event)
+    if self.okButtonRect.collidepoint(pos):
+      self.soundMixer.playEffect("clickEffect")
+      #self.feedback = LoadSave(self.currentSaveLoaded)
+      #return self.feedback
+      return TickEvent()
+    elif self.cancelButtonRect.collidepoint(pos):
+      self.soundMixer.playEffect("clickEffect")
+      return TickEvent()
+    elif self.choosePlayer1Rect.collidepoint(pos):
+      self.soundMixer.playEffect("clickEffect")
+      print("Player 1 selected")
+      #self.View.actualGame.property = 1
+      #self.actualGame.property = 1
+      #self.model.actualGame.property = 1
+      
+      
+    elif self.choosePlayer2Rect.collidepoint(pos):
+      self.soundMixer.playEffect("clickEffect")
+      print("Player 2 selected")
+    elif self.choosePlayer3Rect.collidepoint(pos):
+      self.soundMixer.playEffect("clickEffect")
+      print("Player 3 selected")
+    elif self.choosePlayer4Rect.collidepoint(pos):
+      self.soundMixer.playEffect("clickEffect")
+      print("Player 4 selected")
+    else:
+      return 0
+  
+  def render(self):
+    self.screen.blit(self.defaultSurface, (self.posX, self.posY))
+    self.surface = self.defaultSurface.copy()
+
+    self.surface.blit(self.okButton, self.okButtonPos)
+    self.surface.blit(self.cancelButton, self.cancelButtonPos)
+    self.surface.blit(self.choosePlayer1, self.choosePlayer1Pos)
+    self.surface.blit(self.choosePlayer2, self.choosePlayer2Pos)
+    self.surface.blit(self.choosePlayer3, self.choosePlayer3Pos)
+    self.surface.blit(self.choosePlayer4, self.choosePlayer4Pos)    
+
+    self.screen.blit(self.surface, self.pos)
+
+    
 
 
 numerical_keys = [pygame.K_0, pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4,

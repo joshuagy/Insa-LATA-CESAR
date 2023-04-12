@@ -27,6 +27,8 @@ class KeyboardInputHandler:
 			self.handleKeyboardEventsStateSaveScene(event)
 		elif currentstate == STATE_OPEN_TO_LAN_SCENE:
 			self.handleKeyboardEventsStateOpenToLan(event)
+		elif currentstate == STATE_SELECT_PLAYER:
+			self.handleKeyboardEventsStateSelectPlayer(event)
 		elif event.key == pygame.K_ESCAPE:
 			self.evManager.Post(ExitEvent())
 
@@ -35,6 +37,10 @@ class KeyboardInputHandler:
 
 	def handleKeyboardEventsStateSaveScene(self, event):
 		feedback = self.model.saveScene.handleKeyboardInput(event)
+		self.evManager.Post(feedback)
+  
+	def handleKeyboardEventsStateSelectPlayer(self, event):
+		feedback = self.model.selectPlayerScene.handleKeyboardInput(event)
 		self.evManager.Post(feedback)
 
 	def handleKeyboardEventsStateOpenToLan(self, event):

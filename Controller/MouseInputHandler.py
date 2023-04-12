@@ -3,7 +3,7 @@ import random
 from Model.constants import *
 from Model.control_panel import *
 from EventManager.Event import Event
-from EventManager.allEvent import StateChangeEvent, LoadSave, MultiplayerStart
+from EventManager.allEvent import StateChangeEvent, LoadSave, MultiplayerStart, SelectPlayer
 from Model.Plateau import Plateau, cell_size
 from Model.Route import Route
 from Model.Buildings.Building import *
@@ -58,6 +58,8 @@ class MouseInputHandler:
                                 self.handleMouseEventsStateSaveScene(event)
                         elif currentstate == STATE_OPEN_TO_LAN_SCENE:
                                 self.handleMouseEventsStateOpenToLanScene(event)
+#                        elif currentstate == STATE_SELECT_PLAYER:
+#                                self.handleMouseEventsStateSelectPlayer(event)
                 if event.button == 1:
                         self.clicked = False
                         self.initialMouseCoordinate = None
@@ -119,7 +121,12 @@ class MouseInputHandler:
             self.model.actualGame.load_savefile(feedBack.saveName)
             self.evManager.Post(StateChangeEvent(STATE_PLAY))
         elif isinstance(feedBack, MultiplayerStart):
-            self.model.actualGame.multiplayer = Multiplayer(self.model.actualGame, self.evManager, feedBack.ipaddr, feedBack.portext, feedBack.portint, 1)
+            self.model.actualGame.multiplayer = Multiplayer(self.model.actualGame, feedBack.ipaddr, feedBack.portext, feedBack.portint, 1)
+            self.model.actualGame.load_savefile("DefaultMap.pickle")
+            self.evManager.Post(StateChangeEvent(STATE_PLAY))
+        elif isinstance(feedBack, SelectPlayer):          
+            print("Select player clicked")
+            self.evManager.Post(StateChangeEvent(STATE_MENU))
         elif isinstance(feedBack, StateChangeEvent):
             if feedBack.state == STATE_PLAY:
                 self.model.saveScene.userInput = ""                

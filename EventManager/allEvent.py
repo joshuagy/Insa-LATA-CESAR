@@ -12,6 +12,10 @@ class MultiplayerStart(Event):
         self.portext = portext
         self.portint = portint
         self.name = "Multiplayer start event"
+        
+class SelectPlayer(Event):
+    def __init__ (self):
+        self.name = "Select Player Event"
 
 class ExitEvent(Event):
     """
@@ -40,6 +44,10 @@ class LoadEvent(Event):
 class MultiplayerEvent(Event):
     def __init__ (self):
         self.name = "Multiplayerevent"
+        
+class SelectPlayerEvent(Event):
+    def __init__ (self):
+        self.name = "SelectPlayerEvent"
 
 class TickEvent(Event):
     """
