@@ -2,7 +2,9 @@ import pygame
 import os
 from EventManager.allEvent import *
 from Model.constants import *
-from View.view import *
+#To get actual_game
+from View.view import * 
+from EventManager.Event import Event
 
 class Menu:
   def __init__(self, screen, soundMixer):
@@ -259,6 +261,7 @@ class PlayerSelectionScene:
     self.screen = screen
     self.soundMixer = soundMixer
 
+    self.model = model
     self.surface = model
     self.image = pygame.image.load("./image/UI/menu/select_player_interface.png").convert_alpha()
     self.defaultSurface = pygame.transform.scale(self.image, (400, 400))
@@ -309,11 +312,15 @@ class PlayerSelectionScene:
       return TickEvent()
     elif self.cancelButtonRect.collidepoint(pos):
       self.soundMixer.playEffect("clickEffect")
-      print("button clicked")
       return TickEvent()
     elif self.choosePlayer1Rect.collidepoint(pos):
       self.soundMixer.playEffect("clickEffect")
       print("Player 1 selected")
+      #self.View.actualGame.property = 1
+      #self.actualGame.property = 1
+      #self.model.actualGame.property = 1
+      
+      
     elif self.choosePlayer2Rect.collidepoint(pos):
       self.soundMixer.playEffect("clickEffect")
       print("Player 2 selected")
