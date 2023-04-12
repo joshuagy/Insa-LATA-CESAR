@@ -261,6 +261,7 @@ class PlayerSelectionScene:
     self.screen = screen
     self.soundMixer = soundMixer
 
+    self.model = model
     self.surface = model
     self.image = pygame.image.load("./image/UI/menu/select_player_interface.png").convert_alpha()
     self.defaultSurface = pygame.transform.scale(self.image, (400, 400))
@@ -318,6 +319,7 @@ class PlayerSelectionScene:
       #self.View.actualGame.property = 1
       #self.actualGame.property = 1
       self.model.actualGame.property = 1
+      
       
     elif self.choosePlayer2Rect.collidepoint(pos):
       self.soundMixer.playEffect("clickEffect")
