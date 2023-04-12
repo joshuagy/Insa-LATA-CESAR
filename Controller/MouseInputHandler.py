@@ -796,7 +796,7 @@ class MouseInputHandler:
             self.model.actualGame.buildColosseum(grid_x1, grid_x2, grid_y1, grid_y2, property)
             self.model.actualGame.soundMixer.playEffect('buildEffect')
             if self.model.actualGame.multiplayer:
-                self.model.actualGame.multiplayer.send(f"SBGo.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
+                self.model.actualGame.multiplayer.send(f"SBC.{grid_x1}.{grid_y1}.{grid_x2}.{grid_y2}.{property}")
             
 
         #Overlay part
