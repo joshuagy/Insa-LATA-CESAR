@@ -126,6 +126,7 @@ class DamagedBuilding(Building) :
         self.riskTimer = 0
         self.property = property
         self.filt = 0
+        self.loyFlipTimer = 0
 
     def delete(self):
         self.plateau.structures.remove(self)
@@ -148,6 +149,7 @@ class BurningBuilding(Building) :
         self.index_sprite = 0
         self.riskTimer = 0
         self.property = property
+        self.loyFlipTimer = 0
     
     def delete(self):
         self.plateau.structures.remove(self)
